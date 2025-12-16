@@ -21,7 +21,7 @@
 
 - Entwicklung eines benutzerfreundlichen Online-Casinos mit einer modernen und ansprechenden Benutzeroberfläche
 - Implementierung verschiedener Casinospielen, darunter Slots, Poker, Roulette und Blackjack
-![Mindmap](Online-Casino.jpg)
+![Mindmap](OnlineCasino_MindMap.jpg)
 
 
 ## 3. Chancen und Risiken
