@@ -1,12 +1,38 @@
 # Pflichtenheft - Online Casino
 
-## 1. Beschreibung der Ausgangslage
+## Inhaltsverzeichnis
 
-Die Ausgangslage basiert auf dem Projektantrag der HTL Leonding (3. Klasse Syp-Projekt). Das Ziel ist die Entwicklung eines Online-Casinos als Software-Projekt, bei dem die Logik von Glücksspielen im Vordergrund steht. Das Thema Glücksspiel ist für das Team spannend und motivierend. 
+- [1. Ausgangslage](#1-ausgangslage)
+  - [1.1. Ist-Situation](#11-ist-situation)
+  - [1.2. Verbesserungspotenziale](#12-verbesserungspotenziale)
+- [2. Zielsetzung](#2-zielsetzung)
+- [3. Funktionale Anforderungen](#3-funktionale-anforderungen)
+  - [3.1 Use Case A: Benutzerregistrierung und Login](#31-use-case-a-benutzerregistrierung-und-login)
+  - [3.2 Use Case B: Haupmenü](#32-use-case-b-haupmenü)
+  - [3.3 Use Case C: Spielen von Tischspielen (z.B. Poker, Roulette, Blackjack)](#33-use-case-c-spielen-von-tischspielen-zb-poker-roulette-blackjack)
 
-Aktuell existieren physische Casinos, die jedoch Einschränkungen wie begrenzte Öffnungszeiten, Standortabhängigkeit und manuelle Prozesse aufweisen. Ein Online-Casino bietet Verbesserungspotenziale durch 24/7-Verfügbarkeit, Zugriff von überall und Automatisierung durch Computer.
+## 1. Ausgangslage
 
-### Use Case 1: Benutzerregistrierung und Login
+### 1.1. Ist-Situation
+
+- Siehe Projektantrag
+
+### 1.2. Verbesserungspotenziale
+
+- Siehe Projektantrag
+
+## 2. Zielsetzung
+
+- Siehe Projektantrag
+
+## 3. Funktionale Anforderungen
+
+Die Zielsetzung ist die Entwicklung eines benutzerfreundlichen Online-Casinos mit moderner Benutzeroberfläche. Es sollen verschiedene Spiele implementiert werden: Slots, Poker, Roulette und Blackjack. Das System soll eine Währung (virtuelles Geld) handhaben, Benutzerkonten verwalten und faire Zufallslogik sicherstellen.
+
+Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Projekterfahrungen und potenziell Monetarisierung. Die Umsetzung erfolgt in Meilensteinen: Grundfunktionen bis Ostern, Erweiterungen bis Mai, Fertigstellung bis Juni.
+
+
+### 3.1 Use Case A: Benutzerregistrierung und Login
 **Akteur:** Potenzieller Spieler
 **Vorbedingung:** Der Benutzer öffnet die Website des Online-Casinos.
 **Beschreibung:**
@@ -19,55 +45,38 @@ Aktuell existieren physische Casinos, die jedoch Einschränkungen wie begrenzte 
 **Ausnahmen:** Ungültige Daten führen zu Fehlermeldungen.
 
 Mockup der Login-Seite:
+![LoginPage](recources/LoginPage.jpeg)
 
-
-
-
-## 2. Ist-Zustand
-
-Im Ist-Zustand gibt es kein bestehendes Online-Casino-System. Das Projekt startet von Grund auf als Schülerprojekt. Die aktuelle Situation umfasst physische Casinos, die manuell betrieben werden und keine digitale Automatisierung bieten. Es fehlt an einer Plattform, die Glücksspiele wie Slots, Poker, Roulette und Blackjack online zugänglich macht.
-
-Die Teammitglieder haben hohe Motivation, aber begrenzte Erfahrung mit großen Projekten. Potenzielle Risiken sind Zeitdruck, Merge-Konflikte in Git und unübersichtlicher Code.
-
-### Use Case 2: Spielen eines Slot-Spiels
+### 3.2 Use Case B: Haupmenü
 **Akteur:** Eingeloggter Spieler
 **Vorbedingung:** Der Benutzer ist eingeloggt und hat Guthaben auf dem Konto.
 **Beschreibung:**
-1. Der Benutzer wählt das Slot-Spiel aus dem Menü.
-2. Er setzt einen Einsatz.  
-3. Das System startet den Spin (basierend auf Zufallslogik).
-4. Das Ergebnis wird angezeigt, und Gewinne werden dem Konto gutgeschrieben.
-5. Der Benutzer kann weiter spielen oder zurückkehren.
+1. Der Benutzer öffnet die Anwendung nach dem Login
+2. Das System zeigt das Hauptmenü (Dashboard) an
+3. Der Benutzer sieht folgende zentrale Elemente:
+  1. Aktuelles Guthaben & Bonusinformationen (oben prominent)
+  2. Schnellzugriffe / Kategorien (Slots, Live Casino, Tischspiele, Sportwetten, Crash/Turbo-Spiele etc.)
+  3. Empfohlene / beliebte Spiele (Carousel oder Grid)
+  4. Kontostand und Chat
+    
+4. Der Benutzer kann per Klick/Tap in einen Spielbereich wechseln oder eine Aktion starten (z. B. Einzahlen, Spiel öffnen)
 **Nachbedingung:** Das Spielergebnis ist verarbeitet, Guthaben aktualisiert.
-**Ausnahmen:** Unzureichendes Guthaben verhindert den Start.
+**Ausnahmen:** Keine Internetverbindung → Offline-Hinweis, Session abgelaufen → Rückleitung zum Login
 
 Mockup des Hauptmenüs
+![Startmenü](resources/Startmenü.jpeg)
 
-
-
-## 3. Zielsetzung
-
-Die Zielsetzung ist die Entwicklung eines benutzerfreundlichen Online-Casinos mit moderner Benutzeroberfläche. Es sollen verschiedene Spiele implementiert werden: Slots, Poker, Roulette und Blackjack. Das System soll eine Währung (virtuelles Geld) handhaben, Benutzerkonten verwalten und faire Zufallslogik sicherstellen.
-
-Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Projekterfahrungen und potenziell Monetarisierung. Die Umsetzung erfolgt in Meilensteinen: Grundfunktionen bis Ostern, Erweiterungen bis Mai, Fertigstellung bis Juni.
-
-### Use Case 3: Spielen von Tischspielen (z.B. Poker, Roulette, Blackjack)
-**Akteur:** Eingeloggter Spieler  
+### 3.3 Use Case C: Spielen von Tischspielen (z.B. Poker, Roulette, Blackjack)
+**Akteur:** Eingeloggter Spieler
 **Vorbedingung:** Der Benutzer hat Guthaben und wählt ein Tischspiel.
-**Beschreibung:**  
+**Beschreibung:**
 1. Der Benutzer betritt den virtuellen Tisch (z.B. Poker).
-2. Er platziert Einsätze.  
+2. Er platziert Einsätze.
 3. Das System simuliert das Spiel (Karten austeilen, Rad drehen etc.) mit Zufallsalgorithmen.
 4. Runden werden ausgewertet, Gewinne/Verluste berechnet.
 5. Der Benutzer kann Runden wiederholen oder verlassen.
 **Nachbedingung:** Spielstand aktualisiert, Guthaben angepasst.
-**Ausnahmen:** Verbindungsprobleme führen zu Pausen.
+**Ausnahmen:** Verbindungsprobleme führen zu Pausen, Unzureichendes Guthaben verhindert den Start.
 
-Mockups für Tischspiele:
-**Poker-Tisch:**
-
-
-**Roulette:**
-
-
-**Blackjack:**
+Mockup
+![Pokertisch](recources/Pokertisch.jpeg)
