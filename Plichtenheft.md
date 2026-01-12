@@ -45,7 +45,7 @@ Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Pro
 **Ausnahmen:** Ungültige Daten führen zu Fehlermeldungen.
 
 Mockup der Login-Seite:
-![LoginPage](recources/LoginPage.jpeg)
+![LoginPage](resources/LoginPage.jpeg)
 
 ### 3.2 Use Case B: Haupmenü
 **Akteur:** Eingeloggter Spieler
@@ -79,4 +79,4 @@ Mockup des Hauptmenüs
 **Ausnahmen:** Verbindungsprobleme führen zu Pausen, Unzureichendes Guthaben verhindert den Start.
 
 Mockup
-![Pokertisch](recources/Pokertisch.jpeg)
+![Pokertisch](resources/Pokertisch.jpeg)
