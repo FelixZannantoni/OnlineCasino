@@ -32,6 +32,8 @@ Die Zielsetzung ist die Entwicklung eines benutzerfreundlichen Online-Casinos mi
 Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Projekterfahrungen und potenziell Monetarisierung. Die Umsetzung erfolgt in Meilensteinen: Grundfunktionen bis Ostern, Erweiterungen bis Mai, Fertigstellung bis Juni.
 
 
+![UCD](resources/UCD.png)
+
 ### 3.1 Use Case A: Benutzerregistrierung und Login
 **Akteur:** Potenzieller Spieler
 **Vorbedingung:** Der Benutzer öffnet die Website des Online-Casinos.
@@ -49,33 +51,41 @@ Mockup der Login-Seite:
 
 ### 3.2 Use Case B: Haupmenü
 **Akteur:** Eingeloggter Spieler
+
 **Vorbedingung:** Der Benutzer ist eingeloggt und hat Guthaben auf dem Konto.
+
 **Beschreibung:**
 1. Der Benutzer öffnet die Anwendung nach dem Login
 2. Das System zeigt das Hauptmenü (Dashboard) an
 3. Der Benutzer sieht folgende zentrale Elemente:
-  1. Aktuelles Guthaben & Bonusinformationen (oben prominent)
-  2. Schnellzugriffe / Kategorien (Slots, Live Casino, Tischspiele, Sportwetten, Crash/Turbo-Spiele etc.)
-  3. Empfohlene / beliebte Spiele (Carousel oder Grid)
-  4. Kontostand und Chat
+    1. Aktuelles Guthaben & Bonusinformationen (oben prominent)
+    2. Schnellzugriffe / Kategorien (Slots, Live Casino, Tischspiele, Sportwetten, Crash/Turbo-Spiele etc.)
+    3. Empfohlene / beliebte Spiele (Carousel oder Grid)
+    4. Kontostand und Chat
     
 4. Der Benutzer kann per Klick/Tap in einen Spielbereich wechseln oder eine Aktion starten (z. B. Einzahlen, Spiel öffnen)
+
 **Nachbedingung:** Das Spielergebnis ist verarbeitet, Guthaben aktualisiert.
+
 **Ausnahmen:** Keine Internetverbindung → Offline-Hinweis, Session abgelaufen → Rückleitung zum Login
 
 Mockup des Hauptmenüs
 ![Startmenü](resources/Startmenü.jpeg)
 
-### 3.3 Use Case C: Spielen von Tischspielen (z.B. Poker, Roulette, Blackjack)
+### 3.3 Use Case C: Spielen von Tischspielen (Poker)
 **Akteur:** Eingeloggter Spieler
+
 **Vorbedingung:** Der Benutzer hat Guthaben und wählt ein Tischspiel.
+
 **Beschreibung:**
-1. Der Benutzer betritt den virtuellen Tisch (z.B. Poker).
+1. Der Benutzer betritt den virtuellen Pokertisch
 2. Er platziert Einsätze.
 3. Das System simuliert das Spiel (Karten austeilen, Rad drehen etc.) mit Zufallsalgorithmen.
 4. Runden werden ausgewertet, Gewinne/Verluste berechnet.
-5. Der Benutzer kann Runden wiederholen oder verlassen.
+5. Der Benutzer kann aus der Runde aussteigen er kann mitgehen und den Einsatzt erhöhen.
+
 **Nachbedingung:** Spielstand aktualisiert, Guthaben angepasst.
+
 **Ausnahmen:** Verbindungsprobleme führen zu Pausen, Unzureichendes Guthaben verhindert den Start.
 
 Mockup
