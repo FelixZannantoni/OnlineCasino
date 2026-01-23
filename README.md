@@ -10,6 +10,7 @@
   - [3.1 Use Case A: Haupmenü](#31-use-case-b-haupmenü)
   - [3.2 Use Case B: Spielen von Blackjack](#32-use-case-b-spielen-von-blackjack)
   - [3.3 Use Case C: Spielen von Poker](#33-use-case-c-spielen-von-poker)
+  - [3.4 Use Case D: Social Features](#34-use-case-d-social-features)
 
 ## 1. Ausgangslage
 
@@ -98,3 +99,31 @@ Mockup des Blackjacktisch
 
 Mockup des Pokertisch
 ![Pokertisch](resources/Pokertisch.jpeg)
+
+
+### 3.4 Use Case D: Social Features
+**Akteur:** Eingeloggter Spieler
+
+**Vorbedingung:** Der Benutzer ist eingeloogt.
+
+**Beschreibung:**
+1. Der Benutzer kann den Chat öffnen
+2. Er kann zwischen seine Freundesliste und Freudesleaderboard wechseln
+
+    1. In der Freundesliste
+    - Sieht er alle hinzugefügten Freunde mit Status (online/offline), Avatar, Username und ggf. aktuellem    Chip-Stand oder Level.
+    - Kann er einen Freund auswählen → öffnet sich der Chat mit diesem Freund (1:1-Chat).
+    - Kann er Freunde einladen (z. B. zu einem Tisch), Freundschaftsanfragen verwalten oder suchen.
+    2. Im Friendsleaderboard
+    - Wird eine Rangliste nur der eigenen Freunde angezeigt (sortiert nach z. B. erspielten Chips, Wins, Level, Turnierplatzierungen o. Ä. in einem definierten Zeitraum).
+    - Der eigene Rang ist hervorgehoben.
+    Tippen auf einen Eintrag zeigt Details zum Freund (Profil, Stats) oder startet Chat.
+
+3. fehlt
+
+**Nachbedingung:** fehlt
+
+**Ausnahmen:** fehlt
+
+Mockup des Pokertisch
+![SocialFeatures](resources/SocialFeatures.jpeg)
