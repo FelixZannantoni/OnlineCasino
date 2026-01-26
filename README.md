@@ -107,23 +107,24 @@ Mockup des Pokertisch
 **Vorbedingung:** Der Benutzer ist eingeloogt.
 
 **Beschreibung:**
-1. Der Benutzer kann den Chat öffnen
-2. Er kann zwischen seine Freundesliste und Freudesleaderboard wechseln
+1. Der Benutzer klickt auf das Social-/Chat-Symbol in der Navigation.
+2. Die Freundesliste wird geladen und angezeigt.
+3. Der Benutzer kann die Liste absteigend oder aufsteigend sortieren nach:
+   - Chips
+   - Freundschaftsdauer
+   - Aktuelle Streak-Länge
+   - Name
+4. Eingehende Freunschatsanfragen:
+   - Annehmen → Freund wird hinzugefügt
+   - Ablehnen
 
-    1. In der Freundesliste
-    - Sieht er alle hinzugefügten Freunde mit Status (online/offline), Avatar, Username und ggf. aktuellem    Chip-Stand oder Level.
-    - Kann er einen Freund auswählen → öffnet sich der Chat mit diesem Freund (1:1-Chat).
-    - Kann er Freunde einladen (z. B. zu einem Tisch), Freundschaftsanfragen verwalten oder suchen.
-    2. Im Friendsleaderboard
-    - Wird eine Rangliste nur der eigenen Freunde angezeigt (sortiert nach z. B. erspielten Chips, Wins, Level, Turnierplatzierungen o. Ä. in einem definierten Zeitraum).
-    - Der eigene Rang ist hervorgehoben.
-    Tippen auf einen Eintrag zeigt Details zum Freund (Profil, Stats) oder startet Chat.
+**Nachbedingung:**
+- Freundesliste ist sichtbar + sortiert
+- Gesendete/angenommene Anfragen sind gespeichert
+- Chat mit Freunden ist öffen
 
-3. fehlt
+**Wichtige Ausnahmen:**
+- Freundesliste leer → Hinweis + Button „Freunde finden / einladen“
 
-**Nachbedingung:** fehlt
-
-**Ausnahmen:** fehlt
-
-Mockup des Pokertisch
+Mockup der Social-Features
 ![SocialFeatures](resources/SocialFeatures.jpeg)
