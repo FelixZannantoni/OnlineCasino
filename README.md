@@ -7,7 +7,7 @@
   - [1.2. Verbesserungspotenziale](#12-verbesserungspotenziale)
 - [2. Zielsetzung](#2-zielsetzung)
 - [3. Funktionale Anforderungen](#3-funktionale-anforderungen)
-  - [3.1 Use Case A: Haupmenü](#31-use-case-b-haupmenü)
+  - [3.1 Use Case A: Haupmenü](#31-use-case-a-haupmenü)
   - [3.2 Use Case B: Spielen von Blackjack](#32-use-case-b-spielen-von-blackjack)
   - [3.3 Use Case C: Spielen von Poker](#33-use-case-c-spielen-von-poker)
   - [3.4 Use Case D: Social Features](#34-use-case-d-social-features)
@@ -36,7 +36,7 @@ Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Pro
 
 
 
-### 3.1 Use Case B: Haupmenü
+### 3.1 Use Case A: Haupmenü
 **Akteur:** Eingeloggter Spieler
 
 **Vorbedingung:** Der Benutzer ist eingeloggt und hat Guthaben auf dem Konto.
@@ -52,7 +52,7 @@ Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Pro
     
 4. Der Benutzer kann per Klick/Tap in einen Spielbereich wechseln oder eine Aktion starten (z. B. Einzahlen, Spiel öffnen)
 
-**Nachbedingung:** Das Spielergebnis ist verarbeitet, Guthaben aktualisiert.
+**Nachbedingung:** Jegliche Aktionen sind verarbeitet, Guthaben aktualisiert.
 
 **Ausnahmen:** Keine Internetverbindung → Offline-Hinweis, Session abgelaufen → Rückleitung zum Login
 
@@ -67,9 +67,9 @@ Mockup des Hauptmenüs
 **Vorbedingung:** Der Benutzer hat Guthaben und wählt Blackjack.
 
 **Beschreibung:**
-1. Der Benutzer betritt den virtuellen Blackjacktisch
+1. Der Benutzer öffnet den virtuellen Blackjacktisch
 2. Er platziert Einsätze.
-3. Das System simuliert das Spiel (Karten austeilen) mit Zufallsalgorithmen.
+3. Das System simuliert das Spiel (Karten austeilen, evtl. Spielzüge) mit Zufallsalgorithmen.
 4. Runden werden ausgewertet, Gewinne/Verluste berechnet.
 5. Der Benutzer kann aus der Runde noch eine Kate bekommen, bleiben, verdoppeln und teilen.
 **Nachbedingung:** Spielstand aktualisiert, Guthaben angepasst.
@@ -87,11 +87,11 @@ Mockup des Blackjacktisch
 **Vorbedingung:** Der Benutzer hat Guthaben und wählt Poker.
 
 **Beschreibung:**
-1. Der Benutzer betritt den virtuellen Pokertisch
+1. Der Benutzer öffnet den virtuellen Pokertisch
 2. Er platziert Einsätze.
 3. Das System simuliert das Spiel (Karten austeilen) mit Zufallsalgorithmen.
 4. Runden werden ausgewertet, Gewinne/Verluste berechnet.
-5. Der Benutzer kann aus der Runde aussteigen er kann mitgehen und den Einsatzt erhöhen.
+5. Der Benutzer kann aus der Runde aussteigen, er kann mitgehen, oder den Einsatz erhöhen.
 
 **Nachbedingung:** Spielstand aktualisiert, Guthaben angepasst.
 
@@ -117,11 +117,15 @@ Mockup des Pokertisch
 4. Eingehende Freunschatsanfragen:
    - Annehmen → Freund wird hinzugefügt
    - Ablehnen
+5. Chatten mit einem Freund:
+   - Wird ein Freund ausgewählt, ist auf der Seite dr Chatverlauf dessen offen
+   - Nachrichten können gesendet werden
+   - Empfangene Nachrichten werden angezeigt
 
 **Nachbedingung:**
 - Freundesliste ist sichtbar + sortiert
 - Gesendete/angenommene Anfragen sind gespeichert
-- Chat mit Freunden ist öffen
+- Chat mit Freunden ist offen bzw. akualisiert
 
 **Wichtige Ausnahmen:**
 - Freundesliste leer → Hinweis + Button „Freunde finden / einladen“
