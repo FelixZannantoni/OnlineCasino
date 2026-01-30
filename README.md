@@ -24,11 +24,12 @@
 
 ## 2. Zielsetzung
 
-- Siehe Projektantrag
+- Siehe Projektantra
 
 ## 3. Funktionale Anforderungen
 
-Die Zielsetzung ist die Entwicklung eines benutzerfreundlichen Online-Casinos mit moderner Benutzeroberfläche. Es sollen verschiedene Spiele implementiert werden: Slots, Poker, Roulette und Blackjack. Das System soll eine Währung (virtuelles Geld) handhaben, Benutzerkonten verwalten und faire Zufallslogik sicherstellen.
+Die Zielsetzung ist die Entwicklung eines benutzerfreundlichen Online-Casinos mit moderner Benutzeroberfläche. Es sollen verschiedene Spiele implementiert werden: Slots, Poker, Roulette und Blackjack. Das System soll Casino Chips als Währung haben, neue User starten mit 1000 Chips, der stand verändert sich durch gewinnen oder verlieren und um sicherzustellen das der User nicht 0 Chips hat und dann nie wieder spielen kann, werden tägliche Belohnungen eingeführt.
+Auserdem brauchen wir eine faire Zufallslogik.
 
 Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Projekterfahrungen und potenziell Monetarisierung. Die Umsetzung erfolgt in Meilensteinen: Grundfunktionen bis Ostern, Erweiterungen bis Mai, Fertigstellung bis Juni.
 
@@ -39,20 +40,20 @@ Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Pro
 ### 3.1 Use Case A: Haupmenü
 **Akteur:** Eingeloggter Spieler
 
-**Vorbedingung:** Der Benutzer ist eingeloggt und hat Guthaben auf dem Konto.
+**Vorbedingung:** Der Benutzer ist eingeloggt und hat Chips auf dem Konto.
 
 **Beschreibung:**
 1. Der Benutzer öffnet die Anwendung nach dem Login
 2. Das System zeigt das Hauptmenü (Dashboard) an
 3. Der Benutzer sieht folgende zentrale Elemente:
-    1. Aktuelles Guthaben & Bonusinformationen (oben prominent)
-    2. Schnellzugriffe / Kategorien (Slots, Live Casino, Tischspiele, Sportwetten, Crash/Turbo-Spiele etc.)
+    1. Aktuelles Chips & Bonusinformationen (oben prominent)
+    2. Schnellzugriffe / Kategorien
     3. Empfohlene / beliebte Spiele (Carousel oder Grid)
-    4. Kontostand und Chat
+    4. Kontostand(Chips) und Chat
     
 4. Der Benutzer kann per Klick/Tap in einen Spielbereich wechseln oder eine Aktion starten (z. B. Einzahlen, Spiel öffnen)
 
-**Nachbedingung:** Jegliche Aktionen sind verarbeitet, Guthaben aktualisiert.
+**Nachbedingung:** Jegliche Aktionen sind verarbeitet, Chips aktualisiert.
 
 **Ausnahmen:** Keine Internetverbindung → Offline-Hinweis, Session abgelaufen → Rückleitung zum Login
 
@@ -64,7 +65,7 @@ Mockup des Hauptmenüs
 ### 3.2 Use Case B: Spielen von Blackjack
 **Akteur:** Eingeloggter Spieler
 
-**Vorbedingung:** Der Benutzer hat Guthaben und wählt Blackjack.
+**Vorbedingung:** Der Benutzer hat Chips und wählt Blackjack.
 
 **Beschreibung:**
 1. Der Benutzer öffnet den virtuellen Blackjacktisch
@@ -72,9 +73,9 @@ Mockup des Hauptmenüs
 3. Das System simuliert das Spiel (Karten austeilen, evtl. Spielzüge) mit Zufallsalgorithmen.
 4. Runden werden ausgewertet, Gewinne/Verluste berechnet.
 5. Der Benutzer kann aus der Runde noch eine Kate bekommen, bleiben, verdoppeln und teilen.
-**Nachbedingung:** Spielstand aktualisiert, Guthaben angepasst.
+**Nachbedingung:** Spielstand aktualisiert, Chips angepasst.
 
-**Ausnahmen:** Verbindungsprobleme führen zu Pausen, Unzureichendes Guthaben verhindert den Start.
+**Ausnahmen:** Verbindungsprobleme führen zu Pausen, Unzureichendes Chips verhindert den Start.
 
 Mockup des Blackjacktisch
 ![Pokertisch](resources/Blackjacktisch.jpeg)
@@ -84,7 +85,7 @@ Mockup des Blackjacktisch
 ### 3.3 Use Case C: Spielen von Poker
 **Akteur:** Eingeloggter Spieler
 
-**Vorbedingung:** Der Benutzer hat Guthaben und wählt Poker.
+**Vorbedingung:** Der Benutzer hat Chips und wählt Poker.
 
 **Beschreibung:**
 1. Der Benutzer öffnet den virtuellen Pokertisch
@@ -93,9 +94,9 @@ Mockup des Blackjacktisch
 4. Runden werden ausgewertet, Gewinne/Verluste berechnet.
 5. Der Benutzer kann aus der Runde aussteigen, er kann mitgehen, oder den Einsatz erhöhen.
 
-**Nachbedingung:** Spielstand aktualisiert, Guthaben angepasst.
+**Nachbedingung:** Spielstand aktualisiert, Chips angepasst.
 
-**Ausnahmen:** Verbindungsprobleme führen zu Pausen, Unzureichendes Guthaben verhindert den Start.
+**Ausnahmen:** Verbindungsprobleme führen zu Pausen, Unzureichendes Chips verhindert den Start.
 
 Mockup des Pokertisch
 ![Pokertisch](resources/Pokertisch.jpeg)
