@@ -24,7 +24,7 @@
 
 ## 2. Zielsetzung
 
-- Siehe Projektantra
+- Siehe Projektantrag
 
 ## 3. Funktionale Anforderungen
 
@@ -33,9 +33,33 @@ Auserdem brauchen wir eine faire Zufallslogik.
 
 Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Projekterfahrungen und potenziell Monetarisierung. Die Umsetzung erfolgt in Meilensteinen: Grundfunktionen bis Ostern, Erweiterungen bis Mai, Fertigstellung bis Juni.
 
+
+<div hidden >
+@startuml
+
+left to right direction
+
+rectangle "UCD Online Casino" {
+    (Haupmenü)
+    (Social Features)
+    
+    (Haupmenü).down.>(Poker Spielen): <<extend>>
+    (Haupmenü).down.>(Blackjack Spielen): <<extend>>
+    (Haupmenü).down.>(Slot Machine Spielen): <<extend>>
+    (Haupmenü).down.>(Roulette Spielen): <<extend>>
+    
+    (Social Features)..>(Freundschaftsanfrage senden): <<extend>>
+    (Social Features)..>(Freunde verwalten): <<extend>>
+    (Social Features)..>(Chatnachricht senden): <<extend>>
+}
+
+Spieler --> (Social Features)
+Spieler --> (Haupmenü)
+
+@enduml
+</div>
+
 ![UCD](resources/UCD.png)
-
-
 
 ### 3.1 Use Case A: Haupmenü
 **Akteur:** Eingeloggter Spieler
