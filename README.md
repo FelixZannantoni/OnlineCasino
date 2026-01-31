@@ -10,7 +10,9 @@
   - [3.1 Use Case A: Haupmenü](#31-use-case-a-haupmenü)
   - [3.2 Use Case B: Spielen von Blackjack](#32-use-case-b-spielen-von-blackjack)
   - [3.3 Use Case C: Spielen von Poker](#33-use-case-c-spielen-von-poker)
-  - [3.4 Use Case D: Social Features](#34-use-case-d-social-features)
+  - [3.4 Use Case D: Spielen von Roulette](#34-use-case-d-spielen-von-roulette)
+  - [3.5 Use Case E: Spielen von Slot Machine](#35-use-case-e-spielen-von-slot-machine)
+  - [3.6 Use Case F: Social Features](#36-use-case-f-social-features)
 
 ## 1. Ausgangslage
 
@@ -33,35 +35,9 @@ Auserdem brauchen wir eine faire Zufallslogik.
 
 Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Projekterfahrungen und potenziell Monetarisierung. Die Umsetzung erfolgt in Meilensteinen: Grundfunktionen bis Ostern, Erweiterungen bis Mai, Fertigstellung bis Juni.
 
-
-<div hidden >
-@startuml
-
-left to right direction
-
-rectangle "UCD Online Casino" {
-    (Haupmenü)
-    (Social Features)
-    
-    (Haupmenü).down.>(Poker Spielen): <<extend>>
-    (Haupmenü).down.>(Blackjack Spielen): <<extend>>
-    (Haupmenü).down.>(Slot Machine Spielen): <<extend>>
-    (Haupmenü).down.>(Roulette Spielen): <<extend>>
-    
-    (Social Features)..>(Freundschaftsanfrage senden): <<extend>>
-    (Social Features)..>(Freunde verwalten): <<extend>>
-    (Social Features)..>(Chatnachricht senden): <<extend>>
-}
-
-Spieler --> (Social Features)
-Spieler --> (Haupmenü)
-
-@enduml
-</div>
-
 ![UCD](resources/UCD.png)
 
-### 3.1 Use Case A: Haupmenü
+### 3.1 Use Case A: Haupmenü^
 **Akteur:** Eingeloggter Spieler
 
 **Vorbedingung:** Der Benutzer ist eingeloggt und hat Chips auf dem Konto.
@@ -72,14 +48,14 @@ Spieler --> (Haupmenü)
 3. Der Benutzer sieht folgende zentrale Elemente:
     1. Aktuelles Chips & Bonusinformationen (oben prominent)
     2. Schnellzugriffe / Kategorien
-    3. Empfohlene / beliebte Spiele (Carousel oder Grid)
+    3. Empfohlene / beliebte Spiele
     4. Kontostand(Chips) und Chat
     
-4. Der Benutzer kann per Klick/Tap in einen Spielbereich wechseln oder eine Aktion starten (z. B. Einzahlen, Spiel öffnen)
+4. Der Benutzer kann per Klick/Tap in einen Spielbereich
 
 **Nachbedingung:** Jegliche Aktionen sind verarbeitet, Chips aktualisiert.
 
-**Ausnahmen:** Keine Internetverbindung → Offline-Hinweis, Session abgelaufen → Rückleitung zum Login
+**Ausnahmen:** Keine Internetverbindung → Offline-Hinweis, -> Loadingscreen
 
 Mockup des Hauptmenüs
 ![Startmenü](resources/Startmenü.jpeg)
@@ -126,7 +102,13 @@ Mockup des Pokertisch
 ![Pokertisch](resources/Pokertisch.jpeg)
 
 
-### 3.4 Use Case D: Social Features
+
+### 3.4 Use Case D: Spielen von Roulette
+
+### 3.5 Use Case E: Spielen von Slot Machine
+
+
+### 3.6 Use Case F: Social Features
 **Akteur:** Eingeloggter Spieler
 
 **Vorbedingung:** Der Benutzer ist eingeloogt.

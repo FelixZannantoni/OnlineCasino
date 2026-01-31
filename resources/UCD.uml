@@ -1,0 +1,22 @@
+@startuml
+
+left to right direction
+
+rectangle "UCD Online Casino" {
+    (Haupmenü)
+    (Social Features)
+    
+    (Haupmenü).down.>(Poker Spielen): <<extend>>
+    (Haupmenü).down.>(Blackjack Spielen): <<extend>>
+    (Haupmenü).down.>(Slot Machine Spielen): <<extend>>
+    (Haupmenü).down.>(Roulette Spielen): <<extend>>
+    
+    (Social Features)..>(Freundschaftsanfrage senden): <<extend>>
+    (Social Features)..>(Freunde verwalten): <<extend>>
+    (Social Features)..>(Chatnachricht senden): <<extend>>
+}
+
+Spieler --> (Social Features)
+Spieler --> (Haupmenü)
+
+@enduml
