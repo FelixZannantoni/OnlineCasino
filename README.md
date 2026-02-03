@@ -37,7 +37,7 @@ Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Pro
 
 ![UCD](resources/UCD.png)
 
-### 3.1 Use Case A: Haupmenü^
+### 3.1 Use Case A: Haupmenü
 **Akteur:** Eingeloggter Spieler
 
 **Vorbedingung:** Der Benutzer ist eingeloggt und hat Chips auf dem Konto.
