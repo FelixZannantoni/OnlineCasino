@@ -3,20 +3,30 @@
 left to right direction
 
 rectangle "UCD Online Casino" {
-    (Haupmenü)
-    (Social Features)
     
-    (Haupmenü).down.>(Poker Spielen): <<extend>>
-    (Haupmenü).down.>(Blackjack Spielen): <<extend>>
-    (Haupmenü).down.>(Slot Machine Spielen): <<extend>>
-    (Haupmenü).down.>(Roulette Spielen): <<extend>>
+    rectangle "Hauptmenü" {
+      (Poker spielen)
+      (Blackjack spielen)
+      (Slot Machine spielen)
+      (Roulette spielen)
+    }
     
-    (Social Features)..>(Freundschaftsanfrage senden): <<extend>>
-    (Social Features)..>(Freunde verwalten): <<extend>>
-    (Social Features)..>(Chatnachricht senden): <<extend>>
+    rectangle "Social Features" {
+      (Freundschaftsanfrage senden)
+      (Freunde verwalten)
+      (Chatnachricht senden)
+    }
+    
+    Spieler --> (Poker spielen)
+    Spieler --> (Blackjack spielen)
+    Spieler --> (Slot Machine spielen)
+    Spieler --> (Roulette spielen)
+    
+    Spieler --> (Freundschaftsanfrage senden)
+    Spieler --> (Freunde verwalten)
+    Spieler --> (Chatnachricht senden)
+    Gast --> (Einloggen)
 }
 
-Spieler --> (Social Features)
-Spieler --> (Haupmenü)
 
 @enduml
