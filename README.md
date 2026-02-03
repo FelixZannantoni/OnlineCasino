@@ -109,8 +109,37 @@ Mockup des Pokertisch
 
 
 ### 3.4 Use Case D: Spielen von Roulette
+**Akteur:** Eingeloggter Spieler
+
+**Vorbedingung:** Der Benutzer hat Chips und wählt Roulette.
+
+**Beschreibung:**
+1. Der Benutzer öffnet den virtuellen Roulettetisch.
+2. Er platziert Einsätze auf dem Tableau (z.B. auf Zahlen, Farben, Dutzende).
+3. Das System startet die Kugel im Kessel und simuliert die Drehung mit Zufallsalgorithmen.
+4. Die Kugel landet auf einer Zahl.
+5. Das System wertet die Runde aus, berechnet Gewinne/Verluste und passt den Chip-Kontostand an.
+
+**Nachbedingung:** Spielstand aktualisiert, Chips angepasst.
+
+**Ausnahmen:** Verbindungsprobleme führen zu Pausen; unzureichende Chips verhindern den Start/Einsatz.
 
 ### 3.5 Use Case E: Spielen von Slot Machine
+**Akteur:** Eingeloggter Spieler
+
+**Vorbedingung:** Der Benutzer hat Chips und wählt eine Slot Machine.
+
+**Beschreibung:**
+1. Der Benutzer öffnet die Slot Machine.
+2. Er wählt seinen Einsatz pro Drehung.
+3. Der Benutzer startet die Drehung per Klick/Tap.
+4. Das System simuliert die Drehung der Walzen mit Zufallsalgorithmen.
+5. Die Walzen halten an und zeigen eine Symbolkombination.
+6. Das System wertet Gewinnlinien aus und berechnet Gewinne/Verluste.
+
+**Nachbedingung:** Spielstand aktualisiert, Chips angepasst.
+
+**Ausnahmen:** Verbindungsprobleme führen zu Pausen; unzureichende Chips verhindern den Start/Drehung.
 
 
 ### 3.6 Use Case F: Social Features
@@ -148,8 +177,18 @@ Mockup der Social-Features
 
 ## 4. Nicht-funktionale Anforderungen
 
+| Bereich | Anforderung | Priorität |
+| --- | --- | --- |
+| **Benutzerfreundlichkeit** | Die Benutzeroberfläche muss intuitiv und selbsterklärend sein, orientiert an den erstellten Mockups. | Hoch |
+| **Performance** | - Seitenladezeit (Initial): < 2 Sekunden <br> - Antwortzeit für Spielinteraktionen (z.B. Karte ziehen): < 200 ms | Hoch |
+| **Sicherheit** | - Passwort-Speicherung muss mittels Hashing und Salting (z.B. bcrypt) erfolgen. <br> - Sämtliche spielrelevante Logik wird serverseitig validiert, um Cheating zu verhindern. <br> - Schutz vor gängigen Web-Angriffen (OWASP Top 10) wie XSS und SQL-Injection. | Sehr Hoch |
+| **Zuverlässigkeit** | - Das System soll eine Verfügbarkeit von 99,5 % aufweisen. <br> - Bei Verbindungsabbrüchen des Clients soll der Spielzustand serverseitig erhalten bleiben, um Datenverlust zu minimieren. | Hoch |
+| **Wartbarkeit** | Der Code muss modular aufgebaut, gut dokumentiert und nach etablierten Coding Conventions des gewählten Technologiestacks geschrieben werden. | Mittel |
+| **Fairness** | Die Zufallsgenerierung für Karten und Spielergebnisse muss einen statistisch validen und nicht vorhersagbaren Algorithmus (z.B. CSPRNG) verwenden. | Sehr Hoch |
 
 ## 5. Mengengerüst
+
+
 
 ## 6. Systemarchitektur
 
