@@ -13,6 +13,11 @@
   - [3.4 Use Case D: Spielen von Roulette](#34-use-case-d-spielen-von-roulette)
   - [3.5 Use Case E: Spielen von Slot Machine](#35-use-case-e-spielen-von-slot-machine)
   - [3.6 Use Case F: Social Features](#36-use-case-f-social-features)
+- [4. Nicht-funktionale Anforderungen](#4-nicht-funktionale-anforderungen)
+- [5. Mengengerüst](#5-mengengerüst)
+- [6. Systemarchitektur](#6-systemarchitektur)
+  - [6.1 Deployment-Diagramm](#61-deployment-diagramm)
+  - [6.2 Datenmodell](#62-datenmodell)
 
 ## 1. Ausgangslage
 
@@ -139,3 +144,17 @@ Mockup des Pokertisch
 
 Mockup der Social-Features
 ![SocialFeatures](resources/SocialFeatures.jpeg)
+
+
+## 4. Nicht-funktionale Anforderungen
+
+
+## 5. Mengengerüst
+
+## 6. Systemarchitektur
+
+### 6.1 Deployment-Diagramm
+
+
+### 6.2 Datenmodell
+![alt text](resources/dataModel.jpeg)
