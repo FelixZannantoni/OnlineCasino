@@ -154,7 +154,7 @@ Mockup der Social-Features
 ## 6. Systemarchitektur
 
 ### 6.1 Deployment-Diagramm
-
+![Deployment Diagram](resources/deployment.png)
 
 ### 6.2 Datenmodell
-![alt text](resources/dataModel.jpeg)
+![Data Model](resources/dataModel.jpeg)
