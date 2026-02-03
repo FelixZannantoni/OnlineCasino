@@ -1,0 +1,30 @@
+@startuml
+
+title deploymentDiagram
+    node "Client Device" {
+        component "Web Browser / Mobile App"
+    }
+
+    node "Web Server" {
+        component "Frontend (HTML / CSS / JS)"
+    }
+
+    node "Application Server" {
+        component "Casino Backend API"
+        component "Game Logic"
+        component "User Management"
+    }
+
+    node "Database Server" {
+        component "User Data"
+        component "Game Data"
+    }
+
+    "Web Browser / Mobile App" --> "Web Server"
+    "Web Server" --> "Casino Backend API"
+    "Casino Backend API" --> "Game Logic"
+    "Casino Backend API" --> "User Management"
+    "Casino Backend API" --> "Database Server"
+
+
+@enduml
