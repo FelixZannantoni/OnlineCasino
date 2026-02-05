@@ -60,7 +60,7 @@ Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Pro
 
 **Nachbedingung:** Jegliche Aktionen sind verarbeitet, Chips aktualisiert.
 
-**Ausnahmen:** Keine Internetverbindung → Offline-Hinweis, -> Loadingscreen
+**Ausnahmen:** Keine Internetverbindung -> Offline-Hinweis, -> Loadingscreen
 
 Mockup des Hauptmenüs
 ![Startmenü](resources/Startmenü.jpeg)
@@ -156,7 +156,7 @@ Mockup des Pokertisch
    - Aktuelle Streak-Länge
    - Name
 4. Eingehende Freunschatsanfragen:
-   - Annehmen → Freund wird hinzugefügt
+   - Annehmen -> Freund wird hinzugefügt
    - Ablehnen
 5. Chatten mit einem Freund:
    - Wird ein Freund ausgewählt, ist auf der Seite dr Chatverlauf dessen offen
@@ -169,7 +169,7 @@ Mockup des Pokertisch
 - Chat mit Freunden ist offen bzw. akualisiert
 
 **Wichtige Ausnahmen:**
-- Freundesliste leer → Hinweis + Button „Freunde finden / einladen“
+- Freundesliste leer -> Hinweis + Button „Freunde finden / einladen“
 
 Mockup der Social-Features
 ![SocialFeatures](resources/SocialFeatures.jpeg)
