@@ -1,9 +1,7 @@
-const decksize: number = 52;
-
 export type Card = {
-    name: cardName,
-    value: Map<cardName, number>,
-    color: cardColor,
+    name: string,
+    value: Map<cardName, number> | null,
+    color: string,
     owner: string
 }
 
@@ -62,7 +60,8 @@ const blackjackCardValue: Map<cardName, number> = new Map([
     [cardName.ace, 11,],
 ])
 
-class deck{
+export class Deck{
+    private decksize: number = 52;
     constructor()
     {
         this.deckinit();
@@ -70,6 +69,25 @@ class deck{
 
     private deckinit()
     {
+        let cardDeck: Card[] = [];
+        for(let color in cardColor)
+        {
+            for(let name in cardName)
+            {
+                let card: Card = {
+                    name: cardName[name],
+                    value: null,
+                    color: cardColor[color],
+                    owner: "Dealer"
+                }
+                cardDeck.push(card);
+            }
+        }
+        this.shuffle(cardDeck);
+    }
 
+    private shuffle(cardDeck: Card[])
+    {
+        
     }
 }
