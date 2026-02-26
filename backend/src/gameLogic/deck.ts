@@ -74,7 +74,7 @@ export class Deck{
     private deckinit(gametype: GameType)
     {
         let cardDeck: Card[] = [];
-        
+
         for(let color in CardColor)
         {
             for(let name in CardName)
@@ -103,5 +103,12 @@ export class Deck{
                 cardDeck[randNum] = temp;
             }
         }
+    }
+
+    private drawCard(cardDeck: Card[],userId: string ): Card
+    {
+        const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
+        cardDeck[randNum].owner = userId;
+        return cardDeck[randNum];
     }
 }
