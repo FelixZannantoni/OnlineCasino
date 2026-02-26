@@ -9,7 +9,7 @@ import { hashPassword } from "./utils";
 const dbFileName = process.env.DB_FILE_NAME;
 
 export class DB {
-    public static createDBConnection(): Database {
+    public static async createDBConnection(): Promise<Database> {
         const db = new BetterSqlite3(dbFileName, {
             fileMustExist: false,
             verbose: (stmt) => console.log(stmt)
@@ -17,12 +17,12 @@ export class DB {
 
         db.pragma("foreign_keys = ON");
 
-        this.ensureTablesCreated(db);
+        await this.ensureTablesCreated(db);
 
         return db;
     }
 
-    private static ensureTablesCreated(connection: Database): void {
+    private static async ensureTablesCreated(connection: Database): Promise<void> {
         connection.prepare(`
             CREATE TABLE IF NOT EXISTS users (
                 uuid text PRIMARY KEY,
@@ -42,17 +42,62 @@ export class DB {
                 amount real,
                 date text, -- Timestamp in ISO format
                 status text CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED')),
-                FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
+                FOREIGN KEY (userId) REFERENCES users(uuid) ON DELETE CASCADE
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS bonuses (
+                bonusId integer PRIMARY KEY AUTOINCREMENT,
+                userId text,
+                type text,
+                amount real,
+                status text CHECK (status IN ('ACTIVE', 'CLAIMED', 'EXPIRED')),
+                FOREIGN KEY (userId) REFERENCES users(uuid) ON DELETE CASCADE
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS games (
+                gameId integer PRIMARY KEY AUTOINCREMENT,
+                name text,
+                type text
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS game_rounds (
+                roundId integer PRIMARY KEY AUTOINCREMENT,
+                gameId integer,
+                startTime text, -- Timestamp in ISO format
+                endTime text, -- Timestamp in ISO format
+                status text CHECK (status IN ('OPEN', 'CLOSED', 'CANCELLED')),
+                FOREIGN KEY (gameId) REFERENCES games(gameId)
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS player_game_rounds (
+                roundId integer,
+                userId text,
+                betAmount real,
+                profit real,
+                PRIMARY KEY (roundId, userId),
+                FOREIGN KEY (roundId) REFERENCES game_rounds(roundId),
+                FOREIGN KEY (userId) REFERENCES users(uuid)
             )
             `).run();
 
-        this.insertSampleData(connection);
+        await this.insertSampleData(connection);
     }
 
     private static async insertSampleData(connection: Database): Promise<void> {
         const userFilePath: string = process.env.SAMPLE_USER_FILE_PATH ?? "";
 
         try {
+            const userCount = connection.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
+
+            if (userCount.count > 0) {
+                console.log("Sample user data already inserted!");
+                return;
+            }
+
             const fileContent: string = await readFile(userFilePath, { encoding: "utf-8" });
             const lines: string[] = fileContent.split(EOL);
             lines.shift(); // Remove header line
