@@ -1,9 +1,4 @@
-export type Card = {
-    name: string,
-    value: number;
-    color: string,
-    owner: string
-}
+import {Card} from "../model";
 
 export enum CardColor {
     HEARTS,
@@ -86,7 +81,7 @@ export class Deck{
         }
     }
 
-    private drawCard(cardDeck: Card[],userId: string ): Card
+    public drawCard(cardDeck: Card[],userId: string ): Card
     {
         const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
         cardDeck[randNum].owner = userId;
@@ -95,6 +90,7 @@ export class Deck{
 }
  
 export class PockerDeck extends Deck{
+    private cardDeck: Card[] = [];
     constructor()
     {
         super();
@@ -103,8 +99,6 @@ export class PockerDeck extends Deck{
 
     private pokerDeckInit()
     {
-        let cardDeck: Card[] = [];
-
         for(let color in CardColor)
         {
             for(let name of Object.values(CardName))
@@ -115,10 +109,16 @@ export class PockerDeck extends Deck{
                     color: CardColor[color],
                     owner: dealerId
                 }
-                cardDeck.push(card);
+                this.cardDeck.push(card);
             }
         }
-        this.shuffle(cardDeck)
+        this.shuffle(this.cardDeck)
+    }
+
+    public getCardDeck(): Card[]
+    {
+        const clonedCardDeck: Card[] = Array.from(this.cardDeck);
+        return clonedCardDeck;
     }
 }
 

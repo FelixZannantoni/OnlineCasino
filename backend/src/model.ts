@@ -5,3 +5,10 @@ export type User = {
     email: string,
     streakCount: number
 }
+
+export type Card = {
+    name: string,
+    value: number;
+    color: string,
+    owner: string
+}
