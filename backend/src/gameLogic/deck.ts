@@ -1,18 +1,18 @@
 export type Card = {
     name: string,
-    value: Map<cardName, number> | null,
+    value: Map<CardName, number>,
     color: string,
     owner: string
 }
 
-export enum cardColor {
+export enum CardColor {
     HEARTS,
     DIAMONDS,
     CLUBS,
     SPADES
 }
 
-export enum cardName {
+export enum CardName {
     two,
     three,
     four,
@@ -28,56 +28,62 @@ export enum cardName {
     ace
 }
 
-const pockerCardValue: Map<cardName, number> = new Map([
-    [cardName.two, 2],
-    [cardName.three, 3],
-    [cardName.four, 4],
-    [cardName.five, 5],
-    [cardName.six, 6],
-    [cardName.seven, 7],
-    [cardName.eight, 8],
-    [cardName.nine, 9],
-    [cardName.ten, 10],
-    [cardName.jack, 11],
-    [cardName.queen, 12],
-    [cardName.king, 13],
-    [cardName.ace, 14]
+export enum GameType {
+    Pocker,
+    Blackjack
+}
+
+const pockerCardValue: Map<CardName, number> = new Map([
+    [CardName.two, 2],
+    [CardName.three, 3],
+    [CardName.four, 4],
+    [CardName.five, 5],
+    [CardName.six, 6],
+    [CardName.seven, 7],
+    [CardName.eight, 8],
+    [CardName.nine, 9],
+    [CardName.ten, 10],
+    [CardName.jack, 11],
+    [CardName.queen, 12],
+    [CardName.king, 13],
+    [CardName.ace, 14]
 ])
 
-const blackjackCardValue: Map<cardName, number> = new Map([
-    [cardName.two, 2],
-    [cardName.three, 3],
-    [cardName.four, 4],
-    [cardName.five, 5],
-    [cardName.six, 6],
-    [cardName.seven, 7],
-    [cardName.eight, 8],
-    [cardName.nine, 9],
-    [cardName.ten, 10],
-    [cardName.jack, 10],
-    [cardName.queen, 10],
-    [cardName.king, 10],
-    [cardName.ace, 11,],
+const blackjackCardValue: Map<CardName, number> = new Map([
+    [CardName.two, 2],
+    [CardName.three, 3],
+    [CardName.four, 4],
+    [CardName.five, 5],
+    [CardName.six, 6],
+    [CardName.seven, 7],
+    [CardName.eight, 8],
+    [CardName.nine, 9],
+    [CardName.ten, 10],
+    [CardName.jack, 10],
+    [CardName.queen, 10],
+    [CardName.king, 10],
+    [CardName.ace, 11,],
 ])
 
 export class Deck{
     private decksize: number = 52;
-    constructor()
+
+    constructor(gametype: GameType)
     {
-        this.deckinit();
+        this.deckinit(gametype);
     }
 
-    private deckinit()
+    private deckinit(gametype: GameType)
     {
         let cardDeck: Card[] = [];
-        for(let color in cardColor)
+        for(let color in CardColor)
         {
-            for(let name in cardName)
+            for(let name in CardName)
             {
                 let card: Card = {
-                    name: cardName[name],
-                    value: null,
-                    color: cardColor[color],
+                    name: CardName[name],
+                    value: gametype === GameType.Pocker ? pockerCardValue : blackjackCardValue,
+                    color: CardColor[color],
                     owner: "Dealer"
                 }
                 cardDeck.push(card);
