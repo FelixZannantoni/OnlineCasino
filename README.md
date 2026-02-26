@@ -23,15 +23,15 @@
 
 ### 1.1. Ist-Situation
 
-- Siehe Projektantrag
+- Siehe Projektantrag -> docs
 
 ### 1.2. Verbesserungspotenziale
 
-- Siehe Projektantrag
+- Siehe Projektantrag -> docs
 
 ## 2. Zielsetzung
 
-- Siehe Projektantrag
+- Siehe Projektantrag -> docs
 
 ## 3. Funktionale Anforderungen
 
