@@ -66,8 +66,6 @@ const blackjackCardValue: Map<CardName, number> = new Map([
 ])
 
 export class Deck{
-    private decksize: number = 52;
-
     constructor(gametype: GameType)
     {
         this.deckinit(gametype);
@@ -76,6 +74,7 @@ export class Deck{
     private deckinit(gametype: GameType)
     {
         let cardDeck: Card[] = [];
+        
         for(let color in CardColor)
         {
             for(let name in CardName)
@@ -94,6 +93,15 @@ export class Deck{
 
     private shuffle(cardDeck: Card[])
     {
-        
+        for(let i: number = 0; i < 4; i++)
+        {
+            for(let i: number = 0; i < cardDeck.length; i++)
+            {
+                const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
+                const temp: Card = cardDeck[i];
+                cardDeck[i] = cardDeck[randNum];
+                cardDeck[randNum] = temp;
+            }
+        }
     }
 }
