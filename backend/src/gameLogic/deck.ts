@@ -1,6 +1,6 @@
 export type Card = {
     name: string,
-    value: Map<CardName, number>,
+    value: number;
     color: string,
     owner: string
 }
@@ -13,19 +13,19 @@ export enum CardColor {
 }
 
 export enum CardName {
-    two,
-    three,
-    four,
-    five,
-    six,
-    seven,
-    eight,
-    nine,
-    ten,
-    jack,
-    queen,
-    king,
-    ace
+    two = "two",
+    three = "three",
+    four = "four",
+    five = "five",
+    six = "six",
+    seven = "seven",
+    eight = "eight",
+    nine = "nine",
+    ten = "ten",
+    jack = "jack",
+    queen = "queen",
+    king = "king",
+    ace = "ace"
 }
 
 export enum GameType {
@@ -65,33 +65,14 @@ const blackjackCardValue: Map<CardName, number> = new Map([
     [CardName.ace, 11,],
 ])
 
+export const dealerId: string = "Dealer";
 export class Deck{
-    constructor(gametype: GameType)
+    constructor()
     {
-        this.deckinit(gametype);
+        
     }
 
-    private deckinit(gametype: GameType)
-    {
-        let cardDeck: Card[] = [];
-
-        for(let color in CardColor)
-        {
-            for(let name in CardName)
-            {
-                let card: Card = {
-                    name: CardName[name],
-                    value: gametype === GameType.Pocker ? pockerCardValue : blackjackCardValue,
-                    color: CardColor[color],
-                    owner: "Dealer"
-                }
-                cardDeck.push(card);
-            }
-        }
-        this.shuffle(cardDeck);
-    }
-
-    private shuffle(cardDeck: Card[])
+    protected shuffle(cardDeck: Card[])
     {
         for(let i: number = 0; i < 4; i++)
         {
@@ -110,5 +91,61 @@ export class Deck{
         const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
         cardDeck[randNum].owner = userId;
         return cardDeck[randNum];
+    }
+}
+ 
+export class PockerDeck extends Deck{
+    constructor()
+    {
+        super();
+        this.pokerDeckInit();
+    }
+
+    private pokerDeckInit()
+    {
+        let cardDeck: Card[] = [];
+
+        for(let color in CardColor)
+        {
+            for(let name of Object.values(CardName))
+            {
+                let card: Card = {
+                    name: CardName[name],
+                    value: pockerCardValue.get(CardName[name])!,
+                    color: CardColor[color],
+                    owner: dealerId
+                }
+                cardDeck.push(card);
+            }
+        }
+        this.shuffle(cardDeck)
+    }
+}
+
+export class BlackjackDeck extends Deck{
+    constructor()
+    {
+        super();
+        this.blackjackDeckInit();
+    }
+
+    private blackjackDeckInit()
+    {
+        let cardDeck: Card[] = [];
+
+        for(let color in CardColor)
+        {
+            for(let name of Object.values(CardName))
+            {
+                let card: Card = {
+                    name: CardName[name],
+                    value: blackjackCardValue.get(CardName[name])!,
+                    color: CardColor[color],
+                    owner: dealerId
+                }
+                cardDeck.push(card);
+            }
+        }
+        this.shuffle(cardDeck)
     }
 }
