@@ -19,6 +19,7 @@ export class Player {
         this.cards.push(card);
     }
 
+    //den owner auf ändern
     public clearHand(): void {
         this.cards = [];
     }

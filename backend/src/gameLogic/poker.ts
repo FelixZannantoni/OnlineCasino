@@ -18,8 +18,9 @@ export class startRound
         {
             for(let player of this.players)
             {
-                player.addCard(this.pockerDeck.drawCard(this.pockerDeck.getCardDeck(), player.playerId), player.playerId);   
+                player.addCard(this.pockerDeck.dealCard(this.pockerDeck.getCardDeck(), player.playerId), player.playerId);   
             }
         }
+        //5 karten für Pokertisch
     }
 }

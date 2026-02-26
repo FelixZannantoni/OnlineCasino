@@ -1,3 +1,4 @@
+import { error } from "console";
 import {Card} from "../model";
 
 export enum CardColor {
@@ -57,7 +58,7 @@ const blackjackCardValue: Map<CardName, number> = new Map([
     [CardName.jack, 10],
     [CardName.queen, 10],
     [CardName.king, 10],
-    [CardName.ace, 11,],
+    [CardName.ace, 11],//oder 1
 ])
 
 export const dealerId: string = "Dealer";
@@ -81,11 +82,28 @@ export class Deck{
         }
     }
 
-    public drawCard(cardDeck: Card[],userId: string ): Card
+    public dealCard(cardDeck: Card[],playerId: string ): Card
     {
-        const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
-        cardDeck[randNum].owner = userId;
-        return cardDeck[randNum];
+        let b: boolean = true;
+        let i = 0;
+        while(b)
+        {
+            if(cardDeck[i].owner == dealerId)
+            {
+                b = false;
+            }
+            else
+            {
+                i++;
+                if(i<cardDeck.length)
+                {
+                    console.log("Error: To few Cards. All Cards are already owned by Players")
+                    b = false;
+                }
+            }
+        }
+        cardDeck[i].owner = playerId;
+        return cardDeck[i];
     }
 }
  
