@@ -42,7 +42,7 @@ const pockerCardValue: Map<CardName, number> = new Map([
     [CardName.jack, 11],
     [CardName.queen, 12],
     [CardName.king, 13],
-    [CardName.ace, 14]
+    [CardName.ace, 14]//oder 1 wegen straße
 ])
 
 const blackjackCardValue: Map<CardName, number> = new Map([
@@ -61,7 +61,7 @@ const blackjackCardValue: Map<CardName, number> = new Map([
     [CardName.ace, 11],//oder 1
 ])
 
-export const dealerId: string = "Dealer";
+export const DEALER_ID: string = "Dealer";
 export class Deck{
     constructor()
     {
@@ -86,9 +86,9 @@ export class Deck{
     {
         let b: boolean = true;
         let i = 0;
-        while(b)
+        do
         {
-            if(cardDeck[i].owner == dealerId)
+            if(cardDeck[i].owner == DEALER_ID)
             {
                 b = false;
             }
@@ -97,11 +97,11 @@ export class Deck{
                 i++;
                 if(i<cardDeck.length)
                 {
-                    console.log("Error: To few Cards. All Cards are already owned by Players")
+                    console.error("Error: To few Cards. All Cards are already owned by Players");
                     b = false;
                 }
             }
-        }
+        }while(b);
         cardDeck[i].owner = playerId;
         return cardDeck[i];
     }
@@ -125,7 +125,7 @@ export class PockerDeck extends Deck{
                     name: CardName[name],
                     value: pockerCardValue.get(CardName[name])!,
                     color: CardColor[color],
-                    owner: dealerId
+                    owner: DEALER_ID
                 }
                 this.cardDeck.push(card);
             }
@@ -159,7 +159,7 @@ export class BlackjackDeck extends Deck{
                     name: CardName[name],
                     value: blackjackCardValue.get(CardName[name])!,
                     color: CardColor[color],
-                    owner: dealerId
+                    owner: DEALER_ID
                 }
                 cardDeck.push(card);
             }

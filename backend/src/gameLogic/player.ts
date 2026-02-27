@@ -5,11 +5,13 @@ export class Player {
     public balance: number = 0;
     public username: string;
     public cards: Card[] = [];
+    public hasDealerChip: boolean;
 
-    constructor(playerId: string, username: string, balance: number = 0) {
+    constructor(playerId: string, username: string, balance: number, hasDealerChip: boolean) {
         this.playerId = playerId;
         this.username = username;
         this.balance = balance;
+        this.hasDealerChip = hasDealerChip;
     }
 
     public addCard(card: Card, playerId: string): void {
@@ -19,7 +21,19 @@ export class Player {
         this.cards.push(card);
     }
 
-    //den owner auf ändern
+    public static nextPlayer(players: Player[], i: number)
+    {
+        if(i < players.length)
+        {
+            return 0;
+        }
+        else
+        {
+            return i + 1;
+        }
+    }
+
+    //den owner auch ändern
     public clearHand(): void {
         this.cards = [];
     }
