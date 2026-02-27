@@ -20,7 +20,7 @@ export class startRound
         this.players = [];
         this.pokerDeskCards = [];
         this.giveCardsOut();
-        this.setDefaultBet();
+        this.setDealerChip();
     }
 
     private giveCardsOut()
@@ -29,23 +29,22 @@ export class startRound
         {
             for(let player of this.players)
             {
-                player.addCard(this.pockerDeck.dealCard(this.pockerDeck.getCardDeck(), player.playerId), player.playerId);
+                player.addCard(this.pockerDeck.dealCard(this.pockerDeck.getDeck(), player.playerId), player.playerId);
             }
         }
         
         for(let i: number = 0; i < POKER_CARDS_NUMBER; i++)
         {
-            this.pokerDeskCards.push(this.pockerDeck.dealCard(this.pockerDeck.getCardDeck(),POKER_DESK_ID));
+            this.pokerDeskCards.push(this.pockerDeck.dealCard(this.pockerDeck.getDeck(),POKER_DESK_ID));
         }
     }
 
-    private setDefaultBet()
+    private setDealerChip()
     {
         for(let i: number = 0; i < this.players.length; i++)
         {
             if(this.players[i].hasDealerChip == true)
             {
-                //TODO
                 this.players[i].hasDealerChip = false;
                 this.players[Player.nextPlayer(this.players, i)].hasDealerChip = true;
             }

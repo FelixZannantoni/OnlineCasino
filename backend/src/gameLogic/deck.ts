@@ -63,6 +63,7 @@ const blackjackCardValue: Map<CardName, number> = new Map([
 
 export const DEALER_ID: string = "Dealer";
 export class Deck{
+    protected deck: Card[] = [];
     constructor()
     {
         
@@ -105,10 +106,15 @@ export class Deck{
         cardDeck[i].owner = playerId;
         return cardDeck[i];
     }
+
+    public getDeck(): Card[]
+    {
+        const clonedCardDeck: Card[] = Array.from(this.deck);
+        return clonedCardDeck;
+    }
 }
  
 export class PockerDeck extends Deck{
-    private cardDeck: Card[] = [];
     constructor()
     {
         super();
@@ -127,16 +133,10 @@ export class PockerDeck extends Deck{
                     color: CardColor[color],
                     owner: DEALER_ID
                 }
-                this.cardDeck.push(card);
+                this.deck.push(card);
             }
         }
-        this.shuffle(this.cardDeck)
-    }
-
-    public getCardDeck(): Card[]
-    {
-        const clonedCardDeck: Card[] = Array.from(this.cardDeck);
-        return clonedCardDeck;
+        this.shuffle(this.deck)
     }
 }
 
@@ -149,8 +149,6 @@ export class BlackjackDeck extends Deck{
 
     private blackjackDeckInit()
     {
-        let cardDeck: Card[] = [];
-
         for(let color in CardColor)
         {
             for(let name of Object.values(CardName))
@@ -161,9 +159,9 @@ export class BlackjackDeck extends Deck{
                     color: CardColor[color],
                     owner: DEALER_ID
                 }
-                cardDeck.push(card);
+                this.deck.push(card);
             }
         }
-        this.shuffle(cardDeck)
+        this.shuffle(this.deck)
     }
 }
