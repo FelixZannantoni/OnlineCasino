@@ -83,7 +83,7 @@ export class Deck{
         }
     }
 
-    public dealCard(cardDeck: Card[],playerId: string ): Card
+    public dealCard(cardDeck: Card[],id: string ): Card
     {
         let b: boolean = true;
         let i = 0;
@@ -103,7 +103,7 @@ export class Deck{
                 }
             }
         }while(b);
-        cardDeck[i].owner = playerId;
+        cardDeck[i].owner = id;
         return cardDeck[i];
     }
 
