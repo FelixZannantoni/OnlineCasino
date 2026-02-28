@@ -2,7 +2,7 @@
     "folder-color.pathColors": [
         {
             "folderPath": "OnlineCasino\\frontend\\src\\app\\navbar\\",
-            "color": "foldercolorizer.color_00cc00"
+            "color": "foldercolorizer.color_00cccc"
         },
         {
             "folderPath": "OnlineCasino\\frontend\\src\\app\\shop\\",
@@ -14,7 +14,7 @@
         },
         {
             "folderPath": "OnlineCasino\\frontend\\src\\app\\leaderboard\\",
-            "color": "foldercolorizer.color_999999"
+            "color": "foldercolorizer.color_33cccc"
         },
         {
             "folderPath": "OnlineCasino\\frontend\\src\\app\\home\\",
@@ -31,6 +31,10 @@
         {
             "folderPath": "OnlineCasino\\frontend\\src\\app\\profile-overlay\\",
             "color": "foldercolorizer.color_336600"
+        },
+        {
+            "folderPath": "OnlineCasino\\frontend\\src\\app\\poker\\",
+            "color": "foldercolorizer.color_336666"
         }
     ]
 }

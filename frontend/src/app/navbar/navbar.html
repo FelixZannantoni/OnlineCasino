@@ -1,21 +1,35 @@
 <header class="navbar">
-    <div class="navbar__container">
-        <div class="navbar__brand">
-            <a routerLink="/home" class="brand-link">Casinonline</a>
+    <div class="navbar_container">
+        <div class="navbar_brand">
+            <!-- Static Poker Chip Background -->
+            <div class="coin-bg">
+                <span class="chip chip-gold chip-1"></span>
+                <span class="chip chip-red chip-2"></span>
+                <span class="chip chip-blue chip-3"></span>
+                <span class="chip chip-green chip-4"></span>
+                <span class="chip chip-black chip-5"></span>
+                <span class="chip chip-gold chip-6"></span>
+                <span class="chip chip-red chip-7"></span>
+            </div>
+            
+            <a routerLink="/home" class="brand_link">Online Casino</a>
         </div>
-        <div class="navbar__center">
-            <nav class="navbar__nav">
+        
+        <div class="navbar_center">
+            <nav class="navbar_nav">
                 <ul>
-                    <!-- href triggert F5 und refreshed eine neue seite (defeating the whole point of angular) -->
-                    <li><a routerLink="/club" class="nav-pill">Club</a></li>
-                    <li><a routerLink="/friends" class="nav-pill">Friends</a></li>
-                    <li><a routerLink="/leaderboard" class="nav-pill">Leaderboard</a></li>
-                    <li><a routerLink="/shop" class="nav-pill">Shop</a></li>
+                    <li><a routerLink="/club" class="nav_pill">Club</a></li>
+                    <li><a routerLink="/friends" class="nav_pill">Friends</a></li>
+                    <li><a routerLink="/leaderboard" class="nav_pill">Leaderboard</a></li>
+                    <li><a routerLink="/shop" class="nav_pill">Shop</a></li>
                 </ul>
             </nav>
         </div>
-        <div class="navbar__right">
-            <a routerLink="/profile-overlay" class="profile-pic">[profilepicture]</a>
+        
+        <div class="navbar_right">
+            <a routerLink="/profile-overlay" class="profile_pic">
+                <!-- image the user wants as pfp -->
+            </a>
         </div>
     </div>
 </header>
