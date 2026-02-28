@@ -1,10 +1,17 @@
+/*:root {
+--gold-gradient: linear-gradient(180deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%); /* soll anscheinend wie gold aussehen, metallisch und glänzend
+--gold-light: #ffd86e;
+--gold-mid: #e3a812;
+--gold-dark: #d19e1d; 
+}*/ /* for some reason not working, i cannot use variables*/
+
 .navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
     background: linear-gradient(90deg, #0a0a0a 0%, #1a3a52 50%, #0a0a0a 100%);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
+    box-shadow: linear-gradient(-90deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
     border-bottom: 2px solid #ffd700;
 }
 
@@ -22,7 +29,7 @@
 }
 
 .brand_link {
-    color: #ffd700;
+    color: var(--gold-dark);
     text-decoration: none;
     font-weight: 700;
     font-size: 1.3rem;
@@ -33,7 +40,7 @@
 .brand_link:hover {
     /*cursor: not-allowed; geht nicht*/
     text-shadow: 0 0 10px rgba(255, 215, 0, 10);
-    transition: all 0.2s ease;
+    transition: all 0.5s ease-in-out;
 }
 
 .navbar_center {
@@ -54,20 +61,21 @@
     display: inline-block;
     padding: 0.4rem 1.1rem;
     border-radius: 999px;
-    background: linear-gradient(135deg, rgba(65, 105, 225, 0.3) 0%, rgba(15, 40, 71, 0.5) 100%);
-    color: #fff;
+    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);  /*linear-gradient(135deg, rgba(112, 27, 186, 0.573) 0%, rgba(15, 40, 71, 0.5) 100%);*/
+    color: #75570a;
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    transition: all 0.2s ease;
+    /*border: #d19e1d 2.75px solid;*/
+    transition: all 0.5s ease;
 }
 
 .nav_pill:hover {
-    background: linear-gradient(135deg, rgba(65, 105, 225, 0.5) 0%, rgba(15, 40, 71, 0.7) 100%);
-    border-color: #ffd700;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(65, 105, 225, 0.4);
+    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);  /*linear-gradient(135deg, rgba(65, 105, 225, 0.5) 0%, rgba(15, 40, 71, 0.7) 100%);*/
+    /*border-color: #ffd700;*/
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 8px rgba(153, 93, 250, 0.4);
+    transition: all 0.5s ease;
 }
 
 .navbar_right {
@@ -116,7 +124,7 @@
 }
 
 .profile_pic:hover {
-    border-color: #fff;
+    border-color: #ffeab0;
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
 }
@@ -163,7 +171,7 @@
     z-index: -1;
 }
 
-/* Base Poker Chip Style */
+
 .chip {
     position: absolute;
     border-radius: 50%;
@@ -182,7 +190,6 @@
     justify-content: center;
 }
 
-/* Inner circle of the chip */
 .chip::before {
     content: '';
     position: absolute;
@@ -203,7 +210,6 @@
     color: #333;
 }
 
-/* Different chip colors */
 .chip-red {
     background:
         repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg),
@@ -242,7 +248,7 @@
     background-size: 100% 100%, 80% 80%;
 }
 
-/* Position chips - all within the container bounds */
+/* Position chips - all within the container bounds (harcoded unfortunately)*/
 .chip-1 {
     width: 22px;
     height: 22px;
