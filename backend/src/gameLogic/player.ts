@@ -2,8 +2,8 @@ import { Card } from "../model";
 
 export class Player {
     public playerId: string;
-    public balance: number = 0;
     public username: string;
+    public balance: number = 0;
     public cards: Card[] = [];
     public hasDealerChip: boolean;
 

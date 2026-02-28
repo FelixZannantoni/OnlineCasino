@@ -1,4 +1,4 @@
-import { PockerDeck } from "./deck";
+import { DEALER_ID, PockerDeck } from "./deck";
 import { Player } from "./player";
 import {Card} from "../model";
 
@@ -8,8 +8,9 @@ export const POKER_CARDS_NUMBER: number = 5;
 export const POKER_DESK_ID: string = "PokerDesk";
 
 
-export class startRound
+export class Poker
 {
+    
     private pockerDeck: PockerDeck;
     private players: Player[];
     private pokerDeskCards: Card[];
@@ -19,19 +20,29 @@ export class startRound
         this.pockerDeck = new PockerDeck();
         this.players = [];
         this.pokerDeskCards = [];
-        this.giveCardsOut();
+    }
+
+    private startRound()
+    {
         this.setDealerChip();
+        this.handCardsOut();
+    }
+
+    private nextRound()
+    {
+        this.resetCards();
+        this.updateDealerChip();
+        this.handCardsOut();
     }
    
 
-    private giveCardsOut()
+    private handCardsOut()
     {
         for(let i:number = 0; i < PLAYER_CARDS_NUMBER; i++)
         {
             for(let j: number = 0; j < this.players.length; j++)
             {
                 this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)].addCard(this.pockerDeck.dealCard(this.pockerDeck.getDeck(), this.players[j].playerId), this.players[j].playerId);
-                //der Player soi a nu a feld cards haben und dort soi des a gespeicehrt werden
             }
         }
         
@@ -56,5 +67,22 @@ export class startRound
                 this.players[Player.nextPlayer(this.players, i)].hasDealerChip = true;
             }
         }
+    }
+
+    resetCards()
+    {
+        for(let i: number = 0; i < this.pokerDeskCards.length; i++)
+        {
+            this.pokerDeskCards[i].owner = DEALER_ID;
+        }
+        for(const player of this.players)
+        {
+            player.clearHand();
+        }
+    }
+
+    private deafaultBets()
+    {
+
     }
 }
