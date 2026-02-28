@@ -98,7 +98,7 @@ export class Deck{
                 i++;
                 if(i<cardDeck.length)
                 {
-                    console.error("Error: To few Cards. All Cards are already owned by Players");
+                    throw new Error(`Error: To few Cards. All Cards are already owned by Players`);
                     b = false;
                 }
             }

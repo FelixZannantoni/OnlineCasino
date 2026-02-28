@@ -21,16 +21,41 @@ export class Player {
         this.cards.push(card);
     }
 
+    public static xNextPlayer(players: Player[], i: number,x: number): number
+    {
+        for(let j: number = 0; j < x; j++)
+        {
+            i = this.nextPlayer(players, i);
+        }
+        return i;
+    }
+
     public static nextPlayer(players: Player[], i: number)
     {
-        if(i < players.length)
+        if(i <  players.length)
+        {
+             return i + 1;
+        }
+        else if (i == players.length)
         {
             return 0;
         }
         else
         {
-            return i + 1;
+            throw new Error(`Player not found`);
         }
+    }
+
+    public static playerWithDealerChip(players: Player[]): number
+    {
+        for(let i: number = 0; i < players.length; i++)
+        {
+            if(players[i].hasDealerChip == true)
+            {
+                return i;
+            }
+        }
+        return 0;
     }
 
     //den owner auch ändern

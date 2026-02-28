@@ -27,9 +27,10 @@ export class startRound
     {
         for(let i:number = 0; i < PLAYER_CARDS_NUMBER; i++)
         {
-            for(let player of this.players)
+            for(let j: number = Player.playerWithDealerChip(this.players); j < this.players.length + Player.playerWithDealerChip(this.players); j++)
             {
-                player.addCard(this.pockerDeck.dealCard(this.pockerDeck.getDeck(), player.playerId), player.playerId);
+                this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)].addCard(this.pockerDeck.dealCard(this.pockerDeck.getDeck(), this.players[j].playerId), this.players[j].playerId);
+                //der Player soi aus feld cards haben und dort soi des a gespeicehrt werden
             }
         }
         
