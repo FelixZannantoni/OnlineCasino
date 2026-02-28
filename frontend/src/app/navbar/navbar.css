@@ -61,21 +61,22 @@
     display: inline-block;
     padding: 0.4rem 1.1rem;
     border-radius: 999px;
-    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);  /*linear-gradient(135deg, rgba(112, 27, 186, 0.573) 0%, rgba(15, 40, 71, 0.5) 100%);*/
+    /* Larger background to allow movement */
+    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
+    background-size: 200% 200%;
+    background-position: 100% 50%;
     color: #75570a;
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
-    /*border: #d19e1d 2.75px solid;*/
-    transition: all 0.5s ease;
+    transition: background-position 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
 }
 
 .nav_pill:hover {
-    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);  /*linear-gradient(135deg, rgba(65, 105, 225, 0.5) 0%, rgba(15, 40, 71, 0.7) 100%);*/
-    /*border-color: #ffd700;*/
+    /* Shift gradient position to simulate movement closer to what light it s reflecting*/
+    background-position: 0% 50%;
     transform: translateY(-1.5px);
     box-shadow: 0 6px 8px rgba(153, 93, 250, 0.4);
-    transition: all 0.5s ease;
 }
 
 .navbar_right {
