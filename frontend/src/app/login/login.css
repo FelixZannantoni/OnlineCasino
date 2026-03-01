@@ -1,105 +1,119 @@
-/* Login Overlay - Darkened Background */
-.login-wrapper {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 10000;
-    animation: fadeIn 0.4s ease;
+* {
+    box-sizing: border-box;
 }
 
-/* Login Card */
-.login-card {
-    background: white;
-    padding: 3rem 2.5rem;
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Container */
+.container {
+    background-color: #fff;
     border-radius: 20px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
-    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 20px 60px rgba(10, 10, 10, 0.4);
     position: relative;
+    overflow: hidden;
+    width: 850px;
+    max-width: 100%;
+    min-height: 580px;
 }
 
-/* Poker Chip Decoration */
-.chip-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-}
-
-.poker-chip {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 50%, #5b21b6 100%);
+/* Form Containers */
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow:
-        0 8px 25px rgba(139, 92, 246, 0.5),
-        inset 0 0 0 6px rgba(255, 255, 255, 0.15),
-        inset 0 0 0 12px rgba(139, 92, 246, 0.2);
-    position: relative;
-    animation: chipFloat 3s ease-in-out infinite, chipRotate 20s linear infinite;
+    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
 }
 
-.poker-chip::before {
-    content: '';
-    position: absolute;
-    width: 75%;
-    height: 75%;
-    border-radius: 50%;
-    border: 2px dashed rgba(255, 255, 255, 0.4);
+.sign-in-container {
+    left: 0;
+    width: 50%;
+    z-index: 2;
 }
 
-.poker-chip::after {
-    content: '$';
-    font-family: 'Georgia', serif;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+.container.right-panel-active .sign-in-container {
+    transform: translateX(100%);
 }
 
-.login-card h2 {
-    margin: 0 0 2rem;
+.sign-up-container {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.right-panel-active .sign-up-container {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: show 0.6s;
+}
+
+@keyframes show {
+
+    0%,
+    49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    50%,
+    100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+/* Forms */
+form {
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 50px;
+    height: 100%;
     text-align: center;
-    color: #1a1a1a;
+}
+
+h1 {
+    font-weight: 800;
+    margin: 0 0 1.5rem;
+    color: var(--navbar-dark);
     font-size: 1.8rem;
-    font-weight: 700;
     letter-spacing: -0.5px;
 }
 
-/* Form Styles */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
+/* Input Groups */
 .input-group {
     position: relative;
+    width: 100%;
+    margin: 8px 0;
 }
 
 .input-group input {
     width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
-    border: 2px solid #e5e5e5;
-    border-radius: 12px;
-    font-size: 1rem;
+    background-color: var(--gray-light);
+    border: 2px solid var(--gray-mid);
+    padding: 14px 15px 14px 45px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
     transition: all 0.3s ease;
-    background: #fafafa;
-    box-sizing: border-box;
+    color: var(--navbar-dark);
 }
 
 .input-group input:focus {
     outline: none;
-    border-color: #8b5cf6;
-    background: white;
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    border-color: var(--primary-purple);
+    /*border-color: flexbox(var(--primary-purple) 80%, var(--primary-purple-dark) 100%);*/
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
 }
 
 .input-group input::placeholder {
@@ -108,133 +122,209 @@ form {
 
 .input-icon {
     position: absolute;
-    left: 1rem;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #888;
-    font-size: 1.2rem;
+    color: var(--primary-purple);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
     pointer-events: none;
     transition: color 0.3s ease;
 }
 
 .input-group input:focus+.input-icon {
-    color: #8b5cf6;
+    color: var(--primary-purple);
 }
 
-/* Login Button */
-button[type="submit"] {
-    margin-top: 0.5rem;
-    padding: 1rem;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    color: white;
+/* Buttons */
+button {
+    border-radius: 25px;
     border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    background: var(--primary-gold-gradient);
+    color: var(--text-gold-dark);
+    font-size: 13px;
+    font-weight: 800;
+    padding: 14px 50px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(209, 158, 29, 0.3);
 }
 
-button[type="submit"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(209, 158, 29, 0.5);
 }
 
-button[type="submit"]:active {
-    transform: translateY(0);
+button:active {
+    transform: translateY(-1px);
 }
 
-/* Register Link */
-p {
-    text-align: center;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e5e5e5;
-    color: #666;
-    font-size: 0.95rem;
+button.ghost {
+    background: transparent;
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF;
+    box-shadow: none;
 }
 
-p a {
-    color: #3b82f6;
+button.ghost:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+/* Links */
+a {
+    color: var(--primary-purple);
+    font-size: 13px;
     text-decoration: none;
-    font-weight: 600;
-    margin-left: 0.25rem;
+    margin: 15px 0 20px;
     transition: all 0.3s ease;
+    font-weight: 600;
 }
 
-p a:hover {
-    color: #2563eb;
+a:hover {
+    color: var(--primary-purple-dark);
     text-decoration: underline;
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+/* Overlay */
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.container.right-panel-active .overlay-container {
+    transform: translateX(-100%);
 }
 
-@keyframes chipFloat {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
+.overlay {
+    background: linear-gradient(135deg, var(--navbar-dark) 0%, var(--navbar-mid) 50%, var(--navbar-dark) 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 0;
+    color: #FFFFFF;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+    display: flex;
 }
 
-@keyframes chipRotate {
-    from {
-        transform: rotateY(0deg);
-    }
+.container.right-panel-active .overlay {
+    transform: translateX(50%);
+}
 
-    to {
-        transform: rotateY(360deg);
-    }
+.overlay-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.overlay-left {
+    transform: translateX(-20%);
+}
+
+.container.right-panel-active .overlay-left {
+    transform: translateX(0);
+}
+
+.overlay-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.container.right-panel-active .overlay-right {
+    transform: translateX(20%);
+}
+
+.overlay-panel h1 {
+    color: #FFFFFF;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+}
+
+.overlay-panel p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 15px 0 25px;
+}
+
+/* Gold accent line on overlay */
+.overlay-panel::after {
+    content: '';
+    width: 60px;
+    height: 3px;
+    background: var(--primary-gold-gradient);
+    border-radius: 2px;
+    margin-top: 10px;
 }
 
 /* Responsive */
-@media (max-width: 480px) {
-    .login-card {
-        padding: 2.5rem 1.5rem;
-        width: 95%;
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        min-height: 650px;
+        border-radius: 15px;
     }
 
-    .poker-chip {
-        width: 70px;
-        height: 70px;
+    .form-container {
+        width: 100%;
+        position: relative;
+        left: 0;
+        height: auto;
+        padding: 2rem 0;
     }
 
-    .poker-chip::after {
-        font-size: 2rem;
+    .sign-in-container,
+    .sign-up-container {
+        width: 100%;
+        position: relative;
+        transform: none !important;
     }
 
-    .login-card h2 {
+    .sign-up-container {
+        display: none;
+    }
+
+    .container.right-panel-active .sign-up-container {
+        display: flex;
+    }
+
+    .container.right-panel-active .sign-in-container {
+        display: none;
+    }
+
+    .overlay-container {
+        display: none;
+    }
+
+    form {
+        padding: 0 30px;
+    }
+
+    h1 {
         font-size: 1.5rem;
-    }
-
-    .input-group input {
-        padding: 0.9rem 0.9rem 0.9rem 2.8rem;
     }
 }

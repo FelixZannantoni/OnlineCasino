@@ -1,29 +1,67 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
-import { MatIcon } from "@angular/material/icon";
+import { PLATFORM_ID, inject } from '@angular/core';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, MatIcon],
+  imports: [FormsModule, RouterLink, MatIconModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
-export class Login {
-  username = '';
-  password = '';
-  private isBrowser: boolean;
+export class Login implements OnInit {
+  isSignUp = false;
+  isBrowser: boolean;
   private router = inject(Router);
+
+  // Login fields
+  loginEmail = '';
+  loginPassword = '';
+
+  // Register fields
+  registerName = '';
+  registerEmail = '';
+  registerPassword = '';
+  passwordConfirm = '';
 
   constructor() {
     this.isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   }
 
-  onLogin(): void {
+  ngOnInit(): void {
     if (!this.isBrowser) return;
-    console.log('Login:', this.username);
+    this.updateContainerClass();
+  }
+
+  togglePanel(signUp: boolean): void {
+    if (!this.isBrowser) return;
+    this.isSignUp = signUp;
+    this.updateContainerClass();
+  }
+
+  private updateContainerClass(): void {
+    const container = document.getElementById('login-container');
+    if (container) {
+      container.classList.toggle('right-panel-active', this.isSignUp);
+    }
+  }
+
+  onLogin(): void {
+    console.log('Login:', this.loginEmail);
+    // TODO: Connect to backend
+    this.router.navigate(['/home']);
+  }
+
+  onRegister(): void {
+    if (this.registerPassword !== this.passwordConfirm) {
+      alert('Passwords do not match!');
+      return;
+    }
+    console.log('Register:', this.registerEmail);
+    // TODO: Connect to backend
     this.router.navigate(['/home']);
   }
 }

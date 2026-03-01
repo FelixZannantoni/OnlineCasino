@@ -60,7 +60,7 @@
     background: var(--primary-gold-gradient);
     background-size: 200% 200%;
     background-position: 100% 50%;
-    color: #75570a;
+    color: var(--text-gold-dark);
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;

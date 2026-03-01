@@ -1,5 +1,14 @@
 /* Global Varibales */
 :root {
     --primary-gold-gradient: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    --primary-purple: #760fc5;
+    --primary-purple: #8b5cf6;
+    --primary-purple-dark: #6d28d9;
+    --navbar-dark: #0a0a0a;
+    --navbar-mid: #1a3a52;
+    --text-gold: #d19e1d;
+    --text-purple: #6d28d9;
+    --text-gold-dark: #75570a;
+    --gray-light: #f5f5f5;
+    --gray-mid: #e0e0e0;
+    --gray-dark: #333333;
 }
