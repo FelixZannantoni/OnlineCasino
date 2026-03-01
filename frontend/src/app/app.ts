@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Navbar } from './navbar/navbar';
 import { ProfileOverlay } from './profile-overlay/profile-overlay';
 import { SettingsOverlay } from './settings-overlay/settings-overlay';
+import { Login } from "./login/login";
 
 @Component({
   selector: 'app-root',
@@ -10,8 +11,9 @@ import { SettingsOverlay } from './settings-overlay/settings-overlay';
     RouterOutlet,
     Navbar,
     ProfileOverlay,
-    SettingsOverlay
-  ],
+    SettingsOverlay,
+    Login
+],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

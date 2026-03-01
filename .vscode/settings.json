@@ -35,6 +35,18 @@
         {
             "folderPath": "OnlineCasino\\frontend\\src\\app\\poker\\",
             "color": "foldercolorizer.color_336666"
+        },
+        {
+            "folderPath": "OnlineCasino\\frontend\\src\\app\\settings\\",
+            "color": "foldercolorizer.color_888888"
+        },
+        {
+            "folderPath": "OnlineCasino\\frontend\\src\\app\\settings-overlay\\",
+            "color": "foldercolorizer.color_bbbbbb"
+        },
+        {
+            "folderPath": "OnlineCasino\\frontend\\src\\app\\logged-in\\",
+            "color": "foldercolorizer.color_00cc33"
         }
     ]
 }

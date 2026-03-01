@@ -1,1 +1,16 @@
-<p>login works!</p>
+<div class="login-wrapper">
+    <div class="login-card">
+        <h2>Login</h2>
+
+        <form (ngSubmit)="onLogin()">
+            <mat-icon class="login-icon">account_circle</mat-icon>
+            <input type="text" name="username" placeholder="Benutzername" [(ngModel)]="username" required>
+
+            <mat-icon class="login-icon">lock</mat-icon>
+            <input type="password" name="password" placeholder="Passwort" [(ngModel)]="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <p>No account? <a routerLink="/register">Register</a></p>
+    </div>
+</div>

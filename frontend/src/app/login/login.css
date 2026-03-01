@@ -1,0 +1,240 @@
+/* Login Overlay - Darkened Background */
+.login-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Login Card */
+.login-card {
+    background: white;
+    padding: 3rem 2.5rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+/* Poker Chip Decoration */
+.chip-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.poker-chip {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 50%, #5b21b6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 8px 25px rgba(139, 92, 246, 0.5),
+        inset 0 0 0 6px rgba(255, 255, 255, 0.15),
+        inset 0 0 0 12px rgba(139, 92, 246, 0.2);
+    position: relative;
+    animation: chipFloat 3s ease-in-out infinite, chipRotate 20s linear infinite;
+}
+
+.poker-chip::before {
+    content: '';
+    position: absolute;
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+}
+
+.poker-chip::after {
+    content: '$';
+    font-family: 'Georgia', serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.login-card h2 {
+    margin: 0 0 2rem;
+    text-align: center;
+    color: #1a1a1a;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
+.input-group input::placeholder {
+    color: #999;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 1.2rem;
+    pointer-events: none;
+    transition: color 0.3s ease;
+}
+
+.input-group input:focus+.input-icon {
+    color: #8b5cf6;
+}
+
+/* Login Button */
+button[type="submit"] {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Register Link */
+p {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e5e5;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+p a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+p a:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes chipFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes chipRotate {
+    from {
+        transform: rotateY(0deg);
+    }
+
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 2.5rem 1.5rem;
+        width: 95%;
+    }
+
+    .poker-chip {
+        width: 70px;
+        height: 70px;
+    }
+
+    .poker-chip::after {
+        font-size: 2rem;
+    }
+
+    .login-card h2 {
+        font-size: 1.5rem;
+    }
+
+    .input-group input {
+        padding: 0.9rem 0.9rem 0.9rem 2.8rem;
+    }
+}
