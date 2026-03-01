@@ -5,13 +5,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { Subscription, fromEvent } from 'rxjs';
 
 @Component({
-  selector: 'app-profile-overlay',
+  selector: 'app-settings-overlay',
   standalone: true,
   imports: [RouterLink, MatIconModule],
-  templateUrl: './profile-overlay.html',
-  styleUrls: ['./profile-overlay.css']
+  templateUrl: './settings-overlay.html',
+  styleUrls: ['./settings-overlay.css']
 })
-export class ProfileOverlay implements OnInit, OnDestroy {
+export class SettingsOverlay implements OnInit, OnDestroy {
   isOpen = false;
   private toggleSubscription?: Subscription;
   private keydownSubscription?: Subscription;
@@ -25,7 +25,7 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!this.isBrowser) return; // Skip SSR
 
-    this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleProfileOverlay')
+    this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleSettingsOverlay')
       .subscribe(() => {
         window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
         this.isOpen = !this.isOpen;
