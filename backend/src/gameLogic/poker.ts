@@ -1,4 +1,4 @@
-import { DEALER_ID, PockerDeck } from "./deck";
+import { DEALER_ID, PokerDeck } from "./deck";
 import { Player } from "./player";
 import {Card} from "../model";
 import {CardGame} from "./cardGame";
@@ -11,13 +11,14 @@ export const POKER_DESK_ID: string = "PokerDesk";
 
 export class Poker extends CardGame
 {
-    private pockerDeck: PockerDeck;
+    private pokerDeck: PokerDeck;
     private players: Player[];
     private pokerDeskCards: Card[];
 
     constructor()
     {
-        this.pockerDeck = new PockerDeck();
+        super();
+        this.pokerDeck = new PokerDeck();
         this.players = [];
         this.pokerDeskCards = [];
     }
@@ -43,13 +44,13 @@ export class Poker extends CardGame
             for(let j: number = 0; j < this.players.length; j++)
             {
                 this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)]
-                    .addCard(this.pockerDeck.dealCard(this.pockerDeck.getDeck(), this.players[j].playerId), this.players[j].playerId);
+                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].playerId), this.players[j].playerId);
             }
         }
         
         for(let i: number = 0; i < POKER_CARDS_NUMBER; i++)
         {
-            this.pokerDeskCards.push(this.pockerDeck.dealCard(this.pockerDeck.getDeck(),POKER_DESK_ID));
+            this.pokerDeskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(),POKER_DESK_ID));
         }
     }
 

@@ -1,3 +1,6 @@
-export class Game{
+import { Player } from "./player";
 
+export class Game {
+    constructor() {
+    }
 }

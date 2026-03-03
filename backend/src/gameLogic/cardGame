@@ -1,5 +1,0 @@
-import {Game} from "./game";
-
-export class CardGame extends Game{
-
-}

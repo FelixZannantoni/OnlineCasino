@@ -25,11 +25,11 @@ export enum CardName {
 }
 
 export enum GameType {
-    Pocker,
+    Poker,
     Blackjack
 }
 
-const pockerCardValue: Map<CardName, number> = new Map([
+const pokerCardValue: Map<CardName, number> = new Map([
     [CardName.two, 2],
     [CardName.three, 3],
     [CardName.four, 4],
@@ -73,11 +73,11 @@ export class Deck{
     {
         for(let i: number = 0; i < 4; i++)
         {
-            for(let i: number = 0; i < cardDeck.length; i++)
+            for(let j: number = 0; j < cardDeck.length; j++)
             {
                 const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
-                const temp: Card = cardDeck[i];
-                cardDeck[i] = cardDeck[randNum];
+                const temp: Card = cardDeck[j];
+                cardDeck[j] = cardDeck[randNum];
                 cardDeck[randNum] = temp;
             }
         }
@@ -114,7 +114,7 @@ export class Deck{
     }
 }
  
-export class PockerDeck extends Deck{
+export class PokerDeck extends Deck{
     constructor()
     {
         super();
@@ -129,7 +129,7 @@ export class PockerDeck extends Deck{
             {
                 let card: Card = {
                     name: CardName[name],
-                    value: pockerCardValue.get(CardName[name])!,
+                    value: pokerCardValue.get(CardName[name])!,
                     color: CardColor[color],
                     owner: DEALER_ID
                 }
