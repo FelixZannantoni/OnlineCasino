@@ -1,6 +1,7 @@
 import { DEALER_ID, PockerDeck } from "./deck";
 import { Player } from "./player";
 import {Card} from "../model";
+import {CardGame} from "./cardGame";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -8,9 +9,8 @@ export const POKER_CARDS_NUMBER: number = 5;
 export const POKER_DESK_ID: string = "PokerDesk";
 
 
-export class Poker
+export class Poker extends CardGame
 {
-    
     private pockerDeck: PockerDeck;
     private players: Player[];
     private pokerDeskCards: Card[];
@@ -22,7 +22,7 @@ export class Poker
         this.pokerDeskCards = [];
     }
 
-    private startRound()
+    private startGame()
     {
         this.setDealerChip();
         this.handCardsOut();
@@ -42,7 +42,8 @@ export class Poker
         {
             for(let j: number = 0; j < this.players.length; j++)
             {
-                this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)].addCard(this.pockerDeck.dealCard(this.pockerDeck.getDeck(), this.players[j].playerId), this.players[j].playerId);
+                this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)]
+                    .addCard(this.pockerDeck.dealCard(this.pockerDeck.getDeck(), this.players[j].playerId), this.players[j].playerId);
             }
         }
         
@@ -83,6 +84,6 @@ export class Poker
 
     private deafaultBets()
     {
-
+        this.players[Player.playerWithDealerChip(this.players)].bet = 0;
     }
 }

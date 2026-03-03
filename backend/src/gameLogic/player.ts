@@ -6,12 +6,14 @@ export class Player {
     public balance: number = 0;
     public cards: Card[] = [];
     public hasDealerChip: boolean;
+    public bet: number;
 
-    constructor(playerId: string, username: string, balance: number, hasDealerChip: boolean) {
+    constructor(playerId: string, username: string, balance: number, hasDealerChip: boolean, bet: number) {
         this.playerId = playerId;
         this.username = username;
         this.balance = balance;
         this.hasDealerChip = hasDealerChip;
+        this.bet = bet;
     }
 
     public addCard(card: Card, playerId: string): void {
@@ -58,7 +60,6 @@ export class Player {
         return 0;
     }
 
-    //den owner auch ändern
     public clearHand(): void {
         this.cards = [];
     }
