@@ -2,7 +2,7 @@
 
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
-        <form (ngSubmit)="onRegister()">
+        <form (ngSubmit)="onRegister($event)">
             <h1>Create Account</h1>
 
             <div class="input-group">
@@ -32,7 +32,7 @@
 
     <!-- Sign In Form -->
     <div class="form-container sign-in-container">
-        <form (ngSubmit)="onLogin()">
+        <form (ngSubmit)="onLogin($event)">
             <h1>Sign in</h1>
 
             <div class="input-group">

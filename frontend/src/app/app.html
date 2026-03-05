@@ -1,5 +1,10 @@
-<app-login></app-login> <!-- not implemented the backend yet -->
-<app-navbar></app-navbar>
+@if (showLogin) {
+    <!-- Empty container to maintain layout -->
+    <div class="login-placeholder"></div>
+} @else {
+    <app-navbar></app-navbar>
+    <app-profile-overlay></app-profile-overlay>
+    <app-settings-overlay></app-settings-overlay>
+}
+
 <router-outlet />
-<app-profile-overlay></app-profile-overlay>
-<app-settings-overlay></app-settings-overlay>

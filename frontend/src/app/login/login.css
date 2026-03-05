@@ -1,10 +1,24 @@
+:host {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
 }
+
 
 /* Container */
 .container {
@@ -16,6 +30,8 @@ body {
     width: 850px;
     max-width: 100%;
     min-height: 580px;
+    /* Ensure container doesn't break centering */
+    margin: auto;
 }
 
 /* Form Containers */

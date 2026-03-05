@@ -17,11 +17,8 @@ export class Login implements OnInit {
   isBrowser: boolean;
   private router = inject(Router);
 
-  // Login fields
   loginEmail = '';
   loginPassword = '';
-
-  // Register fields
   registerName = '';
   registerEmail = '';
   registerPassword = '';
@@ -49,19 +46,25 @@ export class Login implements OnInit {
     }
   }
 
-  onLogin(): void {
-    console.log('Login:', this.loginEmail);
-    // TODO: Connect to backend
-    this.router.navigate(['/home']);
-  }
 
-  onRegister(): void {
+  onLogin(event?: Event): void {
+  event?.preventDefault();
+  if (!this.isBrowser) return;
+  console.log('onLogin called, navigating...');
+  this.router.navigate(['/home']).then(() => {
+    console.log('Navigation successful');
+  });
+}
+
+  onRegister(event?: Event): void {
+    event?.preventDefault();
+    if (!this.isBrowser) return;
+    
     if (this.registerPassword !== this.passwordConfirm) {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Register:', this.registerEmail);
-    // TODO: Connect to backend
+    console.log('Navigating to /home from register');
     this.router.navigate(['/home']);
   }
 }
