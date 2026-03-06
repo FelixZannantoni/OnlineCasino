@@ -1,0 +1,12 @@
+@host=http://localhost
+@port=3000
+@baseUrl={{host}}:{{port}}
+
+
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Julian175",
+    "password": "password123"
+}
