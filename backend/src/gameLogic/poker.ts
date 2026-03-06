@@ -1,7 +1,8 @@
-import { DEALER_ID, PokerDeck } from "./deck";
+import { DEALER_ID } from "./deck";
 import { Player } from "./player";
 import {Card} from "../model";
 import {CardGame} from "./cardGame";
+import { PokerDeck } from "./pokerDeck";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
