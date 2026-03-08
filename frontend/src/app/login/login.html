@@ -7,21 +7,26 @@
 
             <div class="input-group">
                 <mat-icon class="input-icon">person</mat-icon>
-                <input type="text" placeholder="Username" [(ngModel)]="registerName" name="regName" required>
+                <input type="text" placeholder="Name" [(ngModel)]="registerName" name="regName" required>
             </div>
 
             <div class="input-group">
-                <mat-icon class="input-icon">mail_outline</mat-icon>
+                <mat-icon class="input-icon">person_outline</mat-icon>
+                <input type="text" placeholder="Display Name" [(ngModel)]="registerName" name="regDisplayname" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">email</mat-icon>
                 <input type="email" placeholder="Email" [(ngModel)]="registerEmail" name="regEmail" required>
             </div>
 
             <div class="input-group">
-                <mat-icon class="input-icon">lock</mat-icon>
+                <mat-icon class="input-icon">lock_outline</mat-icon>
                 <input type="password" placeholder="Password" [(ngModel)]="registerPassword" name="regPass" required>
             </div>
 
             <div class="input-group">
-                <mat-icon class="input-icon">lock_outline</mat-icon>
+                <mat-icon class="input-icon">lock</mat-icon>
                 <input type="password" placeholder="Confirm Password" [(ngModel)]="passwordConfirm"
                     name="regPassConfirm" required>
             </div>
@@ -36,12 +41,12 @@
             <h1>Sign in</h1>
 
             <div class="input-group">
-                <mat-icon class="input-icon">email</mat-icon>
+                <mat-icon class="input-icon">mail_outline</mat-icon>
                 <input type="email" placeholder="Email" [(ngModel)]="loginEmail" name="loginEmail" required>
             </div>
 
             <div class="input-group">
-                <mat-icon class="input-icon">lock_outline</mat-icon>
+                <mat-icon class="input-icon">lock</mat-icon>
                 <input type="password" placeholder="Password" [(ngModel)]="loginPassword" name="loginPass" required>
             </div>
 
