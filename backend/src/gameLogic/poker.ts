@@ -13,15 +13,11 @@ export const POKER_DESK_ID: string = "PokerDesk";
 export class Poker extends CardGame
 {
     private pokerDeck: PokerDeck;
-    private players: Player[];
-    private pokerDeskCards: Card[];
 
     constructor()
     {
         super();
         this.pokerDeck = new PokerDeck();
-        this.players = [];
-        this.pokerDeskCards = [];
     }
 
     private startGame()
@@ -51,41 +47,19 @@ export class Poker extends CardGame
         
         for(let i: number = 0; i < POKER_CARDS_NUMBER; i++)
         {
-            this.pokerDeskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(),POKER_DESK_ID));
-        }
-    }
-
-    setDealerChip()
-    {
-        this.players[Math.floor(Math.random() * this.players.length) + 1].hasDealerChip = true
-    }
-
-    private updateDealerChip()
-    {
-        for(let i: number = 0; i < this.players.length; i++)
-        {
-            if(this.players[i].hasDealerChip == true)
-            {
-                this.players[i].hasDealerChip = false;
-                this.players[Player.nextPlayer(this.players, i)].hasDealerChip = true;
-            }
+            this.deskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(),POKER_DESK_ID));
         }
     }
 
     resetCards()
     {
-        for(let i: number = 0; i < this.pokerDeskCards.length; i++)
+        for(let i: number = 0; i < this.deskCards.length; i++)
         {
-            this.pokerDeskCards[i].owner = DEALER_ID;
+            this.deskCards[i].owner = DEALER_ID;
         }
         for(const player of this.players)
         {
             player.clearHand();
         }
-    }
-
-    private deafaultBets()
-    {
-        this.players[Player.playerWithDealerChip(this.players)].bet = 0;
     }
 }
