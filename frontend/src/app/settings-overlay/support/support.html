@@ -1,0 +1,32 @@
+    <div class="support-content">
+    <h2>Support</h2>
+    <p class="subtitle">We're here to help</p>
+
+    <div class="contact-section">
+        <h3>Contact Us</h3>
+        <div class="contact-grid">
+            @for (method of contactMethods; track method.title) {
+                <div class="contact-card">
+                    <mat-icon class="contact-icon">{{ method.icon }}</mat-icon>
+                    <h4>{{ method.title }}</h4>
+                    <p>{{ method.value }}</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-list">
+            @for (faq of faqs; track faq.question) {
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <mat-icon>help_outline</mat-icon>
+                        <span>{{ faq.question }}</span>
+                    </div>
+                    <div class="faq-answer">{{ faq.answer }}</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
