@@ -24,15 +24,17 @@ export class App {
   showLogin = true;
 
   constructor(private router: Router) {
-    console.log('App init, URL:', this.router.url, 'showLogin:', this.showLogin);
-    
-    this.showLogin = this.router.url === '/login' || this.router.url === '/';
+
+    this.showLogin = this.shouldShowLogin(this.router.url);
     
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
-      console.log('NavigationEnd:', event.url, '→ showLogin:', (event.url === '/login' || event.url === '/'));
-      this.showLogin = event.url === '/login' || event.url === '/';
+      this.showLogin = this.shouldShowLogin(event.url);
     });
+  }
+
+  private shouldShowLogin(url: string): boolean {
+    return url === '/login' || url === '/forgot-password' || url === '/';
   }
 }
