@@ -1,0 +1,99 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface Card {
+  +name: CardName
+  +value: number
+  +color: CardColor
+  +owner: string
+}
+
+enum CardColor {
+  HEARTS
+  DIAMONDS
+  CLUBS
+  SPADES
+}
+
+enum CardName {
+  two
+  three
+  four
+  five
+  six
+  seven
+  eight
+  nine
+  ten
+  jack
+  queen
+  king
+  ace
+}
+
+class Game {
+  #players: Player[]
+}
+
+class CardGame {
+  #deskCards: Card[]
+  #setDealerChip()
+  #updateDealerChip()
+  #deafaultBets()
+}
+
+class Poker {
+  -pokerDeck: PokerDeck
+  -startGame()
+  -nextRound()
+  -handCardsOut()
+  +resetCards()
+}
+
+class Blackjack {
+}
+
+class Player {
+  +playerId: string
+  +username: string
+  +balance: number = 0
+  +cards: Card[] = []
+  +hasDealerChip: boolean
+  +bet: number
+  +addCard(card: Card, playerId: string): void
+  +clearHand(): void
+  {static} +xNextPlayer(players: Player[], i: number, x: number): number
+  {static} +nextPlayer(players: Player[], i: number): number
+  {static} +playerWithDealerChip(players: Player[]): number
+}
+
+class Deck {
+  #deck: Card[] = []
+  #shuffle(cardDeck: Card[]): void
+  +dealCard(cardDeck: Card[], id: string): Card
+  +getDeck(): Card[]
+}
+
+class BlackjackDeck {
+  -blackjackDeckInit(): void
+}
+
+class PokerDeck {
+  -pokerDeckInit(): void
+}
+
+' Inheritance
+Game <|-- CardGame
+CardGame <|-- Poker
+CardGame <|-- Blackjack
+Deck <|-- BlackjackDeck
+Deck <|-- PokerDeck
+
+' Associations
+Game o-- "many" Player : contains
+CardGame *-- "many" Card : deskCards
+Player *-- "many" Card : cards
+Deck *-- "many" Card : deck
+Poker o-- "1" PokerDeck : uses
+
+@enduml
