@@ -47,16 +47,39 @@ export class Login implements OnInit {
   }
 
 
-  onLogin(event?: Event): void {
-  event?.preventDefault();
-  if (!this.isBrowser) return;
-  console.log('onLogin called, navigating...');
-  this.router.navigate(['/home']).then(() => {
-    console.log('Navigation successful');
-  });
+  async onLogin(event?: Event): Promise<void> {
+    event?.preventDefault();
+    if (!this.isBrowser) return;
+    console.log('onLogin called, navigating...');
+
+    //#region login
+
+    const res = await fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: this.loginEmail,
+        password: this.loginPassword
+      })
+    });
+
+    if(!res.ok) {
+      alert('Login failed: ' + res.statusText);
+      return;
+    }
+
+    //#endregion
+
+    // note from julian: login success ->
+
+    this.router.navigate(['/home']).then(() => {
+      console.log('Navigation successful');
+    });
 }
 
-  onRegister(event?: Event): void {
+  async onRegister(event?: Event): Promise<void> {
     event?.preventDefault();
     if (!this.isBrowser) return;
     
@@ -64,6 +87,32 @@ export class Login implements OnInit {
       alert('Passwords do not match!');
       return;
     }
+
+    // note from julian: we could do some validation like checking if the email has a valid format, or password strength, etc.
+
+    //#region registering
+
+    const res = await fetch('http://localhost:3000/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: this.registerName,
+        email: this.registerEmail,
+        password: this.registerPassword
+      })
+    });
+
+    if(!res.ok) {
+      alert('Registration failed: ' + res.statusText);
+      return;
+    }
+
+    //#endregion
+
+    // note from julian: registration success ->
+
     console.log('Navigating to /home from register');
     this.router.navigate(['/home']);
   }
