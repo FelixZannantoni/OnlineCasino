@@ -45,4 +45,9 @@ export class CardGame extends Game {
 
         //TODO set bet auf halb und ganz
     }
+
+    protected bet()
+    {
+        
+    }
 }

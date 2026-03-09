@@ -35,6 +35,7 @@ export class Poker extends CardGame
     {
         this.resetCards();
         this.resetBets();
+        //überprüfen ob pleite
         this.updateDealerChip();
         this.handCardsOut();
         this.setDeafaultBets();

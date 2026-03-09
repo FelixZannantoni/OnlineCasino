@@ -33,17 +33,22 @@ enum CardName {
 
 class Game {
   #players: Player[]
+  +Game()
 }
 
 class CardGame {
+  +CardGame()
   #setDealerChip()
   #updateDealerChip()
+  #resetBets()
   #setDeafaultBets()
+  #bet()
 }
 
 class Poker {
   -pokerDeck: PokerDeck
   -pokerDeskCards: Card[]
+  +Poker()
   -startGame()
   -nextRound()
   -handCardsOut()
@@ -62,6 +67,7 @@ class Player {
   -cards: Card[]
   -hasDealerChip: boolean
   -bet: number
+  +Player(playerId: string, username: string, \n  displayname: string, balance: number, \n  hasDealerChip: boolean, bet: number)
   +getPlayerId(): string
   +getUsername(): string
   +getDisplayname(): string
@@ -76,18 +82,27 @@ class Player {
   {static} +playerWithDealerChip(players: Player[]): number
 }
 
+class CardGamePlayer {
+}
+
+class PockerPlayer {
+}
+
 class Deck {
   #deck: Card[]
+  +Deck()
   #shuffle(cardDeck: Card[]): void
   +dealCard(cardDeck: Card[], id: string): Card
   +getDeck(): Card[]
 }
 
 class BlackjackDeck {
+  +BlackjackDeck()
   -blackjackDeckInit(): void
 }
 
 class PokerDeck {
+  +PokerDeck()
   -pokerDeckInit(): void
 }
 
@@ -97,6 +112,8 @@ CardGame <|-- Poker
 CardGame <|-- Blackjack
 Deck <|-- BlackjackDeck
 Deck <|-- PokerDeck
+Player <|-- CardGamePlayer
+CardGamePlayer <|-- PockerPlayer
 
 ' Associations
 Game o-- "many" Player : contains
