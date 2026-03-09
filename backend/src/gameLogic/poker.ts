@@ -34,6 +34,7 @@ export class Poker extends CardGame
     private nextRound()
     {
         this.resetCards();
+        this.resetBets();
         this.updateDealerChip();
         this.handCardsOut();
         this.setDeafaultBets();
@@ -72,6 +73,15 @@ export class Poker extends CardGame
 
     private playRound()
     {
-
+        //betting
+        //open 3 cards in the middle
+        //betting
+        //open one card
+        //betting
+        //open one card
+        //betting
+        //check winner
+        //distribute profits
+        this.nextRound();
     }
 }

@@ -25,9 +25,24 @@ export class CardGame extends Game {
         }
     }
 
+    protected resetBets()
+    {
+        for(let i: number = 0; i < this.players.length; i++)
+        {
+            this.players[i].setBet(0);
+        }
+    }
+
     protected setDeafaultBets()
     {
+        this.resetBets();
         this.players[Player.playerWithDealerChip(this.players)].setBet(0);
-        //TODO
+        this.players[Player.nextPlayer(this.players, Player.playerWithDealerChip(this.players))].setBet(0);
+        if(this.players.length >= 3)
+        {
+            this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), 2)].setBet(0);
+        }
+
+        //TODO set bet auf halb und ganz
     }
 }
