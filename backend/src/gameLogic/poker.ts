@@ -1,8 +1,8 @@
 import { DEALER_ID } from "./deck";
 import { Player } from "./player";
-import {Card} from "../model";
 import {CardGame} from "./cardGame";
 import { PokerDeck } from "./pokerDeck";
+import { Card } from "../model";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -13,17 +13,22 @@ export const POKER_DESK_ID: string = "PokerDesk";
 export class Poker extends CardGame
 {
     private pokerDeck: PokerDeck;
+    private pokerDeskCards: Card[];
 
     constructor()
     {
         super();
         this.pokerDeck = new PokerDeck();
+        this.pokerDeskCards = [];
+        this.startGame();
     }
 
     private startGame()
     {
         this.setDealerChip();
         this.handCardsOut();
+        this.setDeafaultBets();
+        this.playRound();
     }
 
     private nextRound()
@@ -31,6 +36,8 @@ export class Poker extends CardGame
         this.resetCards();
         this.updateDealerChip();
         this.handCardsOut();
+        this.setDeafaultBets();
+        this.playRound();
     }
    
 
@@ -47,19 +54,24 @@ export class Poker extends CardGame
         
         for(let i: number = 0; i < POKER_CARDS_NUMBER; i++)
         {
-            this.deskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(),POKER_DESK_ID));
+            this.pokerDeskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(),POKER_DESK_ID));
         }
     }
 
-    resetCards()
+    private resetCards()
     {
-        for(let i: number = 0; i < this.deskCards.length; i++)
+        for(let i: number = 0; i < this.pokerDeskCards.length; i++)
         {
-            this.deskCards[i].owner = DEALER_ID;
+            this.pokerDeskCards[i].owner = DEALER_ID;
         }
         for(const player of this.players)
         {
             player.clearHand();
         }
+    }
+
+    private playRound()
+    {
+        
     }
 }

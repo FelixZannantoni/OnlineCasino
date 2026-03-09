@@ -1,14 +1,11 @@
 import { Game } from "./game";
-import { Deck } from "./deck";
 import { Player } from "./player";
 import { Card } from "../model";
 
 export class CardGame extends Game {
-    protected deskCards: Card[];
 
     constructor() {
         super();
-        this.deskCards = [];
     }
 
     protected setDealerChip()
@@ -28,7 +25,7 @@ export class CardGame extends Game {
         }
     }
 
-    protected deafaultBets()
+    protected setDeafaultBets()
     {
         this.players[Player.playerWithDealerChip(this.players)].bet = 0;
         //TODO

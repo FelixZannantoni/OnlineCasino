@@ -47,7 +47,7 @@ class Poker {
   -startGame()
   -nextRound()
   -handCardsOut()
-  +resetCards()
+  -resetCards()
 }
 
 class Blackjack {

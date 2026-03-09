@@ -1,4 +1,3 @@
-import { error } from "console";
 import {Card} from "../model";
 
 export enum CardColor {
