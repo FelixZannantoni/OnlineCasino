@@ -22,11 +22,6 @@ export class Terms {
       content: 'By using OnlineCasino, you agree to be bound by these terms and conditions.'
     },
     {
-      title: 'Minimum Age',
-      icon: 'verified_user',
-      content: 'You must be at least 18 years old to use OnlineCasino.'
-    },
-    {
       title: 'Account Responsibility',
       icon: 'account_circle',
       content: 'You are responsible for maintaining the security of your account credentials.'

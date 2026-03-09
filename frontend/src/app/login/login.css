@@ -7,6 +7,22 @@
     padding: 20px;
     margin: 0;
     box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+:host::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at center, rgba(139, 92, 246, 0.1) 0%, transparent 70%),
+        radial-gradient(ellipse at top right, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 * {
@@ -22,16 +38,20 @@ body {
 
 /* Container */
 .container {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(10, 10, 10, 0.4);
+    box-shadow:
+        0 20px 60px rgba(10, 10, 10, 0.5),
+        0 0 0 1px rgba(255, 215, 0, 0.2),
+        0 0 40px rgba(139, 92, 246, 0.2);
     position: relative;
     overflow: hidden;
     width: 850px;
     max-width: 100%;
     min-height: 580px;
-    /* Ensure container doesn't break centering */
     margin: auto;
+    z-index: 1;
+    border: 3px solid rgba(93, 68, 4, 0.4);
 }
 
 /* Form Containers */
@@ -105,6 +125,64 @@ h1 {
     letter-spacing: -0.5px;
 }
 
+/* Logo Container with Casino Chip */
+.logo-container {
+    margin-bottom: 1rem;
+    animation: chipFloat 3s ease-in-out infinite;
+}
+
+.casino-chip {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background:
+        repeating-conic-gradient(from 0deg,
+            #ffd700 0deg 10deg,
+            #b8860b 10deg 20deg);
+    box-shadow:
+        0 4px 15px rgba(255, 215, 0, 0.4),
+        inset 0 0 0 3px rgba(255, 255, 255, 0.3),
+        inset 0 0 20px rgba(184, 134, 11, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto;
+}
+
+.casino-chip::before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    animation: chipSpin 20s linear infinite;
+}
+
+.casino-chip span {
+    font-size: 32px;
+    z-index: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.casino-chip mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    z-index: 1;
+    color: #fff;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.accent-line {
+    width: 80px;
+    height: 3px;
+    background: var(--primary-gold-gradient);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+}
+
 /* Input Groups */
 .input-group {
     position: relative;
@@ -151,6 +229,18 @@ h1 {
 
 .input-group input:focus+.input-icon {
     color: var(--primary-purple);
+}
+
+.toggle-password {
+    left: auto !important;
+    right: 14px;
+    cursor: pointer;
+    pointer-events: auto;
+    user-select: none;
+}
+
+.toggle-password:hover {
+    color: var(--primary-purple-dark);
 }
 
 /* Buttons */

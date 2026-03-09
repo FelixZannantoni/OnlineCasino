@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Type } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface Developer {
@@ -39,7 +39,7 @@ export class DevTeam {
       name: 'Julian Einzinger',
       role: 'DB Administrator',
       icon: 'storage',
-      skills: ['SQLite', 'Database Optimization', 'Data Security']
+      skills: ['SQLite', 'Database Optimization', 'Data Security', 'TypeScript']
     }
   ];
 }

@@ -3,7 +3,13 @@
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
         <form (ngSubmit)="onRegister($event)">
+            <div class="logo-container">
+                <div class="casino-chip">
+                    <mat-icon>casino</mat-icon>
+                </div>
+            </div>
             <h1>Create Account</h1>
+            <div class="accent-line"></div>
 
             <div class="input-group">
                 <mat-icon class="input-icon">person</mat-icon>
@@ -12,7 +18,7 @@
 
             <div class="input-group">
                 <mat-icon class="input-icon">person_outline</mat-icon>
-                <input type="text" placeholder="Display Name" [(ngModel)]="registerName" name="regDisplayname" required>
+                <input type="text" placeholder="Display Name" [(ngModel)]="registerDisplayName" name="regDisplayname" required>
             </div>
 
             <div class="input-group">
@@ -22,13 +28,19 @@
 
             <div class="input-group">
                 <mat-icon class="input-icon">lock_outline</mat-icon>
-                <input type="password" placeholder="Password" [(ngModel)]="registerPassword" name="regPass" required>
+                <input [type]="showRegisterPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="registerPassword" name="regPass" required>
+                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('register')">
+                    {{ showRegisterPassword ? 'visibility' : 'visibility_off' }}
+                </mat-icon>
             </div>
 
             <div class="input-group">
                 <mat-icon class="input-icon">lock</mat-icon>
-                <input type="password" placeholder="Confirm Password" [(ngModel)]="passwordConfirm"
+                <input [type]="showRegisterPasswordConfirm ? 'text' : 'password'" placeholder="Confirm Password" [(ngModel)]="passwordConfirm"
                     name="regPassConfirm" required>
+                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('confirm')">
+                    {{ showRegisterPasswordConfirm ? 'visibility' : 'visibility_off' }}
+                </mat-icon>
             </div>
 
             <button type="submit">Sign Up</button>
@@ -38,7 +50,13 @@
     <!-- Sign In Form -->
     <div class="form-container sign-in-container">
         <form (ngSubmit)="onLogin($event)">
+            <div class="logo-container">
+                <div class="casino-chip">
+                    <mat-icon>casino</mat-icon>
+                </div>
+            </div>
             <h1>Sign in</h1>
+            <div class="accent-line"></div>
 
             <div class="input-group">
                 <mat-icon class="input-icon">mail_outline</mat-icon>
@@ -47,7 +65,10 @@
 
             <div class="input-group">
                 <mat-icon class="input-icon">lock</mat-icon>
-                <input type="password" placeholder="Password" [(ngModel)]="loginPassword" name="loginPass" required>
+                <input [type]="showLoginPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="loginPassword" name="loginPass" required>
+                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('login')">
+                    {{ showLoginPassword ? 'visibility' : 'visibility_off' }}
+                </mat-icon>
             </div>
 
             <a routerLink="/forgot-password">Forgot your password?</a>

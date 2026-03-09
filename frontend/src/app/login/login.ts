@@ -19,10 +19,14 @@ export class Login implements OnInit {
 
   loginEmail = '';
   loginPassword = '';
+  showLoginPassword = false;
   registerName = '';
+  registerDisplayName = '';
   registerEmail = '';
   registerPassword = '';
+  showRegisterPassword = false;
   passwordConfirm = '';
+  showRegisterPasswordConfirm = false;
 
   constructor() {
     this.isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -43,6 +47,16 @@ export class Login implements OnInit {
     const container = document.getElementById('login-container');
     if (container) {
       container.classList.toggle('right-panel-active', this.isSignUp);
+    }
+  }
+
+  togglePasswordVisibility(field: 'login' | 'register' | 'confirm'): void {
+    if (field === 'login') {
+      this.showLoginPassword = !this.showLoginPassword;
+    } else if (field === 'register') {
+      this.showRegisterPassword = !this.showRegisterPassword;
+    } else if (field === 'confirm') {
+      this.showRegisterPasswordConfirm = !this.showRegisterPasswordConfirm;
     }
   }
 

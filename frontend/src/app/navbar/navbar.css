@@ -4,8 +4,32 @@
     z-index: 1000;
     background: linear-gradient(90deg, #0a0a0a 0%, #1a3a52 50%, #0a0a0a 100%);
     color: #fff;
-    box-shadow: linear-gradient(-90deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
+    box-shadow: 
+        0 2px 20px rgba(0, 0, 0, 0.5),
+        0 0 10px rgba(255, 215, 0, 0.2);
     border-bottom: 2px solid #ffd700;
+    overflow: hidden;
+}
+
+.navbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 215, 0, 0.5) 20%, 
+        rgba(255, 215, 0, 0.8) 50%, 
+        rgba(255, 215, 0, 0.5) 80%, 
+        transparent 100%);
+    animation: goldShimmer 3s ease-in-out infinite;
+}
+
+@keyframes goldShimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 .navbar_container {
@@ -225,7 +249,7 @@
 .chip::after {
     content: '$';
     position: relative;
-    font-family: 'Georgia', serif;
+    font-family: 'Georgia';
     font-weight: bold;
     font-size: 0.8em;
     color: #333;
@@ -339,17 +363,6 @@
 
     .navbar_right {
         gap: 0.6rem;
-    }
-}
-
-/* Spin Keyframes */
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
     }
 }
 
