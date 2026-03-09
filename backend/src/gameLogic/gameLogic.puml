@@ -36,30 +36,39 @@ class Game {
 }
 
 class CardGame {
-  #deskCards: Card[]
   #setDealerChip()
   #updateDealerChip()
-  #deafaultBets()
+  #setDeafaultBets()
 }
 
 class Poker {
   -pokerDeck: PokerDeck
+  -pokerDeskCards: Card[]
   -startGame()
   -nextRound()
   -handCardsOut()
   -resetCards()
+  -playRound()
 }
 
 class Blackjack {
 }
 
 class Player {
-  +playerId: string
-  +username: string
-  +balance: number = 0
-  +cards: Card[] = []
-  +hasDealerChip: boolean
-  +bet: number
+  -playerId: string
+  -username: string
+  -displayname: string
+  -balance: number
+  -cards: Card[]
+  -hasDealerChip: boolean
+  -bet: number
+  +getPlayerId(): string
+  +getUsername(): string
+  +getDisplayname(): string
+  +getDealerChip(): boolean
+  +setDealerChip(hasDealerChip: boolean): void
+  +getBet(): number
+  +setBet(bet: number): void
   +addCard(card: Card, playerId: string): void
   +clearHand(): void
   {static} +xNextPlayer(players: Player[], i: number, x: number): number
@@ -68,7 +77,7 @@ class Player {
 }
 
 class Deck {
-  #deck: Card[] = []
+  #deck: Card[]
   #shuffle(cardDeck: Card[]): void
   +dealCard(cardDeck: Card[], id: string): Card
   +getDeck(): Card[]
@@ -91,7 +100,7 @@ Deck <|-- PokerDeck
 
 ' Associations
 Game o-- "many" Player : contains
-CardGame *-- "many" Card : deskCards
+Poker *-- "many" Card : pokerDeskCards
 Player *-- "many" Card : cards
 Deck *-- "many" Card : deck
 Poker o-- "1" PokerDeck : uses
