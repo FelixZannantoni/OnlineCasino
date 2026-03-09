@@ -1,0 +1,18 @@
+<div class="terms-content">
+    <h2>Terms of Service</h2>
+    <p class="subtitle">Terms and conditions for using OnlineCasino</p>
+
+    <div class="terms-list">
+        @for (section of sections; track section.title) {
+            <div class="terms-item">
+                <div class="terms-icon">
+                    <mat-icon>{{ section.icon }}</mat-icon>
+                </div>
+                <div class="terms-text">
+                    <h3>{{ section.title }}</h3>
+                    <p>{{ section.content }}</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

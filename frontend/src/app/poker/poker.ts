@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-poker',
-  imports: [],
+  selector: 'app-home',
+  standalone: true,
+  imports: [RouterLink, RouterOutlet, MatIconModule],
   templateUrl: './poker.html',
-  styleUrl: './poker.css',
+  styleUrls: ['./poker.css']
 })
 export class Poker {
-
 }

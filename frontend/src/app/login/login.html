@@ -1,1 +1,77 @@
-<p>login works!</p>
+<div class="container" id="login-container">
+
+    <!-- Sign Up Form -->
+    <div class="form-container sign-up-container">
+        <form (ngSubmit)="onRegister($event)">
+            <h1>Create Account</h1>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">person</mat-icon>
+                <input type="text" placeholder="Name" [(ngModel)]="registerName" name="regName" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">person_outline</mat-icon>
+                <input type="text" placeholder="Display Name" [(ngModel)]="registerName" name="regDisplayname" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">email</mat-icon>
+                <input type="email" placeholder="Email" [(ngModel)]="registerEmail" name="regEmail" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">lock_outline</mat-icon>
+                <input type="password" placeholder="Password" [(ngModel)]="registerPassword" name="regPass" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">lock</mat-icon>
+                <input type="password" placeholder="Confirm Password" [(ngModel)]="passwordConfirm"
+                    name="regPassConfirm" required>
+            </div>
+
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+
+    <!-- Sign In Form -->
+    <div class="form-container sign-in-container">
+        <form (ngSubmit)="onLogin($event)">
+            <h1>Sign in</h1>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">mail_outline</mat-icon>
+                <input type="email" placeholder="Email" [(ngModel)]="loginEmail" name="loginEmail" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">lock</mat-icon>
+                <input type="password" placeholder="Password" [(ngModel)]="loginPassword" name="loginPass" required>
+            </div>
+
+            <a routerLink="/forgot-password">Forgot your password?</a>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay-container">
+        <div class="overlay">
+
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info.</p>
+                <button class="ghost" (click)="togglePanel(false)">Sign In</button>
+            </div>
+
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start journey with us.</p>
+                <button class="ghost" (click)="togglePanel(true)">Sign Up</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
