@@ -48,7 +48,7 @@ export class Poker extends CardGame
             for(let j: number = 0; j < this.players.length; j++)
             {
                 this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)]
-                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].playerId), this.players[j].playerId);
+                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()), this.players[j].getPlayerId());
             }
         }
         
@@ -72,6 +72,6 @@ export class Poker extends CardGame
 
     private playRound()
     {
-        
+
     }
 }

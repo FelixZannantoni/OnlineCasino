@@ -1,20 +1,58 @@
 import { Card } from "../model";
 
 export class Player {
-    public playerId: string;
-    public username: string;
-    public balance: number = 0;
-    public cards: Card[] = [];
-    public hasDealerChip: boolean;
-    public bet: number;
+    //auf private setzen
+    private playerId: string;
+    private username: string;
+    private displayname: string;
+    private balance: number = 0;
+    private cards: Card[] = [];
+    private hasDealerChip: boolean;
+    private bet: number;
 
-    constructor(playerId: string, username: string, balance: number, hasDealerChip: boolean, bet: number) {
+    constructor(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number) {
         this.playerId = playerId;
         this.username = username;
+        this.displayname = displayname;
         this.balance = balance;
         this.hasDealerChip = hasDealerChip;
         this.bet = bet;
     }
+
+    public getPlayerId(): string
+    {
+        return this.playerId;
+    }
+
+    public getUsername(): string
+    {
+        return this.username;
+    }
+
+    public getDisplayname(): string
+    {
+        return this.displayname;
+    }
+
+    public getDealerChip(): boolean {
+        return this.hasDealerChip;
+    }
+
+    public setDealerChip(hasDealerChip: boolean): void {
+        this.hasDealerChip = hasDealerChip;
+    }
+
+    public getBet(): number
+    {
+        return this.bet;
+    }
+
+    public setBet(bet: number): void
+    {
+        this.bet = bet;
+    }
+
+
 
     public addCard(card: Card, playerId: string): void {
         if (this.playerId !== playerId) {
