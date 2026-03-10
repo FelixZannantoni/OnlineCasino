@@ -11,15 +11,13 @@ export const PLAYER_CARDS_NUMBER: number = 2;
 export const POKER_CARDS_NUMBER: number = 5;
 export const POKER_DESK_ID: string = "PokerDesk";
 
-export class Poker extends CardGame {
+export class Poker extends CardGame<PokerPlayer> {
 
-    private players: PokerPlayer[];
     private pokerDeck: PokerDeck;
     private pokerDeskCards: Card[];
 
     constructor() {
         super();
-        this.players = [];
         this.pokerDeck = new PokerDeck();
         this.pokerDeskCards = [];
         this.startGame();
@@ -44,6 +42,8 @@ export class Poker extends CardGame {
 
 
     private handCardsOut() {
+        if (this.players.length === 0) return;
+        const dealerIndex = CardGamePlayer.playerWithDealerChip(this.players);
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             for (let j: number = 0; j < this.players.length; j++) {
                 this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]

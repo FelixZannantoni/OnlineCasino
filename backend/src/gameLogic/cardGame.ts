@@ -3,13 +3,10 @@ import { Player } from "./player";
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 
-export class CardGame extends Game {
+export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T> {
 
-    private players: CardGamePlayer[];
-    
     constructor() {
         super();
-        this.players = [];
     }
 
     protected setDealerChip() {
@@ -21,6 +18,7 @@ export class CardGame extends Game {
             if (this.players[i].getDealerChip() == true) {
                 this.players[i].setDealerChip(false);
                 this.players[Player.nextPlayer(this.players, i)].setDealerChip(true);
+                return;
             }
         }
     }
