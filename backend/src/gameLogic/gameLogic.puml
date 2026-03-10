@@ -31,29 +31,32 @@ enum CardName {
   ace
 }
 
-class Game {
-  #players: Player[]
+class Game<T extends Player = Player> {
+  #players: T[]
   +Game()
+  +addPlayer(player: T): void
+  +getPlayers(): T[]
 }
 
-class CardGame {
+class CardGame<T extends CardGamePlayer = CardGamePlayer> {
   +CardGame()
-  #setDealerChip()
-  #updateDealerChip()
-  #resetBets()
-  #setDeafaultBets()
-  #bet()
+  #setDealerChip(): void
+  #updateDealerChip(): void
 }
 
 class Poker {
   -pokerDeck: PokerDeck
   -pokerDeskCards: Card[]
+  -defaultbet: number
+  -pot: number
   +Poker()
-  -startGame()
-  -nextRound()
-  -handCardsOut()
-  -resetCards()
-  -playRound()
+  -startGame(): void
+  -nextRound(): void
+  -handCardsOut(): void
+  -resetCards(): void
+  #resetBets(): void
+  #setDeafaultBets(): void
+  -playRound(): void
 }
 
 class Blackjack {
@@ -64,10 +67,14 @@ class Player {
   -username: string
   -displayname: string
   -balance: number
-  +Player(playerId: string, username: string, \n  displayname: string, balance: number)
+  -bet: number
+  +Player(playerId: string, username: string, \n  displayname: string, balance: number, bet: number)
   +getPlayerId(): string
   +getUsername(): string
   +getDisplayname(): string
+  +getBalance(): number
+  +getBet(): number
+  +setBet(bet: number): void
   {static} +xNextPlayer(players: Player[], i: number, x: number): number
   {static} +nextPlayer(players: Player[], i: number): number
 }
@@ -75,18 +82,22 @@ class Player {
 class CardGamePlayer {
   -cards: Card[]
   -hasDealerChip: boolean
-  -bet: number
   +CardGamePlayer(playerId: string, username: string, \n  displayname: string, balance: number, \n  hasDealerChip: boolean, bet: number)
+  +getCards(): Card[]
   +getDealerChip(): boolean
   +setDealerChip(hasDealerChip: boolean): void
-  +getBet(): number
-  +setBet(bet: number): void
   +addCard(card: Card, playerId: string): void
   +clearHand(): void
   {static} +playerWithDealerChip(players: CardGamePlayer[]): number
 }
 
-class PockerPlayer {
+class PokerPlayer {
+  -pressedFold: boolean
+  -pressedCheck: boolean
+  -pressendBet: boolean
+  -pressedCall: boolean
+  -pressedRaise: boolean
+  +PokerPlayer(...)
 }
 
 class Deck {
@@ -114,7 +125,7 @@ CardGame <|-- Blackjack
 Deck <|-- BlackjackDeck
 Deck <|-- PokerDeck
 Player <|-- CardGamePlayer
-CardGamePlayer <|-- PockerPlayer
+CardGamePlayer <|-- PokerPlayer
 
 ' Associations
 Game o-- "many" Player : contains
