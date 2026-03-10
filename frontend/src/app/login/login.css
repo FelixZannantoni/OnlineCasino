@@ -137,8 +137,8 @@ h1 {
     border-radius: 50%;
     background:
         repeating-conic-gradient(from 0deg,
-            #ffd700 0deg 10deg,
-            #b8860b 10deg 20deg);
+            var(--primary-purple) 0deg 10deg,
+            var(--primary-purple-dark) 10deg 20deg);
     box-shadow:
         0 4px 15px rgba(255, 215, 0, 0.4),
         inset 0 0 0 3px rgba(255, 255, 255, 0.3),
