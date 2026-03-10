@@ -64,25 +64,26 @@ class Player {
   -username: string
   -displayname: string
   -balance: number
-  -cards: Card[]
-  -hasDealerChip: boolean
-  -bet: number
-  +Player(playerId: string, username: string, \n  displayname: string, balance: number, \n  hasDealerChip: boolean, bet: number)
+  +Player(playerId: string, username: string, \n  displayname: string, balance: number)
   +getPlayerId(): string
   +getUsername(): string
   +getDisplayname(): string
+  {static} +xNextPlayer(players: Player[], i: number, x: number): number
+  {static} +nextPlayer(players: Player[], i: number): number
+}
+
+class CardGamePlayer {
+  -cards: Card[]
+  -hasDealerChip: boolean
+  -bet: number
+  +CardGamePlayer(playerId: string, username: string, \n  displayname: string, balance: number, \n  hasDealerChip: boolean, bet: number)
   +getDealerChip(): boolean
   +setDealerChip(hasDealerChip: boolean): void
   +getBet(): number
   +setBet(bet: number): void
   +addCard(card: Card, playerId: string): void
   +clearHand(): void
-  {static} +xNextPlayer(players: Player[], i: number, x: number): number
-  {static} +nextPlayer(players: Player[], i: number): number
-  {static} +playerWithDealerChip(players: Player[]): number
-}
-
-class CardGamePlayer {
+  {static} +playerWithDealerChip(players: CardGamePlayer[]): number
 }
 
 class PockerPlayer {
@@ -118,7 +119,7 @@ CardGamePlayer <|-- PockerPlayer
 ' Associations
 Game o-- "many" Player : contains
 Poker *-- "many" Card : pokerDeskCards
-Player *-- "many" Card : cards
+CardGamePlayer *-- "many" Card : cards
 Deck *-- "many" Card : deck
 Poker o-- "1" PokerDeck : uses
 
