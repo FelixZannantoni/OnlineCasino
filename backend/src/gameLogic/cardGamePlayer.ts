@@ -4,12 +4,10 @@ import { Player } from "./player";
 export class CardGamePlayer extends Player {
     private cards: Card[];
     private hasDealerChip: boolean;
-    private bet: number;
 
     constructor(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number) {
-        super(playerId, username, displayname, balance);
+        super(playerId, username, displayname, balance, bet);
         this.hasDealerChip = hasDealerChip;
-        this.bet = bet;
         this.cards = [];
     }
 
@@ -25,16 +23,8 @@ export class CardGamePlayer extends Player {
         this.hasDealerChip = hasDealerChip;
     }
 
-    public getBet(): number {
-        return this.bet;
-    }
-
-    public setBet(bet: number): void {
-        this.bet = bet;
-    }
-
     public addCard(card: Card, playerId: string): void {
-        //TODO PlayerID
+        //nur mit dealCard aufrufen wegen id
         this.cards.push(card);
     }
 

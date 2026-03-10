@@ -15,6 +15,9 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private pokerDeck: PokerDeck;
     private pokerDeskCards: Card[];
+    private defaultbet: number = 0;
+    private pot = 0;
+    
 
     constructor() {
         super();
@@ -65,7 +68,25 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private playRound() {
+    protected resetBets() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            this.players[i].setBet(0);
+        }
+    }
+
+    protected setDeafaultBets() {
+        this.resetBets();
+        this.players[CardGamePlayer.playerWithDealerChip(this.players)].setBet(0);
+        this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet/2);
+        this.pot += this.defaultbet/2
+        if (this.players.length >= 3) {
+            this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].setBet(this.defaultbet);
+            this.pot += this.defaultbet
+        }
+    }
+
+
+    private playRound() {//pot resetten
         //betting
         //open 3 cards in the middle
         //betting

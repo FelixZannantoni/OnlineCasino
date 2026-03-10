@@ -1,17 +1,17 @@
-import { Card } from "../model";
-
 export class Player {
-    //auf private setzen
     private playerId: string;
     private username: string;
     private displayname: string;
-    private balance: number = 0;
+    private balance: number;
+    private bet: number;
 
-    constructor(playerId: string, username: string, displayname: string, balance: number) {
+
+    constructor(playerId: string, username: string, displayname: string, balance: number, bet: number) {
         this.playerId = playerId;
         this.username = username;
         this.displayname = displayname;
         this.balance = balance;
+        this.bet = bet;
     }
 
     public getPlayerId(): string {
@@ -24,6 +24,23 @@ export class Player {
 
     public getDisplayname(): string {
         return this.displayname;
+    }
+
+    public getBalance(): number {
+        return this.balance;
+    }
+
+
+    public getBet(): number {
+        return this.bet;
+    }
+
+    public setBet(bet: number): void {
+        if (bet > (this.getBalance())){
+            throw new Error(`No money`);
+        }
+        this.balance -= bet - this.bet
+        this.bet = bet;
     }
 
     public static xNextPlayer(players: Player[], i: number, x: number): number {
