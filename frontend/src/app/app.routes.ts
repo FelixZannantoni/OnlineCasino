@@ -14,7 +14,7 @@ import { Club } from './club/club';
 export const routes: Routes = [
     //{ path: "home", component: Home },
     //{ path: "login", component: Login },
-    //{ path: "forgot-password", component: ForgotPassword },
+    { path: "forgot-password", component: ForgotPassword },
     //{ path: "poker", component: Poker },
     { path: "club", component: Club },
     { path: "friends", component: Friends },

@@ -10,7 +10,7 @@ import { PLATFORM_ID } from '@angular/core';
   standalone: true,
   imports: [RouterLink, FormsModule, MatIconModule],
   templateUrl: './forgot-password.html',
-  styleUrls: ['./forgot-password.css']
+  styleUrls: ['./forgot-password.css']  
 })
 export class ForgotPassword { 
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
