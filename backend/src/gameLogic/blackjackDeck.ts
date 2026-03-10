@@ -1,5 +1,5 @@
-import {CardColor, CardName, DEALER_ID, Deck} from "./deck";
-import {Card} from "../model";
+import { CardColor, CardName, DEALER_ID, Deck } from "./deck";
+import { Card } from "../model";
 
 const blackjackCardValue: Map<CardName, number> = new Map([
     [CardName.two, 2],

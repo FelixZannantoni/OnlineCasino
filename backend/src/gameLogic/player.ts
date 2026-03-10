@@ -14,42 +14,33 @@ export class Player {
         this.balance = balance;
     }
 
-    public getPlayerId(): string
-    {
+    public getPlayerId(): string {
         return this.playerId;
     }
 
-    public getUsername(): string
-    {
+    public getUsername(): string {
         return this.username;
     }
 
-    public getDisplayname(): string
-    {
+    public getDisplayname(): string {
         return this.displayname;
     }
 
-    public static xNextPlayer(players: Player[], i: number,x: number): number
-    {
-        for(let j: number = 0; j < x; j++)
-        {
+    public static xNextPlayer(players: Player[], i: number, x: number): number {
+        for (let j: number = 0; j < x; j++) {
             i = this.nextPlayer(players, i);
         }
         return i;
     }
 
-    public static nextPlayer(players: Player[], i: number)
-    {
-        if(i <  players.length)
-        {
-             return i + 1;
+    public static nextPlayer(players: Player[], i: number) {
+        if (i < players.length) {
+            return i + 1;
         }
-        else if (i == players.length)
-        {
+        else if (i == players.length) {
             return 0;
         }
-        else
-        {
+        else {
             throw new Error(`Player not found`);
         }
     }

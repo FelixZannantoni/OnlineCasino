@@ -1,4 +1,4 @@
-import {Card} from "../model";
+import { Card } from "../model";
 
 export enum CardColor {
     HEARTS = "HEARTS",
@@ -25,19 +25,15 @@ export enum CardName {
 
 export const DEALER_ID: string = "Dealer";
 
-export class Deck{
+export class Deck {
     protected deck: Card[] = [];
-    constructor()
-    {
+    constructor() {
 
     }
 
-    protected shuffle(cardDeck: Card[])
-    {
-        for(let i: number = 0; i < 4; i++)
-        {
-            for(let j: number = 0; j < cardDeck.length; j++)
-            {
+    protected shuffle(cardDeck: Card[]) {
+        for (let i: number = 0; i < 4; i++) {
+            for (let j: number = 0; j < cardDeck.length; j++) {
                 const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
                 const temp: Card = cardDeck[j];
                 cardDeck[j] = cardDeck[randNum];
@@ -46,32 +42,26 @@ export class Deck{
         }
     }
 
-    public dealCard(cardDeck: Card[],id: string ): Card
-    {
+    public dealCard(cardDeck: Card[], id: string): Card {
         let b: boolean = true;
         let i = 0;
-        do
-        {
-            if(cardDeck[i].owner == DEALER_ID)
-            {
+        do {
+            if (cardDeck[i].owner == DEALER_ID) {
                 b = false;
             }
-            else
-            {
+            else {
                 i++;
-                if(i<cardDeck.length)
-                {
+                if (i < cardDeck.length) {
                     throw new Error(`Error: To few Cards. All Cards are already owned by Players`);
                     b = false;
                 }
             }
-        }while(b);
+        } while (b);
         cardDeck[i].owner = id;
         return cardDeck[i];
     }
 
-    public getDeck(): Card[]
-    {
+    public getDeck(): Card[] {
         const clonedCardDeck: Card[] = Array.from(this.deck);
         return clonedCardDeck;
     }

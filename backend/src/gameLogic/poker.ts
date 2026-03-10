@@ -1,6 +1,6 @@
 import { DEALER_ID } from "./deck";
 import { Player } from "./player";
-import {CardGame} from "./cardGame";
+import { CardGame } from "./cardGame";
 import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
 
@@ -10,29 +10,25 @@ export const POKER_CARDS_NUMBER: number = 5;
 export const POKER_DESK_ID: string = "PokerDesk";
 
 
-export class Poker extends CardGame
-{
+export class Poker extends CardGame {
     private pokerDeck: PokerDeck;
     private pokerDeskCards: Card[];
 
-    constructor()
-    {
+    constructor() {
         super();
         this.pokerDeck = new PokerDeck();
         this.pokerDeskCards = [];
         this.startGame();
     }
 
-    private startGame()
-    {
+    private startGame() {
         this.setDealerChip();
         this.handCardsOut();
         this.setDeafaultBets();
         this.playRound();
     }
 
-    private nextRound()
-    {
+    private nextRound() {
         this.resetCards();
         this.resetBets();
         //überprüfen ob pleite
@@ -41,39 +37,31 @@ export class Poker extends CardGame
         this.setDeafaultBets();
         this.playRound();
     }
-   
 
-    private handCardsOut()
-    {
-        for(let i:number = 0; i < PLAYER_CARDS_NUMBER; i++)
-        {
-            for(let j: number = 0; j < this.players.length; j++)
-            {
+
+    private handCardsOut() {
+        for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
+            for (let j: number = 0; j < this.players.length; j++) {
                 this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)]
                     .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()), this.players[j].getPlayerId());
             }
         }
-        
-        for(let i: number = 0; i < POKER_CARDS_NUMBER; i++)
-        {
-            this.pokerDeskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(),POKER_DESK_ID));
+
+        for (let i: number = 0; i < POKER_CARDS_NUMBER; i++) {
+            this.pokerDeskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), POKER_DESK_ID));
         }
     }
 
-    private resetCards()
-    {
-        for(let i: number = 0; i < this.pokerDeskCards.length; i++)
-        {
+    private resetCards() {
+        for (let i: number = 0; i < this.pokerDeskCards.length; i++) {
             this.pokerDeskCards[i].owner = DEALER_ID;
         }
-        for(const player of this.players)
-        {
+        for (const player of this.players) {
             player.clearHand();
         }
     }
 
-    private playRound()
-    {
+    private playRound() {
         //betting
         //open 3 cards in the middle
         //betting

@@ -1,5 +1,5 @@
-import {CardColor, CardName, DEALER_ID, Deck} from "./deck";
-import {Card} from "../model";
+import { CardColor, CardName, DEALER_ID, Deck } from "./deck";
+import { Card } from "../model";
 
 const pokerCardValue: Map<CardName, number> = new Map([
     [CardName.two, 2],
@@ -17,9 +17,8 @@ const pokerCardValue: Map<CardName, number> = new Map([
     [CardName.ace, 14]//oder 1 wegen straße
 ]);
 
-export class PokerDeck extends Deck{
-    constructor()
-    {
+export class PokerDeck extends Deck {
+    constructor() {
         super();
         this.pokerDeckInit();
     }
