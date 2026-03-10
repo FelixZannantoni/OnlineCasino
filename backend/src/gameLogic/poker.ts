@@ -3,19 +3,23 @@ import { Player } from "./player";
 import { CardGame } from "./cardGame";
 import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
+import { CardGamePlayer } from "./cardGamePlayer";
+import { PokerPlayer } from "./pokerPlayer";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const POKER_CARDS_NUMBER: number = 5;
 export const POKER_DESK_ID: string = "PokerDesk";
 
-
 export class Poker extends CardGame {
+
+    private players: PokerPlayer[];
     private pokerDeck: PokerDeck;
     private pokerDeskCards: Card[];
 
     constructor() {
         super();
+        this.players = [];
         this.pokerDeck = new PokerDeck();
         this.pokerDeskCards = [];
         this.startGame();
@@ -42,7 +46,7 @@ export class Poker extends CardGame {
     private handCardsOut() {
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             for (let j: number = 0; j < this.players.length; j++) {
-                this.players[Player.xNextPlayer(this.players, Player.playerWithDealerChip(this.players), j)]
+                this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
                     .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()), this.players[j].getPlayerId());
             }
         }

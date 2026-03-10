@@ -1,7 +1,7 @@
 import { Player } from "./player";
 
 export class Game {
-    protected players: Player[];
+    private players: Player[];
 
     constructor() {
         this.players = [];
