@@ -9,12 +9,14 @@ import { Navbar } from './navbar/navbar';
 import { ProfileOverlay } from './profile-overlay/profile-overlay';
 import { SettingsOverlay } from './settings-overlay/settings-overlay';
 import { Shop } from './shop/shop';
+import { Club } from './club/club';
 
 export const routes: Routes = [
     //{ path: "home", component: Home },
     //{ path: "login", component: Login },
     //{ path: "forgot-password", component: ForgotPassword },
     //{ path: "poker", component: Poker },
+    { path: "club", component: Club },
     { path: "friends", component: Friends },
     { path: "home", component: Home },
     { path: "leaderboard", component: Leaderboard },
