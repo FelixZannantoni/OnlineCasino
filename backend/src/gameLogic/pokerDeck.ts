@@ -1,6 +1,5 @@
-import {CardColor, CardName, DEALER_ID, Deck} from "./deck"
+import {CardColor, CardName, DEALER_ID, Deck} from "./deck";
 import {Card} from "../model";
-
 
 const pokerCardValue: Map<CardName, number> = new Map([
     [CardName.two, 2],
@@ -16,7 +15,7 @@ const pokerCardValue: Map<CardName, number> = new Map([
     [CardName.queen, 12],
     [CardName.king, 13],
     [CardName.ace, 14]//oder 1 wegen straße
-])
+]);
 
 export class PokerDeck extends Deck{
     constructor()
@@ -25,18 +24,16 @@ export class PokerDeck extends Deck{
         this.pokerDeckInit();
     }
 
-    private pokerDeckInit()
-    {
-        for(let color in CardColor)
-        {
-            for(let name of Object.values(CardName))
-            {
-                let card: Card = {
+    private pokerDeckInit(): void {
+        this.deck = [];
+        for (const color of Object.values(CardColor)) {
+            for (const name of Object.values(CardName)) {
+                const card: Card = {
                     name: CardName[name],
                     value: pokerCardValue.get(CardName[name])!,
                     color: CardColor[color],
                     owner: DEALER_ID
-                }
+                };
                 this.deck.push(card);
             }
         }

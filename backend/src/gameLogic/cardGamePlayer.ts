@@ -7,18 +7,26 @@ export class CardGamePlayer extends Player
     private hasDealerChip: boolean;
     private bet: number;
 
-    constructor(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number) {
-        super(playerId, username, displayname, balance)
+    constructor(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number) 
+    {
+        super(playerId, username, displayname, balance);
         this.hasDealerChip = hasDealerChip;
         this.bet = bet;
         this.cards = [];
     }
 
-    public getDealerChip(): boolean {
+    public getCards(): Card[]
+    {
+        return this.cards;
+    }
+
+    public getDealerChip(): boolean
+    {
         return this.hasDealerChip;
     }
 
-    public setDealerChip(hasDealerChip: boolean): void {
+    public setDealerChip(hasDealerChip: boolean): void
+    {
         this.hasDealerChip = hasDealerChip;
     }
 
@@ -31,8 +39,6 @@ export class CardGamePlayer extends Player
     {
         this.bet = bet;
     }
-
-
 
     public addCard(card: Card, playerId: string): void {
         //TODO PlayerID
@@ -54,5 +60,4 @@ export class CardGamePlayer extends Player
     public clearHand(): void {
         this.cards = [];
     }
-    
 }

@@ -1,10 +1,10 @@
 import {Card} from "../model";
 
 export enum CardColor {
-    HEARTS,
-    DIAMONDS,
-    CLUBS,
-    SPADES
+    HEARTS = "HEARTS",
+    DIAMONDS = "DIAMONDS",
+    CLUBS = "CLUBS",
+    SPADES = "SPADES"
 }
 
 export enum CardName {
@@ -22,13 +22,14 @@ export enum CardName {
     king = "king",
     ace = "ace"
 }
+
 export const DEALER_ID: string = "Dealer";
 
 export class Deck{
     protected deck: Card[] = [];
     constructor()
     {
-        
+
     }
 
     protected shuffle(cardDeck: Card[])
