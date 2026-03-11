@@ -1,0 +1,41 @@
+<div class="profile-overlay" [class.active]="isOpen">
+    <!-- Backdrop -->
+    <div class="overlay-backdrop" (click)="close()"></div>
+
+    <!-- Sidebar Menu -->
+    <div class="profile-menu">
+        <!-- Close Button -->
+        <button class="close-btn" (click)="close()" aria-label="Close menu">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img src="https://via.placeholder.com/100" alt="Profile Picture">
+            </div>
+            <h3 class="username">Benutzername</h3>
+            <p class="user-email">user@example.com</p>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="menu-items">
+            <a routerLink="/edit-profile" class="menu-item" (click)="close()">
+                <mat-icon class="menu-icon">account_circle</mat-icon>
+                <span>Edit Profile</span>
+            </a>
+
+            <a routerLink="/daily-reward" class="menu-item" (click)="close()">
+                <mat-icon class="menu-icon">card_giftcard</mat-icon>
+                <span>Daily Reward</span>
+            </a>
+
+        <!-- Logout at Bottom --> 
+        <div class="menu-footer">
+            <a routerLink="/login" class="menu-item logout" (click)="close()">
+                <mat-icon class="menu-icon">logout</mat-icon>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+</div>

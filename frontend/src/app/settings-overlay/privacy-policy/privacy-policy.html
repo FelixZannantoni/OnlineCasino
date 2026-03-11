@@ -1,0 +1,24 @@
+<div class="privacy-policy-content">
+    <h2>Privacy Policy</h2>
+    <p class="subtitle">Privacy policy of OnlineCasino</p>
+
+    <div class="privacy-list">
+        @for (section of sections; track section.title) {
+            <div class="privacy-item">
+                <div class="privacy-icon">
+                    <mat-icon>{{ section.icon }}</mat-icon>
+                </div>
+                <div class="privacy-text">
+                    <h3>{{ section.title }}</h3>
+                    <p>{{ section.content }}</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="contact-box">
+        <mat-icon>email</mat-icon>
+        <p>For privacy-related inquiries:</p>
+        <a href="mailto:privacy@onlinecasino.com">privacy@onlinecasino.com</a>
+    </div>
+</div>

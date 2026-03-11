@@ -1,0 +1,225 @@
+.poker-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a3a52 0%, #0a0a0a 100%);
+    padding: 20px;
+    position: relative;
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+}
+
+/* Top Bar */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-balance {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffd86e;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.player-balance mat-icon {
+    color: #d19e1d;
+    font-size: 1.8rem;
+    width: 1.8rem;
+    height: 1.8rem;
+}
+
+.top-icons button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-icons button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.top-icons mat-icon {
+    color: #fff;
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* Poker Table */
+.poker-table {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    height: 500px;
+    margin: 0 auto 30px;
+    background: linear-gradient(145deg, #2d5a3d 0%, #1e3d2f 100%);
+    border-radius: 200px;
+    border: 15px solid #3d2817;
+    box-shadow:
+        inset 0 0 100px rgba(0, 0, 0, 0.5),
+        0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Pot */
+.pot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -120%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: #ffd86e;
+    font-weight: 700;
+    z-index: 10;
+    border: 1px solid rgba(213, 158, 29, 0.3);
+}
+
+.pot mat-icon {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: #ffd86e;
+}
+
+.pot-amount {
+    font-size: 1.1rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 80px;
+}
+
+.action-buttons button {
+    padding: 15px 35px;
+    border: 2px solid #d19e1d;
+    border-radius: 25px;
+    background: transparent;
+    color: #ffd86e;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.action-buttons button:hover {
+    background: var(--primary-gold-gradient);
+    color: var(--text-gold-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(209, 158, 29, 0.4);
+    border-color: transparent;
+}
+
+.btn-fold:hover {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-color: #e74c3c;
+    color: white;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-check:hover {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border-color: #3498db;
+    color: white;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+/* Prettier Back Button */
+.back-home-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    padding: 12px 24px;
+    background: rgba(20, 20, 20, 0.8);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.back-home-btn mat-icon {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.back-home-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #d19e1d;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+.back-home-btn:hover mat-icon {
+    transform: translateX(-3px); /* Slides the arrow left on hover */
+    color: #ffd86e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .poker-table {
+        height: 400px;
+        border-radius: 150px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .action-buttons button {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .back-home-btn {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+    }
+    
+    .back-home-btn:hover {
+        transform: translateX(-50%) translateY(-3px);
+    }
+}

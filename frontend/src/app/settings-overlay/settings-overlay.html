@@ -1,0 +1,101 @@
+<div class="profile-overlay" [class.active]="isOpen">
+    <!-- Backdrop -->
+    <div class="overlay-backdrop" (click)="close()"></div>
+
+    <!-- Sidebar Menu -->
+    <div class="settings-menu">
+        <!-- Close Button -->
+        <button class="close-btn" (click)="close()" aria-label="Close menu">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <!-- Main Menu -->
+        @if (activeSection === 'menu') {
+            <ng-container>
+                <div class="menu-item" (click)="navigateTo('dev-team')">
+                    <mat-icon class="menu-icon">code</mat-icon>
+                    <span>Developer Team</span>
+                </div>
+
+                <div class="menu-item" (click)="navigateTo('privacy-policy')">
+                    <mat-icon class="menu-icon">privacy_tip</mat-icon>
+                    <span>Privacy Policy</span>
+                </div>
+
+                <div class="menu-item" (click)="navigateTo('support')">
+                    <mat-icon class="menu-icon">help_outline</mat-icon>
+                    <span>Support</span>
+                </div>
+
+                <div class="menu-item" (click)="navigateTo('terms')">
+                    <mat-icon class="menu-icon">description</mat-icon>
+                    <span>Terms of Service</span>
+                </div>
+
+                <!-- Language Toggle (UI Only - Not Functional Yet) -->
+                <div class="language-toggle">
+                    <mat-icon class="menu-icon">language</mat-icon>
+                    <div class="language-options">
+                        <button class="lang-btn active" disabled>
+                            <span class="lang-code">DE</span>
+                            <span class="lang-name">German</span>
+                        </button>
+                        <button class="lang-btn" disabled>
+                            <span class="lang-code">EN</span>
+                            <span class="lang-name">English</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Logout at Bottom -->
+                <div class="menu-footer">
+                    <a routerLink="/login" class="menu-item logout" (click)="close()">
+                        <mat-icon class="menu-icon">delete_forever</mat-icon>
+                        <span>Delete Account</span>
+                    </a>
+                </div>
+            </ng-container>
+        }
+
+        <!-- Sub Sections -->
+        @if (activeSection === 'dev-team') {
+            <div class="section-content">
+                <button class="back-button" (click)="navigateTo('menu')">
+                    <mat-icon>arrow_back</mat-icon>
+                    <span>Back</span>
+                </button>
+                <app-dev-team></app-dev-team>
+            </div>
+        }
+
+        @if (activeSection === 'support') {
+            <div class="section-content">
+                <button class="back-button" (click)="navigateTo('menu')">
+                    <mat-icon>arrow_back</mat-icon>
+                    <span>Back</span>
+                </button>
+                <app-support></app-support>
+            </div>
+        }
+
+        @if (activeSection === 'terms') {
+            <div class="section-content">
+                <button class="back-button" (click)="navigateTo('menu')">
+                    <mat-icon>arrow_back</mat-icon>
+                    <span>Back</span>
+                </button>
+                <app-terms></app-terms>
+            </div>
+        }
+
+        @if (activeSection === 'privacy-policy') {
+            <div class="section-content">
+                <button class="back-button" (click)="navigateTo('menu')">
+                    <mat-icon>arrow_back</mat-icon>
+                    <span>Back</span>
+                </button>
+                <app-privacy-policy></app-privacy-policy>
+            </div>
+        }
+    </div>
+</div>
