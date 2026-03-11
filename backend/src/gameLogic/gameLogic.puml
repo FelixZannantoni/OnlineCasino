@@ -1,0 +1,144 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface Card {
+  +name: CardName
+  +value: number
+  +color: CardColor
+  +owner: string
+}
+
+enum CardColor {
+  HEARTS
+  DIAMONDS
+  CLUBS
+  SPADES
+}
+
+enum CardName {
+  two
+  three
+  four
+  five
+  six
+  seven
+  eight
+  nine
+  ten
+  jack
+  queen
+  king
+  ace
+}
+
+class Game<T extends Player = Player> {
+  #players: T[]
+  +Game()
+  +addPlayer(player: T): void
+  +getPlayers(): T[]
+}
+
+class CardGame<T extends CardGamePlayer = CardGamePlayer> {
+  +CardGame()
+  #setDealerChip(): void
+  #updateDealerChip(): void
+}
+
+class Poker {
+  -pokerDeck: PokerDeck
+  -pokerDeskCards: Card[]
+  -defaultbet: number
+  -currentBet: number
+  -pot: number
+  +Poker()
+  -startGame(): void
+  -nextRound(): void
+  -handCardsOut(): void
+  -resetCards(): void
+  #resetBets(): void
+  #setDeafaultBets(): void
+  -makeMove(): void
+  -playRound(): void
+}
+
+class Blackjack {
+}
+
+class Player {
+  -playerId: string
+  -username: string
+  -displayname: string
+  -balance: number
+  -bet: number
+  +Player(playerId: string, username: string, \n  displayname: string, balance: number, bet: number)
+  +getPlayerId(): string
+  +getUsername(): string
+  +getDisplayname(): string
+  +getBalance(): number
+  +getBet(): number
+  +setBet(bet: number): void
+  {static} +xNextPlayer(players: Player[], i: number, x: number): number
+  {static} +nextPlayer(players: Player[], i: number): number
+}
+
+class CardGamePlayer {
+  -cards: Card[]
+  -hasDealerChip: boolean
+  +CardGamePlayer(playerId: string, username: string, \n  displayname: string, balance: number, \n  hasDealerChip: boolean, bet: number)
+  +getCards(): Card[]
+  +getDealerChip(): boolean
+  +setDealerChip(hasDealerChip: boolean): void
+  +addCard(card: Card, playerId: string): void
+  +clearHand(): void
+  {static} +playerWithDealerChip(players: CardGamePlayer[]): number
+}
+
+class PokerPlayer {
+  -pressedFold: boolean
+  -pressedCheck: boolean
+  -pressedBet: boolean
+  -pressedCall: boolean
+  -pressedRaise: boolean
+  +PokerPlayer(...)
+  +getPressedFold(): boolean
+  +getPressedCheck(): boolean
+  +getPressedBet(): boolean
+  +getPressedCall(): boolean
+  +getPressedRaise(): boolean
+}
+
+class Deck {
+  #deck: Card[]
+  +Deck()
+  #shuffle(cardDeck: Card[]): void
+  +dealCard(cardDeck: Card[], id: string): Card
+  +getDeck(): Card[]
+}
+
+class BlackjackDeck {
+  +BlackjackDeck()
+  -blackjackDeckInit(): void
+}
+
+class PokerDeck {
+  +PokerDeck()
+  -pokerDeckInit(): void
+}
+
+' Inheritance
+Game <|-- CardGame
+CardGame <|-- Poker
+CardGame <|-- Blackjack
+Deck <|-- BlackjackDeck
+Deck <|-- PokerDeck
+Player <|-- CardGamePlayer
+CardGamePlayer <|-- PokerPlayer
+
+' Associations
+Game o-- "many" Player : contains
+Poker *-- "many" Card : pokerDeskCards
+CardGamePlayer *-- "many" Card : cards
+Deck *-- "many" Card : deck
+Poker o-- "1" PokerDeck : uses
+
+@enduml

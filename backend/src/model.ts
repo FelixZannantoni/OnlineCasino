@@ -6,3 +6,10 @@ export type User = {
     streakCount: number,
     passwordHash: string
 }
+
+export type Card = {
+    name: string,
+    value: number;
+    color: string,
+    owner: string
+}
