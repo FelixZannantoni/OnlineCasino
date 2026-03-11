@@ -48,6 +48,7 @@ class Poker {
   -pokerDeck: PokerDeck
   -pokerDeskCards: Card[]
   -defaultbet: number
+  -currentBet: number
   -pot: number
   +Poker()
   -startGame(): void
@@ -56,6 +57,7 @@ class Poker {
   -resetCards(): void
   #resetBets(): void
   #setDeafaultBets(): void
+  -makeMove(): void
   -playRound(): void
 }
 
@@ -94,10 +96,15 @@ class CardGamePlayer {
 class PokerPlayer {
   -pressedFold: boolean
   -pressedCheck: boolean
-  -pressendBet: boolean
+  -pressedBet: boolean
   -pressedCall: boolean
   -pressedRaise: boolean
   +PokerPlayer(...)
+  +getPressedFold(): boolean
+  +getPressedCheck(): boolean
+  +getPressedBet(): boolean
+  +getPressedCall(): boolean
+  +getPressedRaise(): boolean
 }
 
 class Deck {

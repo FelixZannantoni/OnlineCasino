@@ -18,7 +18,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private defaultbet: number = 10;
     private currentBet: number;
     private pot: number;
-    
+
 
     constructor() {
         super();
@@ -82,8 +82,8 @@ export class Poker extends CardGame<PokerPlayer> {
     private setDeafaultBets() {
         this.resetBets();
         this.players[CardGamePlayer.playerWithDealerChip(this.players)].setBet(0);
-        this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet/2);
-        this.pot += this.defaultbet/2;
+        this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet / 2);
+        this.pot += this.defaultbet / 2;
         if (this.players.length >= 3) {
             this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].setBet(this.defaultbet);
             this.pot += this.defaultbet;
@@ -91,45 +91,36 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     private makeMove() {
-        for(let i: number = 0; i < this.players.length; i++)
-        {
+        for (let i: number = 0; i < this.players.length; i++) {
             const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
-            if(playerOnMove.getPressedFold() == true)
-            {
+            if (playerOnMove.getPressedFold() == true) {
                 //TODO leaf Round
             }
-            else if (playerOnMove.getPressedCheck() == true)
-            {
-                if(playerOnMove.getBet() == this.currentBet){
-                    
+            else if (playerOnMove.getPressedCheck() == true) {
+                if (playerOnMove.getBet() == this.currentBet) {
+
                 }
-                else{
+                else {
                     //TODO Error handling
                 }
             }
-            else if (playerOnMove.getPressedBet() == true)
-            {
+            else if (playerOnMove.getPressedBet() == true) {
                 //bet();
             }
-            else if (playerOnMove.getPressedCall() == true)
-            {
-                if(playerOnMove.getBet() < this.currentBet)
-                {
+            else if (playerOnMove.getPressedCall() == true) {
+                if (playerOnMove.getBet() < this.currentBet) {
                     playerOnMove.setBet(this.currentBet);
                     this.pot += this.currentBet - playerOnMove.getBet();
                 }
             }
-            else if (playerOnMove.getPressedRaise() == true)
-            {
-                if(playerOnMove.getBet() < this.currentBet)
-                {
+            else if (playerOnMove.getPressedRaise() == true) {
+                if (playerOnMove.getBet() < this.currentBet) {
                     playerOnMove.setBet(this.currentBet);
                     this.pot += this.currentBet - playerOnMove.getBet();
                 }
                 //bet();
             }
-            else
-            {
+            else {
                 //TODO Error Handling
             }
         }
@@ -139,11 +130,11 @@ export class Poker extends CardGame<PokerPlayer> {
     private playRound() {//TODO make move, reset bet, check winner auch wenn dafor aus, und allin
         this.makeMove();
         //open 3 cards in the middle
-        //betting
+        this.makeMove();
         //open one card
-        //betting
+        this.makeMove();
         //open one card
-        //betting
+        this.makeMove();
         //check winner
         //distribute profits
         this.nextRound();
