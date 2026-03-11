@@ -15,14 +15,17 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private pokerDeck: PokerDeck;
     private pokerDeskCards: Card[];
-    private defaultbet: number = 0;
-    private pot = 0;
+    private defaultbet: number = 10;
+    private currentBet: number;
+    private pot: number;
     
 
     constructor() {
         super();
         this.pokerDeck = new PokerDeck();
         this.pokerDeskCards = [];
+        this.pot = 0;
+        this.currentBet = this.defaultbet;
         this.startGame();
     }
 
@@ -36,13 +39,15 @@ export class Poker extends CardGame<PokerPlayer> {
     private nextRound() {
         this.resetCards();
         this.resetBets();
+        this.pot = 0;
         //überprüfen ob pleite
+
         this.updateDealerChip();
         this.handCardsOut();
         this.setDeafaultBets();
+
         this.playRound();
     }
-
 
     private handCardsOut() {
         if (this.players.length === 0) return;
@@ -68,25 +73,56 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    protected resetBets() {
+    private resetBets() {
         for (let i: number = 0; i < this.players.length; i++) {
             this.players[i].setBet(0);
         }
     }
 
-    protected setDeafaultBets() {
+    private setDeafaultBets() {
         this.resetBets();
         this.players[CardGamePlayer.playerWithDealerChip(this.players)].setBet(0);
         this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet/2);
-        this.pot += this.defaultbet/2
+        this.pot += this.defaultbet/2;
         if (this.players.length >= 3) {
             this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].setBet(this.defaultbet);
-            this.pot += this.defaultbet
+            this.pot += this.defaultbet;
+        }
+    }
+
+    private makeMove() {
+        for(let i: number = 0; i < this.players.length; i++)
+        {
+            const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+            if(playerOnMove.getPressedFold() == true)
+            {
+
+            }
+            else if (playerOnMove.getPressedCheck() == true)
+            {
+
+            }
+            else if (playerOnMove.getPressedBet() == true)
+            {
+
+            }
+            else if (playerOnMove.getPressedCall() == true)
+            {
+
+            }
+            else if (playerOnMove.getPressedRaise() == true)
+            {
+                
+            }
+            else
+            {
+
+            }
         }
     }
 
 
-    private playRound() {//pot resetten
+    private playRound() {//TODO make move, reset bet, check winner auch wenn dafor aus, und allin
         //betting
         //open 3 cards in the middle
         //betting
