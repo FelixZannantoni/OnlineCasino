@@ -40,7 +40,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.resetCards();
         this.resetBets();
         this.pot = 0;
-        //überprüfen ob pleite
+        //TODO überprüfen ob pleite
 
         this.updateDealerChip();
         this.handCardsOut();
@@ -96,34 +96,48 @@ export class Poker extends CardGame<PokerPlayer> {
             const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
             if(playerOnMove.getPressedFold() == true)
             {
-
+                //TODO leaf Round
             }
             else if (playerOnMove.getPressedCheck() == true)
             {
-
+                if(playerOnMove.getBet() == this.currentBet){
+                    
+                }
+                else{
+                    //TODO Error handling
+                }
             }
             else if (playerOnMove.getPressedBet() == true)
             {
-
+                //bet();
             }
             else if (playerOnMove.getPressedCall() == true)
             {
-
+                if(playerOnMove.getBet() < this.currentBet)
+                {
+                    playerOnMove.setBet(this.currentBet);
+                    this.pot += this.currentBet - playerOnMove.getBet();
+                }
             }
             else if (playerOnMove.getPressedRaise() == true)
             {
-                
+                if(playerOnMove.getBet() < this.currentBet)
+                {
+                    playerOnMove.setBet(this.currentBet);
+                    this.pot += this.currentBet - playerOnMove.getBet();
+                }
+                //bet();
             }
             else
             {
-
+                //TODO Error Handling
             }
         }
     }
 
 
     private playRound() {//TODO make move, reset bet, check winner auch wenn dafor aus, und allin
-        //betting
+        this.makeMove();
         //open 3 cards in the middle
         //betting
         //open one card
