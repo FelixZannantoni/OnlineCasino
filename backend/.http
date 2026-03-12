@@ -10,3 +10,18 @@ Content-Type: application/json
     "username": "Julian175",
     "password": "password123"
 }
+
+###
+
+POST {{baseUrl}}/poker/addPlayer
+Content-Type: application/json
+
+{
+    "playerId": "player1",
+    "username": "Julian175",
+    "displayname": "Julian175",
+    "balance": 1000,
+    "hasDealerChip": false,
+    "bet": 0,
+    "gameId": "game1"
+}

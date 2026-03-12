@@ -5,6 +5,7 @@ import "dotenv/config";
 import { DB } from "./data";
 import { userRouter } from "./router/user-router";
 import { loginRouter } from "./router/login-router";
+import { pokerRouter } from "./router/poker-router";
 
 const PORT = process.env.PORT;
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/users", userRouter);
 app.use("/login", loginRouter);
+app.use("/poker", pokerRouter);
 
 
 app.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
