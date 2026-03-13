@@ -1,3 +1,5 @@
+import { CardColor, CardName } from "./gameLogic/deck";
+
 export type User = {
     uuid: string,
     username: string,
@@ -8,8 +10,8 @@ export type User = {
 }
 
 export type Card = {
-    name: string,
+    name: CardName,
     value: number;
-    color: string,
+    color: CardColor,
     owner: string
 }

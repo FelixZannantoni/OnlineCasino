@@ -6,12 +6,12 @@ export class Player {
     private bet: number;
 
 
-    constructor(playerId: string, username: string, displayname: string, balance: number, bet: number) {
+    constructor(playerId: string, username: string, displayname: string, balance: number) {
         this.playerId = playerId;
         this.username = username;
         this.displayname = displayname;
         this.balance = balance;
-        this.bet = bet;
+        this.bet = 0;
     }
 
     public getPlayerId(): string {

@@ -5,9 +5,9 @@ export class CardGamePlayer extends Player {
     private cards: Card[];
     private hasDealerChip: boolean;
 
-    constructor(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number) {
-        super(playerId, username, displayname, balance, bet);
-        this.hasDealerChip = hasDealerChip;
+    constructor(playerId: string, username: string, displayname: string, balance: number) {
+        super(playerId, username, displayname, balance);
+        this.hasDealerChip = false;
         this.cards = [];
     }
 
