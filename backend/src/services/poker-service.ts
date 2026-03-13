@@ -30,7 +30,7 @@ export class PokerService {
         //let game: Poker = Poker.getGameById(gameId); // doesnt work for now because that function is not implemented yet, instead just use a placeholder game object
         let game: Poker = new Poker(); // placeholder game object
 
-        const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance, hasDealerChip, bet);
+        const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
         game.addPlayer(newPlayer);
     }
 }
