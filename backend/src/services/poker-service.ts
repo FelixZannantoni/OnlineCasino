@@ -33,7 +33,7 @@ export class PokerService {
         //let game: Poker = new Poker(); // placeholder game object
         if(!game) return;
 
-        const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance, hasDealerChip, bet);
+        const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
         game.addPlayer(newPlayer);
     }
 

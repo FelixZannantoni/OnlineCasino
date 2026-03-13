@@ -7,8 +7,8 @@ export class PokerPlayer extends CardGamePlayer {
     private pressedCall: boolean;
     private pressedRaise: boolean;
 
-    constructor(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number) {
-        super(playerId, username, displayname, balance, hasDealerChip, bet);
+    constructor(playerId: string, username: string, displayname: string, balance: number) {
+        super(playerId, username, displayname, balance);
         this.pressedFold = false;
         this.pressedCheck = false;
         this.pressedBet = false;
