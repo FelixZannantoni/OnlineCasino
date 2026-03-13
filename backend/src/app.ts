@@ -17,10 +17,10 @@ app.use("/users", userRouter);
 app.use("/login", loginRouter);
 app.use("/poker", pokerRouter);
 
-const pokerservice: PokerService = new PokerService();
-pokerservice.loadAllPokerGames();
-
 
 app.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
 
 DB.createDBConnection();
+
+const pokerservice: PokerService = new PokerService();
+pokerservice.loadAllPokerGames();

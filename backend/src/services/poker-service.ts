@@ -4,12 +4,15 @@ import { PokerPlayer } from "../gameLogic/pokerPlayer";
 import { DB } from "../data";
 
 export class PokerService {
-    pokerGames: Poker[] =  [];
+    static pokerGames: Poker[] =  [];
 
 
     async fold(playerId: string, gameId: string): Promise<boolean> {
         // get the game and player objects
-        let game: Poker | null = await this.getGameById(gameId);
+        console.log(`Looking for game(${gameId}) in: [${PokerService.pokerGames.length}]`)
+        const game = PokerService.pokerGames.find(g => g.getGameId());
+        console.log(game);
+        
         if(!game) return false;
 
         const player: PokerPlayer | undefined = game.getPlayers().find(p => p.getPlayerId() === playerId);
@@ -36,10 +39,7 @@ export class PokerService {
      */
     async addPlayer(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number, gameId: string): Promise<void> {
         // get the game object
-        let game: Poker | null = await this.getGameById(gameId);
-        // TODO look for game with ID
-        //game = this.pokerGames.find(g => g.)
-        //let game: Poker = new Poker(); // placeholder game object
+        const game = PokerService.pokerGames.find(g => g.getGameId());
         if(!game) return;
 
         const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
@@ -47,6 +47,8 @@ export class PokerService {
     }
 
     async loadAllPokerGames(): Promise<void> {
+        console.log("Loading games...");
+        
         try {
             const connection: Database = await DB.createDBConnection();
             const type = "POKER";
@@ -66,8 +68,8 @@ export class PokerService {
             }
 
             result.forEach(pokergameData => {
-                const poker = new Poker();
-                this.pokerGames.push(poker);
+                const poker = new Poker(pokergameData.gameId);
+                PokerService.pokerGames.push(poker);
             });
 
             return;
@@ -97,7 +99,7 @@ export class PokerService {
                 return null;
             }
 
-            const poker = new Poker();
+            const poker = new Poker(gameId);
             return poker;
         } catch(err) {
             console.error(`Something happened while trying to get the game with id ${gameId}: ${err}`);
