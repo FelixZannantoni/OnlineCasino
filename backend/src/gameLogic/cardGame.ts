@@ -4,8 +4,8 @@ import { CardGamePlayer } from "./cardGamePlayer";
 
 export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T> {
 
-    constructor() {
-        super();
+    constructor(gameId: string) {
+        super(gameId);
     }
 
     protected setDefaultDealerChip() {

@@ -20,8 +20,8 @@ export class Poker extends CardGame<PokerPlayer> {
     private pot: number;
 
 
-    constructor() {
-        super();
+    constructor(gameId: string) {
+        super(gameId);
         console.log("super");
         this.pokerDeck = new PokerDeck();
         console.log("pokerDeck");

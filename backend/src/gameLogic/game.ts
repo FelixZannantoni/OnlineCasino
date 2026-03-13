@@ -2,9 +2,16 @@ import { Player } from "./player";
 
 export class Game<T extends Player = Player> {
     protected players: T[];
+    private gameId: string;
 
-    constructor() {
+    constructor(gameId: string) {
         this.players = [];
+        this.gameId = gameId;
+    }
+
+    public getGameId()
+    {
+        return this.gameId;
     }
 
     public addPlayer(player: T): void {

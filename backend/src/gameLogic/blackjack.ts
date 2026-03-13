@@ -6,8 +6,8 @@ import { Deck } from "./deck";
 export class Blackjack extends CardGame {
     private blackjackDeck: BlackjackDeck;
 
-    constructor() {
-        super();
+    constructor(gameId: string) {
+        super(gameId);
         this.blackjackDeck = new BlackjackDeck();
         this.startGame();
     }
