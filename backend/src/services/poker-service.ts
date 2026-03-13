@@ -4,17 +4,24 @@ import { PokerPlayer } from "../gameLogic/pokerPlayer";
 import { DB } from "../data";
 
 export class PokerService {
-    async fold(playerId: string, gameId: string): Promise<void> {
+    pokerGames: Poker[] =  [];
+
+
+    async fold(playerId: string, gameId: string): Promise<boolean> {
         // get the game and player objects
-        //let game: Poker = Poker.getGameById(gameId); // doesnt work for now because that function is not implemented yet, instead just use a placeholder game object
-        let game: Poker = new Poker(); // placeholder game object
+        let game: Poker | null = await this.getGameById(gameId);
+        if(!game) return false;
+
         const player: PokerPlayer | undefined = game.getPlayers().find(p => p.getPlayerId() === playerId);
 
         if(!player) {
             console.error(`Player with the id ${playerId} was not found in game ${gameId}`);
-            return;
+            console.log(game.getPlayers());
+            
+            return false;
         }
         player.setPressedFold(true);
+        return true;
     }
 
     /**
@@ -29,12 +36,45 @@ export class PokerService {
      */
     async addPlayer(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number, gameId: string): Promise<void> {
         // get the game object
-        let game: Poker | null = await this.getGameById(gameId); // doesnt work for now because that function is not implemented yet, instead just use a placeholder game object
+        let game: Poker | null = await this.getGameById(gameId);
+        // TODO look for game with ID
+        //game = this.pokerGames.find(g => g.)
         //let game: Poker = new Poker(); // placeholder game object
         if(!game) return;
 
         const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
         game.addPlayer(newPlayer);
+    }
+
+    async loadAllPokerGames(): Promise<void> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+            const type = "POKER";
+
+            type GameRow = {
+                gameId: string;
+                type: string;
+            };
+
+            const result = connection.prepare<[string], GameRow>("SELECT * FROM games WHERE type = ?")
+                .all(type);
+        
+            await connection.close();
+
+            if(!result) {
+                throw new Error("FAIL");
+            }
+
+            result.forEach(pokergameData => {
+                const poker = new Poker();
+                this.pokerGames.push(poker);
+            });
+
+            return;
+        } catch(err) {
+            console.error(`Something happened while trying to get all games from the db: ${err}`);
+            return;
+        }
     }
 
     async getGameById(gameId: string): Promise<Poker | null> {

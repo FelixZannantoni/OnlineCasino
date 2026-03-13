@@ -6,6 +6,7 @@ import { DB } from "./data";
 import { userRouter } from "./router/user-router";
 import { loginRouter } from "./router/login-router";
 import { pokerRouter } from "./router/poker-router";
+import { PokerService } from "./services/poker-service";
 
 const PORT = process.env.PORT;
 
@@ -15,6 +16,9 @@ app.use(express.json());
 app.use("/users", userRouter);
 app.use("/login", loginRouter);
 app.use("/poker", pokerRouter);
+
+const pokerservice: PokerService = new PokerService();
+pokerservice.loadAllPokerGames();
 
 
 app.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
