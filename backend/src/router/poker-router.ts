@@ -14,6 +14,8 @@ pokerRouter.post("/addPlayer", async (req: Request, res: Response) => {
 
     const service: PokerService = new PokerService();
     await service.addPlayer(playerId, username, displayname, balance, hasDealerChip, bet, gameId);
+
+    res.status(StatusCodes.OK).json({ message: "Added Player to pokergame" });
 });
 
 // route for pressing fold
@@ -26,7 +28,13 @@ pokerRouter.put("/fold", async (req: Request, res: Response) => {
 
     const service: PokerService = new PokerService();
 
-    await service.fold(playerId, gameId);
+    const result = await service.fold(playerId, gameId);
 
-    res.status(StatusCodes.OK).json({ message: "Fold action received" });
+    if(result) {
+        res.status(StatusCodes.OK).json({ message: "Fold action received" });
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ message: "Invalid game-ID or player-ID" });
+    }
+
+    
 });

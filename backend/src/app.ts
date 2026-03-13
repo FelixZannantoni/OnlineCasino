@@ -6,6 +6,7 @@ import { DB } from "./data";
 import { userRouter } from "./router/user-router";
 import { loginRouter } from "./router/login-router";
 import { pokerRouter } from "./router/poker-router";
+import { PokerService } from "./services/poker-service";
 
 const PORT = process.env.PORT;
 
@@ -20,3 +21,6 @@ app.use("/poker", pokerRouter);
 app.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
 
 DB.createDBConnection();
+
+const pokerservice: PokerService = new PokerService();
+pokerservice.loadAllPokerGames();

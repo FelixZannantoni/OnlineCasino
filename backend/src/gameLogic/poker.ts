@@ -20,17 +20,23 @@ export class Poker extends CardGame<PokerPlayer> {
     private pot: number;
 
 
-    constructor() {
-        super();
+    constructor(gameId: string) {
+        super(gameId);
+        console.log("super");
         this.pokerDeck = new PokerDeck();
+        console.log("pokerDeck");
         this.pokerDeskCards = [];
+        console.log("pokerDeckCards");
         this.pot = 0;
+        console.log("pot");
         this.currentBet = this.defaultbet;
-        this.startGame();
+        console.log("currentBet");
     }
 
-    private startGame() {
-        this.setDealerChip();
+    public startGame() {
+        console.log("startGame2");
+        this.setDefaultDealerChip();
+        console.log("setDealerChip");
         this.handCardsOut();
         this.setDeafaultBets();
         this.playRound();

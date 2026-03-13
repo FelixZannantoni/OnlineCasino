@@ -4,12 +4,14 @@ import { CardGamePlayer } from "./cardGamePlayer";
 
 export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T> {
 
-    constructor() {
-        super();
+    constructor(gameId: string) {
+        super(gameId);
     }
 
-    protected setDealerChip() {
+    protected setDefaultDealerChip() {
+        console.log("in set deafault dealerchip");
         this.players[Math.floor(Math.random() * this.players.length) + 1].setDealerChip(true);
+        console.log("sucesfully set dealerchipt");
     }
 
     protected updateDealerChip() {
