@@ -4,7 +4,6 @@ import { StatusCodes } from "http-status-codes";
 import "dotenv/config";
 import { DB } from "./data";
 import { userRouter } from "./router/user-router";
-import { loginRouter } from "./router/login-router";
 import { pokerRouter } from "./router/poker-router";
 import { PokerService } from "./services/poker-service";
 
@@ -14,7 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/users", userRouter);
-app.use("/login", loginRouter);
 app.use("/poker", pokerRouter);
 
 
