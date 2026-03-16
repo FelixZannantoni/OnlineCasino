@@ -111,7 +111,11 @@ export class Poker extends CardGame<PokerPlayer> {
                 }
             }
             else if (playerOnMove.getPressedBet() == true) {
-                //bet();
+                const bet: number = 0;
+                //server.getBet
+                playerOnMove.setBet(bet)
+                this.currentBet += bet;
+                this.pot += bet;
             }
             else if (playerOnMove.getPressedCall() == true) {
                 if (playerOnMove.getBet() < this.currentBet) {
@@ -124,7 +128,11 @@ export class Poker extends CardGame<PokerPlayer> {
                     playerOnMove.setBet(this.currentBet);
                     this.pot += this.currentBet - playerOnMove.getBet();
                 }
-                //bet();
+                const bet: number = 0;
+                //server.getBet
+                playerOnMove.setBet(bet)
+                this.currentBet += bet;
+                this.pot += bet;
             }
             else {
                 //TODO Error Handling
