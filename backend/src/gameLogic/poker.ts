@@ -22,31 +22,25 @@ export class Poker extends CardGame<PokerPlayer> {
 
     constructor(gameId: string) {
         super(gameId);
-        console.log("super");
         this.pokerDeck = new PokerDeck();
-        console.log("pokerDeck");
         this.pokerDeskCards = [];
-        console.log("pokerDeckCards");
         this.pot = 0;
-        console.log("pot");
         this.currentBet = this.defaultbet;
-        console.log("currentBet");
     }
 
     public startGame() {
-        console.log("startGame2");
         this.setDefaultDealerChip();
-        console.log("setDealerChip");
         this.handCardsOut();
         this.setDeafaultBets();
         this.playRound();
     }
 
     private nextRound() {
+        //TODO überprüfen ob pleite
         this.resetCards();
         this.resetBets();
         this.pot = 0;
-        //TODO überprüfen ob pleite
+        this.currentBet = this.defaultbet;
 
         this.updateDealerChip();
         this.handCardsOut();
@@ -140,15 +134,65 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
+    private checkWinner(){
+        for(let i: number = 0; i < this.players.length; i++)
+        {
+            let cards: Card[] = [];
+            cards.push(this.players[i].getCards());
+            cards.push(this.pokerDeskCards);
+        }
+    }
 
-    private playRound() {//TODO make move, reset bet, check winner auch wenn dafor aus, und allin
+    private hasRoyalFlush(){
+
+    }
+
+    private hasStraightFlush(){
+
+    }
+
+    private hasQuadruple(){
+
+    }
+
+    private hasFullHouse(){
+
+    }
+
+    private hasFlush()
+    {
+
+    }
+
+    private hasStraight(){
+
+    }
+
+    private hasTripple(){
+
+    }
+
+    private hasPair(){
+
+    }
+
+    private hasHighCard()
+    {
+
+    }
+
+
+    private playRound() {//TODO check winner auch wenn dafor aus, und allin
         this.makeMove();
+        this.currentBet = this.defaultbet;
         this.pokerDeskCards[0].visibility = CardVisibility.all;
         this.pokerDeskCards[1].visibility = CardVisibility.all;
         this.pokerDeskCards[2].visibility = CardVisibility.all;
         this.makeMove();
+        this.currentBet = this.defaultbet;
         this.pokerDeskCards[3].visibility = CardVisibility.all;
         this.makeMove();
+        this.currentBet = this.defaultbet;
         this.pokerDeskCards[4].visibility = CardVisibility.all;
         this.makeMove();
         //check winner
