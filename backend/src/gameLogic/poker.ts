@@ -1,4 +1,4 @@
-import { DEALER_ID } from "./deck";
+import { CardVisibility, DEALER_ID } from "./deck";
 import { Player } from "./player";
 import { CardGame } from "./cardGame";
 import { PokerDeck } from "./pokerDeck";
@@ -135,11 +135,13 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private playRound() {//TODO make move, reset bet, check winner auch wenn dafor aus, und allin
         this.makeMove();
-        //open 3 cards in the middle
+        this.pokerDeskCards[0].visibility = CardVisibility.all;
+        this.pokerDeskCards[1].visibility = CardVisibility.all;
+        this.pokerDeskCards[2].visibility = CardVisibility.all;
         this.makeMove();
-        //open one card
+        this.pokerDeskCards[3].visibility = CardVisibility.all;
         this.makeMove();
-        //open one card
+        this.pokerDeskCards[4].visibility = CardVisibility.all;
         this.makeMove();
         //check winner
         //distribute profits
