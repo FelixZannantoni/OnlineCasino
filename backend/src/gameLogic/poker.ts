@@ -137,50 +137,9 @@ export class Poker extends CardGame<PokerPlayer> {
     private checkWinner(){
         for(let i: number = 0; i < this.players.length; i++)
         {
-            let cards: Card[] = [];
-            cards.push(this.players[i].getCards());
-            cards.push(this.pokerDeskCards);
+            let cards: Card[] = [...this.pokerDeskCards, ...this.players[i].getCards() ];
         }
     }
-
-    private hasRoyalFlush(){
-
-    }
-
-    private hasStraightFlush(){
-
-    }
-
-    private hasQuadruple(){
-
-    }
-
-    private hasFullHouse(){
-
-    }
-
-    private hasFlush()
-    {
-
-    }
-
-    private hasStraight(){
-
-    }
-
-    private hasTripple(){
-
-    }
-
-    private hasPair(){
-
-    }
-
-    private hasHighCard()
-    {
-
-    }
-
 
     private playRound() {//TODO check winner auch wenn dafor aus, und allin
         this.makeMove();

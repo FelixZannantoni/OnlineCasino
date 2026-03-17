@@ -1,3 +1,4 @@
+import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 
 export class PokerPlayer extends CardGamePlayer {
@@ -6,6 +7,7 @@ export class PokerPlayer extends CardGamePlayer {
     private pressedBet: boolean;
     private pressedCall: boolean;
     private pressedRaise: boolean;
+    private handValue: number;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
@@ -14,6 +16,7 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedBet = false;
         this.pressedCall = false;
         this.pressedRaise = false;
+        this.handValue = 0;
     }
 
     public getPressedFold(): boolean {
@@ -68,4 +71,83 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedCall = false;
         this.pressedRaise = false;
     }
+
+    //TODO genauer machen mit meheren
+    private checkHand(cards: Card[]): number
+    {
+        if(this.hasRoyalFlush(cards))
+        {
+            return 9;
+        }
+        else if(this.hasStraightFlush(cards))
+        {
+            return 8;
+        }
+        else if(this.hasQuadruple(cards))
+        {
+            return 7;
+        }
+        else if(this.hasFullHouse(cards))
+        {
+            return 6;
+        }
+        else if(this.hasFlush(cards))
+        {
+            return 5;
+        }
+        else if(this.hasStraight(cards))
+        {
+            return 4;
+        }
+        else if(this.hasTripple(cards))
+        {
+            return 3;
+        }
+        else if(this.hasPair(cards))
+        {
+            return 2;
+        }
+        else if(this.hasHighCard(cards))
+        {
+            return 1;
+        }
+        return -1;
+    }
+
+    private hasRoyalFlush(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasStraightFlush(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasQuadruple(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasFullHouse(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasFlush(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasStraight(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasTripple(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasPair(cards: Card[]): boolean {
+        return true;
+    }
+
+    private hasHighCard(cards: Card[]): boolean {
+        return true;
+    }
+
 }
