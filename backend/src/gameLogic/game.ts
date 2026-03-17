@@ -9,8 +9,7 @@ export class Game<T extends Player = Player> {
         this.gameId = gameId;
     }
 
-    public getGameId()
-    {
+    public getGameId() {
         return this.gameId;
     }
 
