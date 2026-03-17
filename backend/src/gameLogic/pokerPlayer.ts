@@ -72,43 +72,33 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedRaise = false;
     }
 
-    //TODO genauer machen mit meheren
-    private checkHand(cards: Card[]): number
-    {
-        if(this.hasRoyalFlush(cards))
-        {
+    //TODO genauer machen mit meheren (number[]))
+    private checkHand(cards: Card[]): number {
+        if (this.hasRoyalFlush(cards)) {
             return 9;
         }
-        else if(this.hasStraightFlush(cards))
-        {
+        else if (this.hasStraightFlush(cards)) {
             return 8;
         }
-        else if(this.hasQuadruple(cards))
-        {
+        else if (this.hasQuadruple(cards)) {
             return 7;
         }
-        else if(this.hasFullHouse(cards))
-        {
+        else if (this.hasFullHouse(cards)) {
             return 6;
         }
-        else if(this.hasFlush(cards))
-        {
+        else if (this.hasFlush(cards)) {
             return 5;
         }
-        else if(this.hasStraight(cards))
-        {
+        else if (this.hasStraight(cards)) {
             return 4;
         }
-        else if(this.hasTripple(cards))
-        {
+        else if (this.hasTripple(cards)) {
             return 3;
         }
-        else if(this.hasPair(cards))
-        {
+        else if (this.hasPair(cards)) {
             return 2;
         }
-        else if(this.hasHighCard(cards))
-        {
+        else if (this.hasHighCard(cards)) {
             return 1;
         }
         return -1;
@@ -123,7 +113,23 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasQuadruple(cards: Card[]): boolean {
-        return true;
+        for(let i: number = 0; i < cards.length; i++)
+        {
+            for(let j: number = i; j < cards.length; j++)
+            {
+                for(let k: number = j; k < cards.length; k++)
+                {
+                    for(let l: number = k; l < cards.length; l++)
+                    {
+                        if(cards[i].value == cards[j].value && cards[j].value == cards[k].value && cards[k].value == cards[l].value)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private hasFullHouse(cards: Card[]): boolean {
@@ -139,15 +145,36 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasTripple(cards: Card[]): boolean {
-        return true;
+        for(let i: number = 0; i < cards.length; i++)
+        {
+            for(let j: number = i; j < cards.length; j++)
+            {
+                for(let k: number = j; k < cards.length; k++)
+                {
+                    if(cards[i].value == cards[j].value && cards[j].value == cards[k].value)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private hasPair(cards: Card[]): boolean {
-        return true;
+        for(let i: number = 0; i < cards.length; i++)
+        {
+            for(let j: number = i; j <cards.length; j++)
+            {
+                if(cards[i].value == cards[j].value)
+                    return true;
+            }
+        }
+        return false;
     }
 
+    //unnötig
     private hasHighCard(cards: Card[]): boolean {
-        return true;
+       return true;
     }
-
 }

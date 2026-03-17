@@ -134,10 +134,9 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private checkWinner(){
-        for(let i: number = 0; i < this.players.length; i++)
-        {
-            let cards: Card[] = [...this.pokerDeskCards, ...this.players[i].getCards() ];
+    private checkWinner() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            let cards: Card[] = [...this.players[i].getCards(), ...this.pokerDeskCards];
         }
     }
 
