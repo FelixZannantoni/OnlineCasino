@@ -113,16 +113,11 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasQuadruple(cards: Card[]): boolean {
-        for(let i: number = 0; i < cards.length; i++)
-        {
-            for(let j: number = i; j < cards.length; j++)
-            {
-                for(let k: number = j; k < cards.length; k++)
-                {
-                    for(let l: number = k; l < cards.length; l++)
-                    {
-                        if(cards[i].value == cards[j].value && cards[j].value == cards[k].value && cards[k].value == cards[l].value)
-                        {
+        for (let i: number = 0; i < cards.length; i++) {
+            for (let j: number = i; j < cards.length; j++) {
+                for (let k: number = j; k < cards.length; k++) {
+                    for (let l: number = k; l < cards.length; l++) {
+                        if (cards[i].value == cards[j].value && cards[j].value == cards[k].value && cards[k].value == cards[l].value) {
                             return true;
                         }
                     }
@@ -137,7 +132,20 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasFlush(cards: Card[]): boolean {
-        return true;
+        for (let i: number = 0; i < cards.length; i++) {
+            for (let j: number = i; j < cards.length; j++) {
+                for (let k: number = j; k < cards.length; k++) {
+                    for (let l: number = k; l < cards.length; l++) {
+                        for (let m: number = l; m < cards.length; m++) {
+                            if (cards[i].color == cards[j].color && cards[j].color == cards[k].color && cards[k].color == cards[l].color && cards[l].color == cards[m].color) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private hasStraight(cards: Card[]): boolean {
@@ -145,14 +153,10 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasTripple(cards: Card[]): boolean {
-        for(let i: number = 0; i < cards.length; i++)
-        {
-            for(let j: number = i; j < cards.length; j++)
-            {
-                for(let k: number = j; k < cards.length; k++)
-                {
-                    if(cards[i].value == cards[j].value && cards[j].value == cards[k].value)
-                    {
+        for (let i: number = 0; i < cards.length; i++) {
+            for (let j: number = i; j < cards.length; j++) {
+                for (let k: number = j; k < cards.length; k++) {
+                    if (cards[i].value == cards[j].value && cards[j].value == cards[k].value) {
                         return true;
                     }
                 }
@@ -162,11 +166,9 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasPair(cards: Card[]): boolean {
-        for(let i: number = 0; i < cards.length; i++)
-        {
-            for(let j: number = i; j <cards.length; j++)
-            {
-                if(cards[i].value == cards[j].value)
+        for (let i: number = 0; i < cards.length; i++) {
+            for (let j: number = i; j < cards.length; j++) {
+                if (cards[i].value == cards[j].value)
                     return true;
             }
         }
@@ -175,6 +177,6 @@ export class PokerPlayer extends CardGamePlayer {
 
     //unnötig
     private hasHighCard(cards: Card[]): boolean {
-       return true;
+        return true;
     }
 }
