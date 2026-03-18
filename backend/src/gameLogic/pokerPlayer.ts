@@ -77,7 +77,6 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedRaise = false;
     }
 
-    //TODO genauer machen mit meheren (number[]))
     public checkHand(cards: Card[]) {
         if (this.hasRoyalFlush(cards)) {
             this.handValue = [9,0,0];
@@ -103,10 +102,9 @@ export class PokerPlayer extends CardGamePlayer {
         else if (this.hasPair(cards)) {
             this.handValue = [2,0,0];
         }
-        else if (this.hasHighCard(cards)) {
+        else {
             this.handValue = [1,0,0];
         }
-        return -1;
     }
 
     private hasRoyalFlush(cards: Card[]): boolean {
@@ -176,10 +174,5 @@ export class PokerPlayer extends CardGamePlayer {
             }
         }
         return false;
-    }
-
-    //unnötig
-    private hasHighCard(cards: Card[]): boolean {
-        return true;
     }
 }

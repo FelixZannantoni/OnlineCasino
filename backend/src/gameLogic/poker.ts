@@ -106,7 +106,7 @@ export class Poker extends CardGame<PokerPlayer> {
             }
             else if (playerOnMove.getPressedBet() == true) {
                 const bet: number = 0;
-                //server.getBet
+                //TODO server.getBet
                 playerOnMove.setBet(bet)
                 this.currentBet += bet;
                 this.pot += bet;
@@ -123,7 +123,7 @@ export class Poker extends CardGame<PokerPlayer> {
                     this.pot += this.currentBet - playerOnMove.getBet();
                 }
                 const bet: number = 0;
-                //server.getBet
+                //TODO server.getBet
                 playerOnMove.setBet(bet)
                 this.currentBet += bet;
                 this.pot += bet;
@@ -134,28 +134,31 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private checkWinner() {//in checkHand und dann jede runde
+    private checkHands() {//in checkHand und dann jede runde
         for (let i: number = 0; i < this.players.length; i++) {
-            let cards: Card[] = [...this.players[i].getCards(), ...this.pokerDeskCards];
+            let cards: Card[] = [...this.players[i].getCards(), ...this.pokerDeskCards];//TODO nur karten die visible sind
             this.players[i].checkHand(cards);
         }
     }
 
-    private playRound() {//TODO check winner auch wenn dafor aus, und allin
+    private playRound() {//TODO dafor aus, und allin
         this.makeMove();
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[0].visibility = CardVisibility.all;
         this.pokerDeskCards[1].visibility = CardVisibility.all;
         this.pokerDeskCards[2].visibility = CardVisibility.all;
+        this.checkHands();
         this.makeMove();
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[3].visibility = CardVisibility.all;
+        this.checkHands();
         this.makeMove();
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[4].visibility = CardVisibility.all;
+        this.checkHands();
         this.makeMove();
-        this.checkWinner();
-        //distribute profits
+        //TODO check winner
+        //TODO distribute profits
         this.nextRound();
     }
 }
