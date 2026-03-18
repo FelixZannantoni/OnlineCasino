@@ -134,9 +134,10 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private checkWinner() {
+    private checkWinner() {//in checkHand und dann jede runde
         for (let i: number = 0; i < this.players.length; i++) {
             let cards: Card[] = [...this.players[i].getCards(), ...this.pokerDeskCards];
+            this.players[i].checkHand(cards);
         }
     }
 
@@ -153,7 +154,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[4].visibility = CardVisibility.all;
         this.makeMove();
-        //check winner
+        this.checkWinner();
         //distribute profits
         this.nextRound();
     }

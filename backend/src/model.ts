@@ -9,7 +9,7 @@ export type User = {
     passwordHash: string
 }
 
-export type Card = {
+export type Card = {//TODO number und value
     name: CardName,
     value: number;
     color: CardColor,

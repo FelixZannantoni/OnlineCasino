@@ -1,13 +1,18 @@
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 
+
+export const MIN_CARDS_FOR_FLUSH = 5;
+export const MIN_CARDS_FOR_Quadruple = 4;
+
+
 export class PokerPlayer extends CardGamePlayer {
     private pressedFold: boolean;
     private pressedCheck: boolean;
     private pressedBet: boolean;
     private pressedCall: boolean;
     private pressedRaise: boolean;
-    private handValue: number;
+    private handValue: number[];
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
@@ -16,7 +21,7 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedBet = false;
         this.pressedCall = false;
         this.pressedRaise = false;
-        this.handValue = 0;
+        this.handValue = [0, 0, 0];
     }
 
     public getPressedFold(): boolean {
@@ -64,7 +69,7 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedRaise = pressedRaise;
     }
 
-    public resetActions(): void {
+    private resetActions(): void {
         this.pressedFold = false;
         this.pressedCheck = false;
         this.pressedBet = false;
@@ -73,7 +78,7 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     //TODO genauer machen mit meheren (number[]))
-    private checkHand(cards: Card[]): number {
+    public checkHand(cards: Card[]) {
         if (this.hasRoyalFlush(cards)) {
             return 9;
         }
@@ -113,15 +118,15 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasQuadruple(cards: Card[]): boolean {
-        for (let i: number = 0; i < cards.length; i++) {
+  for (let i: number = 0; i < cards.length - MIN_CARDS_FOR_Quadruple; i++) {
+            let count: number = 0;
             for (let j: number = i; j < cards.length; j++) {
-                for (let k: number = j; k < cards.length; k++) {
-                    for (let l: number = k; l < cards.length; l++) {
-                        if (cards[i].value == cards[j].value && cards[j].value == cards[k].value && cards[k].value == cards[l].value) {
-                            return true;
-                        }
-                    }
+                if (cards[i].value == cards[j].value) {
+                    count++;
                 }
+            }
+            if (count >= 4) {
+                return true;
             }
         }
         return false;
@@ -132,17 +137,15 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasFlush(cards: Card[]): boolean {
-        for (let i: number = 0; i < cards.length; i++) {
+        for (let i: number = 0; i < cards.length - MIN_CARDS_FOR_FLUSH; i++) {
+            let count: number = 0;
             for (let j: number = i; j < cards.length; j++) {
-                for (let k: number = j; k < cards.length; k++) {
-                    for (let l: number = k; l < cards.length; l++) {
-                        for (let m: number = l; m < cards.length; m++) {
-                            if (cards[i].color == cards[j].color && cards[j].color == cards[k].color && cards[k].color == cards[l].color && cards[l].color == cards[m].color) {
-                                return true;
-                            }
-                        }
-                    }
+                if (cards[i].color == cards[j].color) {
+                    count++;
                 }
+            }
+            if (count >= 5) {
+                return true;
             }
         }
         return false;
@@ -166,8 +169,8 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasPair(cards: Card[]): boolean {
-        for (let i: number = 0; i < cards.length; i++) {
-            for (let j: number = i; j < cards.length; j++) {
+        for (let i: number = 0; i < cards.length - 1; i++) {
+            for (let j: number = i + 1; j < cards.length; j++) {
                 if (cards[i].value == cards[j].value)
                     return true;
             }

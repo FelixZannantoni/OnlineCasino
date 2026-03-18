@@ -37,7 +37,7 @@ export class Player {
 
     public setBet(bet: number): void {
         if ((bet - this.bet) > (this.getBalance())) {
-            throw new Error(`No money`);
+            throw new Error(`Not enogh money`);
         }
         this.balance -= bet - this.bet
         this.bet = bet;
@@ -60,5 +60,14 @@ export class Player {
         else {
             throw new Error(`Player not found`);
         }
+    }
+
+    public isOutOfMoney(): boolean
+    {
+        if(this.balance==0)
+        {
+            return true;
+        }
+        return false;
     }
 }
