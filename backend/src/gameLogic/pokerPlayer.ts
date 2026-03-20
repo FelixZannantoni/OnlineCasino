@@ -4,6 +4,12 @@ import { CardGamePlayer } from "./cardGamePlayer";
 
 export const MIN_CARDS_FOR_FLUSH = 5;
 export const MIN_CARDS_FOR_Quadruple = 4;
+export const PAIR_VALUE = 2;
+export const TRIPPLE_VALUE = 3;
+
+
+export const FLUSH_VALUE = 5;
+
 
 
 export class PokerPlayer extends CardGamePlayer {
@@ -137,12 +143,15 @@ export class PokerPlayer extends CardGamePlayer {
     private hasFlush(cards: Card[]): boolean {
         for (let i: number = 0; i < cards.length - MIN_CARDS_FOR_FLUSH; i++) {
             let count: number = 0;
+            let sum: number = 0;
             for (let j: number = i; j < cards.length; j++) {
                 if (cards[i].color == cards[j].color) {
                     count++;
+                    sum += cards[j].value;
                 }
             }
             if (count >= 5) {
+                this.handValue = [FLUSH_VALUE,sum,0];//TODO geht nur wenn count 5 ist
                 return true;
             }
         }
@@ -158,6 +167,7 @@ export class PokerPlayer extends CardGamePlayer {
             for (let j: number = i + 1; j < cards.length - 1; j++) {
                 for (let k: number = j + 1; k < cards.length; k++) {
                     if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
+                        this.handValue = [TRIPPLE_VALUE,cards[i].value,0];
                         return true;
                     }
                 }
@@ -170,9 +180,18 @@ export class PokerPlayer extends CardGamePlayer {
         for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name)
+                {
+                    this.handValue = [PAIR_VALUE,cards[i].value,0];
                     return true;
+                }
+
             }
         }
         return false;
+    }
+
+    private getHighestCard(): number
+    {
+        return -1;
     }
 }
