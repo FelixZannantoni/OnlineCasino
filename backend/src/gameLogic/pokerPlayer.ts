@@ -6,10 +6,12 @@ export const MIN_CARDS_FOR_FLUSH = 5;
 export const MIN_CARDS_FOR_Quadruple = 4;
 export const PAIR_VALUE = 2;
 export const TRIPPLE_VALUE = 3;
-
-
+export const STRAIGHT_VALUE = 4;
 export const FLUSH_VALUE = 5;
-
+export const FULLHOUSE_VALUE = 6;
+export const QUADRUPLE_VALUE = 7;
+export const STRAIGHTFLUSH_VALUE = 8;
+export const ROYALFLUSH_VALUE = 9;
 
 
 export class PokerPlayer extends CardGamePlayer {
@@ -85,31 +87,23 @@ export class PokerPlayer extends CardGamePlayer {
 
     public checkHand(cards: Card[]) {
         if (this.hasRoyalFlush(cards)) {
-            this.handValue = [9,0,0];
         }
         else if (this.hasStraightFlush(cards)) {
-            this.handValue = [8,0,0];
         }
         else if (this.hasQuadruple(cards)) {
-            this.handValue = [7,0,0];
         }
         else if (this.hasFullHouse(cards)) {
-            this.handValue = [6,0,0];
         }
         else if (this.hasFlush(cards)) {
-            this.handValue = [5,0,0];
         }
         else if (this.hasStraight(cards)) {
-            this.handValue = [4,0,0];
         }
         else if (this.hasTripple(cards)) {
-            this.handValue = [3,0,0];
         }
         else if (this.hasPair(cards)) {
-            this.handValue = [2,0,0];
         }
         else {
-            this.handValue = [1,0,0];
+            this.handValue = [this.getHighestCard(cards), 0, 0];
         }
     }
 
@@ -127,10 +121,11 @@ export class PokerPlayer extends CardGamePlayer {
             for (let j: number = i; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
                     count++;
+                    if (count == 4) {
+                        this.handValue = [QUADRUPLE_VALUE, cards[j].value, 0];
+                        return true;
+                    }
                 }
-            }
-            if (count >= 4) {
-                return true;
             }
         }
         return false;
@@ -151,7 +146,7 @@ export class PokerPlayer extends CardGamePlayer {
                 }
             }
             if (count >= 5) {
-                this.handValue = [FLUSH_VALUE,sum,0];//TODO geht nur wenn count 5 ist
+                this.handValue = [FLUSH_VALUE, sum, 0];//TODO geht nur wenn count 5 ist
                 return true;
             }
         }
@@ -167,7 +162,7 @@ export class PokerPlayer extends CardGamePlayer {
             for (let j: number = i + 1; j < cards.length - 1; j++) {
                 for (let k: number = j + 1; k < cards.length; k++) {
                     if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
-                        this.handValue = [TRIPPLE_VALUE,cards[i].value,0];
+                        this.handValue = [TRIPPLE_VALUE, cards[i].value, this.getHighestCard(cards)];
                         return true;
                     }
                 }
@@ -179,9 +174,8 @@ export class PokerPlayer extends CardGamePlayer {
     private hasPair(cards: Card[]): boolean {
         for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
-                if (cards[i].name == cards[j].name)
-                {
-                    this.handValue = [PAIR_VALUE,cards[i].value,0];
+                if (cards[i].name == cards[j].name) {
+                    this.handValue = [PAIR_VALUE, cards[i].value, this.getHighestCard(cards)];
                     return true;
                 }
 
@@ -190,8 +184,7 @@ export class PokerPlayer extends CardGamePlayer {
         return false;
     }
 
-    private getHighestCard(): number
-    {
-        return -1;
+    private getHighestCard(cards: Card[]): number {
+        return Math.max(cards[0].value, cards[1].value);
     }
 }
