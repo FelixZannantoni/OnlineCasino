@@ -136,7 +136,16 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private checkHands() {//in checkHand und dann jede runde
         for (let i: number = 0; i < this.players.length; i++) {
-            let cards: Card[] = [...this.players[i].getCards(), ...this.pokerDeskCards];//TODO nur karten die visible sind
+            let cards: Card[] = [];
+            if (this.pokerDeskCards[4].visibility == CardVisibility.all) {
+                cards = [...this.players[i].getCards(), ...this.pokerDeskCards];
+            }
+            else if (this.pokerDeskCards[3].visibility == CardVisibility.none) {
+                cards = [...this.players[i].getCards(), ...this.pokerDeskCards.slice(0, 2)];
+            }
+            else if (this.pokerDeskCards[4].visibility == CardVisibility.none) {
+                cards = [...this.players[i].getCards(), ...this.pokerDeskCards.slice(0, 3)];
+            }
             this.players[i].checkHand(cards);
         }
     }
