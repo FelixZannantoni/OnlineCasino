@@ -3,7 +3,8 @@ import { CardGamePlayer } from "./cardGamePlayer";
 
 
 export const MIN_CARDS_FOR_FLUSH = 5;
-export const MIN_CARDS_FOR_Quadruple = 4;
+export const MIN_CARDS_FOR_STRAIGHT = 5;
+export const NUMBER_OF_CARDS_FOR_Quadruple = 4;
 export const PAIR_VALUE = 2;
 export const TRIPPLE_VALUE = 3;
 export const STRAIGHT_VALUE = 4;
@@ -103,7 +104,7 @@ export class PokerPlayer extends CardGamePlayer {
         else if (this.hasPair(cards)) {
         }
         else {
-            this.handValue = [this.getHighestCard(cards), 0, 0];
+            this.handValue = [this.getHighestCard(cards), this.getLowestCard(cards), 0];
         }
     }
 
@@ -112,11 +113,28 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasStraightFlush(cards: Card[]): boolean {
-        return true;
+        cards.sort((a, b) => a.value - b.value);
+        let count: number = 1;
+        let sum: number = cards[0].value;
+        for (let i: number = 1; i < cards.length; i++) {
+            if (cards[i].value == (cards[i - 1].value) - 1 && cards[i].color == cards[i - 1].color) {
+                count++;
+                sum += cards[i].value;
+            }
+            else {
+                count = 1;
+                sum = cards[i].value;
+            }
+        }
+        if (count >= 5) {
+            this.handValue = [STRAIGHTFLUSH_VALUE, sum, 0];//TODO geht nur wenn count 5 ist
+            return true;
+        }
+        return false;
     }
 
     private hasQuadruple(cards: Card[]): boolean {
-        for (let i: number = 0; i < cards.length - MIN_CARDS_FOR_Quadruple; i++) {
+        for (let i: number = 0; i < cards.length - NUMBER_OF_CARDS_FOR_Quadruple; i++) {
             let count: number = 0;
             for (let j: number = i; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
@@ -183,7 +201,24 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasStraight(cards: Card[]): boolean {
-        return true;
+        cards.sort((a, b) => a.value - b.value);
+        let count: number = 1;
+        let sum: number = cards[0].value;
+        for (let i: number = 1; i < cards.length; i++) {
+            if (cards[i].value == (cards[i - 1].value) - 1) {
+                count++;
+                sum += cards[i].value;
+            }
+            else {
+                count = 1;
+                sum = cards[i].value;
+            }
+        }
+        if (count >= 5) {
+            this.handValue = [STRAIGHT_VALUE, sum, 0];//TODO geht nur wenn count 5 ist
+            return true;
+        }
+        return false;
     }
 
     private hasTripple(cards: Card[]): boolean {
@@ -215,5 +250,9 @@ export class PokerPlayer extends CardGamePlayer {
 
     private getHighestCard(cards: Card[]): number {
         return Math.max(cards[0].value, cards[1].value);
+    }
+
+    private getLowestCard(cards: Card[]): number {
+        return Math.min(cards[0].value, cards[1].value);
     }
 }
