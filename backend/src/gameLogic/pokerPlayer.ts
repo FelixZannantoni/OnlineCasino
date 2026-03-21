@@ -132,7 +132,36 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasFullHouse(cards: Card[]): boolean {
-        return true;
+        let hasTripple: boolean = false;
+        let valueOfTripple: number = 0;
+
+        for (let i: number = 0; i < cards.length - 2; i++) {
+            for (let j: number = i + 1; j < cards.length - 1; j++) {
+                for (let k: number = j + 1; k < cards.length; k++) {
+                    if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
+                        hasTripple = true;
+                        valueOfTripple = cards[i].value;
+                        for (let l: number = 0; l < cards.length; l++) {
+                            if (cards[l].name == cards[i].name)
+                                cards.splice(l, 1);
+                        }
+                    }
+                }
+            }
+        }
+        if (!hasTripple) {
+            return false;
+        }
+        for (let i: number = 0; i < cards.length - 1; i++) {
+            for (let j: number = i + 1; j < cards.length; j++) {
+                if (cards[i].name == cards[j].name) {
+                    this.handValue = [TRIPPLE_VALUE, valueOfTripple, cards[i].value];
+                    return true;
+                }
+
+            }
+        }
+        return false;
     }
 
     private hasFlush(cards: Card[]): boolean {
