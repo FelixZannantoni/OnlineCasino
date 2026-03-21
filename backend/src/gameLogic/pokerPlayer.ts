@@ -1,5 +1,6 @@
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
+import { CardName } from "./deck";
 
 
 export const MIN_CARDS_FOR_FLUSH = 5;
@@ -109,7 +110,12 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasRoyalFlush(cards: Card[]): boolean {
-        return true;
+        cards.sort((a,b) => a.value-b.value);
+        if (this.hasStraightFlush(cards) && cards[4].name == CardName.ace) {
+            this.handValue = [ROYALFLUSH_VALUE, 0, 0];
+            return true;
+        }
+        return false;
     }
 
     private hasStraightFlush(cards: Card[]): boolean {
