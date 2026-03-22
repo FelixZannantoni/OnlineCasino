@@ -250,7 +250,7 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasTwoPair(cards: Card[]): boolean {
-        let hasOnePair: boolean = true;
+        let hasOnePair: boolean = false;
         let firstPairValue: number = 0;
 
         for (let i: number = 0; i < cards.length - 1; i++) {
