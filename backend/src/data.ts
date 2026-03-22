@@ -84,10 +84,33 @@ export class DB {
             )
             `).run();
 
-        await this.insertSampleData(connection);
+        await this.insertUserSampleData(connection);
+        await this.insertGameSampleData(connection);
     }
 
-    private static async insertSampleData(connection: Database): Promise<void> {
+    private static async insertGameSampleData(connection: Database): Promise<void> {
+        try {
+            const gameCount = connection.prepare("SELECT COUNT(*) as count FROM games").get() as { count: number };
+
+            if (gameCount.count > 0) {
+                console.log("Sample game data already inserted!");
+                return;
+            }
+
+            connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 1,
+                name: "Test Game",
+                type: "POKER"
+            });
+
+            connection.close();
+        } catch(err) {
+            console.error("Error inserting sample data:", err);
+            connection.close();
+        }
+    }
+
+    private static async insertUserSampleData(connection: Database): Promise<void> {
         const userFilePath: string = process.env.SAMPLE_USER_FILE_PATH ?? "";
 
         try {
