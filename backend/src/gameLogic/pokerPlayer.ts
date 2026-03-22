@@ -87,6 +87,10 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedRaise = false;
     }
 
+    public getHandValue() {
+        return this.handValue;
+    }
+
     public checkHand(cards: Card[]) {
         if (this.hasRoyalFlush(cards)) {
         }
@@ -110,7 +114,7 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasRoyalFlush(cards: Card[]): boolean {
-        cards.sort((a,b) => a.value-b.value);
+        cards.sort((a, b) => a.value - b.value);
         if (this.hasStraightFlush(cards) && cards[4].name == CardName.ace) {
             this.handValue = [ROYALFLUSH_VALUE, 0, 0];
             return true;

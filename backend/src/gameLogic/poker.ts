@@ -134,7 +134,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private checkHands() {//in checkHand und dann jede runde
+    private checkHands() {
         for (let i: number = 0; i < this.players.length; i++) {
             let cards: Card[] = [];
             if (this.pokerDeskCards[4].visibility == CardVisibility.all) {
@@ -150,7 +150,33 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private playRound() {//TODO dafor aus, und allin
+    private checkWinner() {
+        let highestCombination: number = 0;
+        let count: number = 0;
+        let indexOfWinner: number = 0;
+        for (let i: number = 0; i < this.players.length; i++) {
+            if (this.players[i].getHandValue()[0] > highestCombination) {
+                highestCombination = this.players[i].getHandValue()[0];
+                indexOfWinner = i;
+                count = 0;
+            }
+            else if (this.players[i].getHandValue()[0] == highestCombination) {
+                if (this.players[i].getHandValue()[1] > this.players[indexOfWinner].getHandValue()[1]) {
+                    indexOfWinner = i;
+                }
+                else if (this.players[i].getHandValue()[1] == this.players[indexOfWinner].getHandValue()[1]) {
+                    if (this.players[i].getHandValue()[2] > this.players[indexOfWinner].getHandValue()[2]) {
+                        indexOfWinner = i;
+                    }
+                    else if (this.players[i].getHandValue()[2] == this.players[indexOfWinner].getHandValue()[2]) {
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+
+    private playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
         this.makeMove();
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[0].visibility = CardVisibility.all;
