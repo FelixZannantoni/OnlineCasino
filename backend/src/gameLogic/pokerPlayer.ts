@@ -263,13 +263,13 @@ export class PokerPlayer extends CardGamePlayer {
                 }
             }
         }
-        if(!hasOnePair){
+        if (!hasOnePair) {
             return false;
         }
-         for (let i: number = 0; i < cards.length - 1; i++) {
+        for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
-                    this.handValue[Math.max(firstPairValue, cards[i].value), Math.min(firstPairValue, cards[i].value), 0]
+                    this.handValue = [TWOPAIR_VALUE, Math.max(firstPairValue, cards[i].value), Math.min(firstPairValue, cards[i].value)];
                     return true;
                 }
             }
