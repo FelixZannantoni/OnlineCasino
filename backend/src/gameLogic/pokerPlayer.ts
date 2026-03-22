@@ -6,14 +6,16 @@ import { CardName } from "./deck";
 export const MIN_CARDS_FOR_FLUSH = 5;
 export const MIN_CARDS_FOR_STRAIGHT = 5;
 export const NUMBER_OF_CARDS_FOR_Quadruple = 4;
+export const HIGHCARD_VALUE = 1;
 export const PAIR_VALUE = 2;
-export const TRIPPLE_VALUE = 3;
-export const STRAIGHT_VALUE = 4;
-export const FLUSH_VALUE = 5;
-export const FULLHOUSE_VALUE = 6;
-export const QUADRUPLE_VALUE = 7;
-export const STRAIGHTFLUSH_VALUE = 8;
-export const ROYALFLUSH_VALUE = 9;
+export const TWOPAIR_VALUE = 3;
+export const TRIPPLE_VALUE = 4;
+export const STRAIGHT_VALUE = 5;
+export const FLUSH_VALUE = 6;
+export const FULLHOUSE_VALUE = 7;
+export const QUADRUPLE_VALUE = 8;
+export const STRAIGHTFLUSH_VALUE = 9;
+export const ROYALFLUSH_VALUE = 10;
 
 
 export class PokerPlayer extends CardGamePlayer {
@@ -106,10 +108,12 @@ export class PokerPlayer extends CardGamePlayer {
         }
         else if (this.hasTripple(cards)) {
         }
+        else if (this.hasTwoPair(cards)) {
+        }
         else if (this.hasPair(cards)) {
         }
         else {
-            this.handValue = [this.getHighestCard(cards), this.getLowestCard(cards), 0];
+            this.handValue = [HIGHCARD_VALUE, this.getHighestCard(cards), this.getLowestCard(cards)];
         }
     }
 
@@ -239,6 +243,34 @@ export class PokerPlayer extends CardGamePlayer {
                         this.handValue = [TRIPPLE_VALUE, cards[i].value, this.getHighestCard(cards)];
                         return true;
                     }
+                }
+            }
+        }
+        return false;
+    }
+
+    private hasTwoPair(cards: Card[]): boolean {
+        let hasOnePair: boolean = true;
+        let firstPairValue: number = 0;
+
+        for (let i: number = 0; i < cards.length - 1; i++) {
+            for (let j: number = i + 1; j < cards.length; j++) {
+                if (cards[i].name == cards[j].name) {
+                    firstPairValue = cards[i].value;
+                    hasOnePair = true;
+                    cards.splice(i, 1);
+                    cards.splice(j, 1);
+                }
+            }
+        }
+        if(!hasOnePair){
+            return false;
+        }
+         for (let i: number = 0; i < cards.length - 1; i++) {
+            for (let j: number = i + 1; j < cards.length; j++) {
+                if (cards[i].name == cards[j].name) {
+                    this.handValue[Math.max(firstPairValue, cards[i].value), Math.min(firstPairValue, cards[i].value), 0]
+                    return true;
                 }
             }
         }
