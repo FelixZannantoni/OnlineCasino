@@ -43,6 +43,11 @@ export class Player {
         this.bet = bet;
     }
 
+    public winMoney(win: number)
+    {
+        this.balance += win;
+    }
+
     public static xNextPlayer(players: Player[], i: number, x: number): number {
         for (let j: number = 0; j < x; j++) {
             i = this.nextPlayer(players, i);
