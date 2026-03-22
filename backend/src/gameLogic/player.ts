@@ -6,12 +6,12 @@ export class Player {
     private bet: number;
 
 
-    constructor(playerId: string, username: string, displayname: string, balance: number, bet: number) {
+    constructor(playerId: string, username: string, displayname: string, balance: number) {
         this.playerId = playerId;
         this.username = username;
         this.displayname = displayname;
         this.balance = balance;
-        this.bet = bet;
+        this.bet = 0;
     }
 
     public getPlayerId(): string {
@@ -36,11 +36,16 @@ export class Player {
     }
 
     public setBet(bet: number): void {
-        if ((bet - this.bet) > (this.getBalance())){
-            throw new Error(`No money`);
+        if ((bet - this.bet) > (this.getBalance())) {
+            throw new Error(`Not enogh money`);
         }
         this.balance -= bet - this.bet
         this.bet = bet;
+    }
+
+    public winMoney(win: number)
+    {
+        this.balance += win;
     }
 
     public static xNextPlayer(players: Player[], i: number, x: number): number {
@@ -60,5 +65,14 @@ export class Player {
         else {
             throw new Error(`Player not found`);
         }
+    }
+
+    public isOutOfMoney(): boolean
+    {
+        if(this.balance==0)
+        {
+            return true;
+        }
+        return false;
     }
 }

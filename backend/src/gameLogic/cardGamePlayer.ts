@@ -1,13 +1,14 @@
 import { Card } from "../model";
+import { CardVisibility } from "./deck";
 import { Player } from "./player";
 
 export class CardGamePlayer extends Player {
     private cards: Card[];
     private hasDealerChip: boolean;
 
-    constructor(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number) {
-        super(playerId, username, displayname, balance, bet);
-        this.hasDealerChip = hasDealerChip;
+    constructor(playerId: string, username: string, displayname: string, balance: number) {
+        super(playerId, username, displayname, balance);
+        this.hasDealerChip = false;
         this.cards = [];
     }
 
@@ -26,6 +27,7 @@ export class CardGamePlayer extends Player {
     public addCard(card: Card, playerId: string): void {
         //nur mit dealCard aufrufen wegen id
         this.cards.push(card);
+        card.visibility = CardVisibility.player;
     }
 
     public static playerWithDealerChip(players: CardGamePlayer[]): number {

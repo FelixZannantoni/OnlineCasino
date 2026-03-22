@@ -1,67 +1,88 @@
 @startuml
 skinparam classAttributeIconSize 0
 
+' Types and Enums
 interface Card {
   +name: CardName
   +value: number
   +color: CardColor
   +owner: string
+  +visibility: CardVisibility
 }
 
 enum CardColor {
-  HEARTS
-  DIAMONDS
-  CLUBS
-  SPADES
+  HEARTS = "HEARTS"
+  DIAMONDS = "DIAMONDS"
+  CLUBS = "CLUBS"
+  SPADES = "SPADES"
 }
 
 enum CardName {
-  two
-  three
-  four
-  five
-  six
-  seven
-  eight
-  nine
-  ten
-  jack
-  queen
-  king
-  ace
+  two = "two"
+  three = "three"
+  four = "four"
+  five = "five"
+  six = "six"
+  seven = "seven"
+  eight = "eight"
+  nine = "nine"
+  ten = "ten"
+  jack = "jack"
+  queen = "queen"
+  king = "king"
+  ace = "ace"
 }
 
+enum CardVisibility {
+  player = "player"
+  none = "none"
+  all = "all"
+}
+
+' Classes
 class Game<T extends Player = Player> {
   #players: T[]
-  +Game()
+  -gameId: string
+  +Game(gameId: string)
+  +getGameId(): string
   +addPlayer(player: T): void
   +getPlayers(): T[]
 }
 
 class CardGame<T extends CardGamePlayer = CardGamePlayer> {
-  +CardGame()
-  #setDealerChip(): void
+  +CardGame(gameId: string)
+  #setDefaultDealerChip(): void
   #updateDealerChip(): void
 }
 
 class Poker {
+  {static} +MAX_PLAYER_COUNT: number = 5
+  {static} +PLAYER_CARDS_NUMBER: number = 2
+  {static} +POKER_CARDS_NUMBER: number = 5
+  {static} +POKER_DESK_ID: string = "PokerDesk"
   -pokerDeck: PokerDeck
   -pokerDeskCards: Card[]
-  -defaultbet: number
+  -defaultbet: number = 10
   -currentBet: number
   -pot: number
-  +Poker()
-  -startGame(): void
+  +Poker(gameId: string)
+  +startGame(): void
   -nextRound(): void
   -handCardsOut(): void
   -resetCards(): void
-  #resetBets(): void
-  #setDeafaultBets(): void
+  -resetBets(): void
+  -setDeafaultBets(): void
   -makeMove(): void
+  -checkWinner(): void
   -playRound(): void
 }
 
 class Blackjack {
+  -blackjackDeck: BlackjackDeck
+  +Blackjack(gameId: string)
+  +startGame(): void
+  -nextRound(): void
+  -playRound(): void
 }
 
 class Player {
@@ -70,7 +91,7 @@ class Player {
   -displayname: string
   -balance: number
   -bet: number
-  +Player(playerId: string, username: string, \n  displayname: string, balance: number, bet: number)
+  +Player(playerId: string, username: string, \n  displayname: string, balance: number)
   +getPlayerId(): string
   +getUsername(): string
   +getDisplayname(): string
@@ -84,7 +105,7 @@ class Player {
 class CardGamePlayer {
   -cards: Card[]
   -hasDealerChip: boolean
-  +CardGamePlayer(playerId: string, username: string, \n  displayname: string, balance: number, \n  hasDealerChip: boolean, bet: number)
+  +CardGamePlayer(playerId: string, username: string, \n  displayname: string, balance: number)
   +getCards(): Card[]
   +getDealerChip(): boolean
   +setDealerChip(hasDealerChip: boolean): void
@@ -94,20 +115,45 @@ class CardGamePlayer {
 }
 
 class PokerPlayer {
-  -pressedFold: boolean
-  -pressedCheck: boolean
-  -pressedBet: boolean
-  -pressedCall: boolean
-  -pressedRaise: boolean
-  +PokerPlayer(...)
+  -pressedFold: boolean = false
+  -pressedCheck: boolean = false
+  -pressedBet: boolean = false
+  -pressedCall: boolean = false
+  -pressedRaise: boolean = false
+  -handValue: number
+  +PokerPlayer(playerId: string, username: string, \n  displayname: string, balance: number)
   +getPressedFold(): boolean
   +getPressedCheck(): boolean
   +getPressedBet(): boolean
   +getPressedCall(): boolean
   +getPressedRaise(): boolean
+  +setPressedFold(pressedFold: boolean): void
+  +setPressedCheck(pressedCheck: boolean): void
+  +setPressedBet(pressedBet: boolean): void
+  +setPressedCall(pressedCall: boolean): void
+  +setPressedRaise(pressedRaise: boolean): void
+  +resetActions(): void
+  -checkHand(cards: Card[]): number
+  -hasRoyalFlush(cards: Card[]): boolean
+  -hasStraightFlush(cards: Card[]): boolean
+  -hasQuadruple(cards: Card[]): boolean
+  -hasFullHouse(cards: Card[]): boolean
+  -hasFlush(cards: Card[]): boolean
+  -hasStraight(cards: Card[]): boolean
+  -hasTripple(cards: Card[]): boolean
+  -hasPair(cards: Card[]): boolean
+  -hasHighCard(cards: Card[]): boolean
+}
+
+class BlackjackPlayer {
+  -pressedHit: boolean = false
+  -pressedStand: boolean = false
+  -pressedDoubble: boolean = false
+  +BlackjackPlayer(playerId: string, username: string, \n  displayname: string, balance: number)
 }
 
 class Deck {
+  {static} +DEALER_ID: string = "Dealer"
   #deck: Card[]
   +Deck()
   #shuffle(cardDeck: Card[]): void
@@ -116,11 +162,13 @@ class Deck {
 }
 
 class BlackjackDeck {
+  -blackjackCardValue: Map<CardName, number>
   +BlackjackDeck()
   -blackjackDeckInit(): void
 }
 
 class PokerDeck {
+  -pokerCardValue: Map<CardName, number>
   +PokerDeck()
   -pokerDeckInit(): void
 }
@@ -133,6 +181,7 @@ Deck <|-- BlackjackDeck
 Deck <|-- PokerDeck
 Player <|-- CardGamePlayer
 CardGamePlayer <|-- PokerPlayer
+CardGamePlayer <|-- BlackjackPlayer
 
 ' Associations
 Game o-- "many" Player : contains
@@ -140,5 +189,6 @@ Poker *-- "many" Card : pokerDeskCards
 CardGamePlayer *-- "many" Card : cards
 Deck *-- "many" Card : deck
 Poker o-- "1" PokerDeck : uses
+Blackjack o-- "1" BlackjackDeck : uses
 
 @enduml

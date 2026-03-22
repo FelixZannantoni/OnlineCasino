@@ -23,6 +23,12 @@ export enum CardName {
     ace = "ace"
 }
 
+export enum CardVisibility {
+    player = "player",
+    none = "none",
+    all = "all"
+}
+
 export const DEALER_ID: string = "Dealer";
 
 export class Deck {
