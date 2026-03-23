@@ -12,8 +12,8 @@ export const BALCKJACK_BOT_ID: string = "BlackjackBot";
 export class Blackjack extends CardGame<BlackjackPlayer> {
     private blackjackDeck: BlackjackDeck;
 
-    constructor() {
-        super();
+    constructor(gameId: string) {
+        super(gameId);
         this.blackjackDeck = new BlackjackDeck();
         this.startGame();
     }

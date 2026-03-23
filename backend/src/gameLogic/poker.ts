@@ -1,4 +1,4 @@
-import { DEALER_ID } from "./deck";
+import { CardVisibility, DEALER_ID } from "./deck";
 import { Player } from "./player";
 import { CardGame } from "./cardGame";
 import { PokerDeck } from "./pokerDeck";
@@ -20,27 +20,27 @@ export class Poker extends CardGame<PokerPlayer> {
     private pot: number;
 
 
-    constructor() {
-        super();
+    constructor(gameId: string) {
+        super(gameId);
         this.pokerDeck = new PokerDeck();
         this.pokerDeskCards = [];
         this.pot = 0;
         this.currentBet = this.defaultbet;
-        this.startGame();
     }
 
-    private startGame() {
-        this.setDealerChip();
+    public startGame() {
+        this.setDefaultDealerChip();
         this.handCardsOut();
         this.setDeafaultBets();
         this.playRound();
     }
 
     private nextRound() {
+        //TODO überprüfen ob pleite
         this.resetCards();
         this.resetBets();
         this.pot = 0;
-        //TODO überprüfen ob pleite
+        this.currentBet = this.defaultbet;
 
         this.updateDealerChip();
         this.handCardsOut();
@@ -105,7 +105,11 @@ export class Poker extends CardGame<PokerPlayer> {
                 }
             }
             else if (playerOnMove.getPressedBet() == true) {
-                //bet();
+                const bet: number = 0;
+                //TODO server.getBet
+                playerOnMove.setBet(bet)
+                this.currentBet += bet;
+                this.pot += bet;
             }
             else if (playerOnMove.getPressedCall() == true) {
                 if (playerOnMove.getBet() < this.currentBet) {
@@ -118,7 +122,11 @@ export class Poker extends CardGame<PokerPlayer> {
                     playerOnMove.setBet(this.currentBet);
                     this.pot += this.currentBet - playerOnMove.getBet();
                 }
-                //bet();
+                const bet: number = 0;
+                //TODO server.getBet
+                playerOnMove.setBet(bet)
+                this.currentBet += bet;
+                this.pot += bet;
             }
             else {
                 //TODO Error Handling
@@ -126,17 +134,78 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
+    private checkHands() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            let cards: Card[] = [];
+            if (this.pokerDeskCards[4].visibility == CardVisibility.all) {
+                cards = [...this.players[i].getCards(), ...this.pokerDeskCards];
+            }
+            else if (this.pokerDeskCards[3].visibility == CardVisibility.none) {
+                cards = [...this.players[i].getCards(), ...this.pokerDeskCards.slice(0, 2)];
+            }
+            else if (this.pokerDeskCards[4].visibility == CardVisibility.none) {
+                cards = [...this.players[i].getCards(), ...this.pokerDeskCards.slice(0, 3)];
+            }
+            this.players[i].checkHand(cards);
+        }
+    }
 
-    private playRound() {//TODO make move, reset bet, check winner auch wenn dafor aus, und allin
+    private handOutWin() {
+        let highestCombination: number = 0;
+        let count: number = 1;
+        let indexOfWinner: number = 0;
+        for (let i: number = 0; i < this.players.length; i++) {
+            if (this.players[i].getHandValue()[0] > highestCombination) {
+                highestCombination = this.players[i].getHandValue()[0];
+                indexOfWinner = i;
+                count = 1;
+            }
+            else if (this.players[i].getHandValue()[0] == highestCombination) {
+                if (this.players[i].getHandValue()[1] > this.players[indexOfWinner].getHandValue()[1]) {
+                    indexOfWinner = i;
+                }
+                else if (this.players[i].getHandValue()[1] == this.players[indexOfWinner].getHandValue()[1]) {
+                    if (this.players[i].getHandValue()[2] > this.players[indexOfWinner].getHandValue()[2]) {
+                        indexOfWinner = i;
+                    }
+                    else if (this.players[i].getHandValue()[2] == this.players[indexOfWinner].getHandValue()[2]) {
+                        count++;
+                    }
+                }
+            }
+        }
+        if(count == 1){
+            this.players[indexOfWinner].winMoney(this.pot);
+        }
+        else //TODO side pot
+        {
+            for(let i : number = 0; i < this.players.length; i++)
+            {
+                if(this.players[i].getHandValue () == this.players[indexOfWinner].getHandValue())
+                {
+                    this.players[i].winMoney(this.pot/count);
+                }
+            }
+        }
+    }
+
+    private playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
         this.makeMove();
-        //open 3 cards in the middle
+        this.currentBet = this.defaultbet;
+        this.pokerDeskCards[0].visibility = CardVisibility.all;
+        this.pokerDeskCards[1].visibility = CardVisibility.all;
+        this.pokerDeskCards[2].visibility = CardVisibility.all;
+        this.checkHands();
         this.makeMove();
-        //open one card
+        this.currentBet = this.defaultbet;
+        this.pokerDeskCards[3].visibility = CardVisibility.all;
+        this.checkHands();
         this.makeMove();
-        //open one card
+        this.currentBet = this.defaultbet;
+        this.pokerDeskCards[4].visibility = CardVisibility.all;
+        this.checkHands();
         this.makeMove();
-        //check winner
-        //distribute profits
+        this.handOutWin();
         this.nextRound();
     }
 }

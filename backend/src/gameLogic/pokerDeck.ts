@@ -1,4 +1,4 @@
-import { CardColor, CardName, DEALER_ID, Deck } from "./deck";
+import { CardColor, CardName, CardVisibility, DEALER_ID, Deck } from "./deck";
 import { Card } from "../model";
 
 const pokerCardValue: Map<CardName, number> = new Map([
@@ -31,7 +31,8 @@ export class PokerDeck extends Deck {
                     name: CardName[name],
                     value: pokerCardValue.get(CardName[name])!,
                     color: CardColor[color],
-                    owner: DEALER_ID
+                    owner: DEALER_ID,
+                    visibility: CardVisibility.none
                 };
                 this.deck.push(card);
             }
