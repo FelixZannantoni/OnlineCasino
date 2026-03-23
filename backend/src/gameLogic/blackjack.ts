@@ -17,20 +17,6 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.startGame();
     }
 
-    private startGame() {
-
-    }
-
-    private nextRound() {
-
-        this.handCardsOut();
-    }
-
-    private playRound() {
-
-        this.nextRound();
-    }
-
     private handCardsOut() {
         if (this.players.length === 0) return;
 
@@ -46,4 +32,27 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         }
     }
+
+    private checkHandsValue(){
+        for(let i :number = 0; i< this.players.length; i++)
+        {
+            this.players[i].checkHandValue();
+        }
+    }
+
+    private startGame() {
+        
+    }
+
+    private nextRound() {
+
+        this.handCardsOut();
+    }
+
+    private playRound() {
+        this.checkHandsValue();
+
+        this.nextRound();
+    }
+
 }
