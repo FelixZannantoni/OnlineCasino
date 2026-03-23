@@ -18,7 +18,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.startGame();
     }
 
-    private startGame() {//shuffle?
+    private startGame() {
 
     }
 
