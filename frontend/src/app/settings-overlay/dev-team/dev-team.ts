@@ -21,13 +21,13 @@ export class DevTeam {
       name: 'Victor Ehrenmüller-Jensen',
       role: 'UI/UX Designer',
       icon: 'palette',
-      skills: [ 'HTML', 'Figma', 'CSS', 'Design Systems', 'TypeScript' ]
+      skills: [ 'HTML', 'Figma', 'CSS', 'TypeScript' ]
     },
     {
-      name: 'Felix Zannantoni',
-      role: 'Game Logic Developer',
-      icon: 'code',
-      skills: [ 'TypeScript', 'Angular', 'Markdown' ]
+      name: 'Julian Einzinger',
+      role: 'DB Administrator',
+      icon: 'storage',
+      skills: [ 'SQLite', 'Database Optimization', 'Data Security', 'TypeScript' ]
     },
     {
       name: 'Sebastian Schwingenschuh',
@@ -36,10 +36,10 @@ export class DevTeam {
       skills: [ 'TypeScript', 'Angular', 'HTML', 'Figma' ]
     },
     {
-      name: 'Julian Einzinger',
-      role: 'DB Administrator',
-      icon: 'storage',
-      skills: [ 'SQLite', 'Database Optimization', 'Data Security', 'TypeScript' ]
+      name: 'Felix Zannantoni',
+      role: 'Game Logic Developer',
+      icon: 'code',
+      skills: [ 'TypeScript', 'Angular', 'Markdown' ]
     }
   ];
 }

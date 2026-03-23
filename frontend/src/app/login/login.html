@@ -1,5 +1,34 @@
 <div class="container" id="login-container">
 
+        <!-- Sign In Form -->
+    <div class="form-container sign-in-container">
+        <form (ngSubmit)="onLogin($event)">
+            <div class="logo-container">
+                <div class="casino-chip">
+                    <mat-icon>casino</mat-icon>
+                </div>
+            </div>
+            <h1>Sign in</h1>
+            <div class="accent-line"></div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">person_outline</mat-icon>
+                <input type="email" placeholder="Username" [(ngModel)]="loginEmail" name="loginEmail" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">lock</mat-icon>
+                <input [type]="showLoginPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="loginPassword" name="loginPass" required>
+                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('login')">
+                    {{ showLoginPassword ? 'visibility' : 'visibility_off' }}
+                </mat-icon>
+            </div>
+
+            <a routerLink="/forgot-password">Forgot your password?</a>
+            <button class="shining-btn" type="submit">Sign In</button>
+        </form>
+    </div>
+
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
         <form (ngSubmit)="onRegister($event)">
@@ -10,7 +39,7 @@
             </div>
             <h1>Create Account</h1>
             <div class="accent-line"></div>
-
+            
             <div class="input-group">
                 <mat-icon class="input-icon">person</mat-icon>
                 <input type="text" placeholder="Name" [(ngModel)]="registerName" name="regName" required>
@@ -43,36 +72,7 @@
                 </mat-icon>
             </div>
 
-            <button type="submit">Sign Up</button>
-        </form>
-    </div>
-
-    <!-- Sign In Form -->
-    <div class="form-container sign-in-container">
-        <form (ngSubmit)="onLogin($event)">
-            <div class="logo-container">
-                <div class="casino-chip">
-                    <mat-icon>casino</mat-icon>
-                </div>
-            </div>
-            <h1>Sign in</h1>
-            <div class="accent-line"></div>
-
-            <div class="input-group">
-                <mat-icon class="input-icon">person_outline</mat-icon>
-                <input type="email" placeholder="Username" [(ngModel)]="loginEmail" name="loginEmail" required>
-            </div>
-
-            <div class="input-group">
-                <mat-icon class="input-icon">lock</mat-icon>
-                <input [type]="showLoginPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="loginPassword" name="loginPass" required>
-                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('login')">
-                    {{ showLoginPassword ? 'visibility' : 'visibility_off' }}
-                </mat-icon>
-            </div>
-
-            <a routerLink="/forgot-password">Forgot your password?</a>
-            <button type="submit">Sign In</button>
+            <button class="shining-btn" type="submit">Sign Up</button>
         </form>
     </div>
 

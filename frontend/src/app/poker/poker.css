@@ -104,6 +104,28 @@
     font-size: 1.1rem;
 }
 
+/* Board Cards Positionierung */
+.board-cards {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+
+/* Player Cards Positionierung */
+.player-cards {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 6;
+}
+
 /* Action Buttons */
 .action-buttons {
     display: flex;
@@ -187,7 +209,8 @@
 }
 
 .back-home-btn:hover mat-icon {
-    transform: translateX(-3px); /* Slides the arrow left on hover */
+    transform: translateX(-3px);
+    /* Slides the arrow left on hover */
     color: #ffd86e;
 }
 
@@ -212,14 +235,14 @@
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .back-home-btn {
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
         width: auto;
     }
-    
+
     .back-home-btn:hover {
         transform: translateX(-50%) translateY(-3px);
     }

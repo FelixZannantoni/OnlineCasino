@@ -7,7 +7,7 @@
     box-shadow: 
         0 2px 20px rgba(0, 0, 0, 0.5),
         0 0 10px rgba(255, 215, 0, 0.2);
-    border-bottom: 2px solid #ffd700;
+    border-bottom: 2px solid var(--light-gold);
     overflow: hidden;
 }
 
@@ -73,29 +73,6 @@
     margin: 0;
     padding: 0;
 }
-
-.nav_pill {
-    /*--gold-graadient2: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);*/
-
-    display: inline-block;
-    padding: 0.4rem 1.1rem;
-    border-radius: 999px;
-    /* Larger background to allow movement when hovering*/
-    background: var(--primary-gold-gradient);
-    background-size: 200% 200%;
-    background-position: 100% 50%;
-    color: var(--text-gold-dark);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: background-position 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
-}
-
-.nav_pill:hover {
-    /* Shift gradient position to simulate movement closer to what light it is reflecting*/
-    background-position: 0% 50%;
-    transform: translateY(-1.5px);
-    box-shadow: var(--primary-purple) 0px 2px 8px;}
 
 .navbar_right {
     flex: 0 0 auto;
