@@ -29,7 +29,7 @@ userRouter.post("/login", async (req: Request, res: Response) => {
 
 userRouter.post("/register", async (req: Request, res: Response) => {
     const [username, password]: [string, string] = [req.body.username, req.body.password];
-
+    console.log("TEST");
     const service: UserService = new UserService();
 
     const [success, userId] = await service.registerUser(username, password);
