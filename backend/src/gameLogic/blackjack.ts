@@ -3,7 +3,6 @@ import { BlackjackDeck } from "./blackjackDeck";
 import { BlackjackPlayer } from "./blackjackPlayer";
 import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
-import { Deck } from "./deck";
 import { Player } from "./player";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -40,7 +39,11 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             for (let j: number = 0; j < this.players.length; j++) {
                 this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
                     .addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), this.players[j].getPlayerId()), this.players[j].getPlayerId());
-            }
+            }//TODO dealCard änder visibility auf all
+        }
+
+        for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
+
         }
     }
 }
