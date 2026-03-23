@@ -35,4 +35,12 @@ export class UserService {
             return [false, "-1"];
         }
     }
+    async registerUser(username: string, password: string): Promise<[boolean, string]> {
+        try {
+            return [false, "-1"];
+        } catch(err) {
+            console.error(`Something happened while trying to register user: ${err}`);
+            return [false, "-1"];
+        }
+    }
 }

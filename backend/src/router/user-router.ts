@@ -26,3 +26,17 @@ userRouter.post("/login", async (req: Request, res: Response) => {
         res.status(StatusCodes.UNAUTHORIZED).json({ message: "Invalid credentials!" });
     }
 });
+
+userRouter.post("/register", async (req: Request, res: Response) => {
+    const [username, password]: [string, string] = [req.body.username, req.body.password];
+
+    const service: UserService = new UserService();
+
+    const [success, userId] = await service.registerUser(username, password);
+
+    if(success) {
+        res.status(StatusCodes.CREATED).json({ userId, message: "Registering user successful!" });
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Registering user failed!" });
+    }
+});
