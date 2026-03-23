@@ -1,3 +1,5 @@
+import { CardColor, CardName, CardVisibility } from "./gameLogic/deck";
+
 export type User = {
     uuid: string,
     username: string,
@@ -5,4 +7,12 @@ export type User = {
     email: string,
     streakCount: number,
     passwordHash: string
+}
+
+export type Card = {
+    name: CardName,
+    value: number;
+    color: CardColor,
+    owner: string,
+    visibility: CardVisibility
 }
