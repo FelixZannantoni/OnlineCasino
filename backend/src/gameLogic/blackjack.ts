@@ -11,19 +11,16 @@ export class Blackjack extends CardGame {
         this.blackjackDeck = new BlackjackDeck();
         this.startGame();
     }
-    
-    private startGame()
-    {
+
+    private startGame() {
 
     }
 
-    private nextRound()
-    {
+    private nextRound() {
 
     }
 
-    private playRound()
-    {
+    private playRound() {
 
         this.nextRound();
     }
