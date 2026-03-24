@@ -73,16 +73,32 @@ class Poker {
   -resetBets(): void
   -setDeafaultBets(): void
   -makeMove(): void
-  -checkWinner(): void
+  -checkHands(): void
+  -handOutWin(): void
   -playRound(): void
 }
 
 class Blackjack {
+  {static} +PLAYER_CARDS_NUMBER: number = 2
+  {static} +BALCKJACK_BOT_ID: string = "BlackjackBot"
   -blackjackDeck: BlackjackDeck
   +Blackjack(gameId: string)
-  +startGame(): void
+  -handCardsOut(): void
+  -checkHandsValue(): void
+  -startGame(): void
   -nextRound(): void
   -playRound(): void
+}
+
+class BlackjackBot {
+  -cards: Card[]
+  -handValue: number
+  +BlackjackBot()
+  +getHandValue(): number
+  +addCard(card: Card, playerId: string): void
+  -checkHandValue(): void
+  +makesHit(): boolean
+  +hasBlackJack(): boolean
 }
 
 class Player {
@@ -98,8 +114,10 @@ class Player {
   +getBalance(): number
   +getBet(): number
   +setBet(bet: number): void
+  +winMoney(win: number): void
   {static} +xNextPlayer(players: Player[], i: number, x: number): number
   {static} +nextPlayer(players: Player[], i: number): number
+  +isOutOfMoney(): boolean
 }
 
 class CardGamePlayer {
@@ -120,7 +138,7 @@ class PokerPlayer {
   -pressedBet: boolean = false
   -pressedCall: boolean = false
   -pressedRaise: boolean = false
-  -handValue: number
+  -handValue: number[]
   +PokerPlayer(playerId: string, username: string, \n  displayname: string, balance: number)
   +getPressedFold(): boolean
   +getPressedCheck(): boolean
@@ -133,7 +151,8 @@ class PokerPlayer {
   +setPressedCall(pressedCall: boolean): void
   +setPressedRaise(pressedRaise: boolean): void
   +resetActions(): void
-  -checkHand(cards: Card[]): number
+  +getHandValue(): number[]
+  +checkHand(cards: Card[]): void
   -hasRoyalFlush(cards: Card[]): boolean
   -hasStraightFlush(cards: Card[]): boolean
   -hasQuadruple(cards: Card[]): boolean
@@ -141,15 +160,19 @@ class PokerPlayer {
   -hasFlush(cards: Card[]): boolean
   -hasStraight(cards: Card[]): boolean
   -hasTripple(cards: Card[]): boolean
+  -hasTwoPair(cards: Card[]): boolean
   -hasPair(cards: Card[]): boolean
-  -hasHighCard(cards: Card[]): boolean
+  -getHighestCard(cards: Card[]): number
+  -getLowestCard(cards: Card[]): number
 }
 
 class BlackjackPlayer {
   -pressedHit: boolean = false
   -pressedStand: boolean = false
   -pressedDoubble: boolean = false
+  -handValue: number
   +BlackjackPlayer(playerId: string, username: string, \n  displayname: string, balance: number)
+  +checkHandValue(): void
 }
 
 class Deck {
@@ -162,13 +185,11 @@ class Deck {
 }
 
 class BlackjackDeck {
-  -blackjackCardValue: Map<CardName, number>
   +BlackjackDeck()
   -blackjackDeckInit(): void
 }
 
 class PokerDeck {
-  -pokerCardValue: Map<CardName, number>
   +PokerDeck()
   -pokerDeckInit(): void
 }
@@ -190,5 +211,7 @@ CardGamePlayer *-- "many" Card : cards
 Deck *-- "many" Card : deck
 Poker o-- "1" PokerDeck : uses
 Blackjack o-- "1" BlackjackDeck : uses
+BlackjackBot *-- "many" Card : cards
 
 @enduml
+
