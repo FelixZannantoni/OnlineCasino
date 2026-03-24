@@ -1,3 +1,4 @@
+import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 
 export class BlackjackPlayer extends CardGamePlayer {
@@ -14,8 +15,9 @@ export class BlackjackPlayer extends CardGamePlayer {
         this.handValue = 0;
     }
 
-    public checkHandValue()
-    {
-        
+    public checkHandValue(cards: Card[]) {
+        for (let i: number = 0; i < cards.length; i++) {
+            this.handValue += cards[i].value;
+        }
     }
 }

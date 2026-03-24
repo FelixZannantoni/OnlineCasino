@@ -15,7 +15,7 @@ export class BlackjackBot {
         return this.handValue;
     }
 
-    public addCard(card: Card, playerId: string): void {
+    public addCard(card: Card): void {
         this.cards.push(card);
         if (this.cards.length == 1) {
             card.visibility = CardVisibility.none;

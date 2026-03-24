@@ -1,4 +1,4 @@
-import { Card } from "../model";
+import { BlackjackBot } from "./blackjackBot";
 import { BlackjackDeck } from "./blackjackDeck";
 import { BlackjackPlayer } from "./blackjackPlayer";
 import { CardGame } from "./cardGame";
@@ -8,12 +8,15 @@ import { Player } from "./player";
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BALCKJACK_BOT_ID: string = "BlackjackBot";
 
+
 export class Blackjack extends CardGame<BlackjackPlayer> {
     private blackjackDeck: BlackjackDeck;
+    private blackJackBot: BlackjackBot;
 
     constructor(gameId: string) {
         super(gameId);
         this.blackjackDeck = new BlackjackDeck();
+        this.blackJackBot = new BlackjackBot;
         this.startGame();
     }
 
@@ -29,19 +32,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
 
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
-
+            this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BALCKJACK_BOT_ID));
         }
     }
 
-    private checkHandsValue(){
-        for(let i :number = 0; i< this.players.length; i++)
-        {
-            this.players[i].checkHandValue();
+    private checkHandsValue() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            this.players[i].checkHandValue(this.players[i].getCards());
         }
     }
 
     private startGame() {
-        
+
     }
 
     private nextRound() {
