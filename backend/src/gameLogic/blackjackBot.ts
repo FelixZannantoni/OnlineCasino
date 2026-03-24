@@ -10,7 +10,7 @@ export class BlackjackBot {
         this.handValue = 0;
     }
 
-    public getHandValue(){
+    public getHandValue() {
         this.checkHandValue();
         return this.handValue;
     }
