@@ -27,6 +27,7 @@ export class BlackjackBot {
     }
 
     private checkHandValue() {
+        this.handValue = 0;
         for (let i: number = 0; i < this.cards.length; i++) {
             this.handValue += this.cards[i].value;
         }
