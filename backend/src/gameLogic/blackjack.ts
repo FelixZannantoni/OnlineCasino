@@ -42,6 +42,25 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
+    private makeMove() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+            if (playerOnMove.getPressedStand() == true) {
+
+            }
+            else if (playerOnMove.getPressedHit() == true) {
+
+            }
+            else if (playerOnMove.getPressedDouble() == true) {
+
+            }
+            else {
+                //schieben
+            }
+
+        }
+    }
+
     private startGame() {
 
     }
