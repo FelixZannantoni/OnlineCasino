@@ -49,15 +49,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
             else if (playerOnMove.getPressedHit() == true) {
                 playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
-                if(playerOnMove.getHandsValue() == 21) {
-
+                if(playerOnMove.getHandValue() < 21) {
+                    i--;
                 }
-                else if(playerOnMove.getHandsValue() > 21) {
-
-                }
+                
             }
             else if (playerOnMove.getPressedDouble() == true) {
-
+                
             }
             else {
 
@@ -76,6 +74,21 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
+    private handOutWin() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+            if(playerOnMove.getHandValue() == this.blackJackBot.getHandValue()) {
+                playerOnMove.winMoney(playerOnMove.getBet());
+            }
+            else if(playerOnMove.getHandValue() > this.blackJackBot.getHandValue()) {
+                if(playerOnMove.getCards().length == 2 && playerOnMove.getHandValue() == 21) {
+                playerOnMove.winMoney((playerOnMove.getBet()*2,5));
+                }
+                playerOnMove.winMoney((playerOnMove.getBet()*2));
+            }
+        }
+    }
+
     private startGame() {
 
     }
@@ -89,7 +102,11 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.makeBets();
         this.handCardsOut();
         this.checkHandsValue();
+        if(this.blackJackBot.hasBlackJack()) {
+
+        }
         this.makeMove();
+        this.handOutWin();
         this.nextRound();
     }
 

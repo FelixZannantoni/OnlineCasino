@@ -15,7 +15,7 @@ export class BlackjackPlayer extends CardGamePlayer {
         this.handValue = 0;
     }
 
-    public getHandsValue(): number {
+    public getHandValue(): number {
         this.checkHandValue();
         return this.handValue;
     }
