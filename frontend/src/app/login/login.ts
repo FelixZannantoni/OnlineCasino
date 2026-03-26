@@ -68,7 +68,7 @@ export class Login implements OnInit {
 
     //#region login
 
-    const res = await fetch('http://localhost:3000/login', {
+    const res = await fetch('http://localhost:3000/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -106,7 +106,7 @@ export class Login implements OnInit {
 
     //#region registering
 
-    const res = await fetch('http://localhost:3000/register', {
+    const res = await fetch('http://localhost:3000/users/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

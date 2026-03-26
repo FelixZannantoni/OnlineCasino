@@ -48,22 +48,44 @@ body {
     overflow: hidden;
     width: 850px;
     max-width: 100%;
-    min-height: 580px;
+    min-height: 777px;
     margin: auto;
     z-index: 1;
     border: 3px solid rgba(93, 68, 4, 0.4);
+}
+
+img {
+    max-width: 10%;
+    height: auto;
+    margin: 1px;
 }
 
 /* Form Containers */
 .form-container {
     position: absolute;
     top: 0;
+    padding: 6px;
     height: 100%;
     transition: all 0.6s ease-in-out;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+}
+
+/* Social Buttons */
+.socials-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-light);
+    border: 2px solid var(--gray-mid);
+    color: var(--navbar-dark);
+    padding: 6px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 .sign-in-container {
@@ -180,7 +202,17 @@ h1 {
     height: 3px;
     background: var(--primary-gold-gradient);
     border-radius: 2px;
-    margin-bottom: 1.5rem;
+    margin: 1rem;
+}
+
+.forgot-password-link {
+    color: var(--primary-purple);
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    margin-top: -3px;
+    margin-bottom: -0.05rem;
 }
 
 /* Input Groups */
@@ -255,12 +287,6 @@ button {
     transition: all 0.5s ease;
     cursor: pointer;
     margin-top: 15px;
-    box-shadow: 0 4px 15px rgba(209, 158, 29, 0.3);
-}
-
-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(209, 158, 29, 0.5);
 }
 
 button:active {
