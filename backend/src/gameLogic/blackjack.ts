@@ -49,19 +49,32 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
             else if (playerOnMove.getPressedHit() == true) {
                 playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
+                playerOnMove.checkHandValue(playerOnMove.getCards());//TODO Methode so machen das kein getCards benötigt wird
+                if(playerOnMove.getHandsValue() == 21) {//TODO checkHandsVAlue muus in getHandsValue aufgereufen werden
+
+                }
+                else if(playerOnMove.getHandsValue() > 21) {
+
+                }
             }
             else if (playerOnMove.getPressedDouble() == true) {
 
             }
             else {
-                
+
             }
 
         }
     }
 
     private makeBets() {
-        
+        for (let i: number = 0; i < this.players.length; i++) {
+            const bet: number = this.players[i].getDesiredBet();
+            this.players[i].setBet(bet);
+            if(bet == 0){
+                //TODO player darf runde nicht mitspielen
+            }
+        }
     }
 
     private startGame() {
@@ -69,8 +82,6 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     private nextRound() {
-
-        
 
         this.playRound();
     }

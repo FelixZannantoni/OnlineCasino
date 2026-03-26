@@ -15,6 +15,10 @@ export class BlackjackPlayer extends CardGamePlayer {
         this.handValue = 0;
     }
 
+    public getHandsValue(): number {
+        return this.handValue;
+    }
+
     public getPressedHit(): boolean {
         return this.pressedHit;
     }
