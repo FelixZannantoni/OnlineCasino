@@ -27,7 +27,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             for (let j: number = 0; j < this.players.length; j++) {
                 this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
-                    .addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), this.players[j].getPlayerId()), this.players[j].getPlayerId());
+                    .addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), this.players[j].getPlayerId()));
             }//TODO dealCard änder visibility auf all
         }
 
@@ -46,19 +46,22 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         for (let i: number = 0; i < this.players.length; i++) {
             const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
             if (playerOnMove.getPressedStand() == true) {
-
             }
             else if (playerOnMove.getPressedHit() == true) {
-
+                playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
             }
             else if (playerOnMove.getPressedDouble() == true) {
 
             }
             else {
-                //schieben
+                
             }
 
         }
+    }
+
+    private makeBets() {
+        
     }
 
     private startGame() {
@@ -67,12 +70,16 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     private nextRound() {
 
-        this.handCardsOut();
+        
+
+        this.playRound();
     }
 
     private playRound() {
+        this.makeBets();
+        this.handCardsOut();
         this.checkHandsValue();
-
+        this.makeMove();
         this.nextRound();
     }
 

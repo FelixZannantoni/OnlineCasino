@@ -55,7 +55,7 @@ export class Poker extends CardGame<PokerPlayer> {
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             for (let j: number = 0; j < this.players.length; j++) {
                 this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
-                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()), this.players[j].getPlayerId());
+                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()));
             }
         }
 

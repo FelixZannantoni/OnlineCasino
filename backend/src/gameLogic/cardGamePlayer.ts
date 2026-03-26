@@ -24,8 +24,7 @@ export class CardGamePlayer extends Player {
         this.hasDealerChip = hasDealerChip;
     }
 
-    public addCard(card: Card, playerId: string): void {
-        //nur mit dealCard aufrufen wegen id
+    public addCard(card: Card): void {
         this.cards.push(card);
         card.visibility = CardVisibility.player;
     }
