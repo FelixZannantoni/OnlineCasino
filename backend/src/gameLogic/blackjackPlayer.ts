@@ -16,6 +16,7 @@ export class BlackjackPlayer extends CardGamePlayer {
     }
 
     public getHandsValue(): number {
+        this.checkHandValue();
         return this.handValue;
     }
 
@@ -52,10 +53,10 @@ export class BlackjackPlayer extends CardGamePlayer {
         this.pressedDouble = false;
     }
 
-    public checkHandValue(cards: Card[]) {
+    public checkHandValue() {
         this.handValue = 0;
-        for (let i: number = 0; i < cards.length; i++) {
-            this.handValue += cards[i].value;
+        for (let i: number = 0; i < this.cards.length; i++) {
+            this.handValue += this.cards[i].value;
         }
     }
 }

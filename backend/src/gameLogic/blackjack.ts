@@ -38,7 +38,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     private checkHandsValue() {
         for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].checkHandValue(this.players[i].getCards());
+            this.players[i].checkHandValue();
         }
     }
 
@@ -49,8 +49,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
             else if (playerOnMove.getPressedHit() == true) {
                 playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
-                playerOnMove.checkHandValue(playerOnMove.getCards());//TODO Methode so machen das kein getCards benötigt wird
-                if(playerOnMove.getHandsValue() == 21) {//TODO checkHandsVAlue muus in getHandsValue aufgereufen werden
+                if(playerOnMove.getHandsValue() == 21) {
 
                 }
                 else if(playerOnMove.getHandsValue() > 21) {

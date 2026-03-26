@@ -3,7 +3,7 @@ import { CardVisibility } from "./deck";
 import { Player } from "./player";
 
 export class CardGamePlayer extends Player {
-    private cards: Card[];
+    protected cards: Card[];
     private hasDealerChip: boolean;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
