@@ -17,7 +17,30 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         super(gameId);
         this.blackjackDeck = new BlackjackDeck();
         this.blackJackBot = new BlackjackBot;
-        this.startGame();
+    }
+
+    private startGame() {
+        this.setDefaultDealerChip();
+        this.playRound();
+    }
+
+    private nextRound() {
+        this.resetBets();
+        this.resetCards();
+        this.updateDealerChip();
+        this.playRound();
+    }
+
+    private playRound() {
+        this.makeBets();
+        this.handCardsOut();
+        this.checkHandsValue();
+        if (this.blackJackBot.hasBlackJack()) {
+            //TODO BlackjackBot Blackjack
+        }
+        this.makeMove();
+        this.handOutWin();
+        this.nextRound();
     }
 
     private handCardsOut() {
@@ -36,6 +59,12 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
+    private resetCards() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            this.players[i].clearHand();
+        }
+    }
+
     private checkHandsValue() {
         for (let i: number = 0; i < this.players.length; i++) {
             this.players[i].checkHandValue();
@@ -49,13 +78,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
             else if (playerOnMove.getPressedHit() == true) {
                 playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
-                if(playerOnMove.getHandValue() < 21) {
+                if (playerOnMove.getHandValue() < 21) {
                     i--;
                 }
-                
+
             }
             else if (playerOnMove.getPressedDouble() == true) {
-                
+                //TODO Player bekommt ein neues Deck
             }
             else {
 
@@ -68,46 +97,30 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         for (let i: number = 0; i < this.players.length; i++) {
             const bet: number = this.players[i].getDesiredBet();
             this.players[i].setBet(bet);
-            if(bet == 0){
+            if (bet == 0) {
                 //TODO player darf runde nicht mitspielen
             }
+        }
+    }
+
+    private resetBets() {
+        for (let i: number = 0; i < this.players.length; i++) {
+            this.players[i].setBet(0);
         }
     }
 
     private handOutWin() {
         for (let i: number = 0; i < this.players.length; i++) {
             const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
-            if(playerOnMove.getHandValue() == this.blackJackBot.getHandValue()) {
+            if (playerOnMove.getHandValue() == this.blackJackBot.getHandValue()) {
                 playerOnMove.winMoney(playerOnMove.getBet());
             }
-            else if(playerOnMove.getHandValue() > this.blackJackBot.getHandValue()) {
-                if(playerOnMove.getCards().length == 2 && playerOnMove.getHandValue() == 21) {
-                playerOnMove.winMoney((playerOnMove.getBet()*2,5));
+            else if (playerOnMove.getHandValue() > this.blackJackBot.getHandValue()) {
+                if (playerOnMove.getCards().length == 2 && playerOnMove.getHandValue() == 21) {
+                    playerOnMove.winMoney((playerOnMove.getBet() * 2, 5));
                 }
-                playerOnMove.winMoney((playerOnMove.getBet()*2));
+                playerOnMove.winMoney((playerOnMove.getBet() * 2));
             }
         }
     }
-
-    private startGame() {
-
-    }
-
-    private nextRound() {
-
-        this.playRound();
-    }
-
-    private playRound() {
-        this.makeBets();
-        this.handCardsOut();
-        this.checkHandsValue();
-        if(this.blackJackBot.hasBlackJack()) {
-
-        }
-        this.makeMove();
-        this.handOutWin();
-        this.nextRound();
-    }
-
 }
