@@ -23,16 +23,16 @@
                     {{ showLoginPassword ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
             </div>
-            
+
             <a class="forgot-password-link" routerLink="/forgot-password">Forgot your password?</a>
-            
+
             <div class="accent-line"></div>
 
-                        <button class="socials-btn" type="button">
+            <button class="socials-btn google-btn" type="button">
                 <img src="/resources/socials-icons/google/icons8-google-480.png" alt="Google Logo">
                 Sign in with Google
             </button>
-            <button class="socials-btn" type="button">
+            <button class="socials-btn github-btn" type="button" (click)="handleGithubLogin()">
                 <img src="/resources/socials-icons/github-normal/icons8-github-480.png" alt="GitHub Logo">
                 Sign in with GitHub
             </button>
@@ -88,11 +88,11 @@
             </div>
             <div class="accent-line"></div>
 
-                        <button class="socials-btn" type="button">
+            <button class="socials-btn google-btn" type="button">
                 <img src="/resources/socials-icons/google/icons8-google-480.png" alt="Google Logo">
                 Sign up with Google
             </button>
-            <button class="socials-btn" type="button">
+            <button class="socials-btn github-btn" type="button">
                 <img src="/resources/socials-icons/github-normal/icons8-github-480.png" alt="GitHub Logo">
                 Sign up with GitHub
             </button>

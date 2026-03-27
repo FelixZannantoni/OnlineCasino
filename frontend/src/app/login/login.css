@@ -57,7 +57,10 @@ body {
 img {
     max-width: 10%;
     height: auto;
-    margin: 1px;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+    background-color: #ffffff; /* to make logo more visible */
+    border-radius: 9rem; /*circle */
 }
 
 /* Form Containers */
@@ -87,6 +90,26 @@ img {
     font-weight: 600;
     transition: all 0.3s ease;
 }
+
+.socials-btn:hover {
+    box-shadow: 0 4px 5px rgba(36, 41, 47, 0.4);
+}
+
+/* GitHub Button */
+.socials-btn.github-btn {
+    background-color: #24292F;
+    border: 2px solid var(--grey-light);
+    color: #FFFFFF;
+    text-align: 1rem right;
+}
+
+/* Google Button */
+.socials-btn.google-btn {
+    background-color: #FFFFFF;
+    border: 2px solid var(--gray-mid);
+    color: #3C4043;
+}
+
 
 .sign-in-container {
     left: 0;
@@ -203,6 +226,7 @@ h1 {
     background: var(--primary-gold-gradient);
     border-radius: 2px;
     margin: 1rem;
+    margin-top: 1.4rem; /* Adjusting middle spacing */
 }
 
 .forgot-password-link {
@@ -237,7 +261,6 @@ h1 {
 .input-group input:focus {
     outline: none;
     border-color: var(--primary-purple);
-    /*border-color: flexbox(var(--primary-purple) 80%, var(--primary-purple-dark) 100%);*/
     background-color: #fff;
     box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
 }
