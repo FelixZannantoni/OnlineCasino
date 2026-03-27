@@ -113,7 +113,7 @@ export class PokerPlayer extends CardGamePlayer {
         else if (this.hasPair(cards)) {
         }
         else {
-            this.handValue = [HIGHCARD_VALUE, this.getHighestCard(cards), this.getLowestCard(cards)];
+            this.handValue = [HIGHCARD_VALUE, this.getHighestCard(), this.getLowestCard()];
         }
     }
 
@@ -240,7 +240,7 @@ export class PokerPlayer extends CardGamePlayer {
             for (let j: number = i + 1; j < cards.length - 1; j++) {
                 for (let k: number = j + 1; k < cards.length; k++) {
                     if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
-                        this.handValue = [TRIPPLE_VALUE, cards[i].value, this.getHighestCard(cards)];
+                        this.handValue = [TRIPPLE_VALUE, cards[i].value, this.getHighestCard()];
                         return true;
                     }
                 }
@@ -281,7 +281,7 @@ export class PokerPlayer extends CardGamePlayer {
         for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
-                    this.handValue = [PAIR_VALUE, cards[i].value, this.getHighestCard(cards)];
+                    this.handValue = [PAIR_VALUE, cards[i].value, this.getHighestCard()];
                     return true;
                 }
 
@@ -290,11 +290,11 @@ export class PokerPlayer extends CardGamePlayer {
         return false;
     }
 
-    private getHighestCard(cards: Card[]): number {
-        return Math.max(cards[0].value, cards[1].value);
+    private getHighestCard(): number {
+        return Math.max(this.cards[0].value, this.cards[1].value);
     }
 
-    private getLowestCard(cards: Card[]): number {
-        return Math.min(cards[0].value, cards[1].value);
+    private getLowestCard(): number {
+        return Math.min(this.cards[0].value, this.cards[1].value);
     }
 }
