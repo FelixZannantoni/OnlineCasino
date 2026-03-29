@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import { PokerService } from "../services/poker-service";
+import { Poker } from "../gameLogic/poker";
 
 export const pokerRouter = Router();
 
@@ -75,4 +76,8 @@ pokerRouter.put("/bet", async (req: Request, res: Response) => {
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ message: `Something happened while tryign to bet ${betAmount}` });
     }
-});
+pokerRouter.get("/games", async (req: Request, res: Response) => {
+    const games: Poker[] = [...PokerService.pokerGames];
+
+    res.status(StatusCodes.OK).json({ games });
+})
