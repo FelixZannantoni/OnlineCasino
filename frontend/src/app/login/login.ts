@@ -38,18 +38,24 @@ export class Login implements OnInit {
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get('code');
     
+    if(myParam) {
+        await this.handleGithubLoginWithCode(myParam);
+    }
+  }
+
+  async handleGithubLoginWithCode(code: string): Promise<void> {
     const res = await fetch('http://localhost:3000/users/login/github', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        code: myParam
+        code: code
       })
     });
 
     if(!res.ok) {
-      alert('Login failed: ' + res.statusText);
+      alert('GitHub Login failed: ' + res.statusText);
       return;
     }
 
