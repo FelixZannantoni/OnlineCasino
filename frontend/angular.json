@@ -48,6 +48,10 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "../resources"
               }
             ],
             "styles": [

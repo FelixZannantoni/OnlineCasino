@@ -1,0 +1,209 @@
+/* Karten-Basis */
+.card {
+  width: 100px;
+  height: 140px;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  user-select: none;
+  position: relative;
+}
+
+/* Kartengrößen */
+.card-sm {
+  width: 60px;
+  height: 84px;
+  font-size: 12px;
+  padding: 4px;
+}
+
+.card-lg {
+  width: 140px;
+  height: 196px;
+  font-size: 24px;
+  padding: 12px;
+}
+
+/* Kartenfarben */
+.card-hearts,
+.card-diamonds {
+  color: #e74c3c;
+}
+
+.card-clubs,
+.card-spades {
+  color: #2c3e50;
+}
+
+/* Karten-Content */
+.card-top,
+.card-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.card-bottom {
+  transform: rotate(180deg);
+}
+
+.card-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+}
+
+.card-sm .card-center {
+  font-size: 28px;
+}
+
+.card-lg .card-center {
+  font-size: 72px;
+}
+
+/* Kartensymbole - für leere Elemente 
+.card-suit.suit-hearts::after {
+  content: '♥';
+}
+
+.card-suit.suit-diamonds::after {
+  content: '♦';
+}
+
+.card-suit.suit-clubs::after {
+  content: '♣';
+}
+
+.card-suit.suit-spades::after {
+  content: '♠';
+}*/
+
+/* Für card-center direkt die suit-Klasse */
+.card-center.suit-hearts::before {
+  content: '♥';
+}
+
+.card-center.suit-diamonds::before {
+  content: '♦';
+}
+
+.card-center.suit-clubs::before {
+  content: '♣';
+}
+
+.card-center.suit-spades::before {
+  content: '♠';
+}
+
+/* Karten-Rang-Anzeige */
+.card-rank {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.card-sm .card-rank {
+  font-size: 12px;
+}
+
+.card-lg .card-rank {
+  font-size: 28px;
+}
+
+/* Karten-Suit Symbol Größe */
+.card-suit {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.card-sm .card-suit {
+  font-size: 10px;
+}
+
+.card-lg .card-suit {
+  font-size: 20px;
+}
+
+/* Karten-Rotation */
+.card-rotated {
+  transform: rotate(180deg);
+}
+
+/* Karten-Rückseite - sieht aus wie ein echtes Kartendeck */
+.card-back {
+  background:
+    repeating-linear-gradient(45deg,
+      #1a4d7c 0px,
+      #1a4d7c 10px,
+      #2980b9 10px,
+      #2980b9 20px);
+  border: 4px solid white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-back::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 70%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.card-back * {
+  display: none;
+}
+
+/* Karten-Container für einfache Positionierung */
+.card-container {
+  display: inline-block;
+  position: relative;
+}
+
+/* Karten-Animationen */
+.card-deal {
+  animation: deal 0.3s ease-out;
+}
+
+@keyframes deal {
+  from {
+    transform: translateY(-100px) rotate(-10deg);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+}
+
+/* Karten-Interaktion */
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.card-selected {
+  box-shadow: 0 0 0 3px #f39c12, 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Karten-Disabled */
+.card-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

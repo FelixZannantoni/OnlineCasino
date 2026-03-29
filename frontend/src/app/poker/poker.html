@@ -1,6 +1,5 @@
 <div class="poker-wrapper">
 
-
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="player-balance">
@@ -8,7 +7,7 @@
         </div>
         <div class="top-icons">
             <button routerLink="/home">
-                <mat-icon>exit_to_app </mat-icon>
+                <mat-icon>exit_to_app</mat-icon>
             </button>
         </div>
     </div>
@@ -22,17 +21,95 @@
             <span class="pot-amount"></span>
         </div>
 
+        <!-- Board Cards (Royal Flush Hearts) -->
+        <div class="board-cards">
+            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">10</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">10</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">J</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">J</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">Q</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">Q</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">K</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">K</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-back" style="width: 70px; height: 98px;">
+            </div>
+        </div>
+
+        <!-- Player Cards (72o) -->
+        <div class="player-cards">
+            <div class="card card-diamonds suit-diamonds"
+                style="width: 60px; height: 84px; font-size: 12px; transform: rotate(-15deg);">
+                <div class="card-top">
+                    <span class="card-rank">7</span>
+                    <span class="card-suit suit-diamonds"></span>
+                </div>
+                <div class="card-center suit-diamonds"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">7</span>
+                    <span class="card-suit suit-diamonds"></span>
+                </div>
+            </div>
+            <div class="card card-clubs suit-clubs"
+                style="width: 60px; height: 84px; font-size: 12px; transform: rotate(15deg);">
+                <div class="card-top">
+                    <span class="card-rank">2</span>
+                    <span class="card-suit suit-clubs"></span>
+                </div>
+                <div class="card-center suit-clubs"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">2</span>
+                    <span class="card-suit suit-clubs"></span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <button class="btn-fold">
+        <button class="shining-btn">
             Fold
         </button>
-        <button class="btn-check">
+        <button class="shining-btn">
             Check
         </button>
-        <button class="btn-bet">
+        <button class="shining-btn">
             Bet
         </button>
     </div>

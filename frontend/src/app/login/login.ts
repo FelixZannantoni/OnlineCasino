@@ -19,18 +19,51 @@ export class Login implements OnInit {
 
   loginEmail = '';
   loginPassword = '';
+  showLoginPassword = false;
   registerName = '';
+  registerDisplayName = '';
   registerEmail = '';
   registerPassword = '';
+  showRegisterPassword = false;
   passwordConfirm = '';
+  showRegisterPasswordConfirm = false;
 
   constructor() {
     this.isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (!this.isBrowser) return;
     this.updateContainerClass();
+    const urlParams = new URLSearchParams(window.location.search);
+    const myParam = urlParams.get('code');
+    
+    if(myParam) {
+        await this.handleGithubLoginWithCode(myParam);
+    }
+  }
+
+  async handleGithubLoginWithCode(code: string): Promise<void> {
+    const res = await fetch('http://localhost:3000/users/login/github', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code: code
+      })
+    });
+
+    if(!res.ok) {
+      alert('GitHub Login failed: ' + res.statusText);
+      return;
+    }
+
+    // note from julian: login success ->
+
+    this.router.navigate(['/home']).then(() => {
+      console.log('Navigation successful');
+    });
   }
 
   togglePanel(signUp: boolean): void {
@@ -46,6 +79,16 @@ export class Login implements OnInit {
     }
   }
 
+  togglePasswordVisibility(field: 'login' | 'register' | 'confirm'): void {
+    if (field === 'login') {
+      this.showLoginPassword = !this.showLoginPassword;
+    } else if (field === 'register') {
+      this.showRegisterPassword = !this.showRegisterPassword;
+    } else if (field === 'confirm') {
+      this.showRegisterPasswordConfirm = !this.showRegisterPasswordConfirm;
+    }
+  }
+
 
   async onLogin(event?: Event): Promise<void> {
     event?.preventDefault();
@@ -54,7 +97,7 @@ export class Login implements OnInit {
 
     //#region login
 
-    const res = await fetch('http://localhost:3000/login', {
+    const res = await fetch('http://localhost:3000/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -92,7 +135,7 @@ export class Login implements OnInit {
 
     //#region registering
 
-    const res = await fetch('http://localhost:3000/register', {
+    const res = await fetch('http://localhost:3000/users/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -116,4 +159,12 @@ export class Login implements OnInit {
     console.log('Navigating to /home from register');
     this.router.navigate(['/home']);
   }
+
+    handleGithubLogin() {
+    const GITHUB_CLIENT_ID = 'Ov23liyXKzvf4zPI8g7J';
+    const REDIRECT_URI = 'http://localhost:4200/login'; // Url, zu der zurückgeleitet werden soll
+
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=read:user`;
+    window.location.href = githubAuthUrl;
+};
 }
