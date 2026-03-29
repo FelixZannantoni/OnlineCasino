@@ -55,12 +55,13 @@ export class PokerService {
             console.error(`Player with the id ${playerId} was not found in game ${gameId}`);
             return false;
         }
-        /*
-        player.setPressedBet(true);
-        player.setBet(2.0);
-        */
-       // set desired bet for player
-        return true;
+
+        const success: boolean = player.setDesiredBet(betAmount);
+        if (success) {
+            player.setPressedBet(true);
+        }
+        
+        return success;
     }
 
     /**
