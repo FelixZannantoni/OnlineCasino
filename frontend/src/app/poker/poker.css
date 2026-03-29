@@ -6,6 +6,116 @@
     font-family: 'Montserrat', sans-serif;
     box-sizing: border-box;
     overflow: hidden;
+    display: grid;
+    grid-template-areas:
+        "tl t tr"
+        "l table r"
+        "lb b rb";
+    grid-template-columns: 20% 2fr 20%;
+    grid-template-rows: auto 2fr auto;
+    gap: 10px;
+}
+
+/* Grid Areas zuweisen */
+.top-bar {
+    grid-area: t;
+    margin-bottom: 0;
+    grid-column: 1 / -1;  /* Über alle 3 Spalten */
+}
+
+.poker-table {
+    grid-area: table;
+    margin: 0;
+}
+
+.players-container {
+    grid-area: table;
+    pointer-events: none;
+}
+
+.action-buttons {
+    grid-area: b;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Eigener Spieler Avatar neben Buttons */
+.my-player-avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-left: 30px;
+    padding-left: 30px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.my-player-avatar .player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 4px 8px;
+    border-radius: 6px;
+    gap: 2px;
+    min-width: 70px;
+}
+
+.my-player-avatar .player-name {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.7rem;
+}
+
+.my-player-avatar .player-money {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.my-player-avatar .player-balance {
+    color: #ffd86e;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.my-player-avatar .currency-icon {
+    color: #d19e1d;
+    font-size: 0.9rem;
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+.my-player-avatar .currency-icon.small {
+    font-size: 0.7rem;
+    width: 0.7rem;
+    height: 0.7rem;
+}
+
+.my-player-avatar .player-bet {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    color: #3498db;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.my-player-avatar .avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2d5a3d, #1e3d2f);
+    border: 2px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
 }
 
 /* Top Bar */
@@ -62,11 +172,14 @@
 
 /* Poker Table */
 .poker-table {
-    position: relative;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 100%;
     max-width: 900px;
     height: 500px;
-    margin: 0 auto 30px;
+    margin: 30px auto 30px;
     background: linear-gradient(145deg, #2d5a3d 0%, #1e3d2f 100%);
     border-radius: 200px;
     border: 15px solid #3d2817;
@@ -245,4 +358,147 @@
     .back-home-btn:hover {
         transform: translateX(-50%) translateY(-3px);
     }
+}
+
+/* Spieler Container */
+.players-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-areas: 
+        ". p4 . p5 ."
+        "p2 . . . p3"
+        ". . . . ."
+        ". . p1 . .";
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.player-avatar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+}
+
+/* Players - rund um den zentrierten Tisch */
+.player-avatar {
+    position: absolute;
+}
+
+/* Spieler 1 - unten mitte (lokaler Spieler) */
+.player-avatar:nth-child(1) {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Spieler 2 - links unten (links & bottom bündig) */
+.player-avatar:nth-child(2) {
+    bottom: 45%;
+    left: 0px;
+}
+
+/* Spieler 3 - rechts mitte */
+.player-avatar:nth-child(3) {
+    top: 45%;
+    right: 0px;
+    transform: translateY(-50%);
+}
+
+/* Spieler 4 - oben links */
+.player-avatar:nth-child(4) {
+    top: 0px;
+    left: 25%;
+}
+
+/* Spieler 5 - oben rechts */
+.player-avatar:nth-child(5) {
+    top: 0px;
+    right: 25%;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 12px;
+    border-radius: 8px;
+    gap: 4px;
+    min-width: 100px;
+}
+
+.player-name {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.player-balance {
+    color: #ffd86e;
+    font-size: 0.85rem;
+}
+
+.player-bet {
+    color: #3498db;
+    font-size: 0.8rem;
+}
+
+.dealer-badge {
+    background: #d19e1d;
+    color: #000;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+}
+
+.avatar-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2d5a3d, #1e3d2f);
+    border: 3px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+/* Current Player highlight - nur Pulse */
+.player-avatar.current-player .avatar-circle {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 216, 110, 0.5);
+        border-color: #d19e1d;
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(255, 216, 110, 0.8);
+        border-color: #ffd86e;
+    }
+}
+
+.player-bet-amount {
+    font-weight: 700;
+    color: #3498db;
 }

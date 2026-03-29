@@ -4,6 +4,8 @@
     <div class="top-bar">
         <div class="player-balance">
             <mat-icon>account_balance_wallet</mat-icon>
+            <span>{{ getCurrentPlayerBalance() }}</span>
+            <mat-icon>monetization_on</mat-icon>
         </div>
         <div class="top-icons">
             <button routerLink="/home">
@@ -18,90 +20,73 @@
         <!-- Pot -->
         <div class="pot">
             <mat-icon>monetization_on</mat-icon>
-            <span class="pot-amount">1.250 $</span>
+            <span class="pot-amount">{{ gameState.pot }}</span> 
         </div>
 
-        <!-- Board Cards (Royal Flush Hearts) -->
+        <!-- Board Cards -->
         <div class="board-cards">
-            <div class="card card-hearts suit-hearts">
-                <div class="card-top">
-                    <span class="card-rank">10</span>
-                    <span class="card-suit suit-hearts"></span>
+            @for (card of gameState.boardCards; track card.rank; let i = $index) {
+                <div class="card card-hearts {{ getSuitClass(card.suit) }}">
+                    <div class="card-top">
+                        <span class="card-rank">{{ card.rank }}</span>
+                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
+                    </div>
+                    <div class="card-center {{ getSuitClass(card.suit) }}"></div>
+                    <div class="card-bottom">
+                        <span class="card-rank">{{ card.rank }}</span>
+                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
+                    </div>
                 </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">10</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-hearts suit-hearts">
-                <div class="card-top">
-                    <span class="card-rank">J</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">J</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-hearts suit-hearts">
-                <div class="card-top">
-                    <span class="card-rank">Q</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">Q</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-hearts suit-hearts">
-                <div class="card-top">
-                    <span class="card-rank">K</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">K</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-back">
-            </div>
+            }
         </div>
 
         <!-- Player Cards (72o) -->
         <div class="player-cards">
-            <div class="card card-sm player-card card-diamonds suit-diamonds"
-                style="transform: rotate(-15deg);">
-                <div class="card-top">
-                    <span class="card-rank">7</span>
-                    <span class="card-suit suit-diamonds"></span>
+            @for (card of gameState.playerCards; track card.rank; let i = $index) {
+                <div class="card card-sm player-card card-{{card.suit}} {{ getSuitClass(card.suit) }}"
+                    [style.transform]="'rotate(' + (i === 0 ? -15 : 15) + 'deg)'">
+                    <div class="card-top">
+                        <span class="card-rank">{{ card.rank }}</span>
+                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
+                    </div>
+                    <div class="card-center {{ getSuitClass(card.suit) }}"></div>
+                    <div class="card-bottom">
+                        <span class="card-rank">{{ card.rank }}</span>
+                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
+                    </div>
                 </div>
-                <div class="card-center suit-diamonds"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">7</span>
-                    <span class="card-suit suit-diamonds"></span>
-                </div>
-            </div>
-            <div class="card card-sm card-clubs suit-clubs"
-                style="transform: rotate(15deg);">
-                <div class="card-top">
-                    <span class="card-rank">2</span>
-                    <span class="card-suit suit-clubs"></span>
-                </div>
-                <div class="card-center suit-clubs"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">2</span>
-                    <span class="card-suit suit-clubs"></span>
-                </div>
-            </div>
+            }
+            
         </div>
-
     </div>
 
-    <!-- Action Buttons -->
+    <div class="players-container">
+        @for (player of gameState.players; track player.playerId) {
+            <div class="player-avatar {{ isCurrentPlayer(player.playerId) ? 'current-player' : '' }}">
+                <div class="player-info">
+                    <span class="player-name">{{ player.displayName }}</span>
+                    <div class="player-money">
+                        <mat-icon class="currency-icon">monetization_on</mat-icon>
+                        <span class="player-balance">{{ player.balance }}</span>
+                    </div>
+                    @if (player.bet > 0) {
+                        <div class="player-bet">
+                            <mat-icon class="currency-icon small">monetization_on</mat-icon>
+                            <span class="player-bet-amount">{{ player.bet }}</span>
+                        </div>
+                    }
+                    @if (player.isDealer) {
+                        <span class="dealer-badge">D</span>
+                    }
+                </div>
+                <div class="avatar-circle">
+                    {{ player.displayName.charAt(0) }}
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Action Buttons mit eigenem Spieler -->
     <div class="action-buttons">
         <button class="shining-btn" (click)="fold('1', '1')">
             Fold
@@ -112,5 +97,32 @@
         <button class="shining-btn" (click)="bet('1', '1', 100)">
             Bet
         </button>
+        
+        <!-- Eigener Spieler Avatar -->
+        @for (player of gameState.players; track player.playerId) {
+            @if (isCurrentPlayer(player.playerId)) {
+                <div class="my-player-avatar">
+                    <div class="player-info">
+                        <span class="player-name">{{ player.displayName }}</span>
+                        <div class="player-money">
+                            <mat-icon class="currency-icon">monetization_on</mat-icon>
+                            <span class="player-balance">{{ player.balance }}</span>
+                        </div>
+                        @if (player.bet > 0) {
+                            <div class="player-bet">
+                                <mat-icon class="currency-icon small">monetization_on</mat-icon>
+                                <span class="player-bet-amount">{{ player.bet }}</span>
+                            </div>
+                        }
+                        @if (player.isDealer) {
+                            <span class="dealer-badge">D</span>
+                        }
+                    </div>
+                    <div class="avatar-circle">
+                        {{ player.displayName.charAt(0) }}
+                    </div>
+                </div>
+            }
+        }
     </div>
 </div>
