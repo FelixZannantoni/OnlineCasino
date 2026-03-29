@@ -45,3 +45,39 @@ Content-Type: application/json
     "username": "Testuser",
     "password": "password123"
 }
+
+###
+
+PUT {{baseUrl}}/poker/call
+Content-Type: application/json
+
+{
+    "playerId": 1,
+    "gameId": 1
+}
+
+###
+
+PUT {{baseUrl}}/poker/bet
+Content-Type: application/json
+
+{
+    "playerId": 1,
+    "gameId": 1,
+    "betAmount": 1001
+}
+
+###
+
+PUT {{baseUrl}}/poker/check
+Content-Type: application/json
+
+{
+    "playerId": 1,
+    "gameId": 1
+}
+
+
+###
+
+GET {{baseUrl}}/poker/games
