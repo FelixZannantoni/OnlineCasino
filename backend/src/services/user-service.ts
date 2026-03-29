@@ -21,7 +21,7 @@ export class UserService {
 
             const rows = connection.prepare<{username: string}, User>("SELECT * FROM users WHERE userName = :username").all({username: username});
 
-            await connection.close();
+            //await connection.close();
 
             const user: User = rows[0];
             if(!user) return [false, "-1"];
@@ -46,7 +46,7 @@ export class UserService {
                 passwordHash: pwHash
             });
 
-            await connection.close();
+            // await connection.close();
 
             if(result.changes === 1) {
                 return [true, result.lastInsertRowid.toString()];
