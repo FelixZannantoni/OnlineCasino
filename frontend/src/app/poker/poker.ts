@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { HttpClient } from '@angular/common/http';
+import { response } from 'express';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +12,16 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./poker.css']
 })
 export class Poker {
-  
+  constructor(private http: HttpClient) {}
+
+  fold(playerId: string, gameId: string) {
+    this.http.put('/poker/fold', { 
+      playerId, 
+      gameId 
+    }).subscribe(response => {
+      console.log('Fold erfolgreich:', response);
+    });
+  }
 }
 
 
