@@ -9,18 +9,32 @@ import { hashPassword } from "./utils";
 const dbFileName = process.env.DB_FILE_NAME;
 
 export class DB {
+
+    private static instance: Database;
+    private static instancePromise: Promise<Database> | null = null;
+
     public static async createDBConnection(): Promise<Database> {
-        const db = new BetterSqlite3(dbFileName, {
-            fileMustExist: false,
-            verbose: (stmt) => console.log(stmt)
-        });
+        if (this.instancePromise) {
+            return this.instancePromise;
+        }
 
-        db.pragma("foreign_keys = ON");
+        this.instancePromise = (async () => {
+            const db = new BetterSqlite3(dbFileName, {
+                fileMustExist: false,
+                verbose: (stmt) => console.log(stmt)
+            });
 
-        await this.ensureTablesCreated(db);
+            db.pragma("foreign_keys = ON");
 
-        return db;
+            await this.ensureTablesCreated(db);
+
+            this.instance = db;
+            return db;
+        })();
+
+        return this.instancePromise;
     }
+
 
     private static async ensureTablesCreated(connection: Database): Promise<void> {
         connection.prepare(`
@@ -32,6 +46,7 @@ export class DB {
                 email text,
                 displayName text,
                 streakCount integer,
+                isFromGithub integer, 
                 lastOnline text -- Timestamp in ISO format
             )
             `).run();
@@ -84,29 +99,28 @@ export class DB {
             )
             `).run();
 
+
         await this.insertUserSampleData(connection);
         await this.insertGameSampleData(connection);
     }
 
     private static async insertGameSampleData(connection: Database): Promise<void> {
         try {
-            const gameCount = connection.prepare("SELECT COUNT(*) as count FROM games").get() as { count: number };
+            const gameCount = await connection.prepare("SELECT COUNT(*) as count FROM games").get() as { count: number };
 
             if (gameCount.count > 0) {
                 console.log("Sample game data already inserted!");
                 return;
             }
 
-            connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 1,
                 name: "Test Game",
                 type: "POKER"
             });
 
-            connection.close();
         } catch(err) {
             console.error("Error inserting sample data:", err);
-            connection.close();
         }
     }
 
@@ -114,7 +128,7 @@ export class DB {
         const userFilePath: string = process.env.SAMPLE_USER_FILE_PATH ?? "";
 
         try {
-            const userCount = connection.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
+            const userCount = await connection.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
 
             if (userCount.count > 0) {
                 console.log("Sample user data already inserted!");
@@ -130,10 +144,11 @@ export class DB {
                 const passwordHash: string = await hashPassword(passwordRaw);
                 const uuid: string = generateUUID();
                 const streakCount: number = 0;
+                const isFromGithub: number = 0;
                 const lastOnline: string = new Date().toISOString();
 
-                connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount,
-                    lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :lastOnline)
+                await connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount, isFromGithub,
+                    lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
                 `).run({
                     uuid: uuid,
                     username: username,
@@ -141,14 +156,13 @@ export class DB {
                     email: email,
                     displayName: displayName,
                     streakCount: streakCount,
+                    isFromGithub: isFromGithub,
                     lastOnline: lastOnline
                 });
             }
             
-            connection.close();
         } catch(error) {
             console.error("Error inserting sample data:", error);
-            connection.close();
         }
     }
 }

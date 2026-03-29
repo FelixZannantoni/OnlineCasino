@@ -45,3 +45,14 @@ Content-Type: application/json
     "username": "Testuser",
     "password": "password123"
 }
+
+###
+
+POST {{baseUrl}}/users/login/github
+Content-Type: application/json
+
+{
+    "code": "185445b7b225abbfc4a8"
+}
+
+###
