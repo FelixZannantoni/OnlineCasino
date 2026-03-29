@@ -4,6 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { response } from 'express';
 
+const BASE_URL = 'http://localhost:3000';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -15,12 +17,40 @@ export class Poker {
   constructor(private http: HttpClient) {}
 
   fold(playerId: string, gameId: string) {
-    this.http.put('/poker/fold', { 
+    this.http.put(`${BASE_URL}/poker/fold`, { 
       playerId, 
       gameId 
     }).subscribe(response => {
       console.log('Fold erfolgreich:', response);
     });
+  }
+
+  check(playerId: string, gameId: string) {
+    this.http.put(`${BASE_URL}/poker/check`, { 
+      playerId, 
+      gameId 
+    }).subscribe(response => {
+      console.log('Check erfolgreich:', response);
+    });
+  }
+
+  bet(playerId: string, gameId: string, amount: number) {
+    this.http.put(`${BASE_URL}/poker/bet`, { 
+      playerId, 
+      gameId, 
+      betAmount: amount 
+    }).subscribe(response => {
+      console.log('Bet erfolgreich:', response);
+    });
+  }
+
+  call(playerId: string, gameId: string) {
+    this.http.put(`${BASE_URL}/poker/call`, { 
+      playerId, 
+      gameId 
+    }).subscribe(response => {
+      console.log('Call erfolgreich:', response);
+    }); 
   }
 }
 

@@ -160,30 +160,35 @@ export class PokerService {
 
     async loadAllPokerGames(): Promise<void> {
         console.log("Loading games...");
-        
+
         try {
             const connection: Database = await DB.createDBConnection();
             const type = "POKER";
 
             type GameRow = {
-                gameId: string;
+                gameId: number;
                 type: string;
             };
 
             const result = connection.prepare<[string], GameRow>("SELECT * FROM games WHERE type = ?")
                 .all(type);
-        
+
+            console.log(`Found ${result.length} games in database`);
+            result.forEach(row => console.log(`Game ID: ${row.gameId}, Type: ${row.type}`));
+
             // await connection.close();
 
-            if(!result) {
-                throw new Error("FAIL");
+            if(!result || result.length === 0) {
+                throw new Error("No games found in database");
             }
 
             result.forEach(pokergameData => {
-                const poker = new Poker(pokergameData.gameId);
+                const poker = new Poker(String(pokergameData.gameId));
                 PokerService.pokerGames.push(poker);
+                console.log(`Loaded game with ID: ${pokergameData.gameId}`);
             });
 
+            console.log(`Total games loaded: ${PokerService.pokerGames.length}`);
             return;
         } catch(err) {
             console.error(`Something happened while trying to get all games from the db: ${err}`);

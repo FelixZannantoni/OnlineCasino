@@ -15,10 +15,13 @@ app.use(express.json());
 app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
 
+const startServer = async () => {
+    await DB.createDBConnection();
 
-app.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
+    const pokerservice: PokerService = new PokerService();
+    await pokerservice.loadAllPokerGames();
 
-DB.createDBConnection();
+    app.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
+};
 
-const pokerservice: PokerService = new PokerService();
-pokerservice.loadAllPokerGames();
+startServer();

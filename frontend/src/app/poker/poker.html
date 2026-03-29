@@ -103,13 +103,13 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <button class="shining-btn">
+        <button class="shining-btn" (click)="fold('1', '1')">
             Fold
         </button>
-        <button class="shining-btn">
+        <button class="shining-btn" (click)="check('1', '1')">
             Check
         </button>
-        <button class="shining-btn">
+        <button class="shining-btn" (click)="bet('1', '1', 100)">
             Bet
         </button>
     </div>
