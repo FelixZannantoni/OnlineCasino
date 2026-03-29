@@ -97,7 +97,7 @@ export class PokerService {
             const result = connection.prepare<[string], GameRow>("SELECT * FROM games WHERE type = ?")
                 .all(type);
         
-            await connection.close();
+            // await connection.close();
 
             if(!result) {
                 throw new Error("FAIL");
@@ -128,7 +128,7 @@ export class PokerService {
             const result = connection.prepare<[string, string], GameRow>("SELECT * FROM games WHERE gameId = ? AND type = ?")
                 .get(gameId, type);
         
-            await connection.close();
+            // await connection.close();
 
             if(!result) {
                 console.error(`Game with the id ${gameId} was not found`);
