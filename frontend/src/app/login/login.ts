@@ -52,6 +52,12 @@ export class Login implements OnInit {
       alert('Login failed: ' + res.statusText);
       return;
     }
+
+    // note from julian: login success ->
+
+    this.router.navigate(['/home']).then(() => {
+      console.log('Navigation successful');
+    });
   }
 
   togglePanel(signUp: boolean): void {
