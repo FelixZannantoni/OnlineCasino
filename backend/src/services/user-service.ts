@@ -1,10 +1,9 @@
 import { Database } from "better-sqlite3";
 import { DB } from "../data";
 import { User } from "../model";
-import { verifyPassword } from "../utils";
+import { hashPassword, verifyPassword } from "../utils";
 
 export class UserService {
-    // TODO
 
     async getAllUsers(): Promise<User[]> {
         let result: User[] = [];
@@ -32,6 +31,28 @@ export class UserService {
 
         } catch(err) {
             console.error(`Somehting happened while trying to check user credentials: ${err}`);
+            return [false, "-1"];
+        }
+    }
+    async registerUser(username: string, password: string): Promise<[boolean, string]> {
+        try {
+            const pwHash: string = await hashPassword(password);
+
+            const connection: Database = await DB.createDBConnection();
+
+            const result = connection.prepare<{usernameInput: string, passwordHash: string}, {}>("INSERT INTO users (userName, passwordHash) VALUES (:usernameInput, :passwordHash)").run({
+                usernameInput: username,
+                passwordHash: pwHash
+            });
+
+            await connection.close();
+
+            if(result.changes === 1) {
+                return [true, result.lastInsertRowid.toString()];
+            }
+            return [false, "Invalid credentials!"];
+        } catch(err) {
+            console.error(`Something happened while trying to register user: ${err}`);
             return [false, "-1"];
         }
     }
