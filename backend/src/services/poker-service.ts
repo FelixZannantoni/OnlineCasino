@@ -96,7 +96,40 @@ export class PokerService {
         };
     }
 
-    // TODO: implement call and raise
+    call(playerId: string, gameId: string): {success: boolean, message: string} {
+        // get the game and player objects
+        const gameResult = this.getGameById(gameId);
+
+        if(!gameResult.game) return {
+            success: false,
+            message: gameResult.message
+        };
+
+        const player: PokerPlayer | undefined = gameResult.game.getPlayers().find(p => p.getPlayerId() === playerId);
+
+        if(!player) {
+            const msg = `Player with the id ${playerId} was not found in game ${gameId}`;
+            console.error(msg);
+            return {
+                success: false,
+                message: msg
+            };
+        }
+
+        player.setPressedCall(true);
+        return {
+            success: true,
+            message: 'Call action received'
+        };
+    }
+
+    raise(playerId: string, gameId: string, raiseAmount: number): {success: boolean, message: string} {
+        // TODO: implement raise
+        return {
+            success: false,
+            message: "Not Yet Implemented!"
+        };
+    }
 
     /**
      * Add a player to a game of poker.
