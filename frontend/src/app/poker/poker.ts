@@ -14,6 +14,84 @@ const BASE_URL = 'http://localhost:3000';
   styleUrls: ['./poker.css']
 })
 export class Poker {
+  gameState = {
+    pot: 1000,
+    currentBet: 100,
+    currentPlayerId: '1',  // ID des Spielers, der gerade dran ist
+    boardCards: [
+        { suit: 'hearts', rank: 'A' },
+        { suit: 'clubs', rank: '10' },
+        { suit: 'diamonds', rank: '5' },
+        { suit: 'spades', rank: 'K' },
+        { suit: 'hearts', rank: '3' }
+    ],
+    playerCards: [
+        { suit: 'hearts', rank: 'J' },
+        { suit: 'clubs', rank: '7' }
+    ],
+    players: [
+        {
+            playerId: '1',
+            username: 'Player1',
+            displayName: 'Player 1',
+            balance: 1000,
+            bet: 50,
+            isDealer: false,
+            isCurrentPlayer: true,  // wird dynamisch gesetzt
+            cards: [
+                { suit: 'hearts', rank: 'J' },
+                { suit: 'clubs', rank: '7' }
+            ]
+        },
+        {
+            playerId: '2',
+            username: 'Player2',
+            displayName: 'Player 2',
+            balance: 850,
+            bet: 0,
+            isDealer: true,
+            isCurrentPlayer: false,
+            cards: []  // Gegner-Karten sind verdeckt
+        },
+        {
+            playerId: '3',
+            username: 'Player3',
+            displayName: 'Player 3',
+            balance: 1200,
+            bet: 100,
+            isDealer: false,
+            isCurrentPlayer: false,
+            cards: []
+        },
+        {
+            playerId: '4',
+            username: 'Player4',
+            displayName: 'Player 4',
+            balance: 1000,
+            bet: 50,
+            isDealer: false,
+            isCurrentPlayer: true,  // wird dynamisch gesetzt
+            cards: [
+                { suit: 'hearts', rank: 'J' },
+                { suit: 'clubs', rank: '7' }
+            ]
+        },
+        {
+            playerId: '5',
+            username: 'Player5',
+            displayName: 'Player 5',
+            balance: 1000,
+            bet: 50,
+            isDealer: false,
+            isCurrentPlayer: true,  // wird dynamisch gesetzt
+            cards: [
+                { suit: 'hearts', rank: 'J' },
+                { suit: 'clubs', rank: '7' }
+            ]
+        }
+    ]
+};
+
   constructor(private http: HttpClient) {}
 
   fold(playerId: string, gameId: string) {
@@ -51,6 +129,19 @@ export class Poker {
     }).subscribe(response => {
       console.log('Call erfolgreich:', response);
     }); 
+  }
+
+  getSuitClass(suit: string): string {
+    return `suit-${suit}`;
+  }
+
+  getCurrentPlayerBalance(): number {
+    const currentPlayer = this.gameState.players.find(p => p.playerId === this.gameState.currentPlayerId);
+    return currentPlayer?.balance ?? 0;
+  }
+
+  isCurrentPlayer(playerId: string): boolean {
+    return playerId === this.gameState.currentPlayerId;
   }
 }
 
