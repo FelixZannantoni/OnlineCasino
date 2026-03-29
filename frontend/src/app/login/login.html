@@ -1,52 +1,5 @@
 <div class="container" id="login-container">
 
-    <!-- Sign Up Form -->
-    <div class="form-container sign-up-container">
-        <form (ngSubmit)="onRegister($event)">
-            <div class="logo-container">
-                <div class="casino-chip">
-                    <mat-icon>casino</mat-icon>
-                </div>
-            </div>
-            <h1>Create Account</h1>
-            <div class="accent-line"></div>
-
-            <div class="input-group">
-                <mat-icon class="input-icon">person</mat-icon>
-                <input type="text" placeholder="Name" [(ngModel)]="registerName" name="regName" required>
-            </div>
-
-            <div class="input-group">
-                <mat-icon class="input-icon">person_outline</mat-icon>
-                <input type="text" placeholder="Display Name" [(ngModel)]="registerDisplayName" name="regDisplayname" required>
-            </div>
-
-            <div class="input-group">
-                <mat-icon class="input-icon">email</mat-icon>
-                <input type="email" placeholder="Email" [(ngModel)]="registerEmail" name="regEmail" required>
-            </div>
-
-            <div class="input-group">
-                <mat-icon class="input-icon">lock_outline</mat-icon>
-                <input [type]="showRegisterPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="registerPassword" name="regPass" required>
-                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('register')">
-                    {{ showRegisterPassword ? 'visibility' : 'visibility_off' }}
-                </mat-icon>
-            </div>
-
-            <div class="input-group">
-                <mat-icon class="input-icon">lock</mat-icon>
-                <input [type]="showRegisterPasswordConfirm ? 'text' : 'password'" placeholder="Confirm Password" [(ngModel)]="passwordConfirm"
-                    name="regPassConfirm" required>
-                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('confirm')">
-                    {{ showRegisterPasswordConfirm ? 'visibility' : 'visibility_off' }}
-                </mat-icon>
-            </div>
-
-            <button type="submit">Sign Up</button>
-        </form>
-    </div>
-
     <!-- Sign In Form -->
     <div class="form-container sign-in-container">
         <form (ngSubmit)="onLogin($event)">
@@ -56,7 +9,6 @@
                 </div>
             </div>
             <h1>Sign in</h1>
-            <div class="accent-line"></div>
 
             <div class="input-group">
                 <mat-icon class="input-icon">person_outline</mat-icon>
@@ -65,14 +17,87 @@
 
             <div class="input-group">
                 <mat-icon class="input-icon">lock</mat-icon>
-                <input [type]="showLoginPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="loginPassword" name="loginPass" required>
+                <input [type]="showLoginPassword ? 'text' : 'password'" placeholder="Password"
+                    [(ngModel)]="loginPassword" name="loginPass" required>
                 <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('login')">
                     {{ showLoginPassword ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
             </div>
 
-            <a routerLink="/forgot-password">Forgot your password?</a>
-            <button type="submit">Sign In</button>
+            <a class="forgot-password-link" routerLink="/forgot-password">Forgot your password?</a>
+
+            <div class="accent-line"></div>
+
+            <button class="socials-btn google-btn" type="button">
+                <img src="/resources/socials-icons/google/icons8-google-480.png" alt="Google Logo">
+                Sign in with Google
+            </button>
+            <button class="socials-btn github-btn" type="button" (click)="handleGithubLogin()">
+                <img src="/resources/socials-icons/github-normal/icons8-github-480.png" alt="GitHub Logo">
+                Sign in with GitHub
+            </button>
+
+            <button class="shining-btn" type="submit">Sign In</button>
+        </form>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div class="form-container sign-up-container">
+        <form (ngSubmit)="onRegister($event)">
+            <div class="logo-container">
+                <div class="casino-chip">
+                    <mat-icon>casino</mat-icon>
+                </div>
+            </div>
+            <h1>Create Account</h1>
+
+
+
+            <div class="input-group">
+                <mat-icon class="input-icon">person_outline</mat-icon>
+                <input type="text" placeholder="Username" [(ngModel)]="registerName" name="regName" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">person</mat-icon>
+                <input type="text" placeholder="Display Name" [(ngModel)]="registerDisplayName" name="regDisplayname"
+                    required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">mail_outline</mat-icon>
+                <input type="email" placeholder="Email" [(ngModel)]="registerEmail" name="regEmail" required>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">lock</mat-icon>
+                <input [type]="showRegisterPassword ? 'text' : 'password'" placeholder="Password"
+                    [(ngModel)]="registerPassword" name="regPass" required>
+                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('register')">
+                    {{ showRegisterPassword ? 'visibility' : 'visibility_off' }}
+                </mat-icon>
+            </div>
+
+            <div class="input-group">
+                <mat-icon class="input-icon">lock_outline</mat-icon>
+                <input [type]="showRegisterPasswordConfirm ? 'text' : 'password'" placeholder="Confirm Password"
+                    [(ngModel)]="passwordConfirm" name="regPassConfirm" required>
+                <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('confirm')">
+                    {{ showRegisterPasswordConfirm ? 'visibility' : 'visibility_off' }}
+                </mat-icon>
+            </div>
+            <div class="accent-line"></div>
+
+            <button class="socials-btn google-btn" type="button">
+                <img src="/resources/socials-icons/google/icons8-google-480.png" alt="Google Logo">
+                Sign up with Google
+            </button>
+            <button class="socials-btn github-btn" type="button" (click)="handleGithubLogin()">
+                <img src="/resources/socials-icons/github-normal/icons8-github-480.png" alt="GitHub Logo">
+                Sign up with GitHub
+            </button>
+
+            <button class="shining-btn" type="submit">Sign Up</button>
         </form>
     </div>
 

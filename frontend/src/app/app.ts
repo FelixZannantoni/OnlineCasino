@@ -35,6 +35,6 @@ export class App {
   }
 
   private shouldShowLogin(url: string): boolean {
-    return url === '/login' || url === '/forgot-password' || url === '/';
+    return url.includes('/login') || url.includes('/forgot-password') || url === '/';
   }
 }
