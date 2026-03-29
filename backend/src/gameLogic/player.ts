@@ -57,8 +57,7 @@ export class Player {
         this.bet = bet;
     }
 
-    public winMoney(win: number)
-    {
+    public winMoney(win: number) {
         this.balance += win;
     }
 
@@ -81,10 +80,8 @@ export class Player {
         }
     }
 
-    public isOutOfMoney(): boolean
-    {
-        if(this.balance==0)
-        {
+    public isOutOfMoney(): boolean {
+        if (this.balance == 0) {
             return true;
         }
         return false;

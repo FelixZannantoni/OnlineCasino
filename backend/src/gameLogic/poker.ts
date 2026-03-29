@@ -49,13 +49,33 @@ export class Poker extends CardGame<PokerPlayer> {
         this.playRound();
     }
 
+     private playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
+        this.makeMove();
+        this.currentBet = this.defaultbet;
+        this.pokerDeskCards[0].visibility = CardVisibility.all;
+        this.pokerDeskCards[1].visibility = CardVisibility.all;
+        this.pokerDeskCards[2].visibility = CardVisibility.all;
+        this.checkHands();
+        this.makeMove();
+        this.currentBet = this.defaultbet;
+        this.pokerDeskCards[3].visibility = CardVisibility.all;
+        this.checkHands();
+        this.makeMove();
+        this.currentBet = this.defaultbet;
+        this.pokerDeskCards[4].visibility = CardVisibility.all;
+        this.checkHands();
+        this.makeMove();
+        this.handOutWin();
+        this.nextRound();
+    }
+
     private handCardsOut() {
         if (this.players.length === 0) return;
         const dealerIndex = CardGamePlayer.playerWithDealerChip(this.players);
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             for (let j: number = 0; j < this.players.length; j++) {
                 this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
-                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()), this.players[j].getPlayerId());
+                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()));
             }
         }
 
@@ -185,25 +205,5 @@ export class Poker extends CardGame<PokerPlayer> {
                 }
             }
         }
-    }
-
-    private playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
-        this.makeMove();
-        this.currentBet = this.defaultbet;
-        this.pokerDeskCards[0].visibility = CardVisibility.all;
-        this.pokerDeskCards[1].visibility = CardVisibility.all;
-        this.pokerDeskCards[2].visibility = CardVisibility.all;
-        this.checkHands();
-        this.makeMove();
-        this.currentBet = this.defaultbet;
-        this.pokerDeskCards[3].visibility = CardVisibility.all;
-        this.checkHands();
-        this.makeMove();
-        this.currentBet = this.defaultbet;
-        this.pokerDeskCards[4].visibility = CardVisibility.all;
-        this.checkHands();
-        this.makeMove();
-        this.handOutWin();
-        this.nextRound();
     }
 }
