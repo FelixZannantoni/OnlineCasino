@@ -9,18 +9,32 @@ import { hashPassword } from "./utils";
 const dbFileName = process.env.DB_FILE_NAME;
 
 export class DB {
+
+    private static instance: Database;
+    private static instancePromise: Promise<Database> | null = null;
+
     public static async createDBConnection(): Promise<Database> {
-        const db = new BetterSqlite3(dbFileName, {
-            fileMustExist: false,
-            verbose: (stmt) => console.log(stmt)
-        });
+        if (this.instancePromise) {
+            return this.instancePromise;
+        }
 
-        db.pragma("foreign_keys = ON");
+        this.instancePromise = (async () => {
+            const db = new BetterSqlite3(dbFileName, {
+                fileMustExist: false,
+                verbose: (stmt) => console.log(stmt)
+            });
 
-        await this.ensureTablesCreated(db);
+            db.pragma("foreign_keys = ON");
 
-        return db;
+            await this.ensureTablesCreated(db);
+
+            this.instance = db;
+            return db;
+        })();
+
+        return this.instancePromise;
     }
+
 
     private static async ensureTablesCreated(connection: Database): Promise<void> {
         connection.prepare(`
@@ -84,20 +98,21 @@ export class DB {
             )
             `).run();
 
+
         await this.insertUserSampleData(connection);
         await this.insertGameSampleData(connection);
     }
 
     private static async insertGameSampleData(connection: Database): Promise<void> {
         try {
-            const gameCount = connection.prepare("SELECT COUNT(*) as count FROM games").get() as { count: number };
+            const gameCount = await connection.prepare("SELECT COUNT(*) as count FROM games").get() as { count: number };
 
             if (gameCount.count > 0) {
                 console.log("Sample game data already inserted!");
                 return;
             }
 
-            connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 1,
                 name: "Test Game",
                 type: "POKER"
@@ -114,7 +129,7 @@ export class DB {
         const userFilePath: string = process.env.SAMPLE_USER_FILE_PATH ?? "";
 
         try {
-            const userCount = connection.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
+            const userCount = await connection.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
 
             if (userCount.count > 0) {
                 console.log("Sample user data already inserted!");
@@ -132,7 +147,7 @@ export class DB {
                 const streakCount: number = 0;
                 const lastOnline: string = new Date().toISOString();
 
-                connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount,
+                await connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount, isFromGithub,
                     lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :lastOnline)
                 `).run({
                     uuid: uuid,
