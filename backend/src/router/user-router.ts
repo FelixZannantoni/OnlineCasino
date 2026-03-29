@@ -27,6 +27,45 @@ userRouter.post("/login", async (req: Request, res: Response) => {
     }
 });
 
+userRouter.post("/login/github", async (req: Request, res: Response) => {
+    const code: string = req.body.code;
+
+    if(!code) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ message: "Missing github auth code" });
+    }
+
+    const service: UserService = new UserService();
+
+    const params = new URLSearchParams({
+        client_id: "Ov23liyXKzvf4zPI8g7J",
+        client_secret: "8906e4eab88af6346555e946e819d3ce15dd24f5",
+        code: code
+    });
+
+    const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+        method: "POST",
+        headers: { "Accept": "application/json" },
+        body: params
+    });
+    const tokenData = await tokenRes.json();
+    const accessToken = tokenData.access_token;
+
+    //Userinfo holen
+    const userRes = await fetch('https://api.github.com/user', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const userData = await userRes.json();
+    
+  
+    const success: boolean = await service.githubLogin(userData.id, userData.login, userData.name);
+  
+    if(success) {
+        return res.status(StatusCodes.OK).json({ userId: userData.id, message: "GitHub login successful!" });
+    } else {
+        return res.status(StatusCodes.UNAUTHORIZED).json({ message: "GitHub login failed!" });
+    }
+});
+
 userRouter.post("/register", async (req: Request, res: Response) => {
     const [username, password]: [string, string] = [req.body.username, req.body.password];
     console.log("TEST");

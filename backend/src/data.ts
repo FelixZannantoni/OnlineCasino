@@ -46,6 +46,7 @@ export class DB {
                 email text,
                 displayName text,
                 streakCount integer,
+                isFromGithub integer, 
                 lastOnline text -- Timestamp in ISO format
             )
             `).run();
@@ -118,10 +119,8 @@ export class DB {
                 type: "POKER"
             });
 
-            connection.close();
         } catch(err) {
             console.error("Error inserting sample data:", err);
-            connection.close();
         }
     }
 
@@ -145,10 +144,11 @@ export class DB {
                 const passwordHash: string = await hashPassword(passwordRaw);
                 const uuid: string = generateUUID();
                 const streakCount: number = 0;
+                const isFromGithub: number = 0;
                 const lastOnline: string = new Date().toISOString();
 
                 await connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount, isFromGithub,
-                    lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :lastOnline)
+                    lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
                 `).run({
                     uuid: uuid,
                     username: username,
@@ -156,14 +156,13 @@ export class DB {
                     email: email,
                     displayName: displayName,
                     streakCount: streakCount,
+                    isFromGithub: isFromGithub,
                     lastOnline: lastOnline
                 });
             }
             
-            connection.close();
         } catch(error) {
             console.error("Error inserting sample data:", error);
-            connection.close();
         }
     }
 }

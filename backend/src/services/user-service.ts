@@ -57,4 +57,44 @@ export class UserService {
             return [false, "-1"];
         }
     }
+
+    /**
+     * Tries to log in a user via github. If the user doesn't exist, it will be created.
+     * @param githubId githubId of the user
+     * @param name github name of the user
+     * @returns true if login (or registration) was successful, false otherwise
+     */
+    async githubLogin(githubId: number, username: string, displayName: string): Promise<boolean> {
+        // check for invalid params
+        if(!githubId || !username || !displayName) {
+            console.error(`Invalid parameters for github login: githubId: ${githubId}, username: ${username}, displayName: ${displayName}`);
+            return false;
+        }
+
+        try {
+            const connection: Database = await DB.createDBConnection();
+
+            const result = connection.prepare<{  }>("SELECT * FROM users WHERE uuid = :githubId AND isFromGithub = 1").all({ githubId: githubId });
+
+            if (result.length > 0) {
+                // await connection.close();
+                return true;
+            }
+
+            // If user doesn't exist, create a new one
+            const newUserResult = connection.prepare<{ githubId: number, username: string, displayName: string }>("INSERT INTO users (uuid, userName, displayName, isFromGithub) VALUES (:githubId, :username, :displayName, 1)").run({
+                githubId: githubId,
+                username: username,
+                displayName: displayName
+            });
+
+            // await connection.close();
+
+            return newUserResult.changes === 1;
+
+        } catch(err) {
+            console.error(`Something happened while trying to login via github (user-service): ${err}`);
+            return false;
+        }
+    }
 }
