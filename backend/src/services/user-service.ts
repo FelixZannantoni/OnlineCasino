@@ -19,7 +19,7 @@ export class UserService {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const rows = connection.prepare<{username: string}, User>("SELECT * FROM users WHERE userName = :username").all({username: username});
+            const rows = connection.prepare<{username: string}, User>("SELECT * FROM users WHERE userName = :username AND isFromGithub = 0").all({username: username});
 
             //await connection.close();
 
