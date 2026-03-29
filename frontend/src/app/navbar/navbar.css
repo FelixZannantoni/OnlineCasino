@@ -51,11 +51,10 @@
     font-weight: 700;
     font-size: 1.3rem;
     text-shadow: 0 0 5px rgba(255, 215, 0, 10);
-    letter-spacing: 1px;
 }
 
 .brand_link:hover {
-    /*cursor: not-allowed; geht nicht*/
+    /*cursor: pointer; /* geht nicht*/
     text-shadow: 0 0 10px rgba(255, 215, 0, 10);
     transition: all 0.5s ease-in-out;
 }
