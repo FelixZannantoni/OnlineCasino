@@ -1,9 +1,153 @@
-<!-- Temporary Poker Navigation Button -->
-<div class="temp-poker-nav">
-    <button routerLink="/poker" class="poker-nav-btn">
-        Go to Poker Table
-    </button>
-</div>
+<main class="home-container">
+    <!-- Header Section -->
+    <header class="home-header">
+        <h1 class="home-title">Hauptmenü</h1>
+    </header>
 
-<!-- Your existing home content -->
+    <!-- Main Content Grid -->
+    <div class="home-content">
+        <!-- Games Grid Section -->
+        <div class="games-section">
+            <!-- Row 1 -->
+            <div class="game-row">
+                <div class="news-banner">
+                    <mat-icon class="news-icon">stars</mat-icon>
+                    <span>Was ist neu?</span>
+                </div>
+                <div class="game-card featured">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="game-row">
+                <div class="news-banner">
+                    <mat-icon class="news-icon">casino</mat-icon>
+                    <span>Was ist neu?</span>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="game-row">
+                <div class="news-banner">
+                    <mat-icon class="news-icon">games</mat-icon>
+                    <span>Was ist neu?</span>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+                <div class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel 1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Unified Club + Friends/Leaderboard -->
+        <aside class="sidebar">
+            <div class="sidebar-container">
+                <!-- Club Section (Top) -->
+                <div class="club-section">
+                    <h2 class="club-title">Club</h2>
+                    <div class="player-of-week">
+                        <span class="label">Player of the Week:</span>
+                        <span class="name">[name]</span>
+                    </div>
+                </div>
+
+                <!-- Slider Section (Friends/Leaderboard) -->
+                <div class="slider-section">
+                    <!-- Slider Navigation (Tab Buttons) -->
+                    <div class="slider-nav">
+                        <button class="slider-btn active" data-slide="friends">
+                            <span>Freundesliste</span>
+                        </button>
+                        <button class="slider-btn" data-slide="leaderboard">
+                            <span>Leaderboard</span>
+                        </button>
+                    </div>
+
+                    <!-- Sliding Content Area -->
+                    <div class="slider-wrapper">
+                        <div class="slider-track" id="sliderTrack">
+                            <!-- Friends Slide -->
+                            <div class="slide" data-slide="friends">
+                                <ul class="friends-list">
+                                    <li class="friend-item online">
+                                        <span class="status-dot"></span>
+                                        <span class="friend-name">Freund 1</span>
+                                    </li>
+                                    <li class="friend-item online">
+                                        <span class="status-dot"></span>
+                                        <span class="friend-name">Freund 2</span>
+                                    </li>
+                                    <li class="friend-item offline">
+                                        <span class="status-dot"></span>
+                                        <span class="friend-name">Freund 3</span>
+                                    </li>
+                                </ul>
+                                <div class="slide-hint">
+                                    <mat-icon>arrow_back</mat-icon>
+                                    <span>weitere Profile rechts zum gold</span>
+                                    <mat-icon>arrow_forward</mat-icon>
+                                </div>
+                            </div>
+
+                            <!-- Leaderboard Slide -->
+                            <div class="slide" data-slide="leaderboard">
+                                <ul class="leaderboard-list">
+                                    <li class="leaderboard-item">
+                                        <span class="rank">1</span>
+                                        <span class="player-name">[name]</span>
+                                    </li>
+                                    <li class="leaderboard-item">
+                                        <span class="rank">2</span>
+                                        <span class="player-name">[name]</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<!-- Router Outlet for child routes -->
 <router-outlet />
