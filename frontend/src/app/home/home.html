@@ -1,9 +1,4 @@
 <main class="home-container">
-    <!-- Header Section -->
-    <header class="home-header">
-        <h1 class="home-title">Hauptmenü</h1>
-    </header>
-
     <!-- Main Content Grid -->
     <div class="home-content">
         <!-- Games Grid Section -->
@@ -92,21 +87,23 @@
 
                 <!-- Slider Section (Friends/Leaderboard) -->
                 <div class="slider-section">
-                    <!-- Slider Navigation (Tab Buttons) -->
-                    <div class="slider-nav">
-                        <button class="slider-btn active" data-slide="friends">
+                    <!-- Toggle Switch with sliding background -->
+                    <div class="slide-controls">
+                        <div class="slider-tab" [ngStyle]="{'left': showLeaderboard ? '50%' : '0'}"></div>
+                        <button class="slide" [class.active]="!showLeaderboard" (click)="setSlide('friends')">
                             <span>Freundesliste</span>
                         </button>
-                        <button class="slider-btn" data-slide="leaderboard">
+                        <button class="slide" [class.active]="showLeaderboard" (click)="setSlide('leaderboard')">
                             <span>Leaderboard</span>
                         </button>
                     </div>
 
                     <!-- Sliding Content Area -->
                     <div class="slider-wrapper">
-                        <div class="slider-track" id="sliderTrack">
+                        <div class="slider-track"
+                            [ngStyle]="{'transform': showLeaderboard ? 'translateX(-100%)' : 'translateX(0)'}">
                             <!-- Friends Slide -->
-                            <div class="slide" data-slide="friends">
+                            <div class="slide-content">
                                 <ul class="friends-list">
                                     <li class="friend-item online">
                                         <span class="status-dot"></span>
@@ -121,15 +118,10 @@
                                         <span class="friend-name">Freund 3</span>
                                     </li>
                                 </ul>
-                                <div class="slide-hint">
-                                    <mat-icon>arrow_back</mat-icon>
-                                    <span>weitere Profile rechts zum gold</span>
-                                    <mat-icon>arrow_forward</mat-icon>
-                                </div>
                             </div>
 
                             <!-- Leaderboard Slide -->
-                            <div class="slide" data-slide="leaderboard">
+                            <div class="slide-content">
                                 <ul class="leaderboard-list">
                                     <li class="leaderboard-item">
                                         <span class="rank">1</span>
