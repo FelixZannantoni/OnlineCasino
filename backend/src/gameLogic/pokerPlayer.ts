@@ -24,7 +24,7 @@ export class PokerPlayer extends CardGamePlayer {
     private pressedBet: boolean;
     private pressedCall: boolean;
     private pressedRaise: boolean;
-    private handValue: number[];
+    private valueOfHand: number[];
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
@@ -33,9 +33,24 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedBet = false;
         this.pressedCall = false;
         this.pressedRaise = false;
-        this.handValue = [0];
+        this.valueOfHand = [0];
     }
 
+    public getCardCombinationValue(): number {
+        return this.valueOfHand[0];
+    }
+
+    public getValueOfCardCombination(): number {
+        let valueOfCardCombination: number = 0;
+
+        for (let i: number = 1; i < this.valueOfHand.length; i++) {
+            valueOfCardCombination += this.valueOfHand[i];
+            valueOfCardCombination *= 10;
+        }
+
+        return valueOfCardCombination;
+    }
+    
     public getPressedFold(): boolean {
         return this.pressedFold;
     }
@@ -89,9 +104,6 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedRaise = false;
     }
 
-    public getHandValue() {
-        return this.handValue;
-    }
 
     public checkHand(cards: Card[]) {
         if (this.hasRoyalFlush(cards)) {
@@ -120,7 +132,7 @@ export class PokerPlayer extends CardGamePlayer {
     private hasRoyalFlush(cards: Card[]): boolean {
         cards.sort((a, b) => b.value - a.value);
         if (this.hasStraightFlush(cards) && cards[0].name == CardName.ace) {
-            this.handValue = [ROYALFLUSH_VALUE];
+            this.valueOfHand = [ROYALFLUSH_VALUE];
             return true;
         }
         return false;
@@ -143,7 +155,7 @@ export class PokerPlayer extends CardGamePlayer {
         }
 
         if (count >= 5) {
-            this.handValue = [STRAIGHTFLUSH_VALUE, valueOfFstCardOfSrtFl];
+            this.valueOfHand = [STRAIGHTFLUSH_VALUE, valueOfFstCardOfSrtFl];
             return true;
         }
 
@@ -160,7 +172,7 @@ export class PokerPlayer extends CardGamePlayer {
                 if (cards[i].name == cards[j].name) {
                     count++;
                     if (count == 4) {
-                        this.handValue = [QUADRUPLE_VALUE, cards[j].value, Math.max(valueOfHighestOtherCard, this.getPlayerHighCard())];
+                        this.valueOfHand = [QUADRUPLE_VALUE, cards[j].value, Math.max(valueOfHighestOtherCard, this.getPlayerHighCard())];
                         return true;
                     }
                 }
@@ -196,7 +208,7 @@ export class PokerPlayer extends CardGamePlayer {
         for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
-                    this.handValue = [FULLHOUSE_VALUE, valueOfTripple, cards[i].value];
+                    this.valueOfHand = [FULLHOUSE_VALUE, valueOfTripple, cards[i].value];
                     return true;
                 }
 
@@ -232,7 +244,7 @@ export class PokerPlayer extends CardGamePlayer {
             }
             cards.sort((a, b) => b.value - a.value);
 
-            this.handValue = [FLUSH_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value];
+            this.valueOfHand = [FLUSH_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value];
         }
 
         return hasFlush;
@@ -253,7 +265,7 @@ export class PokerPlayer extends CardGamePlayer {
                 valueOfFirstCardOfStrFl = cards[i].value;
             }
             if (count == 5) {
-                this.handValue = [STRAIGHT_VALUE, valueOfFirstCardOfStrFl, 0];
+                this.valueOfHand = [STRAIGHT_VALUE, valueOfFirstCardOfStrFl, 0];
                 return true;
             }
         }
@@ -280,7 +292,7 @@ export class PokerPlayer extends CardGamePlayer {
 
         if (hasTripple) {
             cards.sort((a, b) => b.value - a.value);
-            this.handValue = [TRIPPLE_VALUE, valueOfTripple, cards[0].value, cards[1].value];
+            this.valueOfHand = [TRIPPLE_VALUE, valueOfTripple, cards[0].value, cards[1].value];
         }
 
         return hasTripple;
@@ -320,7 +332,7 @@ export class PokerPlayer extends CardGamePlayer {
 
         if (hasTwoPair) {
             cards.sort((a, b) => b.value - a.value);
-            this.handValue = [TWOPAIR_VALUE, Math.max(valueOfFstPair, valueOfSndPair), Math.min(valueOfFstPair, valueOfSndPair), cards[0].value];
+            this.valueOfHand = [TWOPAIR_VALUE, Math.max(valueOfFstPair, valueOfSndPair), Math.min(valueOfFstPair, valueOfSndPair), cards[0].value];
         }
 
         return hasTwoPair;
@@ -342,7 +354,7 @@ export class PokerPlayer extends CardGamePlayer {
 
         if (hasPair) {
             cards.sort((a, b) => b.value - a.value);
-            this.handValue = [PAIR_VALUE, valueOfPair, this.getPlayerHighCard(), cards[0].value, cards[1].value, cards[2].value];
+            this.valueOfHand = [PAIR_VALUE, valueOfPair, this.getPlayerHighCard(), cards[0].value, cards[1].value, cards[2].value];
         }
 
         return hasPair;
@@ -350,7 +362,7 @@ export class PokerPlayer extends CardGamePlayer {
 
     getHighCard(cards: Card[]) {
         cards.sort((a, b) => b.value - a.value);
-        this.handValue = [HIGHCARD_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value]
+        this.valueOfHand = [HIGHCARD_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value]
     }
 
 
