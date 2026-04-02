@@ -42,6 +42,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     min-height: 120px;
+    cursor: pointer;
 }
 
 .news-banner:hover {
@@ -50,8 +51,13 @@
 }
 
 .news-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
     color: var(--light-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .news-banner span:last-child {
@@ -76,6 +82,11 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
+}
+
+.game-card,
+.game-card:hover {
+    background: var(--casino-surface);
 }
 
 .game-card::before {
@@ -276,13 +287,27 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.85rem 1rem;
-    background: rgba(0, 0, 0, 0.3);
+    padding: 0;
+    background: transparent;
     border-radius: 8px;
     transition: all 0.2s ease;
 }
 
-.friend-item:hover {
+.friend-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.friend-btn:hover {
     background: rgba(255, 215, 0, 0.1);
 }
 
@@ -344,13 +369,27 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.85rem 1rem;
-    background: rgba(0, 0, 0, 0.3);
+    padding: 0;
+    background: transparent;
     border-radius: 8px;
     transition: all 0.2s ease;
 }
 
-.leaderboard-item:hover {
+.leaderboard-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.leaderboard-btn:hover {
     background: rgba(255, 215, 0, 0.1);
 }
 
