@@ -113,7 +113,7 @@ export class PokerPlayer extends CardGamePlayer {
         else if (this.hasPair(cards)) {
         }
         else {
-            this.handValue = [HIGHCARD_VALUE, this.getPlayerHighCard(), this.getPlayerLowCard()];
+            this.getHighCard(cards);
         }
     }
 
@@ -158,7 +158,7 @@ export class PokerPlayer extends CardGamePlayer {
                         return true;
                     }
                 }
-                else{
+                else {
                     highestOtherCardValue = cards[j].value;
                 }
             }
@@ -239,22 +239,34 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasTripple(cards: Card[]): boolean {
+        let hasTripple: boolean = false;
+        let valueOfTripple: number = 0;
         for (let i: number = 0; i < cards.length - 2; i++) {
             for (let j: number = i + 1; j < cards.length - 1; j++) {
                 for (let k: number = j + 1; k < cards.length; k++) {
                     if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
-                        this.handValue = [TRIPPLE_VALUE, cards[i].value, this.getPlayerHighCard()];//TODO die nächsten 2 highcards
-                        return true;
+                        valueOfTripple = cards[i].value;
+                        hasTripple = true;
+                        cards.splice(i, 1);
+                        cards.splice(j, 1);
+                        cards.splice(k, 1);
                     }
                 }
             }
         }
-        return false;
+        if (hasTripple) {
+            cards.sort((a, b) => a.value - b.value);
+            this.handValue = [TRIPPLE_VALUE, valueOfTripple, cards[0].value, cards[1].value];
+
+        }
+        return hasTripple;
     }
 
     private hasTwoPair(cards: Card[]): boolean {
         let hasOnePair: boolean = false;
+        let hasTwoPair: boolean = false;
         let firstPairValue: number = 0;
+        let secoundPairValue: number = 0;
 
         for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
@@ -272,26 +284,44 @@ export class PokerPlayer extends CardGamePlayer {
         for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
-                    this.handValue = [TWOPAIR_VALUE, Math.max(firstPairValue, cards[i].value), Math.min(firstPairValue, cards[i].value)];//TODO eine Highcard
-                    return true;
+                    secoundPairValue = cards[i].value;
+                    hasTwoPair = true;
+                    cards.splice(i, 1);
+                    cards.splice(j, 1);
                 }
             }
         }
-        return false;
+        if (hasTwoPair) {
+            cards.sort((a, b) => a.value - b.value);
+            this.handValue = [TWOPAIR_VALUE, Math.max(firstPairValue, secoundPairValue), Math.min(firstPairValue, secoundPairValue), cards[0].value];
+        }
+        return hasTwoPair;
     }
 
     private hasPair(cards: Card[]): boolean {
+        let hasPair: boolean = false;
+        let valueOfPair: number = 0;
         for (let i: number = 0; i < cards.length - 1; i++) {
             for (let j: number = i + 1; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
-                    this.handValue = [PAIR_VALUE, cards[i].value, this.getPlayerHighCard()];//TODO nächsten 3 highCards
-                    return true;
+                    hasPair = true;
+                    cards.splice(i, 1);
+                    cards.splice(j, 1);
                 }
-
             }
         }
-        return false;
+        if (hasPair) {
+            cards.sort((a, b) => a.value - b.value);
+            this.handValue = [PAIR_VALUE, valueOfPair, this.getPlayerHighCard(), cards[0].value, cards[1].value, cards[2].value];
+        }
+        return hasPair;
     }
+
+    getHighCard(cards: Card[]) {
+        cards.sort((a, b) => a.value - b.value);
+        this.handValue = [HIGHCARD_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value]
+    }
+
 
     private getPlayerHighCard(): number {
         return Math.max(this.cards[0].value, this.cards[1].value);
