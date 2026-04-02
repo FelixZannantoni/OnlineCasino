@@ -1,6 +1,6 @@
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
-import { CardName } from "./deck";
+import { CardColor, CardName } from "./deck";
 
 
 export const MIN_CARDS_FOR_FLUSH = 5;
@@ -207,23 +207,35 @@ export class PokerPlayer extends CardGamePlayer {
 
     private hasFlush(cards: Card[]): boolean {
         let count: number = 0;
-        let sum: number = 0;
+        let colorOfFlush: CardColor = CardColor.CLUBS;
+        let hasFlush: boolean = false;
 
         for (let i: number = 0; i < cards.length - MIN_CARDS_FOR_FLUSH; i++) {
             count = 0;
-            sum = 0;
             for (let j: number = i; j < cards.length; j++) {
                 if (cards[i].color == cards[j].color) {
                     count++;
-                    sum += cards[j].value;
+                    if (count == 5) {
+                        hasFlush = true;
+                        colorOfFlush = cards[i].color;
+                    }
                 }
             }
-            if (count >= 5) {
-                this.handValue = [FLUSH_VALUE, sum, 0];//TODO geht nur wenn count 5 ist
-                return true;
-            }
         }
-        return false;
+
+        if (hasFlush) {
+
+            for (let i: number = 0; i < cards.length; i++) {
+                if (cards[i].color != colorOfFlush) {
+                    cards.splice(i, 1);
+                }
+            }
+            cards.sort((a, b) => b.value - a.value);
+
+            this.handValue = [FLUSH_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value];
+        }
+
+        return hasFlush;
     }
 
     private hasStraight(cards: Card[]): boolean {
