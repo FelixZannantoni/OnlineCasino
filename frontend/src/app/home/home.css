@@ -84,8 +84,7 @@
     overflow: hidden;
 }
 
-.game-card,
-.game-card:hover {
+.game-card, .game-card:hover {
     background: var(--casino-surface);
 }
 

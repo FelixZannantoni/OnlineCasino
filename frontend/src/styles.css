@@ -29,10 +29,9 @@ body {
     background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
     font-family: 'Montserrat', sans-serif;
     color: #fff;
-    overflow: hidden;
 }
 
-.shining-btn{
+.shining-btn {
     display: inline-block;
     padding: 0.4rem 1.1rem;
     border-radius: 999px;
@@ -122,10 +121,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background-color: black;
+    box-shadow: none;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--primary-gold-gradient);
+    background: #d19e1d;
     border-radius: 5px;
 }
