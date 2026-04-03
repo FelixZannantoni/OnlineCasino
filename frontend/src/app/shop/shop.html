@@ -1,0 +1,84 @@
+<div class="shop-wrapper">
+    <!-- Top Bar -->
+    <div class="shop-top-bar">
+        <div class="shop-title">
+            <mat-icon>storefront</mat-icon>
+            <h1>Poker <span>Shop</span></h1>
+        </div>
+        <div class="balance-badge">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <span class="balance-amount">{{ userCredits | number }}</span>
+        </div>
+    </div>
+
+    <!-- Featured Banner -->
+    <div class="featured-banner">
+        <div class="featured-image">
+            <mat-icon>{{ featuredItem.icon }}</mat-icon>
+        </div>
+        <div class="featured-content">
+            <span class="featured-tag">
+                <mat-icon>local_fire_department</mat-icon>
+                Hot Deal
+            </span>
+            <h2>{{ featuredItem.name }}</h2>
+            <p>{{ featuredItem.description }}</p>
+            <div class="featured-row">
+                <div class="featured-price">
+                    <mat-icon>paid</mat-icon>
+                    <span>{{ featuredItem.price | number }}</span>
+                </div>
+                <button class="featured-btn">
+                    <span>Get It Now</span>
+                    <mat-icon>shopping_cart</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        @for (cat of categories; track cat.id) {
+        <button class="filter-tab" [class.active]="selectedCategory === cat.id" (click)="selectedCategory = cat.id">
+            <mat-icon>{{ cat.icon }}</mat-icon>
+            <span>{{ cat.label }}</span>
+        </button>
+        }
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid">
+        @for (item of filteredItems; track item.id) {
+        <div class="product-item" [attr.data-rarity]="item.rarity">
+            <div class="product-image-area">
+                @if (item.isNew) {
+                <span class="new-badge">New</span>
+                }
+                <div class="product-icon">
+                    <mat-icon>{{ item.icon }}</mat-icon>
+                </div>
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">{{ item.name }}</h3>
+                <p class="product-desc">{{ item.description }}</p>
+                <div class="product-footer">
+                    @if (item.currency === 'free') {
+                    <span class="product-price free">
+                        <mat-icon>gift</mat-icon>
+                        Free
+                    </span>
+                    } @else {
+                    <span class="product-price">
+                        <mat-icon>paid</mat-icon>
+                        {{ item.price | number }}
+                    </span>
+                    }
+                    <button class="add-btn" title="Add to cart">
+                        <mat-icon>add_shopping_cart</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>
