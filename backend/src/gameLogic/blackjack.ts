@@ -16,7 +16,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     constructor(gameId: string) {
         super(gameId);
         this.blackjackDeck = new BlackjackDeck();
-        this.blackJackBot = new BlackjackBot;
+        this.blackJackBot = new BlackjackBot();
     }
 
     private startGame() {
@@ -90,6 +90,9 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
             }
 
+        }
+        while(this.blackJackBot.makesHit()) {
+            this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BALCKJACK_BOT_ID));
         }
     }
 
