@@ -279,11 +279,7 @@
     background-size: 100% 100%, 80% 80%;
 }
 
-/* ========================================
-   ALL 7 CHIPS - fly from text center
-   ======================================== */
-
-/* Final positions (offsets from text center at 65%/50% of navbar_brand) */
+/* Final positions (offsets from text center at 65%/50% of navbar brand) */
 .chip-1 {
     width: 22px;
     height: 22px;
@@ -360,11 +356,11 @@
 
 /* Staggered cascade */
 .navbar_brand:hover>.chip-1 {
-    animation-delay: 0.00s;
+    animation-delay: 0.24s;
 }
 
 .navbar_brand:hover>.chip-2 {
-    animation-delay: 0.04s;
+    animation-delay: 0.16s;
 }
 
 .navbar_brand:hover>.chip-3 {
@@ -376,7 +372,7 @@
 }
 
 .navbar_brand:hover>.chip-5 {
-    animation-delay: 0.16s;
+    animation-delay: 0.06s;
 }
 
 .navbar_brand:hover>.chip-6 {
@@ -384,7 +380,7 @@
 }
 
 .navbar_brand:hover>.chip-7 {
-    animation-delay: 0.24s;
+    animation-delay: 0.04s;
 }
 
 @keyframes chipFlyOut {
