@@ -3,7 +3,7 @@ import { CardVisibility } from "./deck";
 import { Player } from "./player";
 
 export class CardGamePlayer extends Player {
-    private cards: Card[];
+    protected cards: Card[];
     private hasDealerChip: boolean;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
@@ -24,8 +24,7 @@ export class CardGamePlayer extends Player {
         this.hasDealerChip = hasDealerChip;
     }
 
-    public addCard(card: Card, playerId: string): void {
-        //nur mit dealCard aufrufen wegen id
+    public addCard(card: Card): void {
         this.cards.push(card);
         card.visibility = CardVisibility.player;
     }
