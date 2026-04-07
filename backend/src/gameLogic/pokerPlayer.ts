@@ -50,7 +50,7 @@ export class PokerPlayer extends CardGamePlayer {
 
         return valueOfCardCombination;
     }
-    
+
     public getPressedFold(): boolean {
         return this.pressedFold;
     }
