@@ -100,6 +100,24 @@ pokerRouter.put("/call", async (req: Request, res: Response) => {
     }
 });
 
+pokerRouter.put("/raise", async (req: Request, res: Response) => {
+    const [playerId, gameId, amount]: [string, string, number] = [req.body.playerId, req.body.gameId, req.body.amount];
+    if(!playerId || !gameId) {
+        res.status(StatusCodes.BAD_REQUEST).json({ message: "Missing playerId or gameId in request body" });
+        return;
+    }
+
+    const service: PokerService = new PokerService();
+
+    const result = service.raise(playerId, gameId, amount);
+
+    if(result.success) {
+        res.status(StatusCodes.OK).json({ message: result.message });
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
+    }
+});
+
 pokerRouter.get("/games", async (req: Request, res: Response) => {
     const games: Poker[] = [...PokerService.pokerGames];
 
