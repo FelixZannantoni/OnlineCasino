@@ -14,7 +14,7 @@ import { isPlatformBrowser } from '@angular/common';
   templateUrl: './poker.html',
   styleUrls: ['./poker.css']
 })
-export class Poker {
+export class Poker implements OnInit, OnDestroy {
   gameState = {
     pot: 1000,
     currentBet: 100,
@@ -93,7 +93,7 @@ export class Poker {
     ]
 };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: object) {}
 
   fold(playerId: string, gameId: string) {
     this.http.put(`${BASE_URL}/poker/fold`, { 
@@ -143,8 +143,7 @@ export class Poker {
 
   isCurrentPlayer(playerId: string): boolean {
     return playerId === this.gameState.currentPlayerId;
-export class Poker implements OnInit, OnDestroy {
-  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
+  }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
