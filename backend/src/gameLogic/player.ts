@@ -4,7 +4,7 @@ export class Player {
     private displayname: string;
     private balance: number;
     private bet: number;
-
+    private desiredBet: number;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         this.playerId = playerId;
@@ -12,6 +12,7 @@ export class Player {
         this.displayname = displayname;
         this.balance = balance;
         this.bet = 0;
+        this.desiredBet = 0;
     }
 
     public getPlayerId(): string {
@@ -33,6 +34,19 @@ export class Player {
 
     public getBet(): number {
         return this.bet;
+    }
+
+    public getDesiredBet(): number {
+        return this.desiredBet;
+    }
+
+    public setDesiredBet(desiredBet: number): boolean
+    {
+        if((this.bet + desiredBet) > this.balance){
+            return false;
+        }
+        this.desiredBet = desiredBet;
+        return true;
     }
 
     public setBet(bet: number): void {
@@ -75,4 +89,5 @@ export class Player {
         }
         return false;
     }
+
 }

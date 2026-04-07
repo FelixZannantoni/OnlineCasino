@@ -1,28 +1,29 @@
 <header class="navbar">
     <div class="navbar_container">
         <div class="navbar_brand">
-            <div class="coin-bg">
-                <span class="chip chip-gold chip-1"></span>
-                <span class="chip chip-red chip-2"></span>
-                <span class="chip chip-blue chip-3"></span>
-                <span class="chip chip-green chip-4"></span>
-                <span class="chip chip-black chip-5"></span>
-                <span class="chip chip-gold chip-6"></span>
-                <span class="chip chip-red chip-7"></span>
-            </div>
-            
+            <!-- Decorative coin-bg background -->
+            <div class="coin-bg"></div>
+            <!-- ALL 7 chips: direct children of navbar_brand, fly from text center -->
+            <span class="chip chip-gold chip-1"></span>
+            <span class="chip chip-red chip-2"></span>
+            <span class="chip chip-blue chip-3"></span>
+            <span class="chip chip-green chip-4"></span>
+            <span class="chip chip-black chip-5"></span>
+            <span class="chip chip-gold chip-6"></span>
+            <span class="chip chip-red chip-7"></span>
+
             <a routerLink="/home" class="brand_link">Online Casino</a>
         </div>
 
         <div class="navbar_center"></div>
-        
+
         <div class="navbar_right">
             <nav class="navbar_nav">
                 <ul>
-                    <li><a routerLink="/club" class="nav_pill">Club</a></li>
-                    <li><a routerLink="/friends" class="nav_pill">Friends</a></li>
-                    <li><a routerLink="/leaderboard" class="nav_pill">Leaderboard</a></li>
-                    <li><a routerLink="/shop" class="nav_pill">Shop</a></li>
+                    <li><a routerLink="/club" class="shining-btn">Club</a></li>
+                    <li><a routerLink="/friends" class="shining-btn">Friends</a></li>
+                    <li><a routerLink="/leaderboard" class="shining-btn">Leaderboard</a></li>
+                    <li><a routerLink="/shop" class="shining-btn">Shop</a></li>
                 </ul>
             </nav>
         </div>
@@ -32,7 +33,7 @@
                 <mat-icon class="settings-icon">settings</mat-icon>
             </button>
         </div>
-        
+
         <div class="navbar_right">
             <button class="profile_pic" (click)="toggleProfile()" aria-label="Open profile menu">
                 <img src="https://via.placeholder.com/40" alt="Profile" class="profile_image">

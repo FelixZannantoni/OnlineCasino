@@ -3,7 +3,7 @@
 @baseUrl={{host}}:{{port}}
 
 
-POST {{baseUrl}}/login
+POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
@@ -35,3 +35,24 @@ Content-Type: application/json
     "playerId": 1,
     "gameId": 1
 }
+
+###
+
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+    "username": "Testuser",
+    "password": "password123"
+}
+
+###
+
+POST {{baseUrl}}/users/login/github
+Content-Type: application/json
+
+{
+    "code": "185445b7b225abbfc4a8"
+}
+
+###

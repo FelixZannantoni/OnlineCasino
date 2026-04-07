@@ -6,20 +6,20 @@ import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 
 @Component({
-  selector: 'app-forgot-password',
-  standalone: true,
-  imports: [RouterLink, FormsModule, MatIconModule],
-  templateUrl: './forgot-password.html',
-  styleUrls: ['./forgot-password.css']
+    selector: 'app-forgot-password',
+    standalone: true,
+    imports: [RouterLink, FormsModule, MatIconModule],
+    templateUrl: './forgot-password.html',
+    styleUrls: ['./forgot-password.css']
 })
-export class ForgotPassword { 
-  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  email = '';
-  submitted = false;
+export class ForgotPassword {
+    private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+    email = '';
+    submitted = false;
 
-  onSubmit(): void {
-    if (!this.isBrowser) return;
-    console.log('Password reset requested for:', this.email);
-    this.submitted = true;
-  }
+    onSubmit(): void {
+        if (!this.isBrowser) return;
+        console.log('Password reset requested for:', this.email);
+        this.submitted = true;
+    }
 }

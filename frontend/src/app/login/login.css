@@ -7,6 +7,22 @@
     padding: 20px;
     margin: 0;
     box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+:host::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at center, rgba(139, 92, 246, 0.1) 0%, transparent 70%),
+        radial-gradient(ellipse at top right, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 * {
@@ -22,22 +38,36 @@ body {
 
 /* Container */
 .container {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(10, 10, 10, 0.4);
+    box-shadow:
+        0 20px 60px rgba(10, 10, 10, 0.5),
+        0 0 0 1px rgba(255, 215, 0, 0.2),
+        0 0 40px rgba(139, 92, 246, 0.2);
     position: relative;
     overflow: hidden;
     width: 850px;
     max-width: 100%;
-    min-height: 580px;
-    /* Ensure container doesn't break centering */
+    min-height: 777px;
     margin: auto;
+    z-index: 1;
+    border: 3px solid rgba(93, 68, 4, 0.4);
+}
+
+img {
+    max-width: 10%;
+    height: auto;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+    background-color: #ffffff; /* to make logo more visible */
+    border-radius: 9rem; /*circle */
 }
 
 /* Form Containers */
 .form-container {
     position: absolute;
     top: 0;
+    padding: 6px;
     height: 100%;
     transition: all 0.6s ease-in-out;
     display: flex;
@@ -45,6 +75,41 @@ body {
     justify-content: center;
     background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
 }
+
+/* Social Buttons */
+.socials-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-light);
+    border: 2px solid var(--gray-mid);
+    color: var(--navbar-dark);
+    padding: 6px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.socials-btn:hover {
+    box-shadow: 0 4px 5px rgba(36, 41, 47, 0.4);
+}
+
+/* GitHub Button */
+.socials-btn.github-btn {
+    background-color: #24292F;
+    border: 2px solid var(--grey-light);
+    color: #FFFFFF;
+    text-align: 1rem right;
+}
+
+/* Google Button */
+.socials-btn.google-btn {
+    background-color: #FFFFFF;
+    border: 2px solid var(--gray-mid);
+    color: #3C4043;
+}
+
 
 .sign-in-container {
     left: 0;
@@ -105,6 +170,75 @@ h1 {
     letter-spacing: -0.5px;
 }
 
+/* Logo Container with Casino Chip */
+.logo-container {
+    margin-bottom: 1rem;
+    animation: chipFloat 3s ease-in-out infinite;
+}
+
+.casino-chip {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background:
+        repeating-conic-gradient(from 0deg,
+            var(--primary-purple) 0deg 10deg,
+            var(--primary-purple-dark) 10deg 20deg);
+    box-shadow:
+        0 4px 15px rgba(255, 215, 0, 0.4),
+        inset 0 0 0 3px rgba(255, 255, 255, 0.3),
+        inset 0 0 20px rgba(184, 134, 11, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto;
+}
+
+.casino-chip::before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    animation: chipSpin 20s linear infinite;
+}
+
+.casino-chip span {
+    font-size: 32px;
+    z-index: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.casino-chip mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    z-index: 1;
+    color: #fff;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.accent-line {
+    width: 80px;
+    height: 3px;
+    background: var(--primary-gold-gradient);
+    border-radius: 2px;
+    margin: 1rem;
+    margin-top: 1.4rem; /* Adjusting middle spacing */
+}
+
+.forgot-password-link {
+    color: var(--primary-purple);
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    margin-top: -3px;
+    margin-bottom: -0.05rem;
+}
+
 /* Input Groups */
 .input-group {
     position: relative;
@@ -127,7 +261,6 @@ h1 {
 .input-group input:focus {
     outline: none;
     border-color: var(--primary-purple);
-    /*border-color: flexbox(var(--primary-purple) 80%, var(--primary-purple-dark) 100%);*/
     background-color: #fff;
     box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
 }
@@ -153,26 +286,30 @@ h1 {
     color: var(--primary-purple);
 }
 
+.toggle-password {
+    left: auto !important;
+    right: 14px;
+    cursor: pointer;
+    pointer-events: auto;
+    user-select: none;
+}
+
+.toggle-password:hover {
+    color: var(--primary-purple-dark);
+}
+
 /* Buttons */
 button {
     border-radius: 25px;
     border: none;
-    background: var(--primary-gold-gradient);
-    color: var(--text-gold-dark);
     font-size: 13px;
     font-weight: 800;
     padding: 14px 50px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
     cursor: pointer;
     margin-top: 15px;
-    box-shadow: 0 4px 15px rgba(209, 158, 29, 0.3);
-}
-
-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(209, 158, 29, 0.5);
 }
 
 button:active {

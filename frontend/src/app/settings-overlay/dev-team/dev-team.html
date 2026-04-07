@@ -1,21 +1,21 @@
 <div class="dev-team-content">
     <h2>Developer Team</h2>
     <p class="subtitle">Meet the team behind OnlineCasino</p>
-    
+
     <div class="team-grid">
         @for (dev of developers; track dev.name) {
-            <div class="developer-card">
-                <div class="avatar-icon">
-                    <mat-icon>{{ dev.icon }}</mat-icon>
-                </div>
-                <h3 class="name">{{ dev.name }}</h3>
-                <p class="role">{{ dev.role }}</p>
-                <div class="skills">
-                    @for (skill of dev.skills; track skill) {
-                        <span class="skill-tag">{{ skill }}</span>
-                    }
-                </div>
+        <div class="developer-card">
+            <div class="avatar-icon">
+                <mat-icon>{{ dev.icon }}</mat-icon>
             </div>
+            <h3 class="name">{{ dev.name }}</h3>
+            <p class="role">{{ dev.role }}</p>
+            <div class="skills">
+                @for (skill of dev.skills; track skill) {
+                <span class="skill-tag">{{ skill }}</span>
+                }
+            </div>
+        </div>
         }
     </div>
 </div>

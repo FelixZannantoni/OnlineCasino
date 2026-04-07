@@ -1,8 +1,10 @@
-/* Global Varibales */
+/* Global Variables */
+@import 'app/ui/cards/cards.css';
+
 :root {
     --primary-gold-gradient: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    --primary-purple: #8b5cf6;
-    --primary-purple-dark: #6d28d9;
+    --primary-purple: #613092;
+    --primary-purple-dark: rgb(67, 25, 135);
     --navbar-dark: #0a0a0a;
     --navbar-mid: #1a3a52;
     --text-gold: #d19e1d;
@@ -11,4 +13,119 @@
     --gray-light: #f5f5f5;
     --gray-mid: #e0e0e0;
     --gray-dark: #333333;
+    --casino-bg: #0a0a0a;
+    --casino-surface: #1a1a2e;
+    --casino-accent: #16213e;
+    --gold-shine: #ffd700;
+    --light-gold: #ffd700;
+}
+
+/* Global Styles */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+}
+
+.shining-btn {
+    display: inline-block;
+    padding: 0.4rem 1.1rem;
+    border-radius: 999px;
+    /* Larger background to allow movement when hovering*/
+    background: var(--primary-gold-gradient);
+    background-size: 200% 200%;
+    background-position: 100% 50%;
+    color: var(--text-gold-dark);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background-position 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.shining-btn:hover {
+    /* Shift gradient position to simulate movement closer to what light it is reflecting*/
+    background-position: 0% 50%;
+    transform: translateY(-1.5px);
+    box-shadow: var(--primary-purple) 0px 2px 8px;
+}
+
+/* Casino Chip Animation */
+@keyframes chipFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(-5deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(15deg);
+    }
+}
+
+@keyframes chipSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes goldPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.3);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Gold Border Accent */
+.gold-accent {
+    position: relative;
+}
+
+.gold-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--primary-gold-gradient);
+    border-radius: 2px;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 0.6rem;
+}
+
+::-webkit-scrollbar-track {
+    background-color: black;
+    box-shadow: none;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d19e1d;
+    border-radius: 5px;
 }

@@ -27,6 +27,42 @@ export class PokerService {
         return true;
     }
 
+    async check(playerId: string, gameId: string): Promise<boolean> {
+        // get the game and player objects
+        const game = PokerService.pokerGames.find(g => g.getGameId());
+        
+        if(!game) return false;
+
+        const player: PokerPlayer | undefined = game.getPlayers().find(p => p.getPlayerId() === playerId);
+
+        if(!player) {
+            console.error(`Player with the id ${playerId} was not found in game ${gameId}`);
+            return false;
+        }
+        player.setPressedCheck(true);
+        return true;
+    }
+
+    async bet(playerId: string, gameId: string, betAmount: number): Promise<boolean> {
+        // get the game and player objects
+        const game = PokerService.pokerGames.find(g => g.getGameId());
+        
+        if(!game) return false;
+
+        const player: PokerPlayer | undefined = game.getPlayers().find(p => p.getPlayerId() === playerId);
+
+        if(!player) {
+            console.error(`Player with the id ${playerId} was not found in game ${gameId}`);
+            return false;
+        }
+        /*
+        player.setPressedBet(true);
+        player.setBet(2.0);
+        */
+       // set desired bet for player
+        return true;
+    }
+
     /**
      * Add a player to a game of poker.
      * @param playerId 
@@ -61,7 +97,7 @@ export class PokerService {
             const result = connection.prepare<[string], GameRow>("SELECT * FROM games WHERE type = ?")
                 .all(type);
         
-            await connection.close();
+            // await connection.close();
 
             if(!result) {
                 throw new Error("FAIL");
@@ -92,7 +128,7 @@ export class PokerService {
             const result = connection.prepare<[string, string], GameRow>("SELECT * FROM games WHERE gameId = ? AND type = ?")
                 .get(gameId, type);
         
-            await connection.close();
+            // await connection.close();
 
             if(!result) {
                 console.error(`Game with the id ${gameId} was not found`);
