@@ -114,6 +114,8 @@ export class Poker extends CardGame<PokerPlayer> {
     private makeMove() {
         for (let i: number = 0; i < this.players.length; i++) {
             const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+            //*wait for Player Input
+            
             if (playerOnMove.getPressedFold() == true) {
                 //TODO leaf Round
             }
@@ -150,6 +152,7 @@ export class Poker extends CardGame<PokerPlayer> {
             else {
                 //TODO Error Handling
             }
+            playerOnMove.resetMadeMove();
         }
     }
 
