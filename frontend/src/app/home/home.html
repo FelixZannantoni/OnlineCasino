@@ -1,9 +1,155 @@
-<!-- Temporary Poker Navigation Button -->
-<div class="temp-poker-nav">
-    <button routerLink="/poker" class="poker-nav-btn">
-        Go to Poker Table
-    </button>
-</div>
+<main class="home-container">
+    <!-- Main Content Grid -->
+    <div class="home-content">
+        <!-- Games Grid Section -->
+        <div class="games-section">
+            <!-- Row 1 -->
+            <div class="game-row">
+                <button class="news-banner">
+                    <mat-icon class="news-icon">stars</mat-icon>
+                    <span>Was ist neu?</span>
+                </button>
+                <button class="game-card featured" routerLink="/roulette"> <!-- Roulette non-existend atm -->
+                    <div class="game-card-content">
+                        <span class="game-title">Roulette</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel tmp</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel tmp</span>
+                    </div>
+                </button>
+            </div>
 
-<!-- Your existing home content -->
+            <!-- Row 2 -->
+            <div class="game-row">
+                <button class="news-banner">
+                    <mat-icon class="news-icon">casino</mat-icon>
+                    <span>Was ist neu?</span>
+                </button>
+                <button class="game-card featured" routerLink="/blackjack"> <!-- Blackjack non-existend atm -->
+                    <div class="game-card-content">
+                        <span class="game-title">Blackjack</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel tmp</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel tmp</span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="game-row">
+                <button class="news-banner">
+                    <mat-icon class="news-icon">games</mat-icon>
+                    <span>Was ist neu?</span>
+                </button>
+                <button class="game-card featured" routerLink="/poker">
+                    <div class="game-card-content">
+                        <span class="game-title">Poker Texas Hold'em</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel tmp</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Spiel tmp</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Unified Club + Friends/Leaderboard -->
+        <aside class="sidebar">
+            <div class="sidebar-container">
+                <!-- Club Section (Top) -->
+                <div class="club-section">
+                    <h2 class="club-title">Club</h2>
+                    <div class="player-of-week">
+                        <span class="label">Player of the Week:</span>
+                        <span class="name">[name]</span>
+                    </div>
+                </div>
+
+                <!-- Slider Section (Friends/Leaderboard) -->
+                <div class="slider-section">
+                    <!-- Toggle Switch with sliding background -->
+                    <div class="slide-controls">
+                        <div class="slider-tab" [ngStyle]="{'left': showLeaderboard ? '50%' : '0'}"></div>
+                        <button class="slide" [class.active]="!showLeaderboard" (click)="setSlide('friends')">
+                            <span>Freundesliste</span>
+                        </button>
+                        <button class="slide" [class.active]="showLeaderboard" (click)="setSlide('leaderboard')">
+                            <span>Leaderboard</span>
+                        </button>
+                    </div>
+
+                    <!-- Sliding Content Area -->
+                    <div class="slider-wrapper">
+                        <div class="slider-track"
+                            [ngStyle]="{'transform': showLeaderboard ? 'translateX(-100%)' : 'translateX(0)'}">
+                            <!-- Friends Slide -->
+                            <div class="slide-content">
+                                <ul class="friends-list">
+                                    <li class="friend-item online">
+                                        <button class="friend-btn">
+                                            <span class="status-dot"></span>
+                                            <span class="friend-name">Freund 1</span>
+                                        </button>
+                                    </li>
+                                    <li class="friend-item online">
+                                        <button class="friend-btn">
+                                            <span class="status-dot"></span>
+                                            <span class="friend-name">Freund 2</span>
+                                        </button>
+                                    </li>
+                                    <li class="friend-item offline">
+                                        <button class="friend-btn">
+                                            <span class="status-dot"></span>
+                                            <span class="friend-name">Freund 3</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Leaderboard Slide -->
+                            <div class="slide-content">
+                                <ul class="leaderboard-list">
+                                    <li class="leaderboard-item">
+                                        <button class="leaderboard-btn">
+                                            <span class="rank">1</span>
+                                            <span class="player-name">[name]</span>
+                                        </button>
+                                    </li>
+                                    <li class="leaderboard-item">
+                                        <button class="leaderboard-btn">
+                                            <span class="rank">2</span>
+                                            <span class="player-name">[name]</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<!-- Router Outlet for child routes -->
 <router-outlet />

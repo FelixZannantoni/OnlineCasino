@@ -183,9 +183,93 @@
     background: linear-gradient(145deg, #2d5a3d 0%, #1e3d2f 100%);
     border-radius: 200px;
     border: 15px solid #3d2817;
+    margin: 0 auto 30px;
+    border-radius: 250px / 150px;
     box-shadow:
-        inset 0 0 100px rgba(0, 0, 0, 0.5),
-        0 10px 40px rgba(0, 0, 0, 0.5);
+        /* Outer wood frame shadow */
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        /* Wood frame highlight */
+        inset 0 0 0 8px rgba(255, 255, 255, 0.05),
+        /* Inner felt edge */
+        inset 0 0 80px rgba(0, 0, 0, 0.4);
+    overflow: visible;
+}
+
+/* Wood frame / rail */
+.poker-table::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+        /* Wood grain effect */
+        repeating-linear-gradient(90deg,
+            #5c3a1e 0px,
+            #6b4423 2px,
+            #4a2e15 4px,
+            #5c3a1e 6px);
+    border: 12px solid #3d2817;
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.15),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+        0 0 0 2px #2a1a0d,
+        0 0 0 4px #4a2e15;
+    z-index: 1;
+}
+
+/* Red felt playing surface */
+.poker-table::after {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border-radius: 230px / 130px;
+    background:
+        /* Radial gradient for depth and shadow*/
+        radial-gradient(ellipse at center,
+            #910002 0%,
+            #880002 40%,
+            #7D0000 70%,
+            #640000 100%);
+    box-shadow:
+        inset 0 0 60px rgba(0, 0, 0, 0.35),
+        inset 0 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+}
+
+/* Decorative stitching line on felt */
+.poker-table .felt-stitch {
+    position: absolute;
+    inset: 28px;
+    border-radius: 222px / 122px;
+    border: 2px dashed rgba(255, 255, 255, 0.12);
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Center decorative circle */
+.poker-table .center-emblem {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.15) 0%, transparent 70%);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.poker-table .center-emblem::before {
+    content: '♠';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.06);
 }
 
 /* Pot */
@@ -193,7 +277,7 @@
     position: absolute;
     top: 30%;
     left: 50%;
-    transform: translate(-50%, -120%);
+    transform: translate(-50%, -180%);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -204,6 +288,7 @@
     font-weight: 700;
     z-index: 10;
     border: 1px solid rgba(213, 158, 29, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .pot mat-icon {
@@ -220,23 +305,23 @@
 /* Board Cards Positionierung */
 .board-cards {
     position: absolute;
-    top: 50%;
+    top: 42%;
     left: 50%;
-    transform: translate(-50%, -30%);
+    transform: translate(-50%, -50%);
     display: flex;
     gap: 8px;
-    z-index: 5;
+    z-index: 10;
 }
 
 /* Player Cards Positionierung */
 .player-cards {
     position: absolute;
-    bottom: -40px;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 5px;
-    z-index: 6;
+    z-index: 10;
 }
 
 /* Action Buttons */

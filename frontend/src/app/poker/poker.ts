@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { response } from 'express';
 
 const BASE_URL = 'http://localhost:3000';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -142,6 +143,19 @@ export class Poker {
 
   isCurrentPlayer(playerId: string): boolean {
     return playerId === this.gameState.currentPlayerId;
+export class Poker implements OnInit, OnDestroy {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.add('poker-page');
+    }
+  }
+
+  ngOnDestroy() {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.remove('poker-page');
+    }
   }
 }
 

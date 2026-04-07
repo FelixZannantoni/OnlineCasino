@@ -16,6 +16,9 @@
 
     <!-- Poker Table -->
     <div class="poker-table">
+        <!-- Decorative elements -->
+        <div class="felt-stitch"></div>
+        <div class="center-emblem"></div>
 
         <!-- Pot -->
         <div class="pot">
@@ -36,6 +39,12 @@
                         <span class="card-rank">{{ card.rank }}</span>
                         <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
                     </div>
+        <!-- Community Cards (Royal Flush in Hearts) -->
+        <!-------------------------------------------------------------------------------------------------------------- <div class="board-cards"> 
+            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">10</span>
+                    <span class="card-suit suit-hearts"></span>
                 </div>
             }
         </div>
