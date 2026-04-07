@@ -52,7 +52,7 @@ export class PokerPlayer extends CardGamePlayer {
 
         return valueOfCardCombination;
     }
-    
+
     public getPressedFold(): boolean {
         return this.pressedFold;
     }
@@ -71,6 +71,10 @@ export class PokerPlayer extends CardGamePlayer {
 
     public getPressedRaise(): boolean {
         return this.pressedRaise;
+    }
+
+    public getMadeMove(): boolean {
+        return this.madeMove;
     }
 
     public setPressedFold(pressedFold: boolean): void {
