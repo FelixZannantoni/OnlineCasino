@@ -19,6 +19,7 @@ export const ROYALFLUSH_VALUE = 10;
 
 
 export class PokerPlayer extends CardGamePlayer {
+    private madeMove: boolean;
     private pressedFold: boolean;
     private pressedCheck: boolean;
     private pressedBet: boolean;
@@ -33,6 +34,7 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedBet = false;
         this.pressedCall = false;
         this.pressedRaise = false;
+        this.madeMove = false;
         this.valueOfHand = [0];
     }
 
@@ -74,26 +76,31 @@ export class PokerPlayer extends CardGamePlayer {
     public setPressedFold(pressedFold: boolean): void {
         if (pressedFold) this.resetActions();
         this.pressedFold = pressedFold;
+        this.madeMove = true;
     }
 
     public setPressedCheck(pressedCheck: boolean): void {
         if (pressedCheck) this.resetActions();
         this.pressedCheck = pressedCheck;
+        this.madeMove = true;
     }
 
     public setPressedBet(pressedBet: boolean): void {
         if (pressedBet) this.resetActions();
         this.pressedBet = pressedBet;
+        this.madeMove = true;
     }
 
     public setPressedCall(pressedCall: boolean): void {
         if (pressedCall) this.resetActions();
         this.pressedCall = pressedCall;
+        this.madeMove = true;
     }
 
     public setPressedRaise(pressedRaise: boolean): void {
         if (pressedRaise) this.resetActions();
         this.pressedRaise = pressedRaise;
+        this.madeMove = true;
     }
 
     private resetActions(): void {
@@ -104,6 +111,9 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedRaise = false;
     }
 
+    public resetMadeMove(): void {
+        this.madeMove = false;
+    }
 
     public checkHand(cards: Card[]) {
         if (this.hasRoyalFlush(cards)) {
