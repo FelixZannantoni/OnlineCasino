@@ -73,6 +73,10 @@ export class PokerPlayer extends CardGamePlayer {
         return this.pressedRaise;
     }
 
+    public getMadeMove(): boolean {
+        return this.madeMove;
+    }
+
     public setPressedFold(pressedFold: boolean): void {
         if (pressedFold) this.resetActions();
         this.pressedFold = pressedFold;
