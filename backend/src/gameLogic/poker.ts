@@ -115,53 +115,64 @@ export class Poker extends CardGame<PokerPlayer> {
         for (let i: number = 0; i < this.players.length; i++) {
             const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
 
-            //*wait for Player Input
-            addEventListener("playerMove", (event: CustomEvent) => {
-                if (event.detail.playerId == playerOnMove.getPlayerId()) {
-                    if (playerOnMove.getMadeMove()) {
-                        if (playerOnMove.getPressedFold() == true) {
-                            //TODO leaf Round
-                        }
-                        else if (playerOnMove.getPressedCheck() == true) {
-                            if (playerOnMove.getBet() == this.currentBet) {
+            await new Promise<void>((resolve) => {
+                const timeout = setTimeout(() => {
+                    removeEventListener("playerMove", handleMove as any);
+                    resolve();
+                }, 5000);
 
+                const handleMove = (event: any) => {
+                    const customEvent = event as CustomEvent;
+                    if (customEvent.detail && customEvent.detail.playerId == playerOnMove.getPlayerId()) {
+                        if (playerOnMove.getMadeMove()) {
+                            clearTimeout(timeout);
+                            removeEventListener("playerMove", handleMove as any);
+
+                            if (playerOnMove.getPressedFold() == true) {
+                                //TODO leaf Round
+                            }
+                            else if (playerOnMove.getPressedCheck() == true) {
+                                if (playerOnMove.getBet() == this.currentBet) {
+
+                                }
+                                else {
+                                    //TODO Error handling
+                                }
+                            }
+                            else if (playerOnMove.getPressedBet() == true) {
+                                const bet: number = playerOnMove.getDesiredBet();
+                                playerOnMove.setBet(bet)
+                                this.currentBet += bet;
+                                this.pot += bet;
+                            }
+                            else if (playerOnMove.getPressedCall() == true) {
+                                if (playerOnMove.getBet() < this.currentBet) {
+                                    playerOnMove.setBet(this.currentBet);
+                                    this.pot += this.currentBet - playerOnMove.getBet();
+                                }
+                            }
+                            else if (playerOnMove.getPressedRaise() == true) {
+                                if (playerOnMove.getBet() < this.currentBet) {
+                                    playerOnMove.setBet(this.currentBet);
+                                    this.pot += this.currentBet - playerOnMove.getBet();
+                                }
+                                const bet: number = playerOnMove.getDesiredBet();
+                                playerOnMove.setBet(bet)
+                                this.currentBet += bet;
+                                this.pot += bet;
                             }
                             else {
-                                //TODO Error handling
+                                //TODO Error Handling
                             }
+                            playerOnMove.resetMadeMove();
+                            resolve();
                         }
-                        else if (playerOnMove.getPressedBet() == true) {
-                            const bet: number = playerOnMove.getDesiredBet();
-                            playerOnMove.setBet(bet)
-                            this.currentBet += bet;
-                            this.pot += bet;
-                        }
-                        else if (playerOnMove.getPressedCall() == true) {
-                            if (playerOnMove.getBet() < this.currentBet) {
-                                playerOnMove.setBet(this.currentBet);
-                                this.pot += this.currentBet - playerOnMove.getBet();
-                            }
-                        }
-                        else if (playerOnMove.getPressedRaise() == true) {
-                            if (playerOnMove.getBet() < this.currentBet) {
-                                playerOnMove.setBet(this.currentBet);
-                                this.pot += this.currentBet - playerOnMove.getBet();
-                            }
-                            const bet: number = playerOnMove.getDesiredBet();
-                            playerOnMove.setBet(bet)
-                            this.currentBet += bet;
-                            this.pot += bet;
-                        }
-                        else {
-                            //TODO Error Handling
-                        }
-                        playerOnMove.resetMadeMove();
                     }
-                }
-            }
-            else {
-                //schieben oder aussteigen
-            }
+                };
+
+                addEventListener("playerMove", handleMove as any);
+            });
+            //TODO move handeling if player did no action
         }
     }
 
