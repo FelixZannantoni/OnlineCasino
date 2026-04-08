@@ -167,12 +167,19 @@ export class Poker extends CardGame<PokerPlayer> {
                             playerOnMove.resetMadeMove();
                             resolve();
                         }
+                        else {
+                            if(playerOnMove.getBet() == this.currentBet) {
+
+                            }
+                            else {
+                                //TODO leaf Round
+                            }
+                        }
                     }
                 };
 
                 addEventListener("playerMove", handleMove as any);
             });
-            //TODO move handeling if player did no action
         }
     }
 
