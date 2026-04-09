@@ -5,7 +5,6 @@ import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
-import { IndentStyle } from "typescript";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
