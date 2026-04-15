@@ -28,6 +28,7 @@ export class PokerService {
         }
 
         player.setPressedFold(true);
+        gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
             message: 'Fold action received'
@@ -55,6 +56,7 @@ export class PokerService {
         }
 
         player.setPressedCheck(true);
+        gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
             message: 'Check action received'
@@ -84,6 +86,7 @@ export class PokerService {
         const success: boolean = player.setDesiredBet(betAmount);
         if (success) {
             player.setPressedBet(true);
+            gameResult.game.emit("playerMove", { playerId: playerId });
             return {
                 success: true,
                 message: 'Bet action received'
@@ -117,6 +120,7 @@ export class PokerService {
         }
 
         player.setPressedCall(true);
+        gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
             message: 'Call action received'
@@ -149,6 +153,7 @@ export class PokerService {
         const success: boolean = player.setDesiredBet(raiseAmount);
 
         if(success) {
+            gameResult.game.emit("playerMove", { playerId: playerId });
             return {
                 success: false,
                 message: "Not Yet Implemented!"
