@@ -76,16 +76,15 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
             await new Promise<void>((resolve) => {
                 const timeout = setTimeout(() => {
-                    removeEventListener("playerMove", handleMove as any);
+                    this.removeListener("playerMove", handleMove);
                     resolve();
                 }, 5000);
 
-                const handleMove = (event: any) => {
-                    const customEvent = event as CustomEvent;
-                    if (customEvent.detail && customEvent.detail.playerId == playerOnMove.getPlayerId()) {
+                const handleMove = (detail: { playerId: string }) => {
+                    if (detail && detail.playerId == playerOnMove.getPlayerId()) {
                         if (playerOnMove.getMadeMove()) {
                             clearTimeout(timeout);
-                            removeEventListener("playerMove", handleMove as any);
+                            this.removeListener("playerMove", handleMove);
                             if (playerOnMove.getPressedStand() == true) {
                             }
                             else if (playerOnMove.getPressedHit() == true) {
@@ -105,7 +104,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                     }
                 };
 
-                addEventListener("playerMove", handleMove as any);
+                this.on("playerMove", handleMove);
             });
 
         }
