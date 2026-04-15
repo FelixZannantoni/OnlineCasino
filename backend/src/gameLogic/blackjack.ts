@@ -91,7 +91,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
 
         }
-        while(this.blackJackBot.makesHit()) {
+        while (this.blackJackBot.makesHit()) {
             this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BALCKJACK_BOT_ID));
         }
     }
