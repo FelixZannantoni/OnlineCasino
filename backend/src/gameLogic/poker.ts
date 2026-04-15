@@ -5,7 +5,6 @@ import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
-import { IndentStyle } from "typescript";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -111,45 +110,74 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private makeMove() {
+    private async makeMove() {
         for (let i: number = 0; i < this.players.length; i++) {
             const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
-            if (playerOnMove.getPressedFold() == true) {
-                //TODO leaf Round
-            }
-            else if (playerOnMove.getPressedCheck() == true) {
-                if (playerOnMove.getBet() == this.currentBet) {
 
-                }
-                else {
-                    //TODO Error handling
-                }
-            }
-            else if (playerOnMove.getPressedBet() == true) {
-                const bet: number = playerOnMove.getDesiredBet();
-                playerOnMove.setBet(bet)
-                this.currentBet += bet;
-                this.pot += bet;
-            }
-            else if (playerOnMove.getPressedCall() == true) {
-                if (playerOnMove.getBet() < this.currentBet) {
-                    playerOnMove.setBet(this.currentBet);
-                    this.pot += this.currentBet - playerOnMove.getBet();
-                }
-            }
-            else if (playerOnMove.getPressedRaise() == true) {
-                if (playerOnMove.getBet() < this.currentBet) {
-                    playerOnMove.setBet(this.currentBet);
-                    this.pot += this.currentBet - playerOnMove.getBet();
-                }
-                const bet: number = playerOnMove.getDesiredBet();
-                playerOnMove.setBet(bet)
-                this.currentBet += bet;
-                this.pot += bet;
-            }
-            else {
-                //TODO Error Handling
-            }
+            await new Promise<void>((resolve) => {
+                const timeout = setTimeout(() => {
+                    this.removeListener("playerMove", handleMove);
+                    resolve();
+                }, 5000);
+
+                const handleMove = (detail: { playerId: string }) => {
+                    if (detail && detail.playerId == playerOnMove.getPlayerId()) {
+                        if (playerOnMove.getMadeMove()) {
+                            clearTimeout(timeout);
+                            this.removeListener("playerMove", handleMove);
+
+                            if (playerOnMove.getPressedFold() == true) {
+                                //TODO leaf Round
+                            }
+                            else if (playerOnMove.getPressedCheck() == true) {
+                                if (playerOnMove.getBet() == this.currentBet) {
+
+                                }
+                                else {
+                                    //TODO Error handling
+                                }
+                            }
+                            else if (playerOnMove.getPressedBet() == true) {
+                                const bet: number = playerOnMove.getDesiredBet();
+                                playerOnMove.setBet(bet)
+                                this.currentBet += bet;
+                                this.pot += bet;
+                            }
+                            else if (playerOnMove.getPressedCall() == true) {
+                                if (playerOnMove.getBet() < this.currentBet) {
+                                    playerOnMove.setBet(this.currentBet);
+                                    this.pot += this.currentBet - playerOnMove.getBet();
+                                }
+                            }
+                            else if (playerOnMove.getPressedRaise() == true) {
+                                if (playerOnMove.getBet() < this.currentBet) {
+                                    playerOnMove.setBet(this.currentBet);
+                                    this.pot += this.currentBet - playerOnMove.getBet();
+                                }
+                                const bet: number = playerOnMove.getDesiredBet();
+                                playerOnMove.setBet(bet)
+                                this.currentBet += bet;
+                                this.pot += bet;
+                            }
+                            else {
+                                //TODO Error Handling
+                            }
+                            playerOnMove.resetMadeMove();
+                            resolve();
+                        }
+                        else {
+                            if(playerOnMove.getBet() == this.currentBet) {
+
+                            }
+                            else {
+                                //TODO leaf Round
+                            }
+                        }
+                    }
+                };
+
+                this.on("playerMove", handleMove);
+            });
         }
     }
 

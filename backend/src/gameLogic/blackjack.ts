@@ -71,27 +71,44 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
-    private makeMove() {
+    private async makeMove() {
         for (let i: number = 0; i < this.players.length; i++) {
             const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
-            if (playerOnMove.getPressedStand() == true) {
-            }
-            else if (playerOnMove.getPressedHit() == true) {
-                playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
-                if (playerOnMove.getHandValue() < 21) {
-                    i--;
-                }
+            await new Promise<void>((resolve) => {
+                const timeout = setTimeout(() => {
+                    this.removeListener("playerMove", handleMove);
+                    resolve();
+                }, 5000);
 
-            }
-            else if (playerOnMove.getPressedDouble() == true) {
-                //TODO Player bekommt ein neues Deck
-            }
-            else {
+                const handleMove = (detail: { playerId: string }) => {
+                    if (detail && detail.playerId == playerOnMove.getPlayerId()) {
+                        if (playerOnMove.getMadeMove()) {
+                            clearTimeout(timeout);
+                            this.removeListener("playerMove", handleMove);
+                            if (playerOnMove.getPressedStand() == true) {
+                            }
+                            else if (playerOnMove.getPressedHit() == true) {
+                                playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
+                                if (playerOnMove.getHandValue() < 21) {
+                                    i--;
+                                }
 
-            }
+                            }
+                            else if (playerOnMove.getPressedDouble() == true) {
+                                //TODO Player bekommt ein neues Deck
+                            }
+                            else {
+
+                            }
+                        }
+                    }
+                };
+
+                this.on("playerMove", handleMove);
+            });
 
         }
-        while(this.blackJackBot.makesHit()) {
+        while (this.blackJackBot.makesHit()) {
             this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BALCKJACK_BOT_ID));
         }
     }
