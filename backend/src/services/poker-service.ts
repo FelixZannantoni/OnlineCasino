@@ -10,7 +10,7 @@ export class PokerService {
     async fold(playerId: string, gameId: string): Promise<boolean> {
         // get the game and player objects
         console.log(`Looking for game(${gameId}) in: [${PokerService.pokerGames.length}]`)
-        const game = PokerService.pokerGames.find(g => g.getGameId());
+        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
         console.log(game);
         
         if(!game) return false;
@@ -24,12 +24,13 @@ export class PokerService {
             return false;
         }
         player.setPressedFold(true);
+        game.emit("playerMove", { playerId });
         return true;
     }
 
     async check(playerId: string, gameId: string): Promise<boolean> {
         // get the game and player objects
-        const game = PokerService.pokerGames.find(g => g.getGameId());
+        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
         
         if(!game) return false;
 
@@ -40,12 +41,13 @@ export class PokerService {
             return false;
         }
         player.setPressedCheck(true);
+        game.emit("playerMove", { playerId });
         return true;
     }
 
     async bet(playerId: string, gameId: string, betAmount: number): Promise<boolean> {
         // get the game and player objects
-        const game = PokerService.pokerGames.find(g => g.getGameId());
+        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
         
         if(!game) return false;
 
@@ -60,6 +62,7 @@ export class PokerService {
         player.setBet(2.0);
         */
        // set desired bet for player
+       game.emit("playerMove", { playerId });
         return true;
     }
 
@@ -75,7 +78,7 @@ export class PokerService {
      */
     async addPlayer(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number, gameId: string): Promise<void> {
         // get the game object
-        const game = PokerService.pokerGames.find(g => g.getGameId());
+        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
         if(!game) return;
 
         const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);

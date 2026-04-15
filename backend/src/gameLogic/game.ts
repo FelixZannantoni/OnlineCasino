@@ -1,10 +1,12 @@
+import { EventEmitter } from "events";
 import { Player } from "./player";
 
-export class Game<T extends Player = Player> {
+export class Game<T extends Player = Player> extends EventEmitter {
     protected players: T[];
     private gameId: string;
 
     constructor(gameId: string) {
+        super();
         this.players = [];
         this.gameId = gameId;
     }

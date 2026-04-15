@@ -116,16 +116,15 @@ export class Poker extends CardGame<PokerPlayer> {
 
             await new Promise<void>((resolve) => {
                 const timeout = setTimeout(() => {
-                    removeEventListener("playerMove", handleMove as any);
+                    this.removeListener("playerMove", handleMove);
                     resolve();
                 }, 5000);
 
-                const handleMove = (event: any) => {
-                    const customEvent = event as CustomEvent;
-                    if (customEvent.detail && customEvent.detail.playerId == playerOnMove.getPlayerId()) {
+                const handleMove = (detail: { playerId: string }) => {
+                    if (detail && detail.playerId == playerOnMove.getPlayerId()) {
                         if (playerOnMove.getMadeMove()) {
                             clearTimeout(timeout);
-                            removeEventListener("playerMove", handleMove as any);
+                            this.removeListener("playerMove", handleMove);
 
                             if (playerOnMove.getPressedFold() == true) {
                                 //TODO leaf Round
@@ -177,7 +176,7 @@ export class Poker extends CardGame<PokerPlayer> {
                     }
                 };
 
-                addEventListener("playerMove", handleMove as any);
+                this.on("playerMove", handleMove);
             });
         }
     }
