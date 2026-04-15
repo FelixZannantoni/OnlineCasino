@@ -48,11 +48,36 @@ Content-Type: application/json
 
 ###
 
-POST {{baseUrl}}/users/login/github
+PUT {{baseUrl}}/poker/call
 Content-Type: application/json
 
 {
-    "code": "185445b7b225abbfc4a8"
+    "playerId": 1,
+    "gameId": 1
 }
 
 ###
+
+PUT {{baseUrl}}/poker/bet
+Content-Type: application/json
+
+{
+    "playerId": 1,
+    "gameId": 1,
+    "betAmount": 1001
+}
+
+###
+
+PUT {{baseUrl}}/poker/check
+Content-Type: application/json
+
+{
+    "playerId": 1,
+    "gameId": 1
+}
+
+
+###
+
+GET {{baseUrl}}/poker/games
