@@ -1,21 +1,51 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, signal, inject } from '@angular/core';
+import { RouterLink, RouterOutlet, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { SocketService } from '../services/socket.service';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-poker',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, MatIconModule],
+  imports: [RouterLink, RouterOutlet, MatIconModule, CommonModule],
   templateUrl: './poker.html',
   styleUrls: ['./poker.css']
 })
 export class Poker implements OnInit, OnDestroy {
+  private socketService = inject(SocketService);
+  private route = inject(ActivatedRoute);
+  
+  public gameState = signal<any>(null);
+  public gameId = signal<string | null>(null);
+
   constructor(@Inject(PLATFORM_ID) private platformId: object) { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       document.body.classList.add('poker-page');
+      
+      // Get gameId from route params or use a default for testing
+      const id = this.route.snapshot.paramMap.get('id') || 'test-game';
+      this.gameId.set(id);
+      
+      this.socketService.joinGame(id);
+      
+      this.socketService.onEvent('game_state', (state) => {
+        console.log('Received game state:', state);
+        this.gameState.set(state);
+      });
+    }
+  }
+
+  makeMove(action: string, amount?: number) {
+    const gid = this.gameId();
+    if (gid) {
+      this.socketService.emitEvent('player_move', {
+        gameId: gid,
+        playerId: 'user-123', // This should come from an Auth service
+        action,
+        amount
+      });
     }
   }
 

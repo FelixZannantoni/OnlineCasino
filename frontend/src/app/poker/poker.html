@@ -4,6 +4,9 @@
     <div class="top-bar">
         <div class="player-balance">
             <mat-icon>account_balance_wallet</mat-icon>
+            @if (gameState(); as state) {
+                <span>{{ state.pot }} € (Pot)</span>
+            }
         </div>
         <div class="top-icons">
             <button routerLink="/home">
@@ -14,106 +17,74 @@
 
     <!-- Poker Table -->
     <div class="poker-table">
-        <!-- Decorative elements -->
         <div class="felt-stitch"></div>
         <div class="center-emblem"></div>
 
         <!-- Pot -->
         <div class="pot">
             <mat-icon>monetization_on</mat-icon>
-            <span class="pot-amount"></span>
+            <span class="pot-amount">@if (gameState(); as state) { {{ state.pot }} }</span>
         </div>
 
-        <!-- Community Cards (Royal Flush in Hearts) -->
-        <!-------------------------------------------------------------------------------------------------------------- <div class="board-cards"> 
-            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
-                <div class="card-top">
-                    <span class="card-rank">10</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">10</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
-                <div class="card-top">
-                    <span class="card-rank">J</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">J</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
-                <div class="card-top">
-                    <span class="card-rank">Q</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">Q</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
-                <div class="card-top">
-                    <span class="card-rank">K</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-                <div class="card-center suit-hearts"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">K</span>
-                    <span class="card-suit suit-hearts"></span>
-                </div>
-            </div>
-            <div class="card card-back" style="width: 70px; height: 98px;">
-            </div>
+        <!-- Community Cards -->
+        <div class="board-cards"> 
+            @if (gameState(); as state) {
+                @for (card of state.deskCards; track $index) {
+                    <div class="card" [class]="'card-' + card.color.toLowerCase()" 
+                         [style.visibility]="card.visibility === 0 ? 'hidden' : 'visible'"
+                         style="width: 70px; height: 98px; font-size: 14px;">
+                        <div class="card-top">
+                            <span class="card-rank">{{ card.name }}</span>
+                            <span class="card-suit"></span>
+                        </div>
+                        <div class="card-center"></div>
+                        <div class="card-bottom">
+                            <span class="card-rank">{{ card.name }}</span>
+                        </div>
+                    </div>
+                }
+            }
         </div>
 
-        <!-- Player Cards (72o) -->
+        <!-- Player Cards -->
         <div class="player-cards">
-            <div class="card card-diamonds suit-diamonds"
-                style="width: 60px; height: 84px; font-size: 12px; transform: rotate(-15deg);">
-                <div class="card-top">
-                    <span class="card-rank">7</span>
-                    <span class="card-suit suit-diamonds"></span>
-                </div>
-                <div class="card-center suit-diamonds"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">7</span>
-                    <span class="card-suit suit-diamonds"></span>
-                </div>
-            </div>
-            <div class="card card-clubs suit-clubs"
-                style="width: 60px; height: 84px; font-size: 12px; transform: rotate(15deg);">
-                <div class="card-top">
-                    <span class="card-rank">2</span>
-                    <span class="card-suit suit-clubs"></span>
-                </div>
-                <div class="card-center suit-clubs"></div>
-                <div class="card-bottom">
-                    <span class="card-rank">2</span>
-                    <span class="card-suit suit-clubs"></span>
-                </div>
-            </div>
+            @if (gameState(); as state) {
+                <!-- Showing cards for a specific player (user-123 for now) -->
+                @for (player of state.players; track player.playerId) {
+                    @if (player.playerId === 'user-123') {
+                        @for (card of player.cards; track $index) {
+                            <div class="card" [class]="'card-' + card.color.toLowerCase()"
+                                style="width: 60px; height: 84px; font-size: 12px; transform: rotate({{($index-0.5)*30}}deg);">
+                                <div class="card-top">
+                                    <span class="card-rank">{{ card.name }}</span>
+                                    <span class="card-suit"></span>
+                                </div>
+                                <div class="card-center"></div>
+                                <div class="card-bottom">
+                                    <span class="card-rank">{{ card.name }}</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+            }
         </div>
 
     </div>
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <button class="shining-btn">
+        <button class="shining-btn" (click)="makeMove('fold')">
             Fold
         </button>
-        <button class="shining-btn">
+        <button class="shining-btn" (click)="makeMove('check')">
             Check
         </button>
-        <button class="shining-btn">
-            Bet
+        <button class="shining-btn" (click)="makeMove('call')">
+            Call
+        </button>
+        <button class="shining-btn" (click)="makeMove('bet', 20)">
+            Bet 20
         </button>
     </div>
 </div>
