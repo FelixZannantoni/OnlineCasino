@@ -40,9 +40,8 @@ export class Player {
         return this.desiredBet;
     }
 
-    public setDesiredBet(desiredBet: number): boolean
-    {
-        if((this.bet + desiredBet) > this.balance){
+    public setDesiredBet(desiredBet: number): boolean {
+        if ((this.bet + desiredBet) > this.balance) {
             return false;
         }
         this.desiredBet = desiredBet;
