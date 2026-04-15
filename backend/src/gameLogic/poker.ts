@@ -87,7 +87,7 @@ export class Poker extends CardGame<PokerPlayer> {
                 displayname: p.getDisplayname(),
                 balance: p.getBalance(),
                 bet: p.getBet(),
-                hasDealerChip: p.getHasDealerChip(),
+                hasDealerChip: p.getDealerChip(),
                 cards: p.getCards() // Note: In a real game, cards should be filtered by visibility
             })),
             deskCards: this.pokerDeskCards,
