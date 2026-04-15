@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +10,20 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './poker.html',
   styleUrls: ['./poker.css']
 })
-export class Poker {
+export class Poker implements OnInit, OnDestroy {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.add('poker-page');
+    }
+  }
+
+  ngOnDestroy() {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.remove('poker-page');
+    }
+  }
 }
 
 

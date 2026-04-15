@@ -87,6 +87,7 @@
     text-decoration: none;
     transition: all 0.3s ease;
     border-left: 4px solid transparent;
+    cursor: pointer;
 }
 
 .menu-item:hover {

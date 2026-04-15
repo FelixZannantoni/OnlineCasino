@@ -3,8 +3,8 @@
 
 :root {
     --primary-gold-gradient: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    --primary-purple: #8b5cf6;
-    --primary-purple-dark: #6d28d9;
+    --primary-purple: #613092;
+    --primary-purple-dark: rgb(67, 25, 135);
     --navbar-dark: #0a0a0a;
     --navbar-mid: #1a3a52;
     --text-gold: #d19e1d;
@@ -29,10 +29,9 @@ body {
     background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
     font-family: 'Montserrat', sans-serif;
     color: #fff;
-    overflow: hidden;
 }
 
-.shining-btn{
+.shining-btn {
     display: inline-block;
     padding: 0.4rem 1.1rem;
     border-radius: 999px;
@@ -59,11 +58,11 @@ body {
 
     0%,
     100% {
-        transform: translateY(0px) rotate(0deg);
+        transform: translateY(0px) rotate(-5deg);
     }
 
     50% {
-        transform: translateY(-10px) rotate(5deg);
+        transform: translateY(-10px) rotate(15deg);
     }
 }
 
@@ -122,10 +121,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background-color: black;
+    box-shadow: none;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--primary-gold-gradient);
+    background: #d19e1d;
     border-radius: 5px;
 }
