@@ -1,0 +1,34 @@
+<div class="table-game-wrapper">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="player-balance">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <span class="balance-amount">{{ balance }}</span>
+        </div>
+        <div class="top-icons">
+            <button routerLink="/home">
+                <mat-icon>exit_to_app</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Table -->
+    <div class="game-table">
+        <div class="felt-stitch"></div>
+        <div class="center-emblem"></div>
+
+        <div class="pot">
+            <mat-icon>monetization_on</mat-icon>
+            <span class="pot-amount">{{ pot }}</span>
+        </div>
+
+        <!-- Game-specific cards/content -->
+        <ng-content select="[game-content]"></ng-content>
+    </div>
+
+    <!-- Game-specific action buttons -->
+    <div class="action-buttons">
+        <ng-content select="[game-actions]"></ng-content>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+/* Card positioning */
+::ng-deep .dealer-cards {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+
+::ng-deep .player-cards {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+
+/* Purple felt */
+::ng-deep app-blackjack .game-table::after,
+::ng-deep .game-blackjack .game-table::after {
+    background: radial-gradient(ellipse at center,
+            var(--primary-purple) 0%,
+            #552878 40%,
+            #4a2070 70%,
+            var(--primary-purple-dark) 100%) !important;
+}
+
+/* Club emblem */
+::ng-deep app-blackjack .game-table .center-emblem::before,
+::ng-deep .game-blackjack .game-table .center-emblem::before {
+    content: '♣' !important;
+}
+
+/* Blackjack button hover colors */
+::ng-deep .btn-hit:hover {
+    background: linear-gradient(135deg, #27ae60, #229954) !important;
+    border-color: #27ae60 !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4) !important;
+}
+
+::ng-deep .btn-stand:hover {
+    background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+    border-color: #e74c3c !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4) !important;
+}
+
+::ng-deep .btn-double:hover {
+    background: linear-gradient(135deg, #f39c12, #d68910) !important;
+    border-color: #f39c12 !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4) !important;
+}
