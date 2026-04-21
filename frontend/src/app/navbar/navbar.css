@@ -130,7 +130,7 @@
     cursor: pointer;
     padding: 0;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.4);
+    box-shadow: var(--primary-purple) 0px 2px 8px;
 }
 
 .settings_btn:hover {
@@ -168,7 +168,7 @@
     cursor: pointer;
     padding: 0;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.4);
+    box-shadow: var(--primary-purple) 0px 2px 8px;
 }
 
 .profile_pic:hover {

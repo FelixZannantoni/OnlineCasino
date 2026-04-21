@@ -1,31 +1,9 @@
-<div class="poker-wrapper">
+<app-table-game game="poker" [balance]="balance" [pot]="pot">
 
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="player-balance">
-            <mat-icon>account_balance_wallet</mat-icon>
-        </div>
-        <div class="top-icons">
-            <button routerLink="/home">
-                <mat-icon>exit_to_app</mat-icon>
-            </button>
-        </div>
-    </div>
-
-    <!-- Poker Table -->
-    <div class="poker-table">
-        <!-- Decorative elements -->
-        <div class="felt-stitch"></div>
-        <div class="center-emblem"></div>
-
-        <!-- Pot -->
-        <div class="pot">
-            <mat-icon>monetization_on</mat-icon>
-            <span class="pot-amount"></span>
-        </div>
-
+    <!-- Community Cards & Player Cards -->
+    <div game-content>
         <!-- Community Cards (Royal Flush in Hearts) -->
-        <!-------------------------------------------------------------------------------------------------------------- <div class="board-cards"> 
+        <!-- <div class="board-cards">
             <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
                 <div class="card-top">
                     <span class="card-rank">10</span>
@@ -72,7 +50,7 @@
             </div>
             <div class="card card-back" style="width: 70px; height: 98px;">
             </div>
-        </div>
+        </div> -->
 
         <!-- Player Cards (72o) -->
         <div class="player-cards">
@@ -101,19 +79,13 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Action Buttons -->
-    <div class="action-buttons">
-        <button class="shining-btn">
-            Fold
-        </button>
-        <button class="shining-btn">
-            Check
-        </button>
-        <button class="shining-btn">
-            Bet
-        </button>
+    <div game-actions style="display: flex; justify-content: center; gap: 15px; margin-bottom: 80px;">
+        <button class="btn-fold">Fold</button>
+        <button class="btn-check">Check</button>
+        <button class="btn-bet">Bet</button>
     </div>
-</div>
+
+</app-table-game>
