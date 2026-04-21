@@ -71,23 +71,6 @@
   font-size: 72px;
 }
 
-/* Kartensymbole - für leere Elemente 
-.card-suit.suit-hearts::after {
-  content: '♥';
-}
-
-.card-suit.suit-diamonds::after {
-  content: '♦';
-}
-
-.card-suit.suit-clubs::after {
-  content: '♣';
-}
-
-.card-suit.suit-spades::after {
-  content: '♠';
-}*/
-
 /* Für card-center direkt die suit-Klasse */
 .card-center.suit-hearts::before {
   content: '♥';
@@ -138,31 +121,48 @@
   transform: rotate(180deg);
 }
 
-/* Karten-Rückseite - sieht aus wie ein echtes Kartendeck */
+/* Karten-Rückseite - premium casino feel */
 .card-back {
   background:
-    repeating-linear-gradient(45deg,
-      #1a4d7c 0px,
-      #1a4d7c 10px,
-      #2980b9 10px,
-      #2980b9 20px);
-  border: 4px solid white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    radial-gradient(ellipse at center, #1a3a6e 0%, #0d1f3c 100%);
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
+  border: 1px solid var(--text-gold);
 }
 
+/* Diamond pattern overlay */
+.card-back::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 215, 0, 0.06) 0px,
+      rgba(255, 215, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 215, 0, 0.06) 0px,
+      rgba(255, 215, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+}
+
+/* Inner border frame */
 .card-back::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%;
-  height: 70%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px solid var(--text-gold);
+  border-radius: 6px;
 }
 
 .card-back * {
