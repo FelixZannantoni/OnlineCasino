@@ -40,9 +40,8 @@ export class Player {
         return this.desiredBet;
     }
 
-    public setDesiredBet(desiredBet: number): boolean
-    {
-        if((this.bet + desiredBet) > this.balance){
+    public setDesiredBet(desiredBet: number): boolean {
+        if ((this.bet + desiredBet) > this.balance) {
             return false;
         }
         this.desiredBet = desiredBet;
@@ -57,8 +56,7 @@ export class Player {
         this.bet = bet;
     }
 
-    public winMoney(win: number)
-    {
+    public winMoney(win: number) {
         this.balance += win;
     }
 
@@ -81,10 +79,8 @@ export class Player {
         }
     }
 
-    public isOutOfMoney(): boolean
-    {
-        if(this.balance==0)
-        {
+    public isOutOfMoney(): boolean {
+        if (this.balance == 0) {
             return true;
         }
         return false;
