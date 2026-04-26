@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [CommonModule, RouterLink, MatIconModule],
   templateUrl: './table-game.html',
-  styleUrls: ['./table-game.css'],
+  styleUrls: ['./table-game.css', '../ui/chips/chips.css'],
   encapsulation: ViewEncapsulation.None
 })
 export class TableGameComponent implements OnInit, OnDestroy {
