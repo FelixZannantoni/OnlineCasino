@@ -180,10 +180,13 @@ export class PokerService {
         {success: boolean, message: string} {
         // get the game object
         const gameResult = this.getGameById(gameId);
-        if(!gameResult.game) return {
-            success: false,
-            message: gameResult.message
-        };
+        if(!gameResult.game) { 
+            console.log(gameResult.message);
+            return {
+                success: false,
+                message: gameResult.message
+            };
+        }
 
         const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
         gameResult.game.addPlayer(newPlayer);
@@ -232,8 +235,8 @@ export class PokerService {
     }
 
     getGameById(gameId: string): {game: Poker | null, message: string} {
-        const game: Poker | undefined = PokerService.pokerGames.find(g => g.getGameId() === gameId);
-
+        const game: Poker | undefined = PokerService.pokerGames.find(g => g.getGameId().toString() === gameId);
+        console.log(`${typeof gameId} vs ${typeof PokerService.pokerGames[0].getGameId()}`);
         if(!game) {
             return {
                 game: null,

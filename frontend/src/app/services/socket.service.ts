@@ -22,8 +22,8 @@ export class SocketService {
     });
   }
 
-  joinGame(gameId: string) {
-    this.socket.emit('join_game', gameId);
+  joinGame(gameId: string, userId: string) {
+    this.socket.emit('join_game', gameId, userId);
   }
 
   onEvent(eventName: string, callback: (data: any) => void) {
