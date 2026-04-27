@@ -11,6 +11,8 @@ export const PLAYER_CARDS_NUMBER: number = 2;
 export const POKER_CARDS_NUMBER: number = 5;
 export const POKER_DESK_ID: string = "PokerDesk";
 
+type GamePhase = 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown';
+
 export class Poker extends CardGame<PokerPlayer> {
 
     private pokerDeck: PokerDeck;
@@ -19,6 +21,9 @@ export class Poker extends CardGame<PokerPlayer> {
     private currentBet: number;
     private pot: number;
 
+    private currentPlayerIndex: number = 0;
+
+    private phase: GamePhase = 'pre-flop';
 
     constructor(gameId: string) {
         super(gameId);
@@ -29,53 +34,75 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     public startGame() {
-        this.setDefaultDealerChip();
-        this.handCardsOut();
-        this.setDeafaultBets();
-        this.emit("gameState", this.getGameState());
-        this.playRound();
+        this.phase = 'pre-flop';
+        this.startNewHand();
     }
 
-    private nextRound() {
-        //TODO überprüfen ob pleite
-        this.resetCards();
-        this.resetBets();
-        this.pot = 0;
-        this.currentBet = this.defaultbet;
-
-        this.updateDealerChip();
-        this.handCardsOut();
-        this.setDeafaultBets();
-
-        this.emit("gameState", this.getGameState());
-        this.playRound();
-    }
-
-    private async playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
-        await this.makeMove();
-        this.currentBet = this.defaultbet;
+    private revealFlop() {
         this.pokerDeskCards[0].visibility = CardVisibility.all;
         this.pokerDeskCards[1].visibility = CardVisibility.all;
         this.pokerDeskCards[2].visibility = CardVisibility.all;
-        this.checkHands();
-        this.emit("gameState", this.getGameState());
+    }
 
-        await this.makeMove();
-        this.currentBet = this.defaultbet;
+    private revealTurn() {
         this.pokerDeskCards[3].visibility = CardVisibility.all;
-        this.checkHands();
-        this.emit("gameState", this.getGameState());
+    }
 
-        await this.makeMove();
-        this.currentBet = this.defaultbet;
+    private revealRiver() {
         this.pokerDeskCards[4].visibility = CardVisibility.all;
-        this.checkHands();
-        this.emit("gameState", this.getGameState());
+    }
 
-        await this.makeMove();
-        this.handOutWin();
+    private isBettingRoundFinished(): boolean {
+        return this.players.every(p =>
+            p.isFolded() || // evtl. all in noch checken
+            p.getBet() === this.currentBet || p.getPressedFold()
+        );
+    } 
+
+    private startNewHand() {
+        this.resetCards();
+        this.pokerDeskCards = [];
+        this.pokerDeck = new PokerDeck();
+        this.resetBets();
+        this.pot = 0;
+        this.handCardsOut();
+        this.setDeafaultBets();
+        this.phase = 'pre-flop';
+        this.currentPlayerIndex = CardGamePlayer.playerWithDealerChip(this.players);
+    }
+    
+    private resetBettingRound() {
+        this.currentBet = 0;
+        this.players.forEach(p => p.setBet(0));
+    }
+
+    private nextPhase() {
+        switch (this.phase) {
+            case 'pre-flop':
+                this.revealFlop();
+                this.phase = 'flop';
+                break;
+            case 'flop':
+                this.revealTurn();
+                this.phase = 'turn';
+                break;
+            case 'turn':
+                this.revealRiver();
+                this.phase = 'river';
+                break;
+            case 'river':
+                this.phase = 'showdown';
+                if (this.players.filter(p => !p.getPressedFold()).length === 1) {
+                    this.handOutWin();
+                } else {
+                    this.checkHands();
+                    this.handOutWin();
+                }
+                break;
+        }
+
+        this.resetBettingRound();
         this.emit("gameState", this.getGameState());
-        this.nextRound();
     }
 
     public getGameState() {
@@ -137,75 +164,76 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private async makeMove() {
-        for (let i: number = 0; i < this.players.length; i++) {
-            const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+    getcurrentPlayer(): PokerPlayer {
+        return this.players[this.currentPlayerIndex];
+    }
 
-            await new Promise<void>((resolve) => {
-                const timeout = setTimeout(() => {
-                    this.removeListener("playerMove", handleMove);
-                    resolve();
-                }, 5000);
+    nextPlayer() {
+        let counter = 0;
+        do {
+            this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+            counter++;
+            if(counter > this.players.length) break; // prevent infinite loop if all players folded
+        } while (this.players[this.currentPlayerIndex].getPressedFold());
+    }
 
-                const handleMove = (detail: { playerId: string }) => {
-                    if (detail && detail.playerId == playerOnMove.getPlayerId()) {
-                        if (playerOnMove.getMadeMove()) {
-                            clearTimeout(timeout);
-                            this.removeListener("playerMove", handleMove);
+    public handlePlayerMove(playerId: string, action: string, amount?: number): { success: boolean, message: string } {
+        const currentPlayer = this.getcurrentPlayer();
 
-                            if (playerOnMove.getPressedFold() == true) {
-                                //TODO leaf Round
-                            }
-                            else if (playerOnMove.getPressedCheck() == true) {
-                                if (playerOnMove.getBet() == this.currentBet) {
-
-                                }
-                                else {
-                                    //TODO Error handling
-                                }
-                            }
-                            else if (playerOnMove.getPressedBet() == true) {
-                                const bet: number = playerOnMove.getDesiredBet();
-                                playerOnMove.setBet(bet)
-                                this.currentBet += bet;
-                                this.pot += bet;
-                            }
-                            else if (playerOnMove.getPressedCall() == true) {
-                                if (playerOnMove.getBet() < this.currentBet) {
-                                    playerOnMove.setBet(this.currentBet);
-                                    this.pot += this.currentBet - playerOnMove.getBet();
-                                }
-                            }
-                            else if (playerOnMove.getPressedRaise() == true) {
-                                if (playerOnMove.getBet() < this.currentBet) {
-                                    playerOnMove.setBet(this.currentBet);
-                                    this.pot += this.currentBet - playerOnMove.getBet();
-                                }
-                                const bet: number = playerOnMove.getDesiredBet();
-                                playerOnMove.setBet(bet)
-                                this.currentBet += bet;
-                                this.pot += bet;
-                            }
-                            else {
-                                //TODO Error Handling
-                            }
-                            playerOnMove.resetMadeMove();
-                            resolve();
-                        }
-                        else {
-                            if(playerOnMove.getBet() == this.currentBet) {
-
-                            }
-                            else {
-                                //TODO leaf Round
-                            }
-                        }
-                    }
-                };
-
-                this.on("playerMove", handleMove);
-            });
+        if(currentPlayer.getPlayerId() !== playerId) {
+            console.warn(`Player ${playerId} tried to make a move out of turn.`);
+            return { success: false, message: "Not your turn" };
         }
+
+        switch (action) {
+            case "fold":
+                currentPlayer.setFolded(true);
+                break;
+            case "check":
+                if (currentPlayer.getBet() !== this.currentBet) {
+                    return { success: false, message: "Cannot check, current bet is higher" };
+                }
+                break;
+            case "bet":
+                if (!amount || amount <= 0) {
+                    return { success: false, message: "Invalid bet amount" };
+                }
+                currentPlayer.setBet(amount);
+                this.currentBet = amount;
+                this.pot += amount;
+                break;
+            case "call":
+                if (currentPlayer.getBet() >= this.currentBet) {
+                    return { success: false, message: "Cannot call, current bet is not higher" };
+                }
+                const diff = this.currentBet - currentPlayer.getBet();
+                currentPlayer.setBet(this.currentBet);
+                this.pot += diff;
+                break;
+            case "raise":
+                if (!amount  || amount <= 0) {
+                    return { success: false, message: "Invalid raise amount" };
+                }
+                if (currentPlayer.getBet() >= this.currentBet) {
+                    return { success: false, message: "Cannot raise, current bet is not higher" };
+                }
+                const newBet = this.currentBet + amount;
+                const raiseDiff = newBet - currentPlayer.getBet();
+
+                currentPlayer.setBet(newBet);
+                this.currentBet = newBet;
+                this.pot += raiseDiff;
+                break;
+            default:
+                return { success: false, message: "Invalid action" };
+        }
+
+        this.nextPlayer();
+        if (this.isBettingRoundFinished()) {
+            this.nextPhase();
+        }
+        this.emit("gameState", this.getGameState());
+        return { success: true, message: "Move accepted" };
     }
 
     private checkHands() {
