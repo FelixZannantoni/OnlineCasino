@@ -25,10 +25,12 @@ export class Poker implements OnInit, OnDestroy {
       document.body.classList.add('poker-page');
       
       // Get gameId from route params or use a default for testing
-      const id = this.route.snapshot.paramMap.get('id') || 'test-game';
+      const id = this.route.snapshot.paramMap.get('id') || '1';
       this.gameId.set(id);
+
+      const userId: string = localStorage.getItem('userId') ?? 'user-123';
       
-      this.socketService.joinGame(id);
+      this.socketService.joinGame(id, userId);
       
       this.socketService.onEvent('game_state', (state) => {
         console.log('Received game state:', state);
@@ -40,9 +42,10 @@ export class Poker implements OnInit, OnDestroy {
   makeMove(action: string, amount?: number) {
     const gid = this.gameId();
     if (gid) {
+      const userId: string = localStorage.getItem('userId') ?? 'user-123';
+      console.log("USERID: ", userId);
       this.socketService.emitEvent('player_move', {
         gameId: gid,
-        playerId: 'user-123', // This should come from an Auth service
         action,
         amount
       });

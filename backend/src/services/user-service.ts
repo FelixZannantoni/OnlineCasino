@@ -96,4 +96,22 @@ export class UserService {
             return false;
         }
     }
+
+    /**
+     * Gets an user by their userId (uuid in the database)
+     * @param userId 
+     * @returns an user object if found, null otherwise
+     */
+    async getUserById(userId: string): Promise<User | null> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+
+            const result = connection.prepare<{ userId: string }, User>(`SELECT * FROM users WHERE uuid = :userId`)
+            .get({ userId: userId});
+            return result ?? null;
+        } catch (error) {
+            console.error(`Something happened while trying to get user by id: ${error}`);
+            return null;
+        }
+    }
 }
