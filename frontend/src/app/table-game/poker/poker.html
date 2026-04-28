@@ -84,8 +84,22 @@
     <!-- Action Buttons -->
     <div game-actions style="display: flex; justify-content: center; gap: 15px; margin-bottom: 80px;">
         <button class="btn-fold">Fold</button>
-        <button class="btn-check">Check</button>
-        <button class="btn-bet">Bet</button>
+        <button class="btn-check">
+            @if (false) { <!-- TODO: Implement variable to see if another player has already bet -->
+                Call
+            }
+            @else {
+                Check
+            }
+        </button>
+        <button class="btn-bet">
+            @if (false) { <!-- TODO: Implement variable to see if another player has already bet -->
+                Raise
+            }
+            @else {
+                Bet
+            }
+        </button>
     </div>
 
 </app-table-game>

@@ -16,9 +16,14 @@
 
     <!-- Action Buttons -->
     <div game-actions style="display: flex; justify-content: center; gap: 15px; margin-bottom: 80px;">
-        <button class="btn-hit">Hit</button>
-        <button class="btn-stand">Stand</button>
-        <button class="btn-double">Double</button>
+        @if (true) { <!-- TODO: Implement variable if player already has 21 and automatic stand -->
+            <button class="btn-hit">Hit</button>
+            <button class="btn-stand">Stand</button>
+            @if (true) { <!-- TODO: Implement variable if palyer has already Hit -->
+                <button class="btn-double">Double</button>
+            }
+        }
+        
     </div>
 
 </app-table-game>
