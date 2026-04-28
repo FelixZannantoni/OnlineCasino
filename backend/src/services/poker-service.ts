@@ -27,7 +27,7 @@ export class PokerService {
             };
         }
 
-        player.setPressedFold(true);
+        player.userPressedFold();
         gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
@@ -55,7 +55,7 @@ export class PokerService {
             };
         }
 
-        player.setPressedCheck(true);
+        player.userPressedCheck();
         gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
@@ -85,7 +85,7 @@ export class PokerService {
 
         const success: boolean = player.setDesiredBet(betAmount);
         if (success) {
-            player.setPressedBet(true);
+            player.userPressedBet();
             gameResult.game.emit("playerMove", { playerId: playerId });
             return {
                 success: true,
@@ -119,7 +119,7 @@ export class PokerService {
             };
         }
 
-        player.setPressedCall(true);
+        player.userPressedCall();
         gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
@@ -149,7 +149,7 @@ export class PokerService {
             };
         }
 
-        player.setPressedRaise(true);
+        player.userPressedFold();
         const success: boolean = player.setDesiredBet(raiseAmount);
 
         if(success) {
