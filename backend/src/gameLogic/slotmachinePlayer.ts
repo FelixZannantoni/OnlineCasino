@@ -1,15 +1,16 @@
 import { Player } from "./player"
 
-export class slotmachinePlayer extends Player {
+export class SlotmachinePlayer extends Player {
 
     private pressedSpin: boolean;
     private pressedAutoSpin: boolean;
-
+    private currentBet: number;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
         this.pressedSpin = false;
         this.pressedAutoSpin = false;
+        this.currentBet = 0;
     }
 
     public getPressedSpin(): boolean {
