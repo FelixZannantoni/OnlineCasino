@@ -35,4 +35,8 @@ export class TableGameComponent implements OnInit, OnDestroy {
       document.body.classList.remove(`${this.game}-page`);
     }
   }
+
+  toggleQuitOverlay(): void {
+    window.dispatchEvent(new CustomEvent('toggleQuitOverlay'));
+  }
 }

@@ -1,1 +1,20 @@
-<p>quit-overlay works!</p>
+<div class="profile-overlay" [class.active]="isOpen">
+    <!-- Backdrop -->
+    <div class="overlay-backdrop" (click)="close()"></div>
+    <div class="container">
+        <h1>Are you sure you want to quit this game</h1>
+        <p>If you leave this game all your money inside the pot will be lost and you will return to the Main page with
+            your current wallet</p>
+        <!-- Confirmation Buttons -->
+        <div class="buttons">
+            <button class="cancel-btn" (click)="close()">
+                <mat-icon>cancel</mat-icon>
+                Cancel
+            </button>
+            <button class="confirm-btn" routerLink="/home">
+                <mat-icon>check_ciricle</mat-icon>
+                Cofirm
+            </button>
+        </div>
+    </div>
+</div>

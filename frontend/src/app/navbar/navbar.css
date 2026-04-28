@@ -94,6 +94,10 @@
     align-items: center;
 }
 
+.shop-btn {
+    margin-right: 1rem;
+}
+
 .chips {
     background: linear-gradient(135deg, #1a3a52 0%, #0f2847 100%);
     padding: 0.35rem 0.8rem;
