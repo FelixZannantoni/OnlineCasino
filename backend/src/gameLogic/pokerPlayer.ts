@@ -72,33 +72,33 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
 
-    public setPressedFold(pressedFold: boolean): void {
-        if (pressedFold) this.resetActions();
-        this.pressedFold = pressedFold;
+    public userPressedFold(): void {
+        this.resetActions();
+        this.pressedFold = true;
         this.madeMove = true;
     }
 
-    public setPressedCheck(pressedCheck: boolean): void {
-        if (pressedCheck) this.resetActions();
-        this.pressedCheck = pressedCheck;
+    public userPressedCheck(): void {
+        this.resetActions();
+        this.pressedCheck = true;
         this.madeMove = true;
     }
 
-    public setPressedBet(pressedBet: boolean): void {
-        if (pressedBet) this.resetActions();
-        this.pressedBet = pressedBet;
+    public userPressedBet(): void {
+        this.resetActions();
+        this.pressedBet = true;
         this.madeMove = true;
     }
 
-    public setPressedCall(pressedCall: boolean): void {
-        if (pressedCall) this.resetActions();
-        this.pressedCall = pressedCall;
+    public userPressedCall(): void {
+        this.resetActions();
+        this.pressedCall = true;
         this.madeMove = true;
     }
 
-    public setPressedRaise(pressedRaise: boolean): void {
-        if (pressedRaise) this.resetActions();
-        this.pressedRaise = pressedRaise;
+    public userPressedRaise(): void {
+        this.resetActions();
+        this.pressedRaise = true;
         this.madeMove = true;
     }
 
