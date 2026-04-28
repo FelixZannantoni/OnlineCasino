@@ -37,6 +37,6 @@ export class TableGameComponent implements OnInit, OnDestroy {
   }
 
   toggleQuitOverlay(): void {
-    window.dispatchEvent(new CustomEvent('toggleQuitOverlay'));
-  }
+  window.dispatchEvent(new CustomEvent('toggleQuitOverlay', { detail: { redirectTo: '/home' } }));
+}
 }

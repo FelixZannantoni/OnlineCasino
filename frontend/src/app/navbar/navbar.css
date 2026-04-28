@@ -94,8 +94,8 @@
     align-items: center;
 }
 
-.shop-btn {
-    margin-right: 1rem;
+a {
+    cursor:pointer;
 }
 
 .chips {

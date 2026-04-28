@@ -1,17 +1,21 @@
 import { Component, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatIconModule, MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { Subscription, fromEvent } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-quit-overlay',
-  imports: [RouterLink, MatIcon],
+  standalone: true,
+  imports: [RouterLink, MatIconModule],
   templateUrl: './quit-overlay.html',
-  styleUrl: './quit-overlay.css',
+  styleUrls: ['./quit-overlay.css'],
 })
-export class QuitOverlay implements OnInit, OnDestroy{
+export class QuitOverlay implements OnInit, OnDestroy {
   isOpen = false;
+  private redirectTo = '/home'; // default fallback
+  private router = inject(Router);
   private toggleSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private isBrowser: boolean;
@@ -25,9 +29,10 @@ export class QuitOverlay implements OnInit, OnDestroy{
     if (!this.isBrowser) return; // Skip SSR
 
     this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleQuitOverlay')
-      .subscribe(() => {
+      .subscribe((event) => {
+        this.redirectTo = event.detail?.redirectTo ?? '/home';
         window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
-        this.isOpen = !this.isOpen;
+        this.isOpen = true; // always open, never toggle
         this.updateBodyScroll();
       });
 
@@ -52,6 +57,11 @@ export class QuitOverlay implements OnInit, OnDestroy{
   close(): void {
     this.isOpen = false;
     this.updateBodyScroll();
+  }
+
+  confirm(): void {
+    this.close();
+    this.router.navigate([this.redirectTo]);
   }
 
   private updateBodyScroll(): void {
