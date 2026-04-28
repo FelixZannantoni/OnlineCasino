@@ -5,11 +5,13 @@ import { Player } from "./player";
 export class CardGamePlayer extends Player {
     protected cards: Card[];
     private hasDealerChip: boolean;
+    protected madeMove: boolean;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
         this.hasDealerChip = false;
         this.cards = [];
+        this.madeMove = false;
     }
 
     public getCards(): Card[] {
@@ -20,8 +22,16 @@ export class CardGamePlayer extends Player {
         return this.hasDealerChip;
     }
 
+    public getMadeMove(): boolean {
+        return this.madeMove;
+    }
+
     public setDealerChip(hasDealerChip: boolean): void {
         this.hasDealerChip = hasDealerChip;
+    }
+
+    public resetMadeMove(): void {
+        this.madeMove = false;
     }
 
     public addCard(card: Card): void {

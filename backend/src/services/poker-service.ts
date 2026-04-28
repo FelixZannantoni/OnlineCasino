@@ -28,6 +28,7 @@ export class PokerService {
         }
 
         player.setPressedFold(true);
+        gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
             message: 'Fold action received'
@@ -55,6 +56,7 @@ export class PokerService {
         }
 
         player.setPressedCheck(true);
+        gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
             message: 'Check action received'
@@ -84,6 +86,7 @@ export class PokerService {
         const success: boolean = player.setDesiredBet(betAmount);
         if (success) {
             player.setPressedBet(true);
+            gameResult.game.emit("playerMove", { playerId: playerId });
             return {
                 success: true,
                 message: 'Bet action received'
@@ -117,6 +120,7 @@ export class PokerService {
         }
 
         player.setPressedCall(true);
+        gameResult.game.emit("playerMove", { playerId: playerId });
         return {
             success: true,
             message: 'Call action received'
@@ -124,10 +128,41 @@ export class PokerService {
     }
 
     raise(playerId: string, gameId: string, raiseAmount: number): {success: boolean, message: string} {
-        // TODO: implement raise
+        // get the game and player
+        const gameResult = this.getGameById(gameId);
+
+        if(!gameResult.game) {
+            return {
+                success: false,
+                message: gameResult.message
+            };
+        }
+
+        const player: PokerPlayer | undefined = gameResult.game.getPlayers().find(p => p.getPlayerId() === playerId);
+
+        if(!player) {
+            const msg = `Player with the id ${playerId} was not found in game ${gameId}`;
+            console.error(msg);
+            return {
+                success: false,
+                message: msg
+            };
+        }
+
+        player.setPressedRaise(true);
+        const success: boolean = player.setDesiredBet(raiseAmount);
+
+        if(success) {
+            gameResult.game.emit("playerMove", { playerId: playerId });
+            return {
+                success: false,
+                message: "Not Yet Implemented!"
+            };
+        }
+
         return {
             success: false,
-            message: "Not Yet Implemented!"
+            message: `Failed to raise desired bet to ${raiseAmount} € for player ${playerId} in game ${gameId}`
         };
     }
 
@@ -145,10 +180,13 @@ export class PokerService {
         {success: boolean, message: string} {
         // get the game object
         const gameResult = this.getGameById(gameId);
-        if(!gameResult.game) return {
-            success: false,
-            message: gameResult.message
-        };
+        if(!gameResult.game) { 
+            console.log(gameResult.message);
+            return {
+                success: false,
+                message: gameResult.message
+            };
+        }
 
         const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
         gameResult.game.addPlayer(newPlayer);
@@ -197,8 +235,8 @@ export class PokerService {
     }
 
     getGameById(gameId: string): {game: Poker | null, message: string} {
-        const game: Poker | undefined = PokerService.pokerGames.find(g => g.getGameId() === gameId);
-
+        const game: Poker | undefined = PokerService.pokerGames.find(g => g.getGameId().toString() === gameId);
+        console.log(`${typeof gameId} vs ${typeof PokerService.pokerGames[0].getGameId()}`);
         if(!game) {
             return {
                 game: null,

@@ -14,6 +14,28 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
     position: relative;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Dashed edge pattern like real casino chips */
+.chip::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255, 255, 255, 0.45);
+    pointer-events: none;
+}
+
+/* Chip label */
+.chip-label {
+    position: relative;
+    z-index: 1;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    line-height: 1.1;
 }
 
 /* Chip-Größen */
@@ -29,22 +51,115 @@
     font-size: 14px;
 }
 
+
 /* Dealer Chip */
 .chip-dealer {
-    background: radial-gradient(circle, #e74c3c 0%, #c0392b 100%);
+    background: radial-gradient(circle at 35% 35%, #e74c3c 0%, #c0392b 100%);
 }
 
 /* Small Blind Chip */
 .chip-small-blind {
-    background: radial-gradient(circle, #3498db 0%, #2980b9 100%);
+    background: radial-gradient(circle at 35% 35%, #3498db 0%, #2980b9 100%);
 }
 
 /* Big Blind Chip */
 .chip-big-blind {
-    background: radial-gradient(circle, #2ecc71 0%, #27ae60 100%);
+    background: radial-gradient(circle at 35% 35%, #2ecc71 0%, #27ae60 100%);
 }
 
-/* Chip-Positionierung */
+
+/* $1 — Grey */
+.chip-1 {
+    background: radial-gradient(circle at 35% 35%, #a0a0a0, #5a5a5a);
+    border-color: #888888;
+}
+
+/* $5 — Red */
+.chip-5 {
+    background: radial-gradient(circle at 35% 35%, #e05555, #9b1c1c);
+    border-color: #c0392b;
+}
+
+/* $10 — Blue */
+.chip-10 {
+    background: radial-gradient(circle at 35% 35%, #4a90d9, #1a4d7c);
+    border-color: #2471a3;
+}
+
+/* $25 — Green */
+.chip-25 {
+    background: radial-gradient(circle at 35% 35%, #52c97a, #1a6b35);
+    border-color: #27ae60;
+}
+
+/* $100 — Black */
+.chip-100 {
+    background: radial-gradient(circle at 35% 35%, #4a4a4a, #111111);
+    border-color: #2c2c2c;
+}
+
+/* $500 — Pink */
+.chip-500 {
+    background: radial-gradient(circle at 35% 35%, #f07ab0, #b03070);
+    border-color: #d45090;
+}
+
+/* $1000 — Yellow */
+.chip-1000 {
+    background: radial-gradient(circle at 35% 35%, #f5d060, #c89010);
+    border-color: #d4a017;
+}
+
+
+.chip-stack {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+}
+
+.chip-stack .chip {
+    position: absolute;
+    left: 0;
+}
+
+.chip-stack .chip:nth-child(1) { top: 0px; }
+.chip-stack .chip:nth-child(2) { top: -5px; }
+.chip-stack .chip:nth-child(3) { top: -10px; }
+.chip-stack .chip:nth-child(4) { top: -15px; }
+.chip-stack .chip:nth-child(5) { top: -20px; }
+.chip-stack .chip:nth-child(6) { top: -25px; }
+.chip-stack .chip:nth-child(7) { top: -30px; }
+.chip-stack .chip:nth-child(8) { top: -35px; }
+
+.chip-stack-1 { height: 45px; }
+.chip-stack-2 { height: 50px; }
+.chip-stack-3 { height: 55px; }
+.chip-stack-4 { height: 60px; }
+.chip-stack-5 { height: 65px; }
+.chip-stack-6 { height: 70px; }
+.chip-stack-7 { height: 75px; }
+.chip-stack-8 { height: 80px; }
+
+
+.chip-bet {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.chip-bet-label {
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+
 .chip-container {
     display: inline-flex;
     align-items: center;
@@ -52,7 +167,7 @@
     position: relative;
 }
 
-/* Chip-Animation */
+
 .chip-place {
     animation: chipPlace 0.3s ease-out;
 }
@@ -62,17 +177,48 @@
         transform: scale(0.5);
         opacity: 0;
     }
-
     to {
         transform: scale(1);
         opacity: 1;
     }
 }
 
-/* Chip-Hover */
+.chip-deal {
+    animation: chipDeal 0.3s ease-out;
+}
+
+@keyframes chipDeal {
+    from {
+        transform: translateY(-60px) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.chip-toss {
+    animation: chipToss 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes chipToss {
+    0%   { transform: translateY(0) rotate(0deg); }
+    50%  { transform: translateY(-30px) rotate(180deg); }
+    100% { transform: translateY(0) rotate(360deg); }
+}
+
 .chip:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
     cursor: pointer;
+}
+
+.chip-selected {
+    transform: translateY(-6px);
+    box-shadow:
+        0 0 0 3px rgba(255, 215, 0, 0.8),
+        0 8px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Chip-Disabled */

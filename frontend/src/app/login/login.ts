@@ -61,6 +61,10 @@ export class Login implements OnInit {
 
     // note from julian: login success ->
 
+    // save userid to local storage
+    // res.json() should return an object with userId and message
+    localStorage.setItem('userId', (await res.json()).userId);
+
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
     });
@@ -100,7 +104,7 @@ export class Login implements OnInit {
     const res = await fetch('http://localhost:3000/users/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json'  
       },
       body: JSON.stringify({
         username: this.loginEmail,
@@ -116,6 +120,10 @@ export class Login implements OnInit {
     //#endregion
 
     // note from julian: login success ->
+
+    // save userid to local storage
+    // res.json() should return an object with userId and message
+    localStorage.setItem('userId', (await res.json()).userId);
 
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
@@ -155,6 +163,10 @@ export class Login implements OnInit {
     //#endregion
 
     // note from julian: registration success ->
+
+    // save userid to local storage
+    // res.json() should return an object with userId and message
+    localStorage.setItem('userId', (await res.json()).userId);
 
     console.log('Navigating to /home from register');
     this.router.navigate(['/home']);
