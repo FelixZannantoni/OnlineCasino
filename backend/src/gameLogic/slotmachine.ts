@@ -1,6 +1,7 @@
 import { Game } from "./game";
+import { SinglePlayerGame } from "./singlePlayerGame";
 
-export class slotmachine extends Game {
+export class slotmachine extends SinglePlayerGame {
 
     constructor(gameId: string) {
         super(gameId);
@@ -15,7 +16,7 @@ export class slotmachine extends Game {
     }
 
     public startRound() {
-        if
+        
     }
 
     private spin() {
