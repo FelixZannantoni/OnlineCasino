@@ -1,6 +1,6 @@
-import { Player } from "./player"
+import { GamePlayer } from "./gamePlayer"
 
-export class SlotmachinePlayer extends Player {
+export class SlotmachinePlayer extends GamePlayer {
 
     private pressedSpin: boolean;
     private pressedAutoSpin: boolean;

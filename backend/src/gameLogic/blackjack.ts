@@ -3,7 +3,7 @@ import { BlackjackDeck } from "./blackjackDeck";
 import { BlackjackPlayer } from "./blackjackPlayer";
 import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
-import { Player } from "./player";
+import { GamePlayer } from "./gamePlayer";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BALCKJACK_BOT_ID: string = "BlackjackBot";
@@ -49,7 +49,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         const dealerIndex = CardGamePlayer.playerWithDealerChip(this.players);
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             for (let j: number = 0; j < this.players.length; j++) {
-                this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
+                this.players[GamePlayer.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
                     .addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), this.players[j].getPlayerId()));
             }//TODO dealCard änder visibility auf all
         }
@@ -73,7 +73,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     private async makeMove() {
         for (let i: number = 0; i < this.players.length; i++) {
-            const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+            const playerOnMove: BlackjackPlayer = this.players[GamePlayer.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
             await new Promise<void>((resolve) => {
                 const timeout = setTimeout(() => {
                     this.removeListener("playerMove", handleMove);
@@ -131,7 +131,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     private handOutWin() {
         for (let i: number = 0; i < this.players.length; i++) {
-            const playerOnMove: BlackjackPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+            const playerOnMove: BlackjackPlayer = this.players[GamePlayer.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
             if (playerOnMove.getHandValue() == this.blackJackBot.getHandValue()) {
                 playerOnMove.winMoney(playerOnMove.getBet());
             }

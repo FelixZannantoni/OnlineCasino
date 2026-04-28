@@ -1,9 +1,7 @@
-import { Game } from "./gamePlayer";
-import { SlotmachinePlayer, slotmachinePlayer } from "./slotmachinePlayer";
+import { Game } from "./game";
 
 export class slotmachine extends Game {
 
-    private slotmachinePlayer: SlotmachinePlayer = new SlotmachinePlayer;
     constructor(gameId: string) {
         super(gameId);
     }
