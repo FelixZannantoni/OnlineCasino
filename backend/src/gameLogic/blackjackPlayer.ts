@@ -32,19 +32,22 @@ export class BlackjackPlayer extends CardGamePlayer {
         return this.pressedDouble;
     }
 
-    public setPressedHit(pressedHit: boolean) {
-        if (pressedHit) this.resetActions();
-        this.pressedHit = pressedHit;
+    public userPressedHit() {
+        this.resetActions();
+        this.pressedHit = true;
+        this.resetActions;
     }
 
-    public setPressedStand(pressedStand: boolean) {
-        if (pressedStand) this.resetActions();
-        this.pressedStand = pressedStand;
+    public userPressedStand() {
+        this.resetActions();
+        this.pressedStand = true;
+        this.resetActions;
     }
 
-    private setPressedDouble(pressedDouble: boolean) {
-        if (pressedDouble) this.resetActions();
-        this.pressedDouble = pressedDouble;
+    private userPressedDouble() {
+        this.resetActions();
+        this.pressedDouble = true;
+        this.resetActions;
     }
 
     private resetActions(): void {

@@ -26,7 +26,7 @@ export class PokerService {
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
         return game.handlePlayerMove(playerId, "bet", betAmount);
-    }
+    };
 
     call(playerId: string, gameId: string): {success: boolean, message: string} {
         // get the game and player objects
