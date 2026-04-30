@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, signal, inject, computed } from '@angular/core';
 import { RouterLink, RouterOutlet, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { SocketService } from '../services/socket.service';
+import { DataService } from '../services/data-service';
 
 @Component({
   selector: 'app-poker',
@@ -14,6 +15,7 @@ import { SocketService } from '../services/socket.service';
 export class Poker implements OnInit, OnDestroy {
   private socketService = inject(SocketService);
   private route = inject(ActivatedRoute);
+  protected dataService = inject(DataService);
   
   public gameState = signal<any>(null);
   public gameId = signal<string | null>(null);
@@ -28,9 +30,11 @@ export class Poker implements OnInit, OnDestroy {
       const id = this.route.snapshot.paramMap.get('id') || '1';
       this.gameId.set(id);
 
-      const userId: string = localStorage.getItem('userId') ?? 'user-123';
+      const userId: string = this.dataService.userId();
       
-      this.socketService.joinGame(id, userId);
+      this.socketService.onEvent('connect', () => {
+        this.socketService.joinGame(id, userId);
+      });
       
       this.socketService.onEvent('game_state', (state) => {
         console.log('Received game state:', state);
@@ -42,7 +46,7 @@ export class Poker implements OnInit, OnDestroy {
   makeMove(action: string, amount?: number) {
     const gid = this.gameId();
     if (gid) {
-      const userId: string = localStorage.getItem('userId') ?? 'user-123';
+      const userId: string = this.dataService.userId();
       console.log("USERID: ", userId);
       this.socketService.emitEvent('player_move', {
         gameId: gid,
@@ -55,8 +59,15 @@ export class Poker implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (isPlatformBrowser(this.platformId)) {
       document.body.classList.remove('poker-page');
+      this.socketService.offEvent('connect');
+      this.socketService.offEvent('game_state');
     }
   }
+
+  protected isMyTurn = computed(() => {
+    const state = this.gameState();
+    return state?.currentPlayerId === this.dataService.userId();
+  });
 }
 
 

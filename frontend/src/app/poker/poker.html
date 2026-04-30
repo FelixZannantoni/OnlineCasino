@@ -74,16 +74,16 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <button class="shining-btn" (click)="makeMove('fold')">
+        <button class="shining-btn" (click)="makeMove('fold')" [disabled]="!isMyTurn()">
             Fold
         </button>
-        <button class="shining-btn" (click)="makeMove('check')">
+        <button class="shining-btn" (click)="makeMove('check')" [disabled]="!isMyTurn()">
             Check
         </button>
-        <button class="shining-btn" (click)="makeMove('call')">
+        <button class="shining-btn" (click)="makeMove('call')" [disabled]="!isMyTurn()">
             Call
         </button>
-        <button class="shining-btn" (click)="makeMove('bet', 20)">
+        <button class="shining-btn" (click)="makeMove('bet', 20)" [disabled]="!isMyTurn()">
             Bet 20
         </button>
     </div>
