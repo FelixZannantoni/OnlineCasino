@@ -7,10 +7,10 @@
             <div class="game-row">
                 <button class="news-banner">
                     <mat-icon class="news-icon">stars</mat-icon>
-                    <span>What your friends play</span>
+                    <span>What you friends play</span>
                 </button>
-                <button class="game-card featured" routerLink="/slotmachine"> <!-- Roulette non-existend atm -->
-                    <button class="favorite-btn" (click)="toggleFavorite('Slotmachine'); $event.stopPropagation()">
+                <button class="game-card featured" routerLink="/slotmachine"> <!-- Slotmachine non-existend atm -->
+                    <button class="favorite-btn" (click)="toggleFavorite('Slotmachine', $event)">
                         <mat-icon>{{ isFavorite('Slotmachine') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
                     <div class="game-card-content">
@@ -35,8 +35,8 @@
                     <mat-icon class="news-icon">casino</mat-icon>
                     <span>You played last</span>
                 </button>
-                <button class="game-card featured" routerLink="/blackjack"> <!-- Blackjack non-existend atm -->
-                    <button class="favorite-btn" (click)="toggleFavorite('Blackjack'); $event.stopPropagation()">
+                <button class="game-card featured" routerLink="/blackjack">
+                    <button class="favorite-btn" (click)="toggleFavorite('Blackjack', $event)">
                         <mat-icon>{{ isFavorite('Blackjack') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
                     <div class="game-card-content">
@@ -62,9 +62,8 @@
                     <span>Event games</span>
                 </button>
                 <button class="game-card featured" routerLink="/poker">
-                    <button class="favorite-btn"
-                        (click)="toggleFavorite('Poker Texas Hold\'em'); $event.stopPropagation()">
-                        <mat-icon>{{ isFavorite('Poker Texas Hold\'em') ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    <button class="favorite-btn" (click)="toggleFavorite('PokerTexas', $event)">
+                        <mat-icon>{{ isFavorite('PokerTexas') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
                     <div class="game-card-content">
                         <span class="game-title">Poker Texas Hold'em</span>
@@ -90,25 +89,21 @@
                 </button>
                 <button class="game-card">
                     <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
+                        <span class="game-title">Fav game</span>
                     </div>
                 </button>
                 <button class="game-card">
                     <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
+                        <span class="game-title">Fav game</span>
                     </div>
                 </button>
                 <button class="game-card">
                     <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
+                        <span class="game-title">Fav game</span>
                     </div>
                 </button>
             </div>
-
-
         </div>
-
-
 
         <!-- Right Sidebar - Unified Club + Friends/Leaderboard -->
         <aside class="sidebar">

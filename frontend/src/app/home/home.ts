@@ -13,9 +13,9 @@ import { CommonModule } from '@angular/common';
 export class Home {
   showLeaderboard = false;
   favorites: { [key: string]: boolean } = {
-    'Slotmachine': false,
+    'Roulette': false,
     'Blackjack': false,
-    'Poker Texas Hold\'em': false,
+    'PokerTexas': false,
     'Spiel tmp': false
   };
 
@@ -23,7 +23,8 @@ export class Home {
     this.showLeaderboard = slide === 'leaderboard';
   }
 
-  toggleFavorite(game: string): void {
+  toggleFavorite(game: string, event: Event): void {
+    event.stopPropagation();
     this.favorites[game] = !this.favorites[game];
   }
 

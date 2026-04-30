@@ -123,6 +123,44 @@
     z-index: 1;
 }
 
+/* Favorite Button */
+.favorite-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.favorite-btn mat-icon {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #fff;
+    transition: color 0.2s ease;
+}
+
+.favorite-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.favorite-btn:hover mat-icon {
+    color: var(--light-gold);
+}
+
+.game-card-content {
+    text-align: center;
+    z-index: 1;
+}
+
 .game-title {
     color: #fff;
     font-size: 1.1rem;
@@ -143,7 +181,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 2;
+    z-index: 10;
     transition: all 0.2s ease;
 }
 
