@@ -9,161 +9,37 @@ export class PokerService {
 
     fold(playerId: string, gameId: string): {success: boolean, message: string} {
         // get the game and player objects
-        const gameResult = this.getGameById(gameId);
-        
-        if(!gameResult.game) return {
-            success: false,
-            message: gameResult.message
-        };
-
-        const player: PokerPlayer | undefined = gameResult.game.getPlayers().find(p => p.getPlayerId() === playerId);
-
-        if(!player) {
-            const msg = `Player with the id ${playerId} was not found in game ${gameId}`;
-            console.error(msg);
-            return {
-                success: false,
-                message: msg
-            };
-        }
-
-        player.setPressedFold(true);
-        gameResult.game.emit("playerMove", { playerId: playerId });
-        return {
-            success: true,
-            message: 'Fold action received'
-        };
+        const { game } = this.getGameById(gameId);
+        if(!game) return { success: false, message: `Game #${gameId} not found` };
+        return game.handlePlayerMove(playerId, "fold");
     }
 
     check(playerId: string, gameId: string): {success: boolean, message: string} {
         // get the game and player objects
-        const gameResult = this.getGameById(gameId);
-        
-        if(!gameResult.game) return {
-            success: false,
-            message: gameResult.message
-        };
-
-        const player: PokerPlayer | undefined = gameResult.game.getPlayers().find(p => p.getPlayerId() === playerId);
-
-        if(!player) {
-            const msg = `Player with the id ${playerId} was not found in game ${gameId}`;
-            console.error(msg);
-            return {
-                success: false,
-                message: msg
-            };
-        }
-
-        player.setPressedCheck(true);
-        gameResult.game.emit("playerMove", { playerId: playerId });
-        return {
-            success: true,
-            message: 'Check action received'
-        };
+        const { game } = this.getGameById(gameId);
+        if(!game) return { success: false, message: `Game #${gameId} not found` };
+        return game.handlePlayerMove(playerId, "check");
     }
 
     bet(playerId: string, gameId: string, betAmount: number): {success: boolean, message: string} {
         // get the game and player objects
-        const gameResult = this.getGameById(gameId);
-        
-        if(!gameResult.game) return {
-            success: false,
-            message: gameResult.message
-        };
-
-        const player: PokerPlayer | undefined = gameResult.game.getPlayers().find(p => p.getPlayerId() === playerId);
-
-        if(!player) {
-            const msg = `Player with the id ${playerId} was not found in game ${gameId}`;
-            console.error(msg);
-            return {
-                success: false,
-                message: msg
-            };
-        }
-
-        const success: boolean = player.setDesiredBet(betAmount);
-        if (success) {
-            player.setPressedBet(true);
-            gameResult.game.emit("playerMove", { playerId: playerId });
-            return {
-                success: true,
-                message: 'Bet action received'
-            };
-        }
-
-        return {
-            success: false,
-            message: `Failed to set desired bet, ${betAmount} €, for player ${playerId} in game ${gameId}`
-        };
+        const { game } = this.getGameById(gameId);
+        if(!game) return { success: false, message: `Game #${gameId} not found` };
+        return game.handlePlayerMove(playerId, "bet", betAmount);
     }
 
     call(playerId: string, gameId: string): {success: boolean, message: string} {
         // get the game and player objects
-        const gameResult = this.getGameById(gameId);
-
-        if(!gameResult.game) return {
-            success: false,
-            message: gameResult.message
-        };
-
-        const player: PokerPlayer | undefined = gameResult.game.getPlayers().find(p => p.getPlayerId() === playerId);
-
-        if(!player) {
-            const msg = `Player with the id ${playerId} was not found in game ${gameId}`;
-            console.error(msg);
-            return {
-                success: false,
-                message: msg
-            };
-        }
-
-        player.setPressedCall(true);
-        gameResult.game.emit("playerMove", { playerId: playerId });
-        return {
-            success: true,
-            message: 'Call action received'
-        };
+        const { game } = this.getGameById(gameId);
+        if(!game) return { success: false, message: `Game #${gameId} not found` };
+        return game.handlePlayerMove(playerId, "call");
     }
 
     raise(playerId: string, gameId: string, raiseAmount: number): {success: boolean, message: string} {
-        // get the game and player
-        const gameResult = this.getGameById(gameId);
-
-        if(!gameResult.game) {
-            return {
-                success: false,
-                message: gameResult.message
-            };
-        }
-
-        const player: PokerPlayer | undefined = gameResult.game.getPlayers().find(p => p.getPlayerId() === playerId);
-
-        if(!player) {
-            const msg = `Player with the id ${playerId} was not found in game ${gameId}`;
-            console.error(msg);
-            return {
-                success: false,
-                message: msg
-            };
-        }
-
-        player.setPressedRaise(true);
-        const success: boolean = player.setDesiredBet(raiseAmount);
-
-        if(success) {
-            gameResult.game.emit("playerMove", { playerId: playerId });
-            return {
-                success: false,
-                message: "Not Yet Implemented!"
-            };
-        }
-
-        return {
-            success: false,
-            message: `Failed to raise desired bet to ${raiseAmount} € for player ${playerId} in game ${gameId}`
-        };
+        // get the game and player objects
+        const { game } = this.getGameById(gameId);
+        if(!game) return { success: false, message: `Game #${gameId} not found` };
+        return game.handlePlayerMove(playerId, "raise", raiseAmount);
     }
 
     /**
@@ -190,6 +66,11 @@ export class PokerService {
 
         const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
         gameResult.game.addPlayer(newPlayer);
+
+        if(gameResult.game.getPlayers().length === 1) {
+            gameResult.game.setDefaultDealerChip();
+        }
+
         return {
             success: true,
             message: `Successfully added player ${playerId} to game ${gameId}`

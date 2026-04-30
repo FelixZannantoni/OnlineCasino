@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import { PokerService } from "../services/poker-service";
 import { Poker } from "../gameLogic/poker";
+import { pokerService } from "../app";
 
 export const pokerRouter = Router();
 
@@ -12,9 +13,7 @@ pokerRouter.post("/addPlayer", async (req: Request, res: Response) => {
         res.status(StatusCodes.BAD_REQUEST).json({ error: "Missing required fields in request body" });
         return;
     }
-
-    const service: PokerService = new PokerService();
-    const result = service.addPlayer(playerId, username, displayname, balance, hasDealerChip, bet, gameId);
+    const result = pokerService.addPlayer(playerId, username, displayname, balance, hasDealerChip, bet, gameId);
 
     if(result.success) {
         res.status(StatusCodes.OK).json({ message: result.message });
@@ -31,9 +30,7 @@ pokerRouter.put("/fold", async (req: Request, res: Response) => {
         return;
     }
 
-    const service: PokerService = new PokerService();
-
-    const result = service.fold(playerId, gameId);
+    const result = pokerService.fold(playerId, gameId);
 
     if(result.success) {
         res.status(StatusCodes.OK).json({ message: result.message });
@@ -49,9 +46,7 @@ pokerRouter.put("/check", async (req: Request, res: Response) => {
         return;
     }
 
-    const service: PokerService = new PokerService();
-
-    const result = service.check(playerId, gameId);
+    const result = pokerService.check(playerId, gameId);
 
     if(result.success) {
         res.status(StatusCodes.OK).json({ message: result.message });
@@ -71,9 +66,7 @@ pokerRouter.put("/bet", async (req: Request, res: Response) => {
         return;
     }
 
-    const service: PokerService = new PokerService();
-
-    const result = service.bet(playerId, gameId, betAmount);
+    const result = pokerService.bet(playerId, gameId, betAmount);
 
     if(result.success) {
         res.status(StatusCodes.OK).json({ message: result.message });
@@ -89,9 +82,7 @@ pokerRouter.put("/call", async (req: Request, res: Response) => {
         return;
     }
 
-    const service: PokerService = new PokerService();
-
-    const result = service.call(playerId, gameId);
+    const result = pokerService.call(playerId, gameId);
 
     if(result.success) {
         res.status(StatusCodes.OK).json({ message: result.message });
@@ -107,9 +98,7 @@ pokerRouter.put("/raise", async (req: Request, res: Response) => {
         return;
     }
 
-    const service: PokerService = new PokerService();
-
-    const result = service.raise(playerId, gameId, amount);
+    const result = pokerService.raise(playerId, gameId, amount);
 
     if(result.success) {
         res.status(StatusCodes.OK).json({ message: result.message });

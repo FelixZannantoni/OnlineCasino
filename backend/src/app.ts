@@ -29,11 +29,17 @@ app.use("/poker", pokerRouter);
 
 const socketUserMap: Map<string, string> = new Map();
 
+const pokerService: PokerService = new PokerService();
+export { pokerService };
+
 // Socket.io connection handling
 io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
     socket.on("join_game", async (gameId, userId) => {
+        console.log("join_game received:", gameId, userId);              // ← NEU
+        console.log("Games loaded:", PokerService.pokerGames.length);   // ← NEU
+        console.log("Game IDs:", PokerService.pokerGames.map(g => g.getGameId())); // ← NEU
         socketUserMap.set(socket.id, userId);
 
         socket.join(gameId);
@@ -42,21 +48,30 @@ io.on("connection", (socket) => {
         const userService = new UserService();
         const user = await userService.getUserById(userId);
 
-        const service: PokerService = new PokerService();
+        
         const startBalance: number = 1000;
-        service.addPlayer(userId, user?.username ?? '-', user?.displayname ?? 'Guest', startBalance, false, 0, gameId);
         
         // Send initial state
-        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
+        const game = PokerService.pokerGames.find(g => g.getGameId().toString() === gameId.toString());
         if (game) {
-            socket.emit("game_state", game.getGameState());
-            
-            // Listen for changes if not already listening
+            const alreadyIn = game.getGameState().players.some(p => p.id === userId);
+            if(!alreadyIn) {
+                pokerService.addPlayer(userId, user?.username ?? '-', user?.displayname ?? 'Guest', startBalance, false, 0, gameId);
+            }
+
             if (game.listenerCount("gameState") === 0) {
                 game.on("gameState", (state) => {
                     io.to(gameId).emit("game_state", state);
                 });
             }
+
+            const playerCount = game.getGameState().players.length;
+            // Spiel starten, sobald min. 2 Spieler da sind
+            if (playerCount === 2) {
+                game.startGame();
+            }
+
+            socket.emit("game_state", game.getGameState());
         }
     });
 
@@ -68,7 +83,6 @@ io.on("connection", (socket) => {
             console.warn(`Unknown socket tried making a move: ${socket.id}`);
             return;
         }
-        const service = new PokerService();
         
         console.log(`Player ${playerId} performed action: ${action} in game: ${gameId} with amount: ${amount}`);
 
@@ -76,19 +90,19 @@ io.on("connection", (socket) => {
 
         switch (action) {
             case "fold":
-                actionResult = service.fold(playerId, gameId);
+                actionResult = pokerService.fold(playerId, gameId);
                 break;
             case "check":
-                actionResult = service.check(playerId, gameId);
+                actionResult = pokerService.check(playerId, gameId);
                 break;
             case "call":
-                actionResult = service.call(playerId, gameId);
+                actionResult = pokerService.call(playerId, gameId);
                 break;
             case "bet":
-                if (amount !== undefined) actionResult = service.bet(playerId, gameId, amount);
+                if (amount !== undefined) actionResult = pokerService.bet(playerId, gameId, amount);
                 break;
             case "raise":
-                if (amount !== undefined) actionResult = service.raise(playerId, gameId, amount);
+                if (amount !== undefined) actionResult = pokerService.raise(playerId, gameId, amount);
                 break;
         }
 
@@ -108,7 +122,6 @@ httpServer.listen(PORT, () => console.log(`Server running on: http://localhost:$
 
 DB.createDBConnection();
 
-const pokerservice: PokerService = new PokerService();
-pokerservice.loadAllPokerGames();
+pokerService.loadAllPokerGames();
 
 export { io };
