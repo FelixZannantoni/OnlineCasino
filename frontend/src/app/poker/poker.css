@@ -238,6 +238,24 @@
     border-color: transparent;
 }
 
+.action-buttons button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #666;
+    color: #999;
+    background: rgba(255, 255, 255, 0.05);
+    transform: none;
+    box-shadow: none;
+}
+
+.action-buttons button:disabled:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #999;
+    transform: none;
+    box-shadow: none;
+    border-color: #666;
+}
+
 .btn-fold:hover {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     border-color: #e74c3c;

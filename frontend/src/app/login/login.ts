@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
+import { DataService } from '../services/data-service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class Login implements OnInit {
   isSignUp = false;
   isBrowser: boolean;
   private router = inject(Router);
+  private dataService = inject(DataService);
 
   loginEmail = '';
   loginPassword = '';
@@ -63,7 +65,8 @@ export class Login implements OnInit {
 
     // save userid to local storage
     // res.json() should return an object with userId and message
-    localStorage.setItem('userId', (await res.json()).userId);
+    const userId = (await res.json()).userId;
+    this.dataService.userId.set(userId);
 
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
@@ -123,7 +126,8 @@ export class Login implements OnInit {
 
     // save userid to local storage
     // res.json() should return an object with userId and message
-    localStorage.setItem('userId', (await res.json()).userId);
+    const userId = (await res.json()).userId;
+    this.dataService.userId.set(userId);
 
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
@@ -166,7 +170,8 @@ export class Login implements OnInit {
 
     // save userid to local storage
     // res.json() should return an object with userId and message
-    localStorage.setItem('userId', (await res.json()).userId);
+    const userId = (await res.json()).userId;
+    this.dataService.userId.set(userId);
 
     console.log('Navigating to /home from register');
     this.router.navigate(['/home']);
