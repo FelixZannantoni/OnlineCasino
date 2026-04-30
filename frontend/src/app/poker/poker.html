@@ -29,9 +29,9 @@
         <!-- Community Cards -->
         <div class="board-cards"> 
             @if (gameState(); as state) {
-                @for (card of state.deskCards; track $index) {
+                @for (card of state.board; track $index) {
                     <div class="card" [class]="'card-' + card.color.toLowerCase()" 
-                         [style.visibility]="card.visibility === 0 ? 'hidden' : 'visible'"
+                         [style.visibility]="card.visibility === 'all' ? 'visible' : 'hidden'"
                          style="width: 70px; height: 98px; font-size: 14px;">
                         <div class="card-top">
                             <span class="card-rank">{{ card.name }}</span>
