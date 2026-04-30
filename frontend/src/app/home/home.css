@@ -129,6 +129,36 @@
     font-weight: 600;
 }
 
+/* Favorite Button */
+.favorite-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+
+.favorite-btn mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #f44336;
+}
+
+.favorite-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
+}
+
 /* Sidebar */
 .sidebar {
     position: sticky;
@@ -244,12 +274,12 @@
 /* Sliding Content Area */
 .slider-wrapper {
     overflow: hidden;
-    
+
     position: relative;
 }
 
 .slider-track {
-    
+
     transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     height: 100%;
 }
