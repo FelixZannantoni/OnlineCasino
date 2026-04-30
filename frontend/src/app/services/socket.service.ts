@@ -23,11 +23,21 @@ export class SocketService {
   }
 
   joinGame(gameId: string, userId: string) {
-    this.socket.emit('join_game', gameId, userId);
+    if(this.socket.connected) {
+      this.socket.emit('join_game', gameId, userId);
+    } else {
+      this.socket.once('connect', () => {
+        this.socket.emit('join_game', gameId, userId);
+      });
+    }
   }
 
   onEvent(eventName: string, callback: (data: any) => void) {
     this.socket.on(eventName, callback);
+  }
+
+  offEvent(eventName: string) {
+    this.socket.off(eventName);
   }
 
   emitEvent(eventName: string, data: any) {
