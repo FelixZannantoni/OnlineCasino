@@ -50,11 +50,11 @@
         <div class="player-cards">
             @if (gameState(); as state) {
                 <!-- Showing cards for a specific player (user-123 for now) -->
-                @for (player of state.players; track player.playerId) {
-                    @if (player.playerId === 'user-123') {
+                @for (player of state.players; track player.id) {
+                    @if (player.id === dataService.userId()) {
                         @for (card of player.cards; track $index) {
-                            <div class="card" [class]="'card-' + card.color.toLowerCase()"
-                                style="width: 60px; height: 84px; font-size: 12px; transform: rotate({{($index-0.5)*30}}deg);">
+                            <div class="card" [class]="'card-' + card.color.toLowerCase()" [style.transform]="'rotate(' + (($index - 0.5) * 30) + 'deg)'"
+                                style="width: 60px; height: 84px; font-size: 12px;">
                                 <div class="card-top">
                                     <span class="card-rank">{{ card.name }}</span>
                                     <span class="card-suit"></span>
