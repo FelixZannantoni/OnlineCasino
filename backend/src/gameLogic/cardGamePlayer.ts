@@ -1,6 +1,6 @@
 import { Card } from "../model";
 import { CardVisibility } from "./deck";
-import { GamePlayer } from "./gamePlayer";
+import { GamePlayer } from "./player";
 
 export class CardGamePlayer extends GamePlayer {
     protected cards: Card[];

@@ -1,5 +1,5 @@
 import { CardVisibility, DEALER_ID } from "./deck";
-import { GamePlayer } from "./gamePlayer";
+import { GamePlayer } from "./player";
 import { CardGame } from "./cardGame";
 import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";

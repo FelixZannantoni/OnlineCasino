@@ -1,4 +1,4 @@
-import { GamePlayer } from "./gamePlayer"
+import { GamePlayer } from "./player"
 
 export class SlotmachinePlayer extends GamePlayer {
 

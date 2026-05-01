@@ -1,5 +1,5 @@
 import { Game } from "./game";
-import { GamePlayer } from "./gamePlayer";
+import { GamePlayer } from "./player";
 import { CardGamePlayer } from "./cardGamePlayer";
 
 export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T> {

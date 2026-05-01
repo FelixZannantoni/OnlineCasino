@@ -85,5 +85,4 @@ export class GamePlayer {
         }
         return false;
     }
-
 }

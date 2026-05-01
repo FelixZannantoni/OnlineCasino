@@ -3,7 +3,7 @@ import { BlackjackDeck } from "./blackjackDeck";
 import { BlackjackPlayer } from "./blackjackPlayer";
 import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
-import { GamePlayer } from "./gamePlayer";
+import { GamePlayer } from "./player";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BALCKJACK_BOT_ID: string = "BlackjackBot";

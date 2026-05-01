@@ -16,7 +16,7 @@ export class slotmachine extends SinglePlayerGame {
     }
 
     public startRound() {
-        
+
     }
 
     private spin() {

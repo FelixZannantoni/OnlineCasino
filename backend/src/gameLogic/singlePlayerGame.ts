@@ -1,10 +1,10 @@
-import { GamePlayer } from "./gamePlayer";
+import { GamePlayer } from "./player";
 
 export class SinglePlayerGame {
     private gameId: string;
     private player: GamePlayer | null;
 
-    constructor(gameId: string){
+    constructor(gameId: string) {
         this.gameId = gameId;
         this.player = null;
     }

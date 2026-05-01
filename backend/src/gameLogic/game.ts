@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { GamePlayer } from "./gamePlayer";
+import { GamePlayer } from "./player";
 
 export class Game<T extends GamePlayer = GamePlayer> extends EventEmitter {
     protected players: T[];
