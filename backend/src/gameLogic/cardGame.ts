@@ -1,5 +1,5 @@
-import { Game } from "./gamePlayer";
-import { Player } from "./player";
+import { Game } from "./game";
+import { GamePlayer } from "./player";
 import { CardGamePlayer } from "./cardGamePlayer";
 
 export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T> {
@@ -16,7 +16,7 @@ export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T>
         for (let i: number = 0; i < this.players.length; i++) {
             if (this.players[i].getDealerChip() == true) {
                 this.players[i].setDealerChip(false);
-                this.players[Player.nextPlayer(this.players, i)].setDealerChip(true);
+                this.players[GamePlayer.nextPlayer(this.players, i)].setDealerChip(true);
                 return;
             }
         }

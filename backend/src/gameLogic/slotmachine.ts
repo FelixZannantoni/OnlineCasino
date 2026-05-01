@@ -1,9 +1,8 @@
-import { Game } from "./gamePlayer";
-import { SlotmachinePlayer, slotmachinePlayer } from "./slotmachinePlayer";
+import { Game } from "./game";
+import { SinglePlayerGame } from "./singlePlayerGame";
 
-export class slotmachine extends Game {
+export class slotmachine extends SinglePlayerGame {
 
-    private slotmachinePlayer: SlotmachinePlayer = new SlotmachinePlayer;
     constructor(gameId: string) {
         super(gameId);
     }
@@ -17,7 +16,7 @@ export class slotmachine extends Game {
     }
 
     public startRound() {
-        if
+
     }
 
     private spin() {

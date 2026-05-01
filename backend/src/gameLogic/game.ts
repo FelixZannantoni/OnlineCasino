@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
-import { Player } from "./player";
+import { GamePlayer } from "./player";
 
-export class Game<T extends Player = Player> extends EventEmitter {
+export class Game<T extends GamePlayer = GamePlayer> extends EventEmitter {
     protected players: T[];
     private gameId: string;
 
