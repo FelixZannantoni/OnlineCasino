@@ -12,7 +12,7 @@
             <span class="chip chip-gold chip-6"></span>
             <span class="chip chip-red chip-7"></span>
 
-            <a routerLink="/home" class="brand_link">Online Casino</a>
+            <a class="brand_link" (click)="navigate('/home')">Online Casino</a>
         </div>
 
         <div class="navbar_center"></div>
@@ -20,10 +20,10 @@
         <div class="navbar_right">
             <nav class="navbar_nav">
                 <ul>
-                    <li><a routerLink="/club" class="shining-btn">Club</a></li>
-                    <li><a routerLink="/friends" class="shining-btn">Friends</a></li>
-                    <li><a routerLink="/leaderboard" class="shining-btn">Leaderboard</a></li>
-                    <li><a routerLink="/shop" class="shining-btn">Shop</a></li>
+                    <li><a class="club-btn shining-btn" (click)="navigate('/club')">Club</a></li> <!-- navigate statt routerLink um quit-navigation zu "speichern" -->
+                    <li><a class="friends-btn shining-btn" (click)="navigate('/friends')">Friends</a></li>
+                    <li><a class="leaderboard-btn shining-btn" (click)="navigate('/leaderboard')">Leaderboard</a></li>
+                    <li><a class="shop-btn shining-btn" (click)="navigate('/shop')">Shop</a></li>
                 </ul>
             </nav>
         </div>

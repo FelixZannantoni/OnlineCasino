@@ -1,0 +1,33 @@
+<div class="quit-overlay" [class.active]="isOpen">
+    <!-- Backdrop -->
+    <div class="overlay-backdrop" (click)="close()"></div>
+
+    <!-- Dialog Card -->
+    <div class="quit-dialog">
+        <!-- Close Button -->
+        <button class="close-btn" (click)="close()" aria-label="Close dialog">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <!-- Dialog Content -->
+        <div class="dialog-content">
+            <div class="warning-icon">
+                <mat-icon>warning</mat-icon>
+            </div>
+            <h1>Are you sure you want to quit this game?</h1>
+            <p>If you leave this game all your money inside the pot will be lost and you will leave this game
+                with your current wallet.</p>
+        </div>
+
+        <!-- Confirmation Buttons -->
+        <div class="dialog-buttons">
+            <button class="cancel-btn" (click)="close()">
+                <mat-icon>cancel</mat-icon>
+                Cancel
+            </button>
+            <button class="confirm-btn" (click)="confirm()">
+                <mat-icon>check_circle</mat-icon>
+                Accept
+            </button>
+        </div>
+    </div>
