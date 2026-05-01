@@ -14,7 +14,6 @@ import { filter } from 'rxjs/operators';
   imports: [
     RouterOutlet,
     Navbar,
-    Login,
     ProfileOverlay,
     SettingsOverlay,
     QuitOverlay

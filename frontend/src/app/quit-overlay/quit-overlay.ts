@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { Subscription, fromEvent } from 'rxjs';
@@ -8,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-quit-overlay',
   standalone: true,
-  imports: [RouterLink, MatIconModule],
+  imports: [MatIconModule],
   templateUrl: './quit-overlay.html',
   styleUrls: ['./quit-overlay.css'],
 })

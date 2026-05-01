@@ -13,11 +13,15 @@ import { CommonModule } from '@angular/common';
 export class Home {
   showLeaderboard = false;
   favorites: { [key: string]: boolean } = {
-    'Roulette': false,
     'Blackjack': false,
-    'PokerTexas': false,
-    'Spiel tmp': false
+    'PokerTexas': false
   };
+
+  // Map favorite keys to display names and routes
+  favoriteGameIds = [
+    { key: 'Blackjack', title: 'Blackjack', route: '/blackjack' },
+    { key: 'PokerTexas', title: 'Poker Texas Hold\'em', route: '/poker' }
+  ];
 
   setSlide(slide: 'friends' | 'leaderboard'): void {
     this.showLeaderboard = slide === 'leaderboard';
@@ -25,10 +29,19 @@ export class Home {
 
   toggleFavorite(game: string, event: Event): void {
     event.stopPropagation();
-    this.favorites[game] = !this.favorites[game];
+    if (this.favorites[game] !== undefined) {
+      this.favorites[game] = !this.favorites[game];
+    } else {
+      // Initialize if not exists (for future games like Slotmachine)
+      this.favorites[game] = true;
+    }
   }
 
   isFavorite(game: string): boolean {
     return this.favorites[game] || false;
+  }
+
+  get favoriteGames() {
+    return this.favoriteGameIds.filter(game => this.isFavorite(game.key));
   }
 }

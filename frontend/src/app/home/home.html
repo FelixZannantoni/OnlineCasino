@@ -87,9 +87,25 @@
                     <mat-icon class="news-icon">favorite</mat-icon>
                     <span>Favorite games</span>
                 </button>
+                @for (game of favoriteGames; track game.key) {
+                <button class="game-card featured" [routerLink]="game.route">
+                    <button class="favorite-btn" (click)="toggleFavorite(game.key, $event)">
+                        <mat-icon>{{ isFavorite(game.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
+                    <div class="game-card-content">
+                        <span class="game-title">{{ game.title }}</span>
+                    </div>
+                </button>
+                }
+                @empty {
                 <button class="game-card">
                     <div class="game-card-content">
-                        <span class="game-title">Fav game</span>
+                        <span class="game-title">No favorites yet</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Click ♥ to add</span>
                     </div>
                 </button>
                 <button class="game-card">
@@ -97,11 +113,7 @@
                         <span class="game-title">Fav game</span>
                     </div>
                 </button>
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">Fav game</span>
-                    </div>
-                </button>
+            }
             </div>
         </div>
 
