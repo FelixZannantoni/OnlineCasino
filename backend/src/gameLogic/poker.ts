@@ -95,17 +95,17 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private resetBets() {
         for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].setBet(0);
+            this.players[i].makeIncreasedBet(0);
         }
     }
 
     private setDeafaultBets() {
         this.resetBets();
-        this.players[CardGamePlayer.playerWithDealerChip(this.players)].setBet(0);
-        this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet / 2);
+        this.players[CardGamePlayer.playerWithDealerChip(this.players)].makeIncreasedBet(0);
+        this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].makeIncreasedBet(this.defaultbet / 2);
         this.pot += this.defaultbet / 2;
         if (this.players.length >= 3) {
-            this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].setBet(this.defaultbet);
+            this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].makeIncreasedBet(this.defaultbet);
             this.pot += this.defaultbet;
         }
     }
@@ -139,23 +139,23 @@ export class Poker extends CardGame<PokerPlayer> {
                             }
                             else if (playerOnMove.getPressedBet() == true) {
                                 const bet: number = playerOnMove.getDesiredBet();
-                                playerOnMove.setBet(bet)
+                                playerOnMove.makeIncreasedBet(bet)
                                 this.currentBet += bet;
                                 this.pot += bet;
                             }
                             else if (playerOnMove.getPressedCall() == true) {
                                 if (playerOnMove.getBet() < this.currentBet) {
-                                    playerOnMove.setBet(this.currentBet);
+                                    playerOnMove.makeIncreasedBet(this.currentBet);
                                     this.pot += this.currentBet - playerOnMove.getBet();
                                 }
                             }
                             else if (playerOnMove.getPressedRaise() == true) {
                                 if (playerOnMove.getBet() < this.currentBet) {
-                                    playerOnMove.setBet(this.currentBet);
+                                    playerOnMove.makeIncreasedBet(this.currentBet);
                                     this.pot += this.currentBet - playerOnMove.getBet();
                                 }
                                 const bet: number = playerOnMove.getDesiredBet();
-                                playerOnMove.setBet(bet)
+                                playerOnMove.makeIncreasedBet(bet)
                                 this.currentBet += bet;
                                 this.pot += bet;
                             }

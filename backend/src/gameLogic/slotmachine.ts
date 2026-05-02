@@ -17,7 +17,8 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
     public nextRound() {
         if (this.player.getPressedAutoSpin()) {
-
+            this.player.makeBet(this.player.getBet());
+            this.playRound();
         }
     }
 
@@ -35,7 +36,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         }
     }
 
-    private checkSpin() {
+    private checkSpin() {//TODO gewinn gleich nach true austeilen mit wertung von symbol
         let win: number = 0;
         // 1. Horizontal Middle
         if (this.slots[1][0] == this.slots[1][1] && this.slots[1][1] == this.slots[1][2] && this.slots[1][2] == this.slots[1][3] && this.slots[1][3] == this.slots[1][4]) { win++; }
