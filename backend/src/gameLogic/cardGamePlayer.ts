@@ -1,8 +1,8 @@
 import { Card } from "../model";
 import { CardVisibility } from "./deck";
-import { GamePlayer } from "./player";
+import { Player } from "./player";
 
-export class CardGamePlayer extends GamePlayer {
+export class CardGamePlayer extends Player {
     protected cards: Card[];
     private hasDealerChip: boolean;
     protected madeMove: boolean;

@@ -1,4 +1,4 @@
-export class GamePlayer {
+export class Player {
     private playerId: string;
     private username: string;
     private displayname: string;
@@ -60,14 +60,14 @@ export class GamePlayer {
         this.balance += win;
     }
 
-    public static xNextPlayer(players: GamePlayer[], i: number, x: number): number {
+    public static xNextPlayer(players: Player[], i: number, x: number): number {
         for (let j: number = 0; j < x; j++) {
             i = this.nextPlayer(players, i);
         }
         return i;
     }
 
-    public static nextPlayer(players: GamePlayer[], i: number) {
+    public static nextPlayer(players: Player[], i: number) {
         if (i < players.length) {
             return i + 1;
         }

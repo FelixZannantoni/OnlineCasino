@@ -1,5 +1,5 @@
 import { CardVisibility, DEALER_ID } from "./deck";
-import { GamePlayer } from "./player";
+import { Player } from "./player";
 import { CardGame } from "./cardGame";
 import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
@@ -74,7 +74,7 @@ export class Poker extends CardGame<PokerPlayer> {
         const dealerIndex = CardGamePlayer.playerWithDealerChip(this.players);
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             for (let j: number = 0; j < this.players.length; j++) {
-                this.players[GamePlayer.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
+                this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
                     .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()));
             }
         }
@@ -102,17 +102,17 @@ export class Poker extends CardGame<PokerPlayer> {
     private setDeafaultBets() {
         this.resetBets();
         this.players[CardGamePlayer.playerWithDealerChip(this.players)].setBet(0);
-        this.players[GamePlayer.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet / 2);
+        this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet / 2);
         this.pot += this.defaultbet / 2;
         if (this.players.length >= 3) {
-            this.players[GamePlayer.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].setBet(this.defaultbet);
+            this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].setBet(this.defaultbet);
             this.pot += this.defaultbet;
         }
     }
 
     private async makeMove() {
         for (let i: number = 0; i < this.players.length; i++) {
-            const playerOnMove: PokerPlayer = this.players[GamePlayer.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+            const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
 
             await new Promise<void>((resolve) => {
                 const timeout = setTimeout(() => {

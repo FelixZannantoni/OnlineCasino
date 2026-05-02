@@ -1,12 +1,13 @@
 import { Game } from "./game";
 import { SinglePlayerGame } from "./singlePlayerGame";
+import { SlotmachinePlayer } from "./slotmachinePlayer";
 
-export class slotmachine extends SinglePlayerGame {
+export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
     private slots: Symbols[][];//3,5
 
-    constructor(gameId: string) {
-        super(gameId);
+    constructor(gameId: string, player: SlotmachinePlayer) {
+        super(gameId, player);
         this.slots = [];
     }
 
@@ -15,7 +16,9 @@ export class slotmachine extends SinglePlayerGame {
     }
 
     public nextRound() {
+        if (this.player.getPressedAutoSpin()) {
 
+        }
     }
 
 
