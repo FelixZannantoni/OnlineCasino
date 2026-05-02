@@ -48,20 +48,26 @@ export class Player {
         return true;
     }
 
-    public makeBet(bet: number): void {
+    public makeBet(): void {
+        if ((this.bet) > (this.getBalance())) {
+            throw new Error(`Not enogh money`);
+        }
+        this.balance -= this.bet;
+    }
+
+    public makeNewBet(bet: number) {
         if ((bet) > (this.getBalance())) {
             throw new Error(`Not enogh money`);
         }
-        this.balance -= bet;
-    }
-
-    public makeNewBet(bet: number){
-        this.makeBet(bet);
         this.bet = bet;
+        this.makeBet()
     }
 
     public makeIncreasedBet(bet: number): void {
-        this.makeBet(bet - this.bet)
+        if ((bet - this.bet) > (this.getBalance())) {
+            throw new Error(`Not enogh money`);
+        }
+        this.balance = - (bet - this.bet);
         this.bet = bet;
     }
 

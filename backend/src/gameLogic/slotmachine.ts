@@ -12,13 +12,18 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     }
 
     public startGame() {
-
+        const bet: number = this.player.getDesiredBet();
+        this.player.makeNewBet(bet);
+        this.playRound();
     }
 
     public nextRound() {
         if (this.player.getPressedAutoSpin()) {
-            this.player.makeBet(this.player.getBet());
+            this.player.makeBet();
             this.playRound();
+        }
+        else {
+            this.handleMove()
         }
     }
 
@@ -67,6 +72,13 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
         // 10. Bottom-Middle-Top-Middle-Bottom (M-Shape)
         if (this.slots[2][0] == this.slots[1][1] && this.slots[1][1] == this.slots[1][2] && this.slots[1][2] == this.slots[1][3] && this.slots[1][3] == this.slots[0][4]) { win++; }
+    }
+
+    handleMove() {
+        if (this.player.getPressedSpin()) {
+            this.playRound();
+        }
+        //TODO bet
     }
 }
 
