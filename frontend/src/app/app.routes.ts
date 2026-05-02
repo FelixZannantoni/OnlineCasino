@@ -5,6 +5,7 @@ import { Poker } from './table-game/poker/poker';
 import { Blackjack } from './table-game/blackjack/blackjack';
 import { ForgotPassword } from './login/forgot-password/forgot-password';
 import { Shop } from './shop/shop';
+import { Slotmachine } from './slotmachine/slotmachine';
 
 export const routes: Routes = [
     { path: "home", component: Home },
@@ -12,6 +13,7 @@ export const routes: Routes = [
     { path: "forgot-password", component: ForgotPassword },
     { path: "poker", component: Poker },
     { path: "blackjack", component: Blackjack },
+    { path: "slotmachine", component: Slotmachine},
     { path: "shop", component: Shop },
     { path: "", redirectTo: "login", pathMatch: "full" }
 ];
