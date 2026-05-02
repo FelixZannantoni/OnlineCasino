@@ -14,13 +14,15 @@ export class Home {
   showLeaderboard = false;
   favorites: { [key: string]: boolean } = {
     'Blackjack': false,
-    'PokerTexas': false
+    'PokerTexas': false,
+    'Slotmachine': false
   };
 
   // Map favorite keys to display names and routes
   favoriteGameIds = [
     { key: 'Blackjack', title: 'Blackjack', route: '/blackjack' },
-    { key: 'PokerTexas', title: 'Poker Texas Hold\'em', route: '/poker' }
+    { key: 'PokerTexas', title: 'Poker Texas Hold\'em', route: '/poker' },
+    { key: 'Slotmachine', title: 'Slotmachine', route: '/slotmachine' }
   ];
 
   setSlide(slide: 'friends' | 'leaderboard'): void {

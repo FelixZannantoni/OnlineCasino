@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-// SVG Symbols copied
+// SVG symbol functions
 
 function svgSeven(s: number): string {
   return `<svg width="${s}" height="${s}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -79,25 +79,23 @@ function svgBar(s: number): string {
   </svg>`;
 }
 
-// Types
-
 export interface SlotSymbol {
   name: string;
   mult: number;
   weight: number;
   svgFn: (size: number) => string;
-  svgHtml: SafeHtml;   // sanitized, used in template
+  svgHtml: SafeHtml;
 }
 
 const SYMBOL_DEFS = [
-  { name: 'Seven',    svgFn: svgSeven,      mult: 50, weight: 2  },
-  { name: 'Diamond',  svgFn: svgDiamond,    mult: 30, weight: 4  },
-  { name: 'Wild',     svgFn: svgWild,       mult: 20, weight: 5  },
-  { name: 'Star',     svgFn: svgStar,       mult: 15, weight: 7  },
-  { name: 'Bell',     svgFn: svgBell,       mult: 10, weight: 10 },
-  { name: 'Dbl Bar',  svgFn: svgDoubleBar,  mult: 7,  weight: 12 },
-  { name: 'Cherry',   svgFn: svgCherry,     mult: 5,  weight: 14 },
-  { name: 'Bar',      svgFn: svgBar,        mult: 3,  weight: 18 },
+  { name: 'Seven', svgFn: svgSeven, mult: 50, weight: 2 },
+  { name: 'Diamond', svgFn: svgDiamond, mult: 30, weight: 4 },
+  { name: 'Wild', svgFn: svgWild, mult: 20, weight: 5 },
+  { name: 'Star', svgFn: svgStar, mult: 15, weight: 7 },
+  { name: 'Bell', svgFn: svgBell, mult: 10, weight: 10 },
+  { name: 'Double Bar', svgFn: svgDoubleBar, mult: 7, weight: 12 },
+  { name: 'Cherry', svgFn: svgCherry, mult: 5, weight: 14 },
+  { name: 'Bar', svgFn: svgBar, mult: 3, weight: 18 },
 ];
 
 @Component({
@@ -107,28 +105,26 @@ const SYMBOL_DEFS = [
   templateUrl: './slotmachine.html',
   styleUrl: './slotmachine.css',
 })
-export class Slotmachine implements AfterViewInit, OnDestroy {
+export class Slotmachine implements AfterViewInit {
 
-  // ── UI state (no game logic — wire these up from a service) ──
+  // QueryList picks up all three #strip elements from the template
+  @ViewChildren('strip') stripRefs!: QueryList<ElementRef<HTMLElement>>;
+
+  // UI state — wire to a service later as needed
   credits = 1_000;
-  bet     = 10;
-  spins   = 0;
-  isWin   = false;
+  bet = 10;
+  spins = 0;
+  isWin = false;
   spinning = false;
 
-  // Three reel placeholders — drives @for in template
-  readonly reels = [0, 1, 2];
-
-  // Symbols with sanitized SVG ready for [innerHTML]
   readonly symbols: SlotSymbol[];
   readonly paytableSymbols: SlotSymbol[];
 
-  // ── Private reel state ──
   private readonly STRIP_LEN = 28;
-  private readonly SYM_H     = 120; // px — keep in sync with CSS .sym height
-
+  private readonly SYM_H = 150; // must stay in sync with CSS .sym { height }
   private readonly BET_STEPS = [10, 25, 50, 100, 250, 500];
-  private stripEls: HTMLElement[] = [];
+
+  private strips: HTMLElement[] = [];
 
   constructor(private sanitizer: DomSanitizer) {
     this.symbols = SYMBOL_DEFS.map(d => ({
@@ -139,40 +135,33 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    // Grab the three strip elements rendered by @for
-    this.stripEls = this.reels.map(i =>
-      document.getElementById('strip-' + i) as HTMLElement
-    );
-    // Build initial random strips
-    this.stripEls.forEach((el, i) => {
-      this.buildStrip(el);
-      const mid = Math.floor(this.STRIP_LEN / 2);
-      el.style.transform = `translateY(${-mid * this.SYM_H}px)`;
-    });
+    this.strips = this.stripRefs.map(r => r.nativeElement);
+    this.strips.forEach(el => this.buildStrip(el));
   }
 
-  ngOnDestroy(): void { /* cancel any pending timeouts if needed */ }
-
-  // Rolls all three reels to a random result and plays the scroll animation.
+  // Spin: rolls random symbols on each reel with a staggered scroll animation
   async spin(): Promise<void> {
     if (this.spinning) return;
 
     this.spinning = true;
-    this.isWin    = false;
+    this.isWin = false;
     this.spins++;
 
-    // Pick a random result symbol index for each reel
-    const results = this.reels.map(() => this.randomSymbolIndex());
+    const results = [
+      this.randomSymbolIndex(),
+      this.randomSymbolIndex(),
+      this.randomSymbolIndex(),
+    ];
 
-    // Animate all reels concurrently; each stops a little later than the previous
-    await Promise.all(
-      this.reels.map((_, i) => this.animateReel(i, results[i], i * 380))
-    );
+    await Promise.all([
+      this.animateReel(0, results[0], 0),
+      this.animateReel(1, results[1], 380),
+      this.animateReel(2, results[2], 760),
+    ]);
 
-    await this.delay(200);
+    await this.wait(200);
 
-    // Show win state if all three match (purely visual — no credit logic)
-    this.isWin   = results[0] === results[1] && results[1] === results[2];
+    this.isWin = results[0] === results[1] && results[1] === results[2];
     this.spinning = false;
   }
 
@@ -192,13 +181,11 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
   resetCredits(): void {
     this.credits = 1_000;
-    this.spins   = 0;
-    this.isWin   = false;
+    this.spins = 0;
+    this.isWin = false;
   }
 
-  // Private helpers 
-
-  // Weighted random — higher-weight symbols appear more often.
+  // Weighted random: heavier weight = more frequent
   private randomSymbolIndex(): number {
     const total = this.symbols.reduce((sum, s) => sum + s.weight, 0);
     let r = Math.random() * total;
@@ -209,12 +196,14 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     return this.symbols.length - 1;
   }
 
-  // Fills a strip element with STRIP_LEN randomly chosen symbol nodes.
+  // Fills a strip with STRIP_LEN random symbol nodes, centered in view
   private buildStrip(el: HTMLElement): void {
     el.innerHTML = '';
     for (let i = 0; i < this.STRIP_LEN; i++) {
       el.appendChild(this.makeSymNode(this.randomSymbolIndex()));
     }
+    const mid = Math.floor(this.STRIP_LEN / 2);
+    el.style.transform = `translateY(${-mid * this.SYM_H}px)`;
   }
 
   private makeSymNode(symIdx: number): HTMLElement {
@@ -224,20 +213,22 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     return div;
   }
 
+  // Snaps the center row of a strip to the given symbol
   private setCenterSymbol(reelIdx: number, symIdx: number): void {
-    const el  = this.stripEls[reelIdx];
+    const el = this.strips[reelIdx];
     const mid = Math.floor(this.STRIP_LEN / 2);
     (el.children[mid] as HTMLElement).innerHTML = this.symbols[symIdx].svgFn(68);
     el.style.transition = 'none';
-    el.style.transform  = `translateY(${-mid * this.SYM_H}px)`;
+    el.style.transform = `translateY(${-mid * this.SYM_H}px)`;
   }
 
-  private animateReel(reelIdx: number, finalSym: number, delay: number): Promise<void> {
+  // Scrolls a reel for a number of frames then snaps to the final symbol
+  private animateReel(reelIdx: number, finalSym: number, delayMs: number): Promise<void> {
     return new Promise(resolve => {
-      const el          = this.stripEls[reelIdx];
+      const el = this.strips[reelIdx];
       const totalFrames = 20 + reelIdx * 9;
-      let   frame       = 0;
-      let   pos         = -Math.floor(this.STRIP_LEN / 2) * this.SYM_H;
+      let frame = 0;
+      let pos = -Math.floor(this.STRIP_LEN / 2) * this.SYM_H;
 
       const tick = () => {
         if (frame >= totalFrames) {
@@ -248,16 +239,16 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
         pos -= this.SYM_H;
         if (pos < -(this.STRIP_LEN - 1) * this.SYM_H) pos = 0;
         el.style.transition = 'none';
-        el.style.transform  = `translateY(${pos}px)`;
+        el.style.transform = `translateY(${pos}px)`;
         frame++;
         setTimeout(tick, 55);
       };
 
-      setTimeout(tick, delay);
+      setTimeout(tick, delayMs);
     });
   }
 
-  private delay(ms: number): Promise<void> {
+  private wait(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

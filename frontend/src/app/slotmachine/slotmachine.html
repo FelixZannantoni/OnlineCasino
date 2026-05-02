@@ -31,29 +31,33 @@
             <div class="bet-block">
                 <div class="bet-label">Adjust Wager</div>
                 <div class="bet-ctrl">
-                    <button class="bet-btn" (click)="decreaseBet()" [disabled]="spinning">−</button>
+                    <button class="bet-btn" (click)="decreaseBet()" [disabled]="spinning">-</button>
                     <div class="bet-val">{{ bet }}</div>
                     <button class="bet-btn" (click)="increaseBet()" [disabled]="spinning">+</button>
                 </div>
             </div>
         </div>
 
-        <!-- CENTER -->
+        <!-- CENTER REELS -->
         <div class="center">
             <div class="center-top">
-                <span class="ornament">⸻</span>
+                <span class="ornament">-</span>
                 <span class="center-label">Payline</span>
-                <span class="ornament">⸻</span>
+                <span class="ornament">-</span>
             </div>
 
             <div class="reel-frame" [class.lit]="isWin">
                 <div class="win-line"></div>
                 <div class="reels">
-                    @for (reel of reels; track $index) {
                     <div class="reel" [class.winner]="isWin">
-                        <div class="strip" [id]="'strip-' + $index"></div>
+                        <div class="strip" #strip></div>
                     </div>
-                    }
+                    <div class="reel" [class.winner]="isWin">
+                        <div class="strip" #strip></div>
+                    </div>
+                    <div class="reel" [class.winner]="isWin">
+                        <div class="strip" #strip></div>
+                    </div>
                 </div>
             </div>
 
@@ -64,7 +68,7 @@
             }
         </div>
 
-        <!-- CENTER BOTTOM -->
+        <!-- CENTER BOTTOM BUTTONS -->
         <div class="bottom">
             <button class="spin-btn" (click)="spin()" [disabled]="spinning">
                 Spin
@@ -75,19 +79,17 @@
             </div>
         </div>
 
-        <!-- RIGHT SIDEBAR -->
+        <!-- RIGHT SIDEBAR: PAYTABLE -->
         <div class="right">
-            <div class="paytable-block">
-                <div class="pt-eyebrow">Payout Schedule</div>
-                <div class="pt-list">
-                    @for (s of paytableSymbols; track s.name) {
-                    <div class="pt-row">
-                        <div class="pt-icon" [innerHTML]="s.svgHtml"></div>
-                        <div class="pt-name">{{ s.name }}</div>
-                        <div class="pt-mult">×{{ s.mult }}</div>
-                    </div>
-                    }
+            <div class="pt-eyebrow">Payout Schedule</div>
+            <div class="pt-list">
+                @for (s of paytableSymbols; track s.name) {
+                <div class="pt-row">
+                    <div class="pt-icon" [innerHTML]="s.svgHtml"></div>
+                    <div class="pt-name">{{ s.name }}</div>
+                    <div class="pt-mult">x{{ s.mult }}</div>
                 </div>
+                }
             </div>
         </div>
 
