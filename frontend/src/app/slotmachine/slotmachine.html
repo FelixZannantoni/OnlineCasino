@@ -14,15 +14,15 @@
             <div class="stat-block">
                 <div class="stat-item">
                     <div class="stat-label">Credits</div>
-                    <div class="stat-val"></div>
+                    <div class="stat-val">{{ credits }}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Wager</div>
-                    <div class="stat-val"></div>
+                    <div class="stat-val">{{ bet }}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Spins</div>
-                    <div class="stat-val"></div>
+                    <div class="stat-val">{{ spins }}</div>
                 </div>
             </div>
 
@@ -31,9 +31,9 @@
             <div class="bet-block">
                 <div class="bet-label">Adjust Wager</div>
                 <div class="bet-ctrl">
-                    <button class="bet-btn">−</button>
-                    <div class="bet-val"></div>
-                    <button class="bet-btn">+</button>
+                    <button class="bet-btn" (click)="decreaseBet()" [disabled]="spinning">−</button>
+                    <div class="bet-val">{{ bet }}</div>
+                    <button class="bet-btn" (click)="increaseBet()" [disabled]="spinning">+</button>
                 </div>
             </div>
         </div>
@@ -46,22 +46,32 @@
                 <span class="ornament">⸻</span>
             </div>
 
-            <div class="reel-frame">
+            <div class="reel-frame" [class.lit]="isWin">
                 <div class="win-line"></div>
                 <div class="reels">
-                    
+                    @for (reel of reels; track $index) {
+                    <div class="reel" [class.winner]="isWin">
+                        <div class="strip" [id]="'strip-' + $index"></div>
+                    </div>
+                    }
                 </div>
             </div>
+
+            @if (isWin) {
+            <div class="win-msg">— Congratulations —</div>
+            } @else {
+            <div class="win-msg-placeholder"></div>
+            }
         </div>
 
         <!-- CENTER BOTTOM -->
         <div class="bottom">
-            <button class="spin-btn">
+            <button class="spin-btn" (click)="spin()" [disabled]="spinning">
                 Spin
             </button>
             <div class="btn-row">
-                <button class="aux-btn">Maximum Wager</button>
-                <button class="aux-btn">Reset Credits</button>
+                <button class="aux-btn" (click)="setMaxBet()" [disabled]="spinning">Maximum Wager</button>
+                <button class="aux-btn" (click)="resetCredits()" [disabled]="spinning">Reset Credits</button>
             </div>
         </div>
 
@@ -70,7 +80,13 @@
             <div class="paytable-block">
                 <div class="pt-eyebrow">Payout Schedule</div>
                 <div class="pt-list">
-                    
+                    @for (s of paytableSymbols; track s.name) {
+                    <div class="pt-row">
+                        <div class="pt-icon" [innerHTML]="s.svgHtml"></div>
+                        <div class="pt-name">{{ s.name }}</div>
+                        <div class="pt-mult">×{{ s.mult }}</div>
+                    </div>
+                    }
                 </div>
             </div>
         </div>
