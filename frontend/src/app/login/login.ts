@@ -37,9 +37,9 @@ export class Login implements OnInit {
     this.updateContainerClass();
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get('code');
-    
-    if(myParam) {
-        await this.handleGithubLoginWithCode(myParam);
+
+    if (myParam) {
+      await this.handleGithubLoginWithCode(myParam);
     }
   }
 
@@ -54,12 +54,13 @@ export class Login implements OnInit {
       })
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       alert('GitHub Login failed: ' + res.statusText);
       return;
     }
 
     // note from julian: login success ->
+    // note from victor: W JJ
 
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
@@ -108,7 +109,7 @@ export class Login implements OnInit {
       })
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       alert('Login failed: ' + res.statusText);
       return;
     }
@@ -120,18 +121,19 @@ export class Login implements OnInit {
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
     });
-}
+  }
 
   async onRegister(event?: Event): Promise<void> {
     event?.preventDefault();
     if (!this.isBrowser) return;
-    
+
     if (this.registerPassword !== this.passwordConfirm) {
       alert('Passwords do not match!');
       return;
     }
 
     // note from julian: we could do some validation like checking if the email has a valid format, or password strength, etc.
+    // note from victor: thought about it too, but I'm pretty sure that's something for later on.
 
     //#region registering
 
@@ -147,7 +149,7 @@ export class Login implements OnInit {
       })
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       alert('Registration failed: ' + res.statusText);
       return;
     }
@@ -160,11 +162,11 @@ export class Login implements OnInit {
     this.router.navigate(['/home']);
   }
 
-    handleGithubLogin() {
+  handleGithubLogin() {
     const GITHUB_CLIENT_ID = 'Ov23liyXKzvf4zPI8g7J';
     const REDIRECT_URI = 'http://localhost:4200/login'; // Url, zu der zurückgeleitet werden soll
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=read:user`;
     window.location.href = githubAuthUrl;
-};
+  };
 }
