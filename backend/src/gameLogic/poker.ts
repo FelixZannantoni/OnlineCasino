@@ -6,238 +6,359 @@ import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
 
-export const MAX_PLAYER_COUNT: number = 5;
-export const PLAYER_CARDS_NUMBER: number = 2;
-export const POKER_CARDS_NUMBER: number = 5;
-export const POKER_DESK_ID: string = "PokerDesk";
+export const MAX_PLAYER_COUNT = 5;
+export const PLAYER_CARDS_NUMBER = 2;
+export const POKER_CARDS_NUMBER = 5;
+
+type GamePhase = 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown';
 
 export class Poker extends CardGame<PokerPlayer> {
 
-    private pokerDeck: PokerDeck;
-    private pokerDeskCards: Card[];
-    private defaultbet: number = 10;
-    private currentBet: number;
-    private pot: number;
+    private deck: PokerDeck;
+    private board: Card[] = [];
 
+    private pot = 0;
+    private defaultBet = 10;
+    private currentBet = 0;
+
+    private phase: GamePhase = 'pre-flop';
+    private currentPlayerIndex = 0;
 
     constructor(gameId: string) {
         super(gameId);
-        this.pokerDeck = new PokerDeck();
-        this.pokerDeskCards = [];
-        this.pot = 0;
-        this.currentBet = this.defaultbet;
+        this.deck = new PokerDeck();
     }
 
+    private isStarted = false;
     public startGame() {
-        this.setDefaultDealerChip();
-        this.handCardsOut();
-        this.setDeafaultBets();
-        this.playRound();
+        if(this.isStarted) return;
+        this.isStarted = true;
+        this.startNewHand();
+        this.emit("gameState", this.getGameState());
     }
 
-    private nextRound() {
-        //TODO überprüfen ob pleite
-        this.resetCards();
-        this.resetBets();
+    private startNewHand() {
+        this.isStarted = true;
+
+        if(this.players.length >= 2) {
+            this.moveDealerChip();
+        }
+
+        this.deck = new PokerDeck();
+        this.board = [];
         this.pot = 0;
-        this.currentBet = this.defaultbet;
+        this.currentBet = 0;
+        this.phase = 'pre-flop';
 
-        this.updateDealerChip();
-        this.handCardsOut();
-        this.setDeafaultBets();
+        this.resetPlayers();
+        this.dealCards();
+        this.initBlinds();
 
-        this.playRound();
+        const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
+        const bigBlindIdx = Player.xNextPlayer(this.players, dealerIdx, 2);
+        this.currentPlayerIndex = Player.nextPlayer(this.players, bigBlindIdx);
+
+        this.emit("gameState", this.getGameState());
     }
 
-    private playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
-        this.makeMove();
-        this.currentBet = this.defaultbet;
-        this.pokerDeskCards[0].visibility = CardVisibility.all;
-        this.pokerDeskCards[1].visibility = CardVisibility.all;
-        this.pokerDeskCards[2].visibility = CardVisibility.all;
-        this.checkHands();
-        this.makeMove();
-        this.currentBet = this.defaultbet;
-        this.pokerDeskCards[3].visibility = CardVisibility.all;
-        this.checkHands();
-        this.makeMove();
-        this.currentBet = this.defaultbet;
-        this.pokerDeskCards[4].visibility = CardVisibility.all;
-        this.checkHands();
-        this.makeMove();
-        this.handOutWin();
-        this.nextRound();
+    private resetPlayers() {
+        this.players.forEach(p => {
+            p.clearHand();
+            p.setBet(0);
+            p.setFolded(false);
+        });
     }
 
-    private handCardsOut() {
+    private moveDealerChip() {
         if (this.players.length === 0) return;
-        const dealerIndex = CardGamePlayer.playerWithDealerChip(this.players);
-        for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
-            for (let j: number = 0; j < this.players.length; j++) {
-                this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), j)]
-                    .addCard(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), this.players[j].getPlayerId()));
+
+        const currentDealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
+
+        // alten Dealer entfernen
+        this.players[currentDealerIdx].setDealerChip(false);
+
+        // nächsten Spieler als Dealer setzen
+        const nextDealerIdx = Player.nextPlayer(this.players, currentDealerIdx);
+
+        this.players[nextDealerIdx].setDealerChip(true);
+    }
+
+    private dealCards() {
+        // 2 cards each player
+        for (let i = 0; i < PLAYER_CARDS_NUMBER; i++) {
+            for (const p of this.players) {
+                p.addCard(this.deck.dealCard(this.deck.getDeck(), p.getPlayerId()));
             }
         }
 
-        for (let i: number = 0; i < POKER_CARDS_NUMBER; i++) {
-            this.pokerDeskCards.push(this.pokerDeck.dealCard(this.pokerDeck.getDeck(), POKER_DESK_ID));
+        // board
+        for (let i = 0; i < POKER_CARDS_NUMBER; i++) {
+            const card = this.deck.dealCard(this.deck.getDeck(), "board");
+            card.visibility = CardVisibility.none;
+            this.board.push(card);
         }
     }
 
-    private resetCards() {
-        for (let i: number = 0; i < this.pokerDeskCards.length; i++) {
-            this.pokerDeskCards[i].owner = DEALER_ID;
-        }
-        for (const player of this.players) {
-            player.clearHand();
-        }
+    private initBlinds() {
+        if (this.players.length < 2) return;
+
+        const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
+        const smallBlindIdx = Player.nextPlayer(this.players, dealerIdx);
+        const bigBlindIdx = Player.xNextPlayer(this.players, dealerIdx, 2);
+
+        this.players[smallBlindIdx].setBet(this.defaultBet / 2);
+        this.players[bigBlindIdx].setBet(this.defaultBet);
+
+        this.currentBet = this.defaultBet;
+        this.pot += this.defaultBet + this.defaultBet / 2;
     }
 
-    private resetBets() {
-        for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].setBet(0);
-        }
-    }
+    private nextPhase() {
 
-    private setDeafaultBets() {
-        this.resetBets();
-        this.players[CardGamePlayer.playerWithDealerChip(this.players)].setBet(0);
-        this.players[Player.nextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players))].setBet(this.defaultbet / 2);
-        this.pot += this.defaultbet / 2;
-        if (this.players.length >= 3) {
-            this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), 2)].setBet(this.defaultbet);
-            this.pot += this.defaultbet;
-        }
-    }
+        this.resetBettingRound();
 
-    private async makeMove() {
-        for (let i: number = 0; i < this.players.length; i++) {
-            const playerOnMove: PokerPlayer = this.players[Player.xNextPlayer(this.players, CardGamePlayer.playerWithDealerChip(this.players), i)];
+        switch (this.phase) {
+            case 'pre-flop':
+                this.reveal(3);
+                this.phase = 'flop';
+                break;
 
-            await new Promise<void>((resolve) => {
-                const timeout = setTimeout(() => {
-                    this.removeListener("playerMove", handleMove);
-                    resolve();
+            case 'flop':
+                this.reveal(4);
+                this.phase = 'turn';
+                break;
+
+            case 'turn':
+                this.reveal(5);
+                this.phase = 'river';
+                break;
+
+            case 'river':
+                this.reveal(5);
+                this.phase = 'showdown';
+
+                this.resolveWinner();
+
+                this.emit("gameState", this.getGameState());
+
+                setTimeout(() => {
+                    this.startNewHand();
                 }, 5000);
 
-                const handleMove = (detail: { playerId: string }) => {
-                    if (detail && detail.playerId == playerOnMove.getPlayerId()) {
-                        if (playerOnMove.getMadeMove()) {
-                            clearTimeout(timeout);
-                            this.removeListener("playerMove", handleMove);
+                return;
+        }
 
-                            if (playerOnMove.getPressedFold() == true) {
-                                //TODO leaf Round
-                            }
-                            else if (playerOnMove.getPressedCheck() == true) {
-                                if (playerOnMove.getBet() == this.currentBet) {
+        this.emit("gameState", this.getGameState());
+    }
 
-                                }
-                                else {
-                                    //TODO Error handling
-                                }
-                            }
-                            else if (playerOnMove.getPressedBet() == true) {
-                                const bet: number = playerOnMove.getDesiredBet();
-                                playerOnMove.setBet(bet)
-                                this.currentBet += bet;
-                                this.pot += bet;
-                            }
-                            else if (playerOnMove.getPressedCall() == true) {
-                                if (playerOnMove.getBet() < this.currentBet) {
-                                    playerOnMove.setBet(this.currentBet);
-                                    this.pot += this.currentBet - playerOnMove.getBet();
-                                }
-                            }
-                            else if (playerOnMove.getPressedRaise() == true) {
-                                if (playerOnMove.getBet() < this.currentBet) {
-                                    playerOnMove.setBet(this.currentBet);
-                                    this.pot += this.currentBet - playerOnMove.getBet();
-                                }
-                                const bet: number = playerOnMove.getDesiredBet();
-                                playerOnMove.setBet(bet)
-                                this.currentBet += bet;
-                                this.pot += bet;
-                            }
-                            else {
-                                //TODO Error Handling
-                            }
-                            playerOnMove.resetMadeMove();
-                            resolve();
-                        }
-                        else {
-                            if(playerOnMove.getBet() == this.currentBet) {
-
-                            }
-                            else {
-                                //TODO leaf Round
-                            }
-                        }
-                    }
-                };
-
-                this.on("playerMove", handleMove);
-            });
+    private reveal(count: number) {
+        for (let i = 0; i < count; i++) {
+            this.board[i].visibility = CardVisibility.all;
         }
     }
 
-    private checkHands() {
-        for (let i: number = 0; i < this.players.length; i++) {
-            let cards: Card[] = [];
-            if (this.pokerDeskCards[4].visibility == CardVisibility.all) {
-                cards = [...this.players[i].getCards(), ...this.pokerDeskCards];
-            }
-            else if (this.pokerDeskCards[3].visibility == CardVisibility.none) {
-                cards = [...this.players[i].getCards(), ...this.pokerDeskCards.slice(0, 2)];
-            }
-            else if (this.pokerDeskCards[4].visibility == CardVisibility.none) {
-                cards = [...this.players[i].getCards(), ...this.pokerDeskCards.slice(0, 3)];
-            }
-            this.players[i].checkHand(cards);
-        }
+    private resetBettingRound() {
+        this.currentBet = 0;
+        this.hasActedThisRound.clear(); // hasActed zurücksetzen bei neuer Runde
+        this.players.forEach(p => p.setBet(0));
+        
+        const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
+        this.currentPlayerIndex = Player.nextPlayer(this.players, dealerIdx);
     }
 
-    private handOutWin() {
-        let highestCombination: number = 0;
-        let count: number = 1;
-        let indexOfWinners: number[] = [0];
+    private getCurrentPlayer(): PokerPlayer {
+        return this.players[this.currentPlayerIndex];
+    }
 
-        for (let i: number = 0; i < this.players.length; i++) {
-            if (this.players[i].getCardCombinationValue() > highestCombination) {
-                highestCombination = this.players[i].getCardCombinationValue();
-                indexOfWinners = [i];
-                count = 1;
-            }
-            else if (this.players[i].getCardCombinationValue() == highestCombination) {
-                if (this.players[i].getValueOfCardCombination() > this.players[indexOfWinners[0]].getValueOfCardCombination()) {
-                    indexOfWinners = [i];
+    private nextPlayer() {
+        let tries = 0;
+
+        do {
+            this.currentPlayerIndex =
+                (this.currentPlayerIndex + 1) % this.players.length;
+
+            tries++;
+            if (tries > this.players.length) break;
+
+        } while (this.players[this.currentPlayerIndex].getPressedFold());
+    }
+
+    private hasActedThisRound: Set<string> = new Set();
+    private isRoundFinished(): boolean {
+        const activePlayers = this.players.filter(p => !p.getPressedFold());
+
+        if(activePlayers.length <= 1) {
+            return true;
+        }
+
+        const allMatchedBet = activePlayers.every(p => p.getBet() === this.currentBet);
+
+        const allActed = activePlayers.every(p => this.hasActedThisRound.has(p.getPlayerId()));
+
+        return allMatchedBet && allActed;
+    }
+
+    public handlePlayerMove(playerId: string, action: string, amount?: number) {
+
+        const player = this.getCurrentPlayer();
+
+        if (player.getPlayerId() !== playerId) {
+            return { success: false, message: "Not your turn" };
+        }
+
+        this.hasActedThisRound.add(player.getPlayerId()); // Spieler als hat gehandelt markieren
+        switch (action) {
+
+            case "fold":
+                player.setFolded(true);
+                break;
+
+            case "check":
+                if (player.getBet() !== this.currentBet) {
+                    return { success: false, message: "Cannot check" };
                 }
-                else if (this.players[i].getValueOfCardCombination() == this.players[indexOfWinners[0]].getValueOfCardCombination()) {
-                    count++;
-                    indexOfWinners[count] = i;
+                break;
+
+            case "bet":
+                if(this.currentBet > 0) {
+                    return {
+                        success: false,
+                        message: 'Use raise instead of bet!'
+                    };
                 }
+
+                if (!amount || amount <= 0) {
+                    return {
+                        success: false, 
+                        message: "Invalid bet" 
+                    };
+                }
+                    
+
+                player.setBet(amount);
+                this.currentBet = amount;
+                this.pot += amount;
+                break;
+
+            case "call":
+                const diff = this.currentBet - player.getBet();
+                if (diff <= 0) {
+                    return {
+                        success: false,
+                        message: 'Nothing to call'
+                    };
+                }
+                player.setBet(this.currentBet);
+                this.pot += diff;
+                break;
+
+            case "raise":
+                if(this.currentBet === 0) {
+                    return {
+                        success: false,
+                        message: 'Use bet instead of raise!'
+                    };
+                }
+
+                if (!amount || amount <= 0) {
+                    return { 
+                        success: false,
+                        message: "Invalid raise"
+                     };
+                }
+
+                const minRaise = this.defaultBet;
+
+                if(amount < minRaise) {
+                    return {
+                        success: false,
+                        message: `Minimum raise is ${minRaise}`
+                    };
+                }
+
+                const newBet = this.currentBet + amount;
+                const add = newBet - player.getBet();
+
+                player.setBet(newBet);
+                this.currentBet = newBet;
+                this.pot += add;
+
+                // Alle anderen müssen jetzt wieder reagieren
+                this.hasActedThisRound.clear();
+                this.hasActedThisRound.add(player.getPlayerId());
+
+                break;
+        }
+
+        const activePlayers: PokerPlayer[] = this.players.filter(p => !p.getPressedFold());
+
+        if(activePlayers.length === 1) {
+            activePlayers[0].winMoney(this.pot);
+            this.emit("gameState", this.getGameState());
+
+            setTimeout(() => {
+                this.startNewHand();
+            }, 3000);
+
+            return {
+                success: true,
+                message: "Only one player left"
             }
         }
 
-        if (count == 1) {
+        this.nextPlayer();
 
-            if (this.players[indexOfWinners[0]].getBet() < (this.pot / this.players.length)) {
-                //TODO side pot
-            }
-            else {
-                this.players[indexOfWinners[0]].winMoney(this.pot);
+        // if all players have the same current bet, move to next phase
+        if (this.isRoundFinished()) {
+            this.nextPhase();
+        }
+
+        this.emit("gameState", this.getGameState());
+        return { success: true, message: "ok" };
+    }
+
+    // Winner logic: best hand wins, split pot on ties
+    private resolveWinner() {
+        let best = -1;
+        let winners: PokerPlayer[] = [];
+
+        for (const p of this.players) {
+            if (p.getPressedFold()) continue;
+
+            const combined = [...p.getCards(), ...this.board.filter(c => c.visibility === CardVisibility.all)];
+            p.checkHand(combined);
+
+            const score = p.getCardCombinationValue();
+
+            if (score > best) {
+                best = score;
+                winners = [p];
+            } else if (score === best) {
+                winners.push(p);
             }
         }
 
-        else {
-            for (let i: number = 0; i < indexOfWinners.length; i++) {
-                if (this.players[indexOfWinners[i]].getBet() < (this.pot / this.players.length)) {
-                    //TODO side pot
-                }
-                for (let i: number = 0; i < indexOfWinners.length; i++) {
-                    this.players[indexOfWinners[i]].winMoney(this.pot / indexOfWinners.length);
-                }
-            }
-        }
+        const share = this.pot / winners.length;
+        winners.forEach(w => w.winMoney(share));
+    }
+
+    public getGameState() {
+        return {
+            gameId: this.getGameId(),
+            phase: this.phase,
+            pot: this.pot,
+            currentBet: this.currentBet,
+
+            players: this.players.map(p => ({
+                id: p.getPlayerId(),
+                bet: p.getBet(),
+                folded: p.getPressedFold(),
+                balance: p.getBalance(),
+                cards: p.getCards()
+            })),
+
+            board: this.board,
+            currentPlayerId: this.players[this.currentPlayerIndex]?.getPlayerId() ?? null
+        };
     }
 }

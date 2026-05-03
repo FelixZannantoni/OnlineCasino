@@ -39,6 +39,11 @@ export class CardGamePlayer extends Player {
         card.visibility = CardVisibility.player;
     }
 
+    /**
+     * Retrieve the index of the player with the dealer chip. If no player has the dealer chip, returns 0 by default.
+     * @param players 
+     * @returns an index of the player with the dealer chip, 0 if no player has the dealer chip
+     */
     public static playerWithDealerChip(players: CardGamePlayer[]): number {
         for (let i: number = 0; i < players.length; i++) {
             if (players[i].hasDealerChip == true) {

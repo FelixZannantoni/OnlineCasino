@@ -67,16 +67,22 @@ export class Player {
         return i;
     }
 
+    /**
+     * 
+     * @param players an array of players
+     * @param i the index of the current player
+     * @returns the index of the next player
+     */
     public static nextPlayer(players: Player[], i: number) {
-        if (i < players.length) {
-            return i + 1;
+        if(players.length === 0) {
+            throw new Error(`No players available!`);
         }
-        else if (i == players.length) {
-            return 0;
+
+        if(i < 0 || i >= players.length) {
+            throw new Error(`Player index out of bounds`);
         }
-        else {
-            throw new Error(`Player not found`);
-        }
+
+        return (i+1) % players.length;
     }
 
     public isOutOfMoney(): boolean {
