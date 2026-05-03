@@ -4,6 +4,8 @@ import { Navbar } from './navbar/navbar';
 import { Login } from './login/login';
 import { ProfileOverlay } from './profile-overlay/profile-overlay';
 import { SettingsOverlay } from './settings-overlay/settings-overlay';
+import { QuitOverlay } from './quit-overlay/quit-overlay';
+
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -12,9 +14,9 @@ import { filter } from 'rxjs/operators';
   imports: [
     RouterOutlet,
     Navbar,
-    Login,
     ProfileOverlay,
-    SettingsOverlay
+    SettingsOverlay,
+    QuitOverlay
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'

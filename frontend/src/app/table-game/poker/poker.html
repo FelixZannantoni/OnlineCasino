@@ -1,137 +1,105 @@
-<div class="poker-wrapper">
+<app-table-game game="poker" [balance]="balance" [pot]="pot">
 
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="player-balance">
-            <mat-icon>account_balance_wallet</mat-icon>
-            <span>{{ getCurrentPlayerBalance() }}</span>
-            <mat-icon>monetization_on</mat-icon>
-        </div>
-        <div class="top-icons">
-            <button routerLink="/home">
-                <mat-icon>exit_to_app</mat-icon>
-            </button>
-        </div>
-    </div>
-
-    <!-- Poker Table -->
-    <div class="poker-table">
-        <!-- Decorative elements -->
-        <div class="felt-stitch"></div>
-        <div class="center-emblem"></div>
-
-        <!-- Pot -->
-        <div class="pot">
-            <mat-icon>monetization_on</mat-icon>
-            <span class="pot-amount">{{ gameState.pot }}</span> 
-        </div>
-
-        <!-- Board Cards -->
-        <div class="board-cards">
-            @for (card of gameState.boardCards; track card.rank; let i = $index) {
-                <div class="card card-hearts {{ getSuitClass(card.suit) }}">
-                    <div class="card-top">
-                        <span class="card-rank">{{ card.rank }}</span>
-                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
-                    </div>
-                    <div class="card-center {{ getSuitClass(card.suit) }}"></div>
-                    <div class="card-bottom">
-                        <span class="card-rank">{{ card.rank }}</span>
-                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
-                    </div>
+    <!-- Community Cards & Player Cards -->
+    <div game-content>
         <!-- Community Cards (Royal Flush in Hearts) -->
-        <!-------------------------------------------------------------------------------------------------------------- <div class="board-cards"> 
-            <div class="card card-hearts suit-hearts" style="width: 70px; height: 98px; font-size: 14px;">
+        <div class="board-cards">
+            <div class="card card-hearts suit-hearts" style="width: 84px; height: 117px; font-size: 14px;">
                 <div class="card-top">
                     <span class="card-rank">10</span>
                     <span class="card-suit suit-hearts"></span>
-                    -->
                 </div>
-            }
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">10</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-hearts suit-hearts" style="width: 84px; height: 117px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">J</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">J</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-hearts suit-hearts" style="width: 84px; height: 117px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">Q</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">Q</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-hearts suit-hearts" style="width: 84px; height: 117px; font-size: 14px;">
+                <div class="card-top">
+                    <span class="card-rank">K</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+                <div class="card-center suit-hearts"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">K</span>
+                    <span class="card-suit suit-hearts"></span>
+                </div>
+            </div>
+            <div class="card card-back" style="width: 84px; height: 117px;">
+            </div>
         </div>
 
         <!-- Player Cards (72o) -->
         <div class="player-cards">
-            @for (card of gameState.playerCards; track card.rank; let i = $index) {
-                <div class="card card-sm player-card card-{{card.suit}} {{ getSuitClass(card.suit) }}"
-                    [style.transform]="'rotate(' + (i === 0 ? -15 : 15) + 'deg)'">
-                    <div class="card-top">
-                        <span class="card-rank">{{ card.rank }}</span>
-                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
-                    </div>
-                    <div class="card-center {{ getSuitClass(card.suit) }}"></div>
-                    <div class="card-bottom">
-                        <span class="card-rank">{{ card.rank }}</span>
-                        <span class="card-suit {{ getSuitClass(card.suit) }}"></span>
-                    </div>
+            <div class="card card-diamonds suit-diamonds"
+                style="width: 84px; height: 117px; font-size: 12px; transform: rotate(-15deg);">
+                <div class="card-top">
+                    <span class="card-rank">7</span>
+                    <span class="card-suit suit-diamonds"></span>
                 </div>
-            }
-            
+                <div class="card-center suit-diamonds"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">7</span>
+                    <span class="card-suit suit-diamonds"></span>
+                </div>
+            </div>
+            <div class="card card-clubs suit-clubs"
+                style="width: 84px; height: 117px; font-size: 12px; transform: rotate(15deg);">
+                <div class="card-top">
+                    <span class="card-rank">2</span>
+                    <span class="card-suit suit-clubs"></span>
+                </div>
+                <div class="card-center suit-clubs"></div>
+                <div class="card-bottom">
+                    <span class="card-rank">2</span>
+                    <span class="card-suit suit-clubs"></span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="players-container">
-        @for (player of gameState.players; track player.playerId) {
-            <div class="player-avatar {{ isCurrentPlayer(player.playerId) ? 'current-player' : '' }}">
-                <div class="player-info">
-                    <span class="player-name">{{ player.displayName }}</span>
-                    <div class="player-money">
-                        <mat-icon class="currency-icon">monetization_on</mat-icon>
-                        <span class="player-balance">{{ player.balance }}</span>
-                    </div>
-                    @if (player.bet > 0) {
-                        <div class="player-bet">
-                            <mat-icon class="currency-icon small">monetization_on</mat-icon>
-                            <span class="player-bet-amount">{{ player.bet }}</span>
-                        </div>
-                    }
-                    @if (player.isDealer) {
-                        <span class="dealer-badge">D</span>
-                    }
-                </div>
-                <div class="avatar-circle">
-                    {{ player.displayName.charAt(0) }}
-                </div>
-            </div>
-        }
+    <!-- Action Buttons -->
+    <div game-actions style="display: flex; justify-content: center; gap: 15px; margin-bottom: 80px;">
+        <button class="btn-fold">Fold</button>
+        <button class="btn-check">
+            @if (false) { <!-- TODO: Implement variable to see if another player has already bet -->
+                Call
+            }
+            @else {
+                Check
+            }
+        </button>
+        <button class="btn-bet">
+            @if (false) { <!-- TODO: Implement variable to see if another player has already bet -->
+                Raise
+            }
+            @else {
+                Bet
+            }
+        </button>
     </div>
 
-    <!-- Action Buttons mit eigenem Spieler -->
-    <div class="action-buttons">
-        <button class="shining-btn" (click)="fold('1', '1')">
-            Fold
-        </button>
-        <button class="shining-btn" (click)="check('1', '1')">
-            Check
-        </button>
-        <button class="shining-btn" (click)="bet('1', '1', 100)">
-            Bet
-        </button>
-        
-        <!-- Eigener Spieler Avatar -->
-        @for (player of gameState.players; track player.playerId) {
-            @if (isCurrentPlayer(player.playerId)) {
-                <div class="my-player-avatar">
-                    <div class="player-info">
-                        <span class="player-name">{{ player.displayName }}</span>
-                        <div class="player-money">
-                            <mat-icon class="currency-icon">monetization_on</mat-icon>
-                            <span class="player-balance">{{ player.balance }}</span>
-                        </div>
-                        @if (player.bet > 0) {
-                            <div class="player-bet">
-                                <mat-icon class="currency-icon small">monetization_on</mat-icon>
-                                <span class="player-bet-amount">{{ player.bet }}</span>
-                            </div>
-                        }
-                        @if (player.isDealer) {
-                            <span class="dealer-badge">D</span>
-                        }
-                    </div>
-                    <div class="avatar-circle">
-                        {{ player.displayName.charAt(0) }}
-                    </div>
-                </div>
-            }
-        }
-    </div>
+</app-table-game>

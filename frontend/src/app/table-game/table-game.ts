@@ -1,12 +1,11 @@
 import { Component, Input, OnInit, OnDestroy, Inject, PLATFORM_ID, HostBinding, ViewEncapsulation } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-table-game',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatIconModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './table-game.html',
   styleUrls: ['./table-game.css', '../ui/chips/chips.css'],
   encapsulation: ViewEncapsulation.None
@@ -35,4 +34,8 @@ export class TableGameComponent implements OnInit, OnDestroy {
       document.body.classList.remove(`${this.game}-page`);
     }
   }
+
+  toggleQuitOverlay(): void {
+  window.dispatchEvent(new CustomEvent('toggleQuitOverlay', { detail: { redirectTo: '/home' } }));
+}
 }

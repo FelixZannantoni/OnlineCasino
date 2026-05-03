@@ -7,7 +7,7 @@
     box-shadow:
         0 2px 20px rgba(0, 0, 0, 0.5),
         0 0 10px rgba(255, 215, 0, 0.2);
-    border-bottom: 2px solid var(--light-gold);
+    border-bottom: 1.5px solid var(--light-gold);
     overflow: visible;
 }
 
@@ -92,6 +92,10 @@
 .navbar_meta {
     display: flex;
     align-items: center;
+}
+
+a {
+    cursor:pointer;
 }
 
 .chips {

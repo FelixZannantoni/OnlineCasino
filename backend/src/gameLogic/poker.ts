@@ -32,7 +32,6 @@ export class Poker extends CardGame<PokerPlayer> {
         this.setDefaultDealerChip();
         this.handCardsOut();
         this.setDeafaultBets();
-        this.emit("gameState", this.getGameState());
         this.playRound();
     }
 
@@ -47,53 +46,27 @@ export class Poker extends CardGame<PokerPlayer> {
         this.handCardsOut();
         this.setDeafaultBets();
 
-        this.emit("gameState", this.getGameState());
         this.playRound();
     }
 
-    private async playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
-        await this.makeMove();
+    private playRound() {//TODO dafor aus, und allin (bei aus hand = [0,0,0])
+        this.makeMove();
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[0].visibility = CardVisibility.all;
         this.pokerDeskCards[1].visibility = CardVisibility.all;
         this.pokerDeskCards[2].visibility = CardVisibility.all;
         this.checkHands();
-        this.emit("gameState", this.getGameState());
-
-        await this.makeMove();
+        this.makeMove();
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[3].visibility = CardVisibility.all;
         this.checkHands();
-        this.emit("gameState", this.getGameState());
-
-        await this.makeMove();
+        this.makeMove();
         this.currentBet = this.defaultbet;
         this.pokerDeskCards[4].visibility = CardVisibility.all;
         this.checkHands();
-        this.emit("gameState", this.getGameState());
-
-        await this.makeMove();
+        this.makeMove();
         this.handOutWin();
-        this.emit("gameState", this.getGameState());
         this.nextRound();
-    }
-
-    public getGameState() {
-        return {
-            gameId: this.getGameId(),
-            players: this.players.map(p => ({
-                playerId: p.getPlayerId(),
-                username: p.getUsername(),
-                displayname: p.getDisplayname(),
-                balance: p.getBalance(),
-                bet: p.getBet(),
-                hasDealerChip: p.getDealerChip(),
-                cards: p.getCards() // Note: In a real game, cards should be filtered by visibility
-            })),
-            deskCards: this.pokerDeskCards,
-            pot: this.pot,
-            currentBet: this.currentBet
-        };
     }
 
     private handCardsOut() {

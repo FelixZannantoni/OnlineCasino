@@ -38,8 +38,9 @@ export class ProfileOverlay implements OnInit, OnDestroy {
 
     this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
       .subscribe((event) => {
-        if (event.key === 'Escape' && this.isOpen) {
+        if (event.key == 'Escape' && this.isOpen) {
           this.close();
+          console.log('pressed escape')
         }
       });
   }
@@ -53,6 +54,7 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   close(): void {
     this.isOpen = false;
     this.updateBodyScroll();
+    console.log('closing...')
   }
 
   private updateBodyScroll(): void {

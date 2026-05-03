@@ -7,7 +7,8 @@
             <span class="balance-amount">{{ balance }}</span>
         </div>
         <div class="top-icons">
-            <button routerLink="/home">
+
+            <button class="quitOverlay" (click)="toggleQuitOverlay()" aria-label="Open QuitOverlay">
                 <mat-icon>exit_to_app</mat-icon>
             </button>
         </div>
