@@ -1,45 +1,115 @@
+/* Google Font (Cinzel for card typography) */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+
+/* Card design tokens */
+:root {
+  --card-bg:          #fdfaf2;
+  --card-gold-bright: #ffd86e;
+  --card-gold-mid:    #d19e1d;
+  --card-gold-dark:   #a07010;
+  --card-red:         #c0272d;
+  --card-black:       #1a1a1a;
+  --card-shadow:      rgba(0, 0, 0, 0.6);
+}
+
 /* Karten-Basis */
 .card {
   width: 100px;
   height: 140px;
-  border-radius: 8px;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-family: 'Cinzel', 'Georgia', serif;
+  font-weight: 700;
+  user-select: none;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8px;
-  box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
-  font-weight: bold;
-  user-select: none;
-  position: relative;
+  padding: 7px;
+
+  /* Ivory linen texture */
+  background-color: var(--card-bg);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.013) 3px,
+      rgba(0, 0, 0, 0.013) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.013) 3px,
+      rgba(0, 0, 0, 0.013) 4px
+    ),
+    linear-gradient(160deg, #fdfaf2 0%, #f5f0e4 100%);
+
+  box-shadow:
+    0 6px 20px var(--card-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Gold gradient border frame */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+    linear-gradient(135deg,
+      rgba(209, 158, 29, 0.7)  0%,
+      rgba(255, 216, 110, 0.9) 30%,
+      rgba(160, 112, 16, 0.4)  50%,
+      rgba(255, 216, 110, 0.8) 70%,
+      rgba(209, 158, 29, 0.6)  100%
+    ) border-box;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Art-deco horizontal accent lines */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: 5px;
+  border-top: 1px solid rgba(209, 158, 29, 0.3);
+  border-bottom: 1px solid rgba(209, 158, 29, 0.3);
+  border-left: none;
+  border-right: none;
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* Kartengrößen */
 .card-sm {
   width: 60px;
   height: 84px;
-  font-size: 12px;
   padding: 4px;
 }
 
 .card-lg {
   width: 140px;
   height: 196px;
-  font-size: 24px;
-  padding: 12px;
+  padding: 10px;
 }
 
 /* Kartenfarben */
 .card-hearts,
 .card-diamonds {
-  color: #e74c3c;
+  color: var(--card-red);
 }
 
 .card-clubs,
 .card-spades {
-  color: #2c3e50;
+  color: var(--card-black);
 }
 
 /* Karten-Content */
@@ -49,120 +119,121 @@
   flex-direction: column;
   align-items: center;
   line-height: 1;
+  position: absolute;
+  z-index: 3;
+  gap: 1px;
+}
+
+.card-top {
+  top: 8px;
+  left: 9px;
 }
 
 .card-bottom {
+  bottom: 8px;
+  right: 9px;
   transform: rotate(180deg);
 }
 
+/* Karten-Rang-Anzeige */
+.card-rank {
+  font-family: 'Cinzel', 'Georgia', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  color: inherit;
+}
+
+.card-sm .card-rank { font-size: 0.72rem; }
+.card-lg .card-rank { font-size: 1.55rem; }
+
+/* Karten-Suit Symbol Größe */
+.card-suit {
+  font-size: 0.8rem;
+  line-height: 1;
+  color: inherit;
+}
+
+.card-suit::before { color: inherit; }
+
+.card-sm .card-suit { font-size: 0.55rem; }
+.card-lg .card-suit { font-size: 1.05rem; }
+
+.card-suit.suit-hearts::before   { content: '♥'; }
+.card-suit.suit-diamonds::before { content: '♦'; }
+.card-suit.suit-clubs::before    { content: '♣'; }
+.card-suit.suit-spades::before   { content: '♠'; }
+
+/* Karten-Mitte Symbol */
 .card-center {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 48px;
-}
-
-.card-sm .card-center {
-  font-size: 28px;
-}
-
-.card-lg .card-center {
-  font-size: 72px;
-}
-
-/* Kartensymbole - für leere Elemente 
-.card-suit.suit-hearts::after {
-  content: '♥';
-}
-
-.card-suit.suit-diamonds::after {
-  content: '♦';
-}
-
-.card-suit.suit-clubs::after {
-  content: '♣';
-}
-
-.card-suit.suit-spades::after {
-  content: '♠';
-}*/
-
-/* Für card-center direkt die suit-Klasse */
-.card-center.suit-hearts::before {
-  content: '♥';
-}
-
-.card-center.suit-diamonds::before {
-  content: '♦';
-}
-
-.card-center.suit-clubs::before {
-  content: '♣';
-}
-
-.card-center.suit-spades::before {
-  content: '♠';
-}
-
-/* Karten-Rang-Anzeige */
-.card-rank {
-  font-size: 18px;
+  font-size: 3.8rem;
   line-height: 1;
+  z-index: 3;
+  user-select: none;
+  color: inherit;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
 }
 
-.card-sm .card-rank {
-  font-size: 12px;
-}
+.card-center::before { color: inherit; }
 
-.card-lg .card-rank {
-  font-size: 28px;
-}
+.card-sm .card-center { font-size: 2.2rem; }
+.card-lg .card-center { font-size: 5.5rem; }
 
-/* Karten-Suit Symbol Größe */
-.card-suit {
-  font-size: 14px;
-  line-height: 1;
-}
+.card-center.suit-hearts::before   { content: '♥'; }
+.card-center.suit-diamonds::before { content: '♦'; }
+.card-center.suit-clubs::before    { content: '♣'; }
+.card-center.suit-spades::before   { content: '♠'; }
 
-.card-sm .card-suit {
-  font-size: 10px;
-}
-
-.card-lg .card-suit {
-  font-size: 20px;
-}
-
-/* Karten-Rotation */
-.card-rotated {
-  transform: rotate(180deg);
-}
-
-/* Karten-Rückseite - sieht aus wie ein echtes Kartendeck */
+/* Karten-Rückseite - premium casino feel */
 .card-back {
   background:
-    repeating-linear-gradient(45deg,
-      #1a4d7c 0px,
-      #1a4d7c 10px,
-      #2980b9 10px,
-      #2980b9 20px);
-  border: 4px solid white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    radial-gradient(ellipse at center, #1a3a6e 0%, #0d1f3c 100%);
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
+  border: 1px solid var(--card-gold-mid);
+  padding: 0;
 }
 
+/* Diamond pattern overlay */
+.card-back::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 215, 0, 0.06) 0px,
+      rgba(255, 215, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 215, 0, 0.06) 0px,
+      rgba(255, 215, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+  z-index: 1;
+}
+
+/* Inner border frame */
 .card-back::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%;
-  height: 70%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px solid rgba(209, 158, 29, 0.5);
+  border-radius: 6px;
+  z-index: 2;
 }
 
 .card-back * {
@@ -175,6 +246,11 @@
   position: relative;
 }
 
+/* Karten-Rotation */
+.card-rotated {
+  transform: rotate(180deg);
+}
+
 /* Karten-Animationen */
 .card-deal {
   animation: deal 0.3s ease-out;
@@ -185,7 +261,6 @@
     transform: translateY(-100px) rotate(-10deg);
     opacity: 0;
   }
-
   to {
     transform: translateY(0) rotate(0);
     opacity: 1;
@@ -194,11 +269,18 @@
 
 /* Karten-Interaktion */
 .card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 216, 110, 0.3),
+    0 0 20px rgba(209, 158, 29, 0.12);
+  transform: translateY(-4px);
 }
 
 .card-selected {
-  box-shadow: 0 0 0 3px #f39c12, 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 0 0 2px var(--card-gold-mid),
+    0 0 12px rgba(209, 158, 29, 0.5),
+    0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Karten-Disabled */

@@ -7,7 +7,7 @@
     box-shadow:
         0 2px 20px rgba(0, 0, 0, 0.5),
         0 0 10px rgba(255, 215, 0, 0.2);
-    border-bottom: 2px solid var(--light-gold);
+    border-bottom: 1.5px solid var(--light-gold);
     overflow: visible;
 }
 
@@ -94,6 +94,10 @@
     align-items: center;
 }
 
+a {
+    cursor:pointer;
+}
+
 .chips {
     background: linear-gradient(135deg, #1a3a52 0%, #0f2847 100%);
     padding: 0.35rem 0.8rem;
@@ -130,7 +134,7 @@
     cursor: pointer;
     padding: 0;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.4);
+    box-shadow: var(--primary-purple) 0px 2px 8px;
 }
 
 .settings_btn:hover {
@@ -168,7 +172,7 @@
     cursor: pointer;
     padding: 0;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.4);
+    box-shadow: var(--primary-purple) 0px 2px 8px;
 }
 
 .profile_pic:hover {
