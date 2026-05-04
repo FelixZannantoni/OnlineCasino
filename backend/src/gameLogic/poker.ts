@@ -351,6 +351,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
+                name: p.getUsername(),
                 bet: p.getBet(),
                 folded: p.getPressedFold(),
                 balance: p.getBalance(),

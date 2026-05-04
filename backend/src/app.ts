@@ -60,7 +60,7 @@ const startServer = async () => {
                 if (!alreadyIn) {
                     await pokerservice.addPlayer(
                         userId,
-                        user?.username ?? '-',
+                        user?.username ?? `${userId.slice(0, 10)}`,
                         user?.displayname ?? 'Guest',
                         startBalance,
                         false,

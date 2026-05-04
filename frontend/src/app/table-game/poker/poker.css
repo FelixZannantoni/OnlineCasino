@@ -9,14 +9,24 @@
     z-index: 10;
 }
 
+/* EIGENE KARTEN: Sichtbar machen! */
 ::ng-deep .player-cards {
     position: absolute;
-    bottom: 0;
+    
+    /* OPTION A: Zentriert vor dem Tisch (wie auf dem Screenshot) */
+    bottom: 15%; /* Abstand vom unteren Tischrand */
     left: 50%;
     transform: translateX(-50%);
+    
+    /* OPTION B: Wenn sie beim Avatar (unten links) sein sollen: */
+    /* bottom: 10%; */
+    /* left: 15%; */ /* Anpassen basierend auf Avatar-Position */
+    /* transform: none; */
+
     display: flex;
     gap: 5px;
-    z-index: 10;
+    z-index: 20; /* Höher als der Tisch und der Avatar */
+    pointer-events: none; /* Klicks gehen durch, falls nötig */
 }
 
 /* Red felt instead of default green */

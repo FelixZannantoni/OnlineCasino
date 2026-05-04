@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SocketService } from '../../services/socket.service';
 import { DataService } from '../../services/data-service';
 import { DevTeam } from "../../settings-overlay/dev-team/dev-team";
+import { PokerPlayersComponent } from './poker-players/poker-players';
 
 type PokerBoardCard = {
   name: string;
@@ -17,6 +18,7 @@ type PokerBoardCard = {
 
 type PokerPlayerState = {
   id: string;
+  name: string
   bet: number;
   folded: boolean;
   balance: number;
@@ -36,7 +38,7 @@ type PokerGameState = {
 @Component({
   selector: 'app-poker',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, MatIconModule, DevTeam],
+  imports: [CommonModule, TableGameComponent, MatIconModule, DevTeam, PokerPlayersComponent],
   templateUrl: './poker.html',
   styleUrls: ['./poker.css'],
 })
@@ -53,11 +55,26 @@ export class Poker {
 
   private readonly gameId = signal<string>('1');
 
+  protected readonly myPlayer = computed(() => {
+    const state = this.gameState();
+    if (!state) return null;
+    return state.players.find(p => p.id === this.dataService.userId()) || null;
+  });
+
+  protected readonly opponents = computed(() => {
+    const state = this.gameState();
+    if (!state) return [];
+    // Alle Spieler, die NICHT ich sind
+    return state.players.filter(p => p.id !== this.dataService.userId());
+  });
+
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const id = this.route.snapshot.paramMap.get('id') ?? '1';
     this.gameId.set(id);
+
+    
 
     const userId = this.dataService.userId();
 
@@ -164,7 +181,7 @@ export class Poker {
     const state = this.gameState();
     if (!state) return;
 
-    const amount = 20; // keep simple; you had "Bet 20" in the old template
+    const amount = 20; // from old template
     if (state.currentBet === 0) {
       this.makeMove('bet', amount);
     } else {
