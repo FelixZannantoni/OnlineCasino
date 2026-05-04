@@ -84,26 +84,27 @@
 
   <!-- Action Buttons -->
   <div game-actions>
+    <!--cutted for testing: [disabled]="!isMyTurn()"-->
     <button
       class="btn-fold"
       (click)="makeMove('fold')"
-      [disabled]="!isMyTurn()"
+      
     >
       Fold
     </button>
 
+    <!--cutted for testing: [disabled]="!isMyTurn()"-->
     <button
       class="btn-check"
       (click)="makeCheckOrCall()"
-      [disabled]="!isMyTurn()"
     >
       {{ checkOrCallLabel() }}
     </button>
 
+    <!--cutted for testing: [disabled]="!isMyTurn()"-->
     <button
       class="btn-bet"
       (click)="makeBetOrRaise()"
-      [disabled]="!isMyTurn()"
     >
       {{ betOrRaiseLabel() }}
     </button>

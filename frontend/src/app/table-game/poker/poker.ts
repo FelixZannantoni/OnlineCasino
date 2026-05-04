@@ -5,6 +5,7 @@ import { TableGameComponent } from '../table-game';
 import { MatIconModule } from '@angular/material/icon';
 import { SocketService } from '../../services/socket.service';
 import { DataService } from '../../services/data-service';
+import { DevTeam } from "../../settings-overlay/dev-team/dev-team";
 
 type PokerBoardCard = {
   name: string;
@@ -35,7 +36,7 @@ type PokerGameState = {
 @Component({
   selector: 'app-poker',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, MatIconModule],
+  imports: [CommonModule, TableGameComponent, MatIconModule, DevTeam],
   templateUrl: './poker.html',
   styleUrls: ['./poker.css'],
 })
