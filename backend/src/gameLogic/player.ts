@@ -67,7 +67,7 @@ export class Player {
         if ((bet - this.bet) > (this.getBalance())) {
             throw new Error(`Not enogh money`);
         }
-        this.balance = - (bet - this.bet);
+        this.balance -= (bet - this.bet);
         this.bet = bet;
     }
 

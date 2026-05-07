@@ -7,21 +7,21 @@ export class PokerService {
     static pokerGames: Poker[] =  [];
 
 
-    async fold(playerId: string, gameId: string): Promise<boolean> {
+    async fold(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
         // get the game and player objects
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
         return game.handlePlayerMove(playerId, "fold");
     }
 
-    async check(playerId: string, gameId: string): Promise<boolean> {
+    async check(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
         // get the game and player objects
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
         return game.handlePlayerMove(playerId, "check");
     }
 
-    async bet(playerId: string, gameId: string, betAmount: number): Promise<boolean> {
+    async bet(playerId: string, gameId: string, betAmount: number): Promise<{success: boolean, message: string}> {
         // get the game and player objects
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
@@ -52,7 +52,7 @@ export class PokerService {
      * @param bet 
      * @param gameId 
      */
-    async addPlayer(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number, gameId: string): Promise<void> {
+    async addPlayer(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number, gameId: string): Promise<{success: boolean, message: string}> {
         // get the game object
         const gameResult = this.getGameById(gameId);
         if(!gameResult.game) { 

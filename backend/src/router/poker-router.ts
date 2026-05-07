@@ -13,7 +13,7 @@ pokerRouter.post("/addPlayer", async (req: Request, res: Response) => {
         res.status(StatusCodes.BAD_REQUEST).json({ error: "Missing required fields in request body" });
         return;
     }
-    const result = pokerService.addPlayer(playerId, username, displayname, balance, hasDealerChip, bet, gameId);
+    const result = await pokerService.addPlayer(playerId, username, displayname, balance, hasDealerChip, bet, gameId);
 
     res.status(StatusCodes.OK).json({ message: "Added Player to pokergame" });
 });
@@ -26,12 +26,12 @@ pokerRouter.put("/fold", async (req: Request, res: Response) => {
         return;
     }
 
-    const result = pokerService.fold(playerId, gameId);
+    const result = await pokerService.fold(playerId, gameId);
 
-    if(result) {
+    if(result.success) {
         res.status(StatusCodes.OK).json({ message: "Fold action received" });
     } else {
-        res.status(StatusCodes.NOT_FOUND).json({ message: "Invalid game-ID or player-ID" });
+        res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
     } 
 });
 
@@ -42,12 +42,12 @@ pokerRouter.put("/check", async (req: Request, res: Response) => {
         return;
     }
 
-    const result = pokerService.check(playerId, gameId);
+    const result = await pokerService.check(playerId, gameId);
 
-    if(result) {
+    if(result.success) {
         res.status(StatusCodes.OK).json({ message: "Check action received" });
     } else {
-        res.status(StatusCodes.NOT_FOUND).json({ message: "Invalid game-ID or player-ID" });
+        res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
     }
 });
 
@@ -62,9 +62,9 @@ pokerRouter.put("/bet", async (req: Request, res: Response) => {
         return;
     }
 
-    const result = pokerService.bet(playerId, gameId, betAmount);
+    const result = await pokerService.bet(playerId, gameId, betAmount);
 
-    if(result) {
+    if(result.success) {
         res.status(StatusCodes.OK).json({ message: "Bet received" });
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
