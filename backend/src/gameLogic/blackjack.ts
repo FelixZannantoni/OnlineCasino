@@ -178,7 +178,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     private resetBets() {
         for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].setBet(0);
+            this.players[i].makeIncreasedBet(0);
         }
     }
 

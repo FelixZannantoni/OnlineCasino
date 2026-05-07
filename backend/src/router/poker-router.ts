@@ -15,11 +15,7 @@ pokerRouter.post("/addPlayer", async (req: Request, res: Response) => {
     }
     const result = pokerService.addPlayer(playerId, username, displayname, balance, hasDealerChip, bet, gameId);
 
-    if(result.success) {
-        res.status(StatusCodes.OK).json({ message: result.message });
-    } else {
-        res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
-    }
+    res.status(StatusCodes.OK).json({ message: "Added Player to pokergame" });
 });
 
 // route for pressing fold
@@ -32,10 +28,10 @@ pokerRouter.put("/fold", async (req: Request, res: Response) => {
 
     const result = pokerService.fold(playerId, gameId);
 
-    if(result.success) {
-        res.status(StatusCodes.OK).json({ message: result.message });
+    if(result) {
+        res.status(StatusCodes.OK).json({ message: "Fold action received" });
     } else {
-        res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
+        res.status(StatusCodes.NOT_FOUND).json({ message: "Invalid game-ID or player-ID" });
     } 
 });
 
@@ -48,10 +44,10 @@ pokerRouter.put("/check", async (req: Request, res: Response) => {
 
     const result = pokerService.check(playerId, gameId);
 
-    if(result.success) {
-        res.status(StatusCodes.OK).json({ message: result.message });
+    if(result) {
+        res.status(StatusCodes.OK).json({ message: "Check action received" });
     } else {
-        res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
+        res.status(StatusCodes.NOT_FOUND).json({ message: "Invalid game-ID or player-ID" });
     }
 });
 
@@ -68,8 +64,8 @@ pokerRouter.put("/bet", async (req: Request, res: Response) => {
 
     const result = pokerService.bet(playerId, gameId, betAmount);
 
-    if(result.success) {
-        res.status(StatusCodes.OK).json({ message: result.message });
+    if(result) {
+        res.status(StatusCodes.OK).json({ message: "Bet received" });
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
     }
@@ -106,9 +102,3 @@ pokerRouter.put("/raise", async (req: Request, res: Response) => {
         res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
     }
 });
-
-pokerRouter.get("/games", async (req: Request, res: Response) => {
-    const games: Poker[] = [...PokerService.pokerGames];
-
-    res.status(StatusCodes.OK).json({ games });
-})
