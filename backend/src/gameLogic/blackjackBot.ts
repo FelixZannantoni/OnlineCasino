@@ -58,4 +58,9 @@ export class BlackjackBot {
         }
         return false;
     }
+
+    public clearHand(): void {
+        this.cards = [];
+        this.handValue = 0;
+    }
 }
