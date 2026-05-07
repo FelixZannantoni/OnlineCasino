@@ -72,7 +72,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private resetPlayers() {
         this.players.forEach(p => {
             p.clearHand();
-            p.setBet(0);
+            p.makeNewBet(0);
             p.setFolded(false);
             p.resetMadeMove();
         });
@@ -103,14 +103,14 @@ export class Poker extends CardGame<PokerPlayer> {
             const sbIdx = dealerIdx;
             const bbIdx = Player.nextPlayer(this.players, dealerIdx);
             
-            this.players[sbIdx].setBet(this.defaultBet / 2);
-            this.players[bbIdx].setBet(this.defaultBet);
+            this.players[sbIdx].makeNewBet(this.defaultBet / 2);
+            this.players[bbIdx].makeNewBet(this.defaultBet);
         } else {
             const sbIdx = Player.nextPlayer(this.players, dealerIdx);
             const bbIdx = Player.xNextPlayer(this.players, dealerIdx, 2);
             
-            this.players[sbIdx].setBet(this.defaultBet / 2);
-            this.players[bbIdx].setBet(this.defaultBet);
+            this.players[sbIdx].makeNewBet(this.defaultBet / 2);
+            this.players[bbIdx].makeNewBet(this.defaultBet);
         }
 
         this.currentBet = this.defaultBet;
@@ -161,7 +161,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private resetBettingRound() {
         this.currentBet = 0;
         this.hasActedThisRound.clear();
-        this.players.forEach(p => p.setBet(0));
+        this.players.forEach(p => p.makeNewBet(0));
         
         // Nach dem Flop beginnt der Spieler links vom Dealer
         const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
@@ -235,7 +235,7 @@ export class Poker extends CardGame<PokerPlayer> {
             case "call":
                 if (player.getBet() < this.currentBet) {
                     const diff = this.currentBet - player.getBet();
-                    player.setBet(this.currentBet);
+                    player.makeBet();
                     this.pot += diff;
                 } else {
                     return { success: false, message: "Nothing to call" };
@@ -254,7 +254,7 @@ export class Poker extends CardGame<PokerPlayer> {
                 const totalNewBet = this.currentBet + betAmount;
                 const additionalContribution = totalNewBet - player.getBet();
                 
-                player.setBet(totalNewBet);
+                player.makeIncreasedBet(totalNewBet);
                 this.currentBet = totalNewBet;
                 this.pot += additionalContribution;
 

@@ -140,7 +140,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                     // Double Down
                                     const currentBet = playerOnMove.getBet();
                                     try {
-                                        playerOnMove.setBet(currentBet * 2);
+                                        playerOnMove.makeIncreasedBet(currentBet * 2);
                                         playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
                                         playerOnMove.checkHandValue();
                                     } catch (e) {
@@ -165,13 +165,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             const desiredBet: number = this.players[i].getDesiredBet();
             if (desiredBet > 0) {
                 try {
-                    this.players[i].setBet(desiredBet);
+                    this.players[i].makeNewBet(desiredBet);
                 } catch (e) {
                     // Not enough money
-                    this.players[i].setBet(0);
+                    this.players[i].makeNewBet(0);
                 }
             } else {
-                this.players[i].setBet(0);
+                this.players[i].makeNewBet(0);
             }
         }
     }
