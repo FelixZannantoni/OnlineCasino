@@ -26,7 +26,7 @@ export class BlackjackService {
 
     async addPlayer(playerId: string, username: string, displayname: string, balance: number, gameId: string): Promise<{success: boolean, message: string}> {
         const gameResult = this.getGameById(gameId);
-        if(!gameResult.game) { 
+        if(!gameResult.game) {
             return {
                 success: false,
                 message: gameResult.message
