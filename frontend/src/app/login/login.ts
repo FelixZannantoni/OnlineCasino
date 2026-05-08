@@ -39,9 +39,9 @@ export class Login implements OnInit {
     this.updateContainerClass();
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get('code');
-    
-    if(myParam) {
-        await this.handleGithubLoginWithCode(myParam);
+
+    if (myParam) {
+      await this.handleGithubLoginWithCode(myParam);
     }
   }
 
@@ -56,16 +56,14 @@ export class Login implements OnInit {
       })
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       alert('GitHub Login failed: ' + res.statusText);
       return;
     }
 
-    // note from julian: login success ->
-
-    // save userid to local storage
-    // res.json() should return an object with userId and message
     const userId = (await res.json()).userId;
+
+    localStorage.setItem('userId', userId);
     this.dataService.userId.set(userId);
 
     this.router.navigate(['/home']).then(() => {
@@ -96,18 +94,15 @@ export class Login implements OnInit {
     }
   }
 
-
   async onLogin(event?: Event): Promise<void> {
     event?.preventDefault();
     if (!this.isBrowser) return;
     console.log('onLogin called, navigating...');
 
-    //#region login
-
     const res = await fetch('http://localhost:3000/users/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'  
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         username: this.loginEmail,
@@ -115,37 +110,28 @@ export class Login implements OnInit {
       })
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       alert('Login failed: ' + res.statusText);
       return;
     }
 
-    //#endregion
-
-    // note from julian: login success ->
-
-    // save userid to local storage
-    // res.json() should return an object with userId and message
     const userId = (await res.json()).userId;
+    localStorage.setItem('userId', userId);
     this.dataService.userId.set(userId);
 
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
     });
-}
+  }
 
   async onRegister(event?: Event): Promise<void> {
     event?.preventDefault();
     if (!this.isBrowser) return;
-    
+
     if (this.registerPassword !== this.passwordConfirm) {
       alert('Passwords do not match!');
       return;
     }
-
-    // note from julian: we could do some validation like checking if the email has a valid format, or password strength, etc.
-
-    //#region registering
 
     const res = await fetch('http://localhost:3000/users/register', {
       method: 'POST',
@@ -159,29 +145,24 @@ export class Login implements OnInit {
       })
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
       alert('Registration failed: ' + res.statusText);
       return;
     }
 
-    //#endregion
-
-    // note from julian: registration success ->
-
-    // save userid to local storage
-    // res.json() should return an object with userId and message
     const userId = (await res.json()).userId;
+    localStorage.setItem('userId', userId);
     this.dataService.userId.set(userId);
 
     console.log('Navigating to /home from register');
     this.router.navigate(['/home']);
   }
 
-    handleGithubLogin() {
+  handleGithubLogin() {
     const GITHUB_CLIENT_ID = 'Ov23liyXKzvf4zPI8g7J';
-    const REDIRECT_URI = 'http://localhost:4200/login'; // Url, zu der zurückgeleitet werden soll
+    const REDIRECT_URI = 'http://localhost:4200/login';
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=read:user`;
     window.location.href = githubAuthUrl;
-};
+  };
 }

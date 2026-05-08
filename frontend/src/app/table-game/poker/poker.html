@@ -1,0 +1,120 @@
+<app-table-game game="poker" [balance]="balance" [pot]="pot">
+  
+  <div game-content>
+    
+    <!-- Cards -->
+    <div class="board-cards">
+       @if (gameState(); as state) {
+        @for (card of state.board; track $index) {
+          @if (card.visibility === 'all') {
+            <div class="card" [class]="'card-' + card.color.toLowerCase()" style="width: 84px; height: 117px;">
+              <div class="card-top"><span class="card-rank">{{ cardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+              <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
+              <div class="card-bottom"><span class="card-rank">{{ cardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+            </div>
+          } @else {
+            <div class="card card-back" style="width: 84px; height: 117px;"></div>
+          }
+        }
+      } @else {
+        <div class="card card-back" style="width: 84px; height: 117px;"></div>
+        <div class="card card-back" style="width: 84px; height: 117px;"></div>
+        <div class="card card-back" style="width: 84px; height: 117px;"></div>
+        <div class="card card-back" style="width: 84px; height: 117px;"></div>
+        <div class="card card-back" style="width: 84px; height: 117px;"></div>
+      }
+    </div>
+
+    <div class="player-cards">
+      @if (myPlayer(); as player) {
+        @for (card of player.cards; track $index) {
+          <div class="card" 
+               [class]="'card-' + card.color.toLowerCase()" 
+               [style.transform]="'rotate(' + ($index === 0 ? -15 : 15) + 'deg)'" 
+               style="width: 84px; height: 117px;">
+            <div class="card-top"><span class="card-rank">{{ cardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+            <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
+            <div class="card-bottom"><span class="card-rank">{{ cardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Spieler -->
+
+    <!-- OBEN LINKS: Gegner 1 -->
+    <div class="grid-cell top-left">
+      @if (opponents()[0]; as opponent) {
+        <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+          @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+          <div class="player-name">{{ opponent.name || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-bet">Bet: {{ opponent.bet }}</div>
+        </div>
+      }
+    </div>
+
+    <!-- OBEN MITTE: Gegner 2 -->
+    <div class="grid-cell top-center">
+      @if (opponents()[1]; as opponent) {
+        <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+          @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+<div class="player-name">{{ opponent.name || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-bet">Bet: {{ opponent.bet }}</div>
+        </div>
+      }
+    </div>
+
+    <!-- OBEN RECHTS: Gegner 3 -->
+    <div class="grid-cell top-right">
+      @if (opponents()[2]; as opponent) {
+        <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+          @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+<div class="player-name">{{ opponent.name || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-bet">Bet: {{ opponent.bet }}</div>
+        </div>
+      }
+    </div>
+
+    <!-- SEITEN & MITTE -->
+    <div class="grid-cell middle-left"></div>
+    <div class="grid-cell middle-right"></div>
+    <div class="grid-cell center"></div> 
+
+    <!-- UNTEN LINKS: ICH (USER) -->
+    <div class="grid-cell bottom-left">
+      @if (myPlayer(); as player) {
+        <div class="player-display" [class.active]="player.id === gameState()?.currentPlayerId">
+          @if (player.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Me" /></div>
+          <div class="player-name">{{ 'You' }}</div>
+          <div class="player-bet">Bet: {{ player.bet }}</div>
+        </div>
+      }
+    </div>
+
+    <div class="grid-cell bottom-center"></div>
+
+    <!-- UNTEN RECHTS: Gegner 4 -->
+    <div class="grid-cell bottom-right">
+      @if (opponents()[3]; as opponent) {
+        <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+          @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+<div class="player-name">{{ opponent.name || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-bet">Bet: {{ opponent.bet }}</div>
+        </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div game-actions style="position: relative; z-index: 30;">
+    <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn()">Fold</button>
+    <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn()">{{ checkOrCallLabel() }}</button>
+    <button class="btn-bet" (click)="makeBetOrRaise()" [disabled]="!isMyTurn()">{{ betOrRaiseLabel() }}</button>
+  </div>
+</app-table-game>

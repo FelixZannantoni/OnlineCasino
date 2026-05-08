@@ -2,9 +2,10 @@ import { Request, Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import { PokerService } from "../services/poker-service";
 import { Poker } from "../gameLogic/poker";
-import { pokerService } from "../app";
 
 export const pokerRouter = Router();
+
+const pokerService = new PokerService();
 
 // route for adding a player to a game
 pokerRouter.post("/addPlayer", async (req: Request, res: Response) => {
@@ -72,19 +73,20 @@ pokerRouter.put("/bet", async (req: Request, res: Response) => {
 });
 
 pokerRouter.put("/call", async (req: Request, res: Response) => {
-    const [playerId, gameId]: [string, string] = [req.body.playerId, req.body.gameId];
-    if(!playerId || !gameId) {
-        res.status(StatusCodes.BAD_REQUEST).json({ message: "Missing playerId or gameId in request body" });
-        return;
-    }
+  const [playerId, gameId]: [string, string] = [req.body.playerId, req.body.gameId];
 
-    const result = pokerService.call(playerId, gameId);
+  if (!playerId || !gameId) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: "Missing playerId or gameId in request body" });
+    return;
+  }
 
-    if(result.success) {
-        res.status(StatusCodes.OK).json({ message: result.message });
-    } else {
-        res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
-    }
+  const result = await pokerService.call(playerId, gameId);
+
+  if (result.success) {
+    res.status(StatusCodes.OK).json({ message: result.message });
+  } else {
+    res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
+  }
 });
 
 pokerRouter.put("/raise", async (req: Request, res: Response) => {

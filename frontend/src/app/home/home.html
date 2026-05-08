@@ -7,11 +7,14 @@
             <div class="game-row">
                 <button class="news-banner">
                     <mat-icon class="news-icon">stars</mat-icon>
-                    <span>Was ist neu?</span>
+                    <span>What you friends play</span>
                 </button>
-                <button class="game-card featured" routerLink="/roulette"> <!-- Roulette non-existend atm -->
+                <button class="game-card featured" routerLink="/slotmachine"> <!-- Slotmachine non-existend atm -->
+                    <button class="favorite-btn" (click)="toggleFavorite('Slotmachine', $event)">
+                        <mat-icon>{{ isFavorite('Slotmachine') ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
                     <div class="game-card-content">
-                        <span class="game-title">Roulette</span>
+                        <span class="game-title">Slotmachine</span>
                     </div>
                 </button>
                 <button class="game-card">
@@ -30,9 +33,12 @@
             <div class="game-row">
                 <button class="news-banner">
                     <mat-icon class="news-icon">casino</mat-icon>
-                    <span>Was ist neu?</span>
+                    <span>You played last</span>
                 </button>
-                <button class="game-card featured" routerLink="/blackjack"> <!-- Blackjack non-existend atm -->
+                <button class="game-card featured" routerLink="/blackjack">
+                    <button class="favorite-btn" (click)="toggleFavorite('Blackjack', $event)">
+                        <mat-icon>{{ isFavorite('Blackjack') ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
                     <div class="game-card-content">
                         <span class="game-title">Blackjack</span>
                     </div>
@@ -53,9 +59,12 @@
             <div class="game-row">
                 <button class="news-banner">
                     <mat-icon class="news-icon">games</mat-icon>
-                    <span>Was ist neu?</span>
+                    <span>Event games</span>
                 </button>
                 <button class="game-card featured" routerLink="/poker">
+                    <button class="favorite-btn" (click)="toggleFavorite('PokerTexas', $event)">
+                        <mat-icon>{{ isFavorite('PokerTexas') ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
                     <div class="game-card-content">
                         <span class="game-title">Poker Texas Hold'em</span>
                     </div>
@@ -70,6 +79,41 @@
                         <span class="game-title">Spiel tmp</span>
                     </div>
                 </button>
+            </div>
+
+            <!-- Row 4 -->
+            <div class="game-row">
+                <button class="news-banner">
+                    <mat-icon class="news-icon">favorite</mat-icon>
+                    <span>Favorite games</span>
+                </button>
+                @for (game of favoriteGames; track game.key) {
+                <button class="game-card featured" [routerLink]="game.route">
+                    <button class="favorite-btn" (click)="toggleFavorite(game.key, $event)">
+                        <mat-icon>{{ isFavorite(game.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
+                    <div class="game-card-content">
+                        <span class="game-title">{{ game.title }}</span>
+                    </div>
+                </button>
+                }
+                @empty {
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">No favorites yet</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Click ♥ to add</span>
+                    </div>
+                </button>
+                <button class="game-card">
+                    <div class="game-card-content">
+                        <span class="game-title">Fav game</span>
+                    </div>
+                </button>
+            }
             </div>
         </div>
 

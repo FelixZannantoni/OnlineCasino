@@ -70,6 +70,7 @@ io.on("connection", (socket) => {
                     blackjackService.addPlayer(userId, user?.username ?? '-', user?.displayname ?? 'Guest', startBalance, gameId);
                 }
             }
+        });
 
             if (game.listenerCount("gameState") === 0) {
                 game.on("gameState", (state: any) => {
@@ -85,9 +86,27 @@ io.on("connection", (socket) => {
                 game.startGame();
             }
 
-            socket.emit("game_state", game.getGameState());
-        }
-    });
+            console.log(`Player ${playerId} performed action: ${action} in game: ${gameId} with amount: ${amount}`);
+
+            let actionResult = { success: false, message: "Invalid action" };
+
+            switch (action) {
+                case "fold":
+                    actionResult = await pokerservice.fold(playerId, gameId);
+                    break;
+                case "check":
+                    actionResult = await pokerservice.check(playerId, gameId);
+                    break;
+                case "call":
+                    actionResult = await pokerservice.call(playerId, gameId);
+                    break;
+                case "bet":
+                    if (amount !== undefined) actionResult = await pokerservice.bet(playerId, gameId, amount);
+                    break;
+                case "raise":
+                    if (amount !== undefined) actionResult = await pokerservice.raise(playerId, gameId, amount);
+                    break;
+            }
 
     socket.on("player_move", async (data: { gameId: string, action: string, amount?: number }) => {
         const { gameId, action, amount } = data;
@@ -140,13 +159,10 @@ io.on("connection", (socket) => {
         console.log(`User disconnected: ${socket.id}`);
         socketUserMap.delete(socket.id);
     });
-});
 
-httpServer.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
-
-DB.createDBConnection();
-
+    httpServer.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
+};
 pokerService.loadAllPokerGames();
 blackjackService.loadAllBlackjackGames();
 
-export { io };
+startServer()

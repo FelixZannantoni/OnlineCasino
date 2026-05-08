@@ -1,0 +1,36 @@
+<div class="players-container">
+  @for (player of players(); track player.id) {
+    <div 
+      class="player-slot"
+      [class.active]="player.id === currentPlayerId()"
+      [class.folded]="player.folded"
+    >
+      <!-- Heiligenschein Effekt -->
+      @if (player.id === currentPlayerId()) {
+        <div class="halo"></div>
+      }
+      
+      <!-- Profilbild -->
+      <div class="player-avatar">
+        <img 
+          [src]="player.profileImage || 'assets/default-avatar.png'" 
+          [alt]="player.name || 'Player'"
+        />
+      </div>
+      
+      <!-- Spieler Info -->
+      <div class="player-info">
+        <div class="player-name">{{ player.name || 'Unknown' }}</div>
+        <div class="player-balance">${{ player.balance }}</div>
+        @if (player.bet > 0) {
+          <div class="player-bet">Bet: ${{ player.bet }}</div>
+        }
+      </div>
+      
+      <!-- Folded Badge -->
+      @if (player.folded) {
+        <div class="folded-badge">FOLDED</div>
+      }
+    </div>
+  }
+</div>

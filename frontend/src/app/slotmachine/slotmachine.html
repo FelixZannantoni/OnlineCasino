@@ -1,1 +1,98 @@
-<p>slotmachine works!</p>
+<div class="sm-root">
+    <div class="panel">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="left">
+            <div class="brand-block">
+                <div class="brand-eyebrow">Est. MCMXLVIII</div>
+                <div class="brand-name">Aurum</div>
+                <div class="brand-sub">Grand Casino · Vegas</div>
+            </div>
+
+            <hr class="gold-rule">
+
+            <div class="stat-block">
+                <div class="stat-item">
+                    <div class="stat-label">Credits</div>
+                    <div class="stat-val">{{ credits }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Wager</div>
+                    <div class="stat-val">{{ bet }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Spins</div>
+                    <div class="stat-val">{{ spins }}</div>
+                </div>
+            </div>
+
+            <hr class="gold-rule">
+
+            <div class="bet-block">
+                <div class="bet-label">Adjust Wager</div>
+                <div class="bet-ctrl">
+                    <button class="bet-btn" (click)="decreaseBet()" [disabled]="spinning && !autoSpin">-</button>
+                    <div class="bet-val">{{ bet }}</div>
+                    <button class="bet-btn" (click)="increaseBet()" [disabled]="spinning && !autoSpin">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER: reels -->
+        <div class="center">
+            <div class="center-top">
+                <span class="ornament">-</span>
+                <span class="center-label">Payline</span>
+                <span class="ornament">-</span>
+            </div>
+
+            <div class="reel-frame" [class.lit]="isWin">
+                <div class="win-line"></div>
+                <div class="reels">
+                    @for (r of reels; track r) {
+                    <div class="reel" [class.winner]="isWin">
+                        <div class="strip" #strip>
+                            <div class="sym placeholder"></div>
+                            <div class="sym placeholder"></div>
+                            <div class="sym placeholder"></div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            @if (isWin) {
+            <div class="win-msg">Congratulations</div>
+            } @else {
+            <div class="win-msg-placeholder"></div>
+            }
+        </div>
+
+        <!-- BOTTOM: buttons -->
+        <div class="bottom">
+            <div class="btn-row">
+                <button class="aux-btn" (click)="setMaxBet()" [disabled]="spinning">Max Wager</button>
+                <button class="spin-btn" (click)="spin()" [disabled]="spinning || autoSpin">Spin</button>
+                <button class="auto-btn" (click)="toggleAutoSpin()" [class.active]="autoSpin">
+                    @if (autoSpin) { Stop } @else { Auto }
+                </button>
+                <button class="aux-btn" (click)="resetCredits()">Reset</button>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR: paytable -->
+        <div class="right">
+            <div class="pt-eyebrow">Payout Schedule</div>
+            <div class="pt-list">
+                @for (s of paytableSymbols; track s.name) {
+                <div class="pt-row">
+                    <div class="pt-icon" [innerHTML]="s.svgHtml"></div>
+                    <div class="pt-name">{{ s.name }}</div>
+                    <div class="pt-mult">x{{ s.mult }}</div>
+                </div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

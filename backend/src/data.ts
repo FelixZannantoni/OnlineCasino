@@ -113,11 +113,12 @@ export class DB {
                 return;
             }
 
-            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
-                gameId: 1,
+            await connection.prepare(`INSERT INTO games (name, type) VALUES (:name, :type)`).run({
                 name: "Test Game",
                 type: "POKER"
             });
+
+            console.log("Sample game data inserted successfully!");
 
         } catch(err) {
             console.error("Error inserting sample data:", err);

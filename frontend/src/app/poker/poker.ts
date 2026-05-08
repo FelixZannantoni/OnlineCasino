@@ -1,88 +1,18 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, signal, inject, computed } from '@angular/core';
-import { RouterLink, RouterOutlet, ActivatedRoute } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { isPlatformBrowser, CommonModule } from '@angular/common';
-import { SocketService } from '../services/socket.service';
-import { DataService } from '../services/data-service';
+import { Component } from '@angular/core';
 
+/**
+ * Legacy component (nicht über die aktuelle Route `/poker` verwendet).
+ * Der Router nutzt `frontend/src/app/table-game/poker/poker.ts`.
+ *
+ * Wir halten diese Datei nur build-fähig und konfliktfrei.
+ */
 @Component({
   selector: 'app-poker',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, MatIconModule, CommonModule],
-  templateUrl: './poker.html',
-  styleUrls: ['./poker.css']
+  template: `<p style="padding: 16px; color: #fff; background: rgba(0,0,0,0.5); border-radius: 8px;">
+    Poker UI is served via /poker (table-game).
+  </p>`,
 })
-export class Poker implements OnInit, OnDestroy {
-  private socketService = inject(SocketService);
-  private route = inject(ActivatedRoute);
-  protected dataService = inject(DataService);
-  
-  public gameState = signal<any>(null);
-  public gameId = signal<string | null>(null);
-
-  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
-
-  ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      document.body.classList.add('poker-page');
-      
-      // Get gameId from route params or use a default for testing
-      const id = this.route.snapshot.paramMap.get('id') || '1';
-      this.gameId.set(id);
-
-      const userId: string = this.dataService.userId();
-      
-      this.socketService.onEvent('connect', () => {
-        this.socketService.joinGame(id, userId);
-      });
-      
-      this.socketService.onEvent('game_state', (state) => {
-        console.log('Received game state:', state);
-        this.gameState.set(state);
-      });
-    }
-  }
-
-  makeMove(action: string, amount?: number) {
-    const gid = this.gameId();
-    if (gid) {
-      const userId: string = this.dataService.userId();
-      console.log("USERID: ", userId);
-      this.socketService.emitEvent('player_move', {
-        gameId: gid,
-        action,
-        amount
-      });
-    }
-  }
-
-  ngOnDestroy() {
-    if (isPlatformBrowser(this.platformId)) {
-      document.body.classList.remove('poker-page');
-      this.socketService.offEvent('connect');
-      this.socketService.offEvent('game_state');
-    }
-  }
-
-  protected isMyTurn = computed(() => {
-    const state = this.gameState();
-    return state?.currentPlayerId === this.dataService.userId();
-  });
+export class Poker {
+  // Intentionally empty
 }
-
-
-/* Kartenanwendungen 
-<!-- Einfach Karte einfügen mit Inline-Styles -->
-<div class="card card-hearts suit-hearts" 
-      style="width: 70px; height: 98px; transform: rotate(30deg);">
-  <div class="card-top">
-    <span class="card-rank">A</span>
-    <span class="card-suit suit-hearts"></span>
-  </div>
-  <div class="card-center suit-hearts"></div>
-  <div class="card-bottom">
-    <span class="card-rank">A</span>
-    <span class="card-suit suit-hearts"></span>
-  </div>
-</div>
-*/

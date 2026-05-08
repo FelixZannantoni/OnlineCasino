@@ -1,0 +1,511 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;600;700&family=Cinzel:wght@400;700&display=swap');
+
+:host {
+    display: block;
+    height: calc(100vh - 57px);
+    overflow: hidden;
+}
+
+.sm-root {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.panel {
+    width: 100%;
+    max-width: 1200px;
+    height: 620px;
+    display: grid;
+    grid-template-columns: 210px 1fr 210px;
+    grid-template-rows: 1fr 90px;
+    background: linear-gradient(135deg, #18181f 0%, #111118 60%, #141420 100%);
+    border: 1px solid rgba(180, 145, 60, 0.35);
+    border-radius: 4px;
+    box-shadow:
+        0 0 0 1px rgba(180, 145, 60, 0.1),
+        0 32px 80px rgba(0, 0, 0, 0.85),
+        inset 0 1px 0 rgba(200, 165, 80, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        repeating-linear-gradient(108deg, transparent 0px, transparent 40px, rgba(255, 255, 255, 0.012) 40px, rgba(255, 255, 255, 0.012) 41px),
+        repeating-linear-gradient(72deg, transparent 0px, transparent 60px, rgba(255, 255, 255, 0.008) 60px, rgba(255, 255, 255, 0.008) 61px);
+}
+
+.panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 165, 80, 0.6) 20%, rgba(220, 185, 100, 1) 50%, rgba(200, 165, 80, 0.6) 80%, transparent);
+}
+
+/* LEFT SIDEBAR */
+.left {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    border-right: 1px solid rgba(180, 145, 60, 0.18);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1.25rem;
+    gap: 1rem;
+    overflow: hidden;
+}
+
+.brand-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 4px;
+    color: rgba(200, 165, 80, 0.5);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+}
+
+.brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #c8a550;
+    line-height: 1;
+}
+
+.brand-sub {
+    font-family: 'Cinzel', serif;
+    font-size: 0.46rem;
+    letter-spacing: 3px;
+    color: rgba(200, 165, 80, 0.35);
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+}
+
+.gold-rule {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(200, 165, 80, 0.4), rgba(200, 165, 80, 0.06));
+    border: none;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.stat-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.stat-label {
+    font-size: 0.48rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: rgba(200, 165, 80, 0.4);
+    text-transform: uppercase;
+    margin-bottom: 0.05rem;
+}
+
+.stat-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #e0c878;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+.bet-label {
+    font-size: 0.48rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: rgba(200, 165, 80, 0.4);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+}
+
+.bet-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bet-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 2px;
+    border: 1px solid rgba(200, 165, 80, 0.3);
+    background: transparent;
+    color: #c8a550;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-family: 'Montserrat', sans-serif;
+    flex-shrink: 0;
+}
+
+.bet-btn:hover:not(:disabled) {
+    border-color: #c8a550;
+    background: rgba(200, 165, 80, 0.08);
+}
+
+.bet-btn:active:not(:disabled) {
+    transform: scale(0.9);
+}
+
+.bet-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.bet-val {
+    flex: 1;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #e0c878;
+    letter-spacing: 2px;
+    border-bottom: 1px solid rgba(200, 165, 80, 0.25);
+    padding-bottom: 2px;
+}
+
+/* CENTER */
+.center {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 1rem 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    overflow: hidden;
+}
+
+.center-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.ornament {
+    color: rgba(200, 165, 80, 0.3);
+    font-size: 0.8rem;
+}
+
+.center-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.56rem;
+    letter-spacing: 5px;
+    color: rgba(200, 165, 80, 0.4);
+    text-transform: uppercase;
+}
+
+/* Reel frame: exactly 3 rows tall (3 × 150px) */
+.reel-frame {
+    width: 100%;
+    height: 450px;
+    flex-shrink: 0;
+    background: #080810;
+    border: 1px solid rgba(180, 145, 60, 0.25);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.95);
+}
+
+/* Center payline hairline */
+.reel-frame::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1px;
+    background: rgba(200, 165, 80, 0.15);
+    z-index: 9;
+    pointer-events: none;
+}
+
+/* Top/bottom vignette fades the outer rows slightly */
+.reel-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 8;
+    background: linear-gradient(to bottom,
+            rgba(8, 8, 16, 0.85) 0%,
+            transparent 22%,
+            transparent 78%,
+            rgba(8, 8, 16, 0.85) 100%);
+}
+
+.win-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1px;
+    z-index: 10;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(200, 165, 80, 0.5), #e0c878, rgba(200, 165, 80, 0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.reel-frame.lit .win-line {
+    opacity: 1;
+}
+
+.reels {
+    display: flex;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.reel {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    border-right: 1px solid rgba(180, 145, 60, 0.1);
+}
+
+.reel:last-child {
+    border-right: none;
+}
+
+.strip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    will-change: transform;
+}
+
+/* Symbol cell — must match SYM_H in slotmachine.ts */
+.sym {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Placeholder shown before JS initializes the strip */
+.sym.placeholder {
+    background: rgba(200, 165, 80, 0.03);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.06);
+}
+
+.win-msg,
+.win-msg-placeholder {
+    height: 18px;
+    flex-shrink: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    font-style: italic;
+    color: #c8a550;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* BOTTOM */
+.bottom {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 0 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid rgba(180, 145, 60, 0.12);
+}
+
+.btn-row {
+    display: flex;
+    gap: 0.6rem;
+    width: 100%;
+    align-items: center;
+}
+
+.spin-btn {
+    flex: 2;
+    padding: 0.65rem;
+    border-radius: 2px;
+    border: 1px solid rgba(200, 165, 80, 0.5);
+    background: transparent;
+    color: #c8a550;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.spin-btn:hover:not(:disabled) {
+    border-color: #c8a550;
+    color: #e0c878;
+    box-shadow: 0 0 20px rgba(200, 165, 80, 0.1), inset 0 0 20px rgba(200, 165, 80, 0.04);
+}
+
+.spin-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.spin-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.auto-btn {
+    flex: 1;
+    padding: 0.65rem;
+    border-radius: 2px;
+    border: 1px solid rgba(200, 165, 80, 0.3);
+    background: transparent;
+    color: rgba(200, 165, 80, 0.55);
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.auto-btn:hover {
+    border-color: rgba(200, 165, 80, 0.6);
+    color: #c8a550;
+}
+
+.auto-btn.active {
+    border-color: #c8a550;
+    color: #e0c878;
+    background: rgba(200, 165, 80, 0.07);
+    box-shadow: 0 0 16px rgba(200, 165, 80, 0.1);
+}
+
+.aux-btn {
+    flex: 1;
+    padding: 0.65rem;
+    border-radius: 2px;
+    border: 1px solid rgba(200, 165, 80, 0.15);
+    background: transparent;
+    color: rgba(200, 165, 80, 0.35);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.45rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.aux-btn:hover:not(:disabled) {
+    border-color: rgba(200, 165, 80, 0.35);
+    color: rgba(200, 165, 80, 0.7);
+}
+
+.aux-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* RIGHT SIDEBAR */
+.right {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    border-left: 1px solid rgba(180, 145, 60, 0.18);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1.25rem;
+    overflow: hidden;
+}
+
+.pt-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 3px;
+    color: rgba(200, 165, 80, 0.4);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    flex-shrink: 0;
+}
+
+.pt-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.pt-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.18rem 0;
+    border-bottom: 1px solid rgba(200, 165, 80, 0.06);
+}
+
+.pt-row:last-child {
+    border-bottom: none;
+}
+
+.pt-icon {
+    display: flex;
+    align-items: center;
+    width: 22px;
+    flex-shrink: 0;
+}
+
+.pt-name {
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 300;
+    letter-spacing: 1px;
+    flex: 1;
+}
+
+.pt-mult {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: #c8a550;
+    font-weight: 600;
+}
+
+@keyframes luxFlash {
+
+    0%,
+    100% {
+        border-color: rgba(180, 145, 60, 0.1);
+    }
+
+    50% {
+        border-color: rgba(200, 165, 80, 0.45);
+        background: rgba(200, 165, 80, 0.03);
+    }
+}
+
+.reel.winner {
+    animation: luxFlash 0.5s ease-in-out 3;
+}

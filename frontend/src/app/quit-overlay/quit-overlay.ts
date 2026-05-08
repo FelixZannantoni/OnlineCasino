@@ -1,18 +1,20 @@
 import { Component, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { Subscription, fromEvent } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-profile-overlay',
+  selector: 'app-quit-overlay',
   standalone: true,
-  imports: [RouterLink, MatIconModule],
-  templateUrl: './profile-overlay.html',
-  styleUrls: ['./profile-overlay.css']
+  imports: [MatIconModule],
+  templateUrl: './quit-overlay.html',
+  styleUrls: ['./quit-overlay.css'],
 })
-export class ProfileOverlay implements OnInit, OnDestroy {
+export class QuitOverlay implements OnInit, OnDestroy {
   isOpen = false;
+  private redirectTo = '/home'; // default fallback
+  private router = inject(Router);
   private toggleSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private isBrowser: boolean;
@@ -25,10 +27,11 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!this.isBrowser) return; // Skip SSR
 
-    this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleProfileOverlay')
-      .subscribe(() => {
+    this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleQuitOverlay')
+      .subscribe((event) => {
+        this.redirectTo = event.detail?.redirectTo ?? '/home';
         window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
-        this.isOpen = !this.isOpen;
+        this.isOpen = true; // always open, never toggle
         this.updateBodyScroll();
       });
 
@@ -38,9 +41,8 @@ export class ProfileOverlay implements OnInit, OnDestroy {
 
     this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
       .subscribe((event) => {
-        if (event.key == 'Escape' && this.isOpen) {
+        if (event.key === 'Escape' && this.isOpen) {
           this.close();
-          console.log('pressed escape')
         }
       });
   }
@@ -54,7 +56,11 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   close(): void {
     this.isOpen = false;
     this.updateBodyScroll();
-    console.log('closing...')
+  }
+
+  confirm(): void {
+    this.close();
+    this.router.navigate([this.redirectTo]);
   }
 
   private updateBodyScroll(): void {

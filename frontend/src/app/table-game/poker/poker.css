@@ -1,0 +1,68 @@
+/* Card positioning */
+::ng-deep .board-cards {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+/* EIGENE KARTEN: Sichtbar machen! */
+::ng-deep .player-cards {
+    position: absolute;
+    
+    /* OPTION A: Zentriert vor dem Tisch (wie auf dem Screenshot) */
+    bottom: 15%; /* Abstand vom unteren Tischrand */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* OPTION B: Wenn sie beim Avatar (unten links) sein sollen: */
+    /* bottom: 10%; */
+    /* left: 15%; */ /* Anpassen basierend auf Avatar-Position */
+    /* transform: none; */
+
+    display: flex;
+    gap: 5px;
+    z-index: 20; /* Höher als der Tisch und der Avatar */
+    pointer-events: none; /* Klicks gehen durch, falls nötig */
+}
+
+/* Red felt instead of default green */
+::ng-deep app-poker .game-table::after,
+::ng-deep .game-poker .game-table::after {
+    background: radial-gradient(ellipse at center,
+            #910002 0%,
+            #880002 40%,
+            #7D0000 70%,
+            #640000 100%) !important;
+}
+
+/* Spade emblem */
+::ng-deep app-poker .game-table .center-emblem::before,
+::ng-deep .game-poker .game-table .center-emblem::before {
+    content: '♠' !important;
+}
+
+/* Poker button hover colors */
+::ng-deep .btn-fold:hover {
+    background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+    border-color: #e74c3c !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4) !important;
+}
+
+::ng-deep .btn-check:hover {
+    background: linear-gradient(135deg, #3498db, #2980b9) !important;
+    border-color: #3498db !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4) !important;
+}
+
+::ng-deep .btn-bet:hover {
+    background: linear-gradient(135deg, #27ae60, #229954) !important;
+    border-color: #27ae60 !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4) !important;
+}
