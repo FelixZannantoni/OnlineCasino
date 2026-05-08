@@ -28,6 +28,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         while (this.isRunning && this.players.length > 0) {
             await this.playRound();
             this.updateDealerChip();
+            this.emit("gameState", this.getGameState());
             // Wait a bit before next round
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
@@ -44,6 +45,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.blackjackDeck = new BlackjackDeck(); // New deck for each round
 
         this.makeBets();
+        this.emit("gameState", this.getGameState());
         
         // Only players who made a bet participate
         const activePlayers = this.players.filter(p => p.getBet() > 0);
@@ -53,13 +55,16 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         this.handCardsOut();
         this.checkHandsValue();
+        this.emit("gameState", this.getGameState());
 
         if (!this.blackJackBot.hasBlackJack()) {
             await this.makeMove();
         }
         
         this.dealerPlay();
+        this.emit("gameState", this.getGameState());
         this.handOutWin();
+        this.emit("gameState", this.getGameState());
     }
 
     private dealerPlay() {
@@ -113,6 +118,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
             let turnOver = false;
             while (!turnOver && playerOnMove.getHandValue() < 21) {
+                this.emit("gameState", this.getGameState());
                 await new Promise<void>((resolve) => {
                     const timeout = setTimeout(() => {
                         this.removeListener("playerMove", handleMove);
@@ -149,6 +155,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                     turnOver = true;
                                 }
                                 playerOnMove.resetMadeMove();
+                                this.emit("gameState", this.getGameState());
                                 resolve();
                             }
                         }
@@ -158,6 +165,50 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                 });
             }
         }
+    }
+
+    public handlePlayerMove(playerId: string, action: string) {
+        const player = this.players.find(p => p.getPlayerId() === playerId);
+        if (!player) return { success: false, message: "Player not found" };
+
+        switch (action) {
+            case "hit":
+                player.userPressedHit();
+                break;
+            case "stand":
+                player.userPressedStand();
+                break;
+            case "double":
+                player.userPressedDouble();
+                break;
+            default:
+                return { success: false, message: "Invalid action" };
+        }
+
+        this.emit("playerMove", { playerId });
+        return { success: true, message: "Action received" };
+    }
+
+    public getGameState() {
+        return {
+            gameId: this.getGameId(),
+            isRunning: this.isRunning,
+            players: this.players.map(p => ({
+                id: p.getPlayerId(),
+                username: p.getUsername(),
+                displayname: p.getDisplayname(),
+                balance: p.getBalance(),
+                bet: p.getBet(),
+                cards: p.getCards(),
+                handValue: p.getHandValue(),
+                isDealer: p.getDealerChip()
+            })),
+            bot: {
+                id: BALCKJACK_BOT_ID,
+                cards: this.blackJackBot.getCards(),
+                handValue: this.blackJackBot.getHandValue()
+            }
+        };
     }
 
     private makeBets() {

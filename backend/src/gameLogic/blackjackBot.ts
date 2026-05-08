@@ -10,6 +10,11 @@ export class BlackjackBot {
         this.handValue = 0;
     }
 
+    public getCards() {
+        return this.cards;
+    }
+
+
     public getHandValue() {
         this.checkHandValue();
         return this.handValue;
@@ -25,6 +30,7 @@ export class BlackjackBot {
             card.visibility = CardVisibility.all;
         }
     }
+
 
     private checkHandValue() {
         this.handValue = 0;
