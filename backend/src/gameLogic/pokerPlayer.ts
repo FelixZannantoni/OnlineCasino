@@ -182,9 +182,11 @@ export class PokerPlayer extends CardGamePlayer {
 
     private hasQuadruple(cards: Card[]): boolean {
         let count: number = 0;
-        let valueOfHighestOtherCard: number = cards[6].value;
+        if (cards.length < 4) return false;
+        
+        let valueOfHighestOtherCard: number = cards[cards.length - 1].value;
 
-        for (let i: number = 0; i < cards.length - NUMBER_OF_CARDS_FOR_Quadruple; i++) {
+        for (let i: number = 0; i < cards.length - NUMBER_OF_CARDS_FOR_Quadruple + 1; i++) {
             count = 0;
             for (let j: number = i; j < cards.length; j++) {
                 if (cards[i].name == cards[j].name) {
@@ -254,15 +256,10 @@ export class PokerPlayer extends CardGamePlayer {
         }
 
         if (hasFlush) {
-
-            for (let i: number = 0; i < cards.length; i++) {
-                if (cards[i].color != colorOfFlush) {
-                    cards.splice(i, 1);
-                }
-            }
-            cards.sort((a, b) => b.value - a.value);
-
-            this.valueOfHand = [FLUSH_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value];
+            const flushCards = cards.filter(c => c.color === colorOfFlush);
+            flushCards.sort((a, b) => b.value - a.value);
+            const topFive = flushCards.slice(0, 5).map(c => c.value);
+            this.valueOfHand = [FLUSH_VALUE, ...topFive];
         }
 
         return hasFlush;
@@ -350,7 +347,8 @@ export class PokerPlayer extends CardGamePlayer {
 
         if (hasTwoPair) {
             cards.sort((a, b) => b.value - a.value);
-            this.valueOfHand = [TWOPAIR_VALUE, Math.max(valueOfFstPair, valueOfSndPair), Math.min(valueOfFstPair, valueOfSndPair), cards[0].value];
+            const kickers = cards.slice(0, 1).map(c => c.value);
+            this.valueOfHand = [TWOPAIR_VALUE, Math.max(valueOfFstPair, valueOfSndPair), Math.min(valueOfFstPair, valueOfSndPair), ...kickers];
         }
 
         return hasTwoPair;
@@ -373,7 +371,8 @@ export class PokerPlayer extends CardGamePlayer {
 
         if (hasPair) {
             cards.sort((a, b) => b.value - a.value);
-            this.valueOfHand = [PAIR_VALUE, valueOfPair, this.getPlayerHighCard(), cards[0].value, cards[1].value, cards[2].value];
+            const kickers = cards.slice(0, 3).map(c => c.value);
+            this.valueOfHand = [PAIR_VALUE, valueOfPair, this.getPlayerHighCard(), ...kickers];
         }
 
         return hasPair;
