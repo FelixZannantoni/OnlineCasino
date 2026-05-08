@@ -18,7 +18,7 @@ type PokerBoardCard = {
 
 type PokerPlayerState = {
   id: string;
-  name: string
+  displayname: string;
   bet: number;
   folded: boolean;
   balance: number;
