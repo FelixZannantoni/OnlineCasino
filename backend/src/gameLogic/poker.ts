@@ -235,7 +235,7 @@ export class Poker extends CardGame<PokerPlayer> {
             case "call":
                 if (player.getBet() < this.currentBet) {
                     const diff = this.currentBet - player.getBet();
-                    player.makeBet();
+                    player.makeIncreasedBet(this.currentBet);
                     this.pot += diff;
                 } else {
                     return { success: false, message: "Nothing to call" };
