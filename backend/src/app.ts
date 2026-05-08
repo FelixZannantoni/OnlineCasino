@@ -7,6 +7,7 @@ import "dotenv/config";
 import { DB } from "./data";
 import { userRouter } from "./router/user-router";
 import { pokerRouter } from "./router/poker-router";
+import { blackjackRouter } from "./router/blackjack-router";
 import { PokerService } from "./services/poker-service";
 import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
@@ -27,6 +28,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
+app.use("/blackjack", blackjackRouter);
 
 const socketUserMap: Map<string, string> = new Map();
 
