@@ -102,10 +102,39 @@ export class PokerService {
     }
   }
 
-  getGameById(gameId: string): { game: Poker | null; message: string } {
-    const game: Poker | undefined = PokerService.pokerGames.find(
-      (g) => g.getGameId().toString() === gameId.toString()
-    );
+    /**
+     * Add a player to a game of poker.
+     * @param playerId 
+     * @param username 
+     * @param displayname 
+     * @param balance 
+     * @param hasDealerChip 
+     * @param bet 
+     * @param gameId 
+     */
+    async addPlayer(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number, gameId: string): Promise<{success: boolean, message: string}> {
+        // get the game object
+        const gameResult = this.getGameById(gameId);
+        if(!gameResult.game) { 
+            console.log(gameResult.message);
+            return {
+                success: false,
+                message: gameResult.message
+            };
+        }
+
+        const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
+        gameResult.game.addPlayer(newPlayer);
+
+        if(gameResult.game.getPlayers().length === 1) {
+            gameResult.game.setDefaultDealerChip();
+        }
+
+        return {
+            success: true,
+            message: `Successfully added player ${playerId} to game ${gameId}`
+        }
+    }
 
     if (!game) {
       return { game: null, message: `Game with the id ${gameId} was not found` };
