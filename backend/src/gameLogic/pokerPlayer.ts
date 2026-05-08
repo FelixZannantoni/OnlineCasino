@@ -381,7 +381,8 @@ export class PokerPlayer extends CardGamePlayer {
 
     getHighCard(cards: Card[]) {
         cards.sort((a, b) => b.value - a.value);
-        this.valueOfHand = [HIGHCARD_VALUE, cards[0].value, cards[1].value, cards[2].value, cards[3].value, cards[4].value]
+        const topFive = cards.slice(0, 5).map(c => c.value);
+        this.valueOfHand = [HIGHCARD_VALUE, ...topFive];
     }
 
 
