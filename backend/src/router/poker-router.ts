@@ -96,7 +96,7 @@ pokerRouter.put("/raise", async (req: Request, res: Response) => {
         return;
     }
 
-    const result = pokerService.raise(playerId, gameId, amount);
+    const result = await pokerService.raise(playerId, gameId, amount);
 
     if(result.success) {
         res.status(StatusCodes.OK).json({ message: result.message });
