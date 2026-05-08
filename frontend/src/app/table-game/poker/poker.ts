@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, signal, computed, inject } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, signal, computed, inject, OnInit } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TableGameComponent } from '../table-game';
@@ -7,6 +7,7 @@ import { SocketService } from '../../services/socket.service';
 import { DataService } from '../../services/data-service';
 import { DevTeam } from "../../settings-overlay/dev-team/dev-team";
 import { PokerPlayersComponent } from './poker-players/poker-players';
+import { getCardRank } from '../../services/card-utils';
 
 type PokerBoardCard = {
   name: string;
@@ -42,7 +43,7 @@ type PokerGameState = {
   templateUrl: './poker.html',
   styleUrls: ['./poker.css'],
 })
-export class Poker {
+export class Poker implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly route = inject(ActivatedRoute);
   private readonly socketService = inject(SocketService);
@@ -54,6 +55,8 @@ export class Poker {
   public gameState = signal<PokerGameState | null>(null);
 
   private readonly gameId = signal<string>('1');
+
+  protected readonly getCardRank = getCardRank;
 
   protected readonly myPlayer = computed(() => {
     const state = this.gameState();
@@ -74,8 +77,6 @@ export class Poker {
     const id = this.route.snapshot.paramMap.get('id') ?? '1';
     this.gameId.set(id);
 
-    
-
     const userId = this.dataService.userId();
 
     this.socketService.onEvent('game_state', (state: unknown) => {
@@ -91,41 +92,6 @@ export class Poker {
     });
 
     this.socketService.joinGame(id, userId);
-  }
-
-  // Card rank mapping to match your existing card look (A/K/Q/J/10/2-9)
-  cardRank(cardName: string): string {
-    const n = (cardName ?? '').toLowerCase();
-    switch (n) {
-      case 'ace':
-        return 'A';
-      case 'king':
-        return 'K';
-      case 'queen':
-        return 'Q';
-      case 'jack':
-        return 'J';
-      case 'ten':
-        return '10';
-      case 'two':
-        return '2';
-      case 'three':
-        return '3';
-      case 'four':
-        return '4';
-      case 'five':
-        return '5';
-      case 'six':
-        return '6';
-      case 'seven':
-        return '7';
-      case 'eight':
-        return '8';
-      case 'nine':
-        return '9';
-      default:
-        return cardName;
-    }
   }
 
   private getMyPlayer(): PokerPlayerState | null {
