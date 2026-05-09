@@ -39,7 +39,7 @@ type PokerGameState = {
 @Component({
   selector: 'app-poker',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, MatIconModule, DevTeam, PokerPlayersComponent],
+  imports: [CommonModule, TableGameComponent, MatIconModule],
   templateUrl: './poker.html',
   styleUrls: ['./poker.css'],
 })

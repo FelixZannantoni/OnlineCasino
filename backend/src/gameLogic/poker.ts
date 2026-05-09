@@ -75,6 +75,7 @@ export class Poker extends CardGame<PokerPlayer> {
             p.makeNewBet(0);
             p.setFolded(false);
             p.resetMadeMove();
+            p.resetHandValue();
         });
     }
 
@@ -319,10 +320,28 @@ export class Poker extends CardGame<PokerPlayer> {
                 folded: p.getPressedFold(),
                 balance: p.getBalance(),
                 cards: p.getCards(),
-                isDealer: p.getDealerChip()
+                isDealer: p.getDealerChip(),
+                handValue: p.getCardCombinationValue(),
+                handName: this.getHandName(p.getCardCombinationValue())
             })),
             board: this.board,
             currentPlayerId: this.players[this.currentPlayerIndex]?.getPlayerId() ?? null
         };
     }
-}
+
+    private getHandName(value: number): string {
+        switch (value) {
+            case 1: return "High Card";
+            case 2: return "Pair";
+            case 3: return "Two Pair";
+            case 4: return "Three of a Kind";
+            case 5: return "Straight";
+            case 6: return "Flush";
+            case 7: return "Full House";
+            case 8: return "Four of a Kind";
+            case 9: return "Straight Flush";
+            case 10: return "Royal Flush";
+            default: return "";
+        }
+    }
+    }
