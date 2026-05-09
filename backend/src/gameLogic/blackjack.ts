@@ -8,11 +8,20 @@ import { Player } from "./player";
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BALCKJACK_BOT_ID: string = "BlackjackBot";
 
+export enum BlackjackPhase {
+    WAITING = "WAITING",
+    BETTING = "BETTING",
+    PLAYING = "PLAYING",
+    DEALER_TURN = "DEALER_TURN",
+    FINISHED = "FINISHED"
+}
 
 export class Blackjack extends CardGame<BlackjackPlayer> {
     private blackjackDeck: BlackjackDeck;
     private blackJackBot: BlackjackBot;
     private isRunning: boolean = false;
+    private currentPhase: BlackjackPhase = BlackjackPhase.WAITING;
+    private currentPlayerId: string | null = null;
 
     constructor(gameId: string) {
         super(gameId);
@@ -28,11 +37,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         while (this.isRunning && this.players.length > 0) {
             await this.playRound();
             this.updateDealerChip();
+            this.currentPhase = BlackjackPhase.FINISHED;
             this.emit("gameState", this.getGameState());
             // Wait a bit before next round
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
         this.isRunning = false;
+        this.currentPhase = BlackjackPhase.WAITING;
     }
 
     public stopGame() {
@@ -44,8 +55,8 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.resetCards();
         this.blackjackDeck = new BlackjackDeck(); // New deck for each round
 
-        this.makeBets();
-        this.emit("gameState", this.getGameState());
+        this.currentPhase = BlackjackPhase.BETTING;
+        await this.waitForBets();
         
         // Only players who made a bet participate
         const activePlayers = this.players.filter(p => p.getBet() > 0);
@@ -53,6 +64,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             return;
         }
 
+        this.currentPhase = BlackjackPhase.PLAYING;
         this.handCardsOut();
         this.checkHandsValue();
         this.emit("gameState", this.getGameState());
@@ -61,10 +73,35 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             await this.makeMove();
         }
         
+        this.currentPhase = BlackjackPhase.DEALER_TURN;
+        this.currentPlayerId = BALCKJACK_BOT_ID;
         this.dealerPlay();
         this.emit("gameState", this.getGameState());
         this.handOutWin();
+        this.currentPlayerId = null;
+    }
+
+    private async waitForBets() {
         this.emit("gameState", this.getGameState());
+        // Wait for all players to place a bet or timeout
+        await new Promise<void>((resolve) => {
+            const betTimeout = setTimeout(() => {
+                this.removeListener("playerBet", handleBet);
+                resolve();
+            }, 15000); // 15 seconds for betting
+
+            const handleBet = () => {
+                const allBet = this.players.every(p => p.getBet() > 0 || p.getBalance() === 0);
+                if (allBet) {
+                    clearTimeout(betTimeout);
+                    this.removeListener("playerBet", handleBet);
+                    resolve();
+                }
+                this.emit("gameState", this.getGameState());
+            };
+
+            this.on("playerBet", handleBet);
+        });
     }
 
     private dealerPlay() {
@@ -116,6 +153,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             // If player has Blackjack, they stand automatically
             if (playerOnMove.getHandValue() === 21 && playerOnMove.getCards().length === 2) continue;
 
+            this.currentPlayerId = playerOnMove.getPlayerId();
             let turnOver = false;
             while (!turnOver && playerOnMove.getHandValue() < 21) {
                 this.emit("gameState", this.getGameState());
@@ -124,7 +162,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                         this.removeListener("playerMove", handleMove);
                         turnOver = true;
                         resolve();
-                    }, 10000);
+                    }, 15000); // Increased to 15s
 
                     const handleMove = (detail: { playerId: string }) => {
                         if (detail && detail.playerId == playerOnMove.getPlayerId()) {
@@ -165,11 +203,32 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                 });
             }
         }
+        this.currentPlayerId = null;
     }
 
-    public handlePlayerMove(playerId: string, action: string) {
+    public handlePlayerMove(playerId: string, action: string, amount?: number) {
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
+
+        if (action === "bet") {
+            if (this.currentPhase !== BlackjackPhase.BETTING) {
+                return { success: false, message: "Not in betting phase" };
+            }
+            if (amount === undefined || amount <= 0) {
+                return { success: false, message: "Invalid bet amount" };
+            }
+            try {
+                player.makeNewBet(amount);
+                this.emit("playerBet", { playerId });
+                return { success: true, message: "Bet placed" };
+            } catch (e) {
+                return { success: false, message: "Not enough balance" };
+            }
+        }
+
+        if (this.currentPhase !== BlackjackPhase.PLAYING || this.currentPlayerId !== playerId) {
+            return { success: false, message: "Not your turn or wrong phase" };
+        }
 
         switch (action) {
             case "hit":
@@ -193,6 +252,8 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         return {
             gameId: this.getGameId(),
             isRunning: this.isRunning,
+            phase: this.currentPhase,
+            currentPlayerId: this.currentPlayerId,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),
@@ -212,19 +273,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     private makeBets() {
-        for (let i: number = 0; i < this.players.length; i++) {
-            const desiredBet: number = this.players[i].getDesiredBet();
-            if (desiredBet > 0) {
-                try {
-                    this.players[i].makeNewBet(desiredBet);
-                } catch (e) {
-                    // Not enough money
-                    this.players[i].makeNewBet(0);
-                }
-            } else {
-                this.players[i].makeNewBet(0);
-            }
-        }
+        // This is now handled by waitForBets and handlePlayerMove("bet")
     }
 
     private resetBets() {
