@@ -1,1 +1,212 @@
-<p>roulette works!</p>
+<div class="roulette-shell">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="logo">ROULETTE</div>
+        <div class="recent-nums">
+            <span class="rc-lbl">LAST</span>
+            @for (r of recentResults(); track $index) {
+            <div class="rc-ball" [class.rc-r]="isRed(r)" [class.rc-b]="!isRed(r) && r !== 0" [class.rc-g]="r === 0">
+                {{ r }}
+            </div>
+            }
+        </div>
+        <div class="balance-wrap">
+            <div class="bal-lbl">Balance</div>
+            <div class="bal-num">${{ balance() | number }}</div>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+
+        <!-- LEFT: WHEEL -->
+        <div class="wheel-col">
+            <div class="wheel-frame">
+                <canvas #wheelCanvas width="300" height="300"></canvas>
+                <div class="wheel-pointer" aria-hidden="true"></div>
+            </div>
+            <div class="result-display" [class.red]="resultClass() === 'red'" [class.black]="resultClass() === 'black'"
+                [class.green]="resultClass() === 'green'" aria-live="polite" aria-atomic="true">
+                {{ resultLabel() }}
+            </div>
+        </div>
+
+        <!-- CENTER: FELT TABLE -->
+        <div class="table-col">
+
+            <div class="felt-outer">
+                <div class="felt">
+                    <div class="tgrid">
+
+                        <!-- ZERO ROW -->
+                        <div class="zrow">
+                            <div class="cell zcell" role="button" tabindex="0" aria-label="Bet on 0"
+                                (click)="placeBet('0', 35)" (keydown.enter)="placeBet('0', 35)">
+                                0
+                                @if (getBetOn('0'); as amt) {
+                                <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
+                                    amt }}</span>
+                                }
+                            </div>
+                            <div class="cell dzcell" role="button" tabindex="0" aria-label="Bet on double zero"
+                                (click)="placeBet('00', 35)" (keydown.enter)="placeBet('00', 35)">
+                                0 0
+                                @if (getBetOn('00'); as amt) {
+                                <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
+                                    amt }}</span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- NUMBER GRID -->
+                        <div class="ngrid">
+                            @for (row of numberLayout; track $index) {
+                            <div class="cell col-label" role="button" tabindex="0"
+                                [attr.aria-label]="'Bet on ' + colLabels[$index]"
+                                (click)="placeBet(colLabels[$index], 2)"
+                                (keydown.enter)="placeBet(colLabels[$index], 2)">
+                                2:1
+                                @if (getBetOn(colLabels[$index]); as amt) {
+                                <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
+                                    amt }}</span>
+                                }
+                            </div>
+                            @for (n of row; track n) {
+                            <div class="cell ncell" [class.nr]="isRed(n)" [class.nb]="!isRed(n)" role="button"
+                                tabindex="0" [attr.aria-label]="'Bet on number ' + n" (click)="placeBet('' + n, 35)"
+                                (keydown.enter)="placeBet('' + n, 35)">
+                                {{ n }}
+                                @if (getBetOn('' + n); as amt) {
+                                <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
+                                    amt }}</span>
+                                }
+                            </div>
+                            }
+                            }
+                        </div>
+
+                        <!-- DOZENS -->
+                        <div class="drow">
+                            <div class="cell dcell spacer" aria-hidden="true"></div>
+                            @for (d of dozens; track d.label) {
+                            <div class="cell dcell" role="button" tabindex="0" [attr.aria-label]="'Bet on ' + d.label"
+                                (click)="placeBet(d.label, 2)" (keydown.enter)="placeBet(d.label, 2)">
+                                {{ d.label }}
+                                @if (getBetOn(d.label); as amt) {
+                                <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
+                                    amt }}</span>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <!-- EVEN MONEY -->
+                        <div class="erow">
+                            <div class="cell ecell spacer" aria-hidden="true"></div>
+                            @for (e of evenMoneyBets; track e.label) {
+                            <div class="cell ecell" [class.eg]="e.color === 'g'" [class.er]="e.color === 'r'"
+                                [class.eb]="e.color === 'b'" role="button" tabindex="0"
+                                [attr.aria-label]="'Bet on ' + e.label" (click)="placeBet(e.label, 1)"
+                                (keydown.enter)="placeBet(e.label, 1)">
+                                @if (e.pip) {
+                                <span class="pip" aria-hidden="true">{{ e.pip }}</span>
+                                }
+                                <span class="eplbl">{{ e.label }}</span>
+                                @if (e.sub) {
+                                <span class="epnum">{{ e.sub }}</span>
+                                }
+                                @if (getBetOn(e.label); as amt) {
+                                <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
+                                    amt }}</span>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHIP TRAY -->
+            <div class="tray">
+                <span class="tray-lbl" id="chip-label">Chip</span>
+                <div role="radiogroup" aria-labelledby="chip-label" style="display:flex;gap:8px">
+                    @for (c of chipOptions; track c.value) {
+                    <div class="chip-btn" [class]="c.cls" [class.on]="selectedChip() === c.value" role="radio"
+                        tabindex="0" [attr.aria-checked]="selectedChip() === c.value"
+                        [attr.aria-label]="'Select $' + c.value + ' chip'" (click)="selectChip(c.value)"
+                        (keydown.enter)="selectChip(c.value)">
+                        ${{ c.value }}
+                    </div>
+                    }
+                </div>
+                <div class="tray-gap"></div>
+                <button class="tbtn" (click)="undoLast()" [disabled]="bets().length === 0">↩ Undo</button>
+                <button class="tbtn" (click)="clearBets()" [disabled]="bets().length === 0">✕ Clear</button>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: SIDEBAR -->
+        <div class="sidebar">
+
+            <button class="spin-btn" [disabled]="spinning() || bets().length === 0" (click)="spin()">
+                {{ spinning() ? 'SPINNING…' : 'SPIN' }}
+            </button>
+
+            <!-- CURRENT BETS -->
+            <div class="scard">
+                <div class="shead" id="bets-heading">Current Bets</div>
+                <div class="sbody" role="region" aria-labelledby="bets-heading">
+                    @if (bets().length === 0) {
+                    <p class="nobets">No bets placed</p>
+                    } @else {
+                    @for (b of bets(); track b.label) {
+                    <div class="brow">
+                        <span class="bn">{{ b.label }}</span>
+                        <span class="ba">${{ b.amount }}</span>
+                    </div>
+                    }
+                    }
+                    <div class="trow">
+                        <span class="tl">Total wagered</span>
+                        <span class="tv">${{ totalWagered() | number }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT RESULTS -->
+            <div class="scard">
+                <div class="shead">Recent Results</div>
+                <div class="sbody">
+                    <div class="rstrip" role="list" aria-label="Recent results">
+                        @for (r of recentResults(); track $index) {
+                        <div class="rball" role="listitem" [class.rb-r]="isRed(r)" [class.rb-b]="!isRed(r) && r !== 0"
+                            [class.rb-g]="r === 0"
+                            [attr.aria-label]="r + (r === 0 ? ' green' : isRed(r) ? ' red' : ' black')">
+                            {{ r }}
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYOUTS -->
+            <div class="scard">
+                <div class="shead">Payouts</div>
+                <div class="sbody">
+                    <dl>
+                        @for (p of payouts; track p.name; let last = $last) {
+                        <div class="orow" [class.last]="last">
+                            <dt class="on">{{ p.name }}</dt>
+                            <dd class="ov">{{ p.odds }}</dd>
+                        </div>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
