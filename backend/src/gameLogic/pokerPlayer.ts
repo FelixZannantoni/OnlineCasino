@@ -392,4 +392,8 @@ export class PokerPlayer extends CardGamePlayer {
     private getPlayerLowCard(): number {
         return Math.min(this.cards[0].value, this.cards[1].value);
     }
+
+    public resetHandValue() {
+        this.valueOfHand = [0];
+    }
 }
