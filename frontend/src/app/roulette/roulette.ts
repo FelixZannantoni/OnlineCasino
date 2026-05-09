@@ -108,5 +108,121 @@ export class RouletteComponent implements AfterViewInit {
     return this.REDS.has(n);
   }
 
-  
+  // Canvas drawing
+  private drawWheel(angle: number): void {
+    const ctx = this.ctx;
+    const N = 37;
+    const slice = (Math.PI * 2) / N;
+
+    ctx.clearRect(0, 0, this.SIZE, this.SIZE);
+    ctx.save();
+    ctx.translate(this.CX, this.CY);
+
+    // Outer wood base
+    ctx.beginPath();
+    ctx.arc(0, 0, this.CX, 0, Math.PI * 2);
+    ctx.fillStyle = '#2c1200';
+    ctx.fill();
+
+    // Pockets
+    const pocketSequence = [
+      0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1,
+      27, 10, 25, 29, 12, 8, 19, 31, 18, 6, 21, 33, 16, 4, 23, 35, 14, 2,
+    ];
+
+    for (let i = 0; i < N; i++) {
+      const start = angle + i * slice - slice / 2;
+      const end = angle + (i + 1) * slice - slice / 2;
+      const mid = angle + i * slice;
+      const n = pocketSequence[i];
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, this.R_INNER, start, end);
+      ctx.closePath();
+      ctx.fillStyle = n === 0 ? '#1a6b35' : this.REDS.has(n) ? '#8b0000' : '#111';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(201,168,76,0.3)';
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+
+      // Number label
+      ctx.save();
+      ctx.rotate(mid + Math.PI / 2);
+      ctx.translate(0, -(this.R_INNER - 11));
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 8px Oswald,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(n), 0, 0);
+      ctx.restore();
+    }
+
+    // Fret dividers
+    for (let i = 0; i < N; i++) {
+      const a = angle + i * slice - slice / 2;
+      ctx.beginPath();
+      ctx.moveTo(
+        Math.cos(a) * (this.R_INNER - 16),
+        Math.sin(a) * (this.R_INNER - 16)
+      );
+      ctx.lineTo(Math.cos(a) * this.R_INNER, Math.sin(a) * this.R_INNER);
+      ctx.strokeStyle = '#c9a84c';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Ball track ring
+    ctx.beginPath();
+    ctx.arc(0, 0, this.R_INNER + 18, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(201,168,76,0.2)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Center cone
+    const cg = ctx.createRadialGradient(0, 0, 4, 0, 0, this.R_CONE);
+    cg.addColorStop(0, '#4a2a08');
+    cg.addColorStop(0.6, '#2c1200');
+    cg.addColorStop(1, '#1a0b00');
+    ctx.beginPath();
+    ctx.arc(0, 0, this.R_CONE, 0, Math.PI * 2);
+    ctx.fillStyle = cg;
+    ctx.fill();
+    ctx.strokeStyle = '#c9a84c';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Cone studs (rotate slightly with wheel for movement feel)
+    for (let i = 0; i < 8; i++) {
+      const da = i * (Math.PI / 4) + angle * 0.1;
+      ctx.beginPath();
+      ctx.arc(
+        Math.cos(da) * (this.R_CONE - 9),
+        Math.sin(da) * (this.R_CONE - 9),
+        2.5,
+        0,
+        Math.PI * 2
+      );
+      ctx.fillStyle = '#c9a84c';
+      ctx.fill();
+    }
+
+    // Hub
+    ctx.beginPath();
+    ctx.arc(0, 0, this.R_HUB, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a0b00';
+    ctx.fill();
+    ctx.strokeStyle = '#c9a84c';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Hub centre dot
+    ctx.beginPath();
+    ctx.arc(0, 0, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#c9a84c';
+    ctx.fill();
+
+    ctx.restore();
+  }
 }
