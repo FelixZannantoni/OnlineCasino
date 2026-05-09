@@ -44,20 +44,11 @@ export class DB {
                 socialId text UNIQUE,
                 passwordHash text,
                 email text,
+                balance real not null default 0,
                 displayName text,
                 streakCount integer,
                 isFromGithub integer, 
                 lastOnline text -- Timestamp in ISO format
-            )
-            `).run();
-        connection.prepare(`
-            CREATE TABLE IF NOT EXISTS transactions (
-                transactionId text PRIMARY KEY,
-                userId text,
-                amount real,
-                date text, -- Timestamp in ISO format
-                status text CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED')),
-                FOREIGN KEY (userId) REFERENCES users(uuid) ON DELETE CASCADE
             )
             `).run();
         connection.prepare(`
@@ -113,12 +104,11 @@ export class DB {
                 return;
             }
 
-            await connection.prepare(`INSERT INTO games (name, type) VALUES (:name, :type)`).run({
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 1,
                 name: "Test Game",
                 type: "POKER"
             });
-
-            console.log("Sample game data inserted successfully!");
 
         } catch(err) {
             console.error("Error inserting sample data:", err);
