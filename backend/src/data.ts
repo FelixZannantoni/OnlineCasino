@@ -44,7 +44,7 @@ export class DB {
                 socialId text UNIQUE,
                 passwordHash text,
                 email text,
-                balance real not null default 0,
+                balance real not null default 1000,
                 displayName text,
                 streakCount integer,
                 isFromGithub integer, 
