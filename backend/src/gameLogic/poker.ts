@@ -27,6 +27,8 @@ export class Poker extends CardGame<PokerPlayer> {
     private isStarted: boolean = false;
     private hasActedThisRound: Set<string> = new Set();
 
+    private isLoading: boolean = false;
+
     constructor(gameId: string) {
         super(gameId);
         this.pokerDeck = new PokerDeck();
@@ -45,6 +47,7 @@ export class Poker extends CardGame<PokerPlayer> {
             return;
         }
 
+        this.isLoading = false;
         this.updateDealerChip();
         this.pokerDeck = new PokerDeck();
         this.board = [];
@@ -206,6 +209,7 @@ export class Poker extends CardGame<PokerPlayer> {
         const winAmount = this.pot / winners.length;
         winners.forEach(w => w.winMoney(winAmount));
 
+        this.isLoading = true;
         this.emit("gameState", this.getGameState());
 
         setTimeout(() => {
@@ -328,7 +332,8 @@ export class Poker extends CardGame<PokerPlayer> {
                 handName: this.getHandName(p.getCardCombinationValue())
             })),
             board: this.board,
-            currentPlayerId: this.players[this.currentPlayerIndex]?.getPlayerId() ?? null
+            currentPlayerId: this.players[this.currentPlayerIndex]?.getPlayerId() ?? null,
+            isLoading: this.isLoading
         };
     }
 
