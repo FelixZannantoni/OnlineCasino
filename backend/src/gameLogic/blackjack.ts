@@ -33,7 +33,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         if (this.isRunning) return;
         this.isRunning = true;
         this.setDefaultDealerChip();
-        
+
         while (this.isRunning && this.players.length > 0) {
             await this.playRound();
             this.updateDealerChip();
@@ -57,7 +57,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         this.currentPhase = BlackjackPhase.BETTING;
         await this.waitForBets();
-        
+
         // Only players who made a bet participate
         const activePlayers = this.players.filter(p => p.getBet() > 0);
         if (activePlayers.length === 0 && this.players.length > 0) {
@@ -72,36 +72,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         if (!this.blackJackBot.hasBlackJack()) {
             await this.makeMove();
         }
-        
+
         this.currentPhase = BlackjackPhase.DEALER_TURN;
         this.currentPlayerId = BALCKJACK_BOT_ID;
         this.dealerPlay();
         this.emit("gameState", this.getGameState());
         this.handOutWin();
         this.currentPlayerId = null;
-    }
-
-    private async waitForBets() {
-        this.emit("gameState", this.getGameState());
-        // Wait for all players to place a bet or timeout
-        await new Promise<void>((resolve) => {
-            const betTimeout = setTimeout(() => {
-                this.removeListener("playerBet", handleBet);
-                resolve();
-            }, 15000); // 15 seconds for betting
-
-            const handleBet = () => {
-                const allBet = this.players.every(p => p.getBet() > 0 || p.getBalance() === 0);
-                if (allBet) {
-                    clearTimeout(betTimeout);
-                    this.removeListener("playerBet", handleBet);
-                    resolve();
-                }
-                this.emit("gameState", this.getGameState());
-            };
-
-            this.on("playerBet", handleBet);
-        });
     }
 
     private dealerPlay() {
@@ -142,7 +119,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
-    private async makeMove() {
+    private async makeMove() {//TODO mit websockets
         const dealerChipIndex = CardGamePlayer.playerWithDealerChip(this.players);
         for (let i: number = 0; i < this.players.length; i++) {
             const playerIndex = Player.xNextPlayer(this.players, dealerChipIndex, i + 1);
@@ -169,7 +146,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                             if (playerOnMove.getMadeMove()) {
                                 clearTimeout(timeout);
                                 this.removeListener("playerMove", handleMove);
-                                
+
                                 if (playerOnMove.getPressedStand()) {
                                     turnOver = true;
                                 }
@@ -206,7 +183,30 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.currentPlayerId = null;
     }
 
-    public handlePlayerMove(playerId: string, action: string, amount?: number) {
+    private async waitForBets() {
+        this.emit("gameState", this.getGameState());
+        // Wait for all players to place a bet or timeout
+        await new Promise<void>((resolve) => {
+            const betTimeout = setTimeout(() => {
+                this.removeListener("playerBet", handleBet);
+                resolve();
+            }, 15000); // 15 seconds for betting
+
+            const handleBet = () => {
+                const allBet = this.players.every(p => p.getBet() > 0 || p.getBalance() === 0);
+                if (allBet) {
+                    clearTimeout(betTimeout);
+                    this.removeListener("playerBet", handleBet);
+                    resolve();
+                }
+                this.emit("gameState", this.getGameState());
+            };
+
+            this.on("playerBet", handleBet);
+        });
+    }
+
+    public handlePlayerMove(playerId: string, action: string, amount?: number) {//TODO Double
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
 
