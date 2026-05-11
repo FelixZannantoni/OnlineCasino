@@ -30,7 +30,7 @@ interface ChipOption {
   styleUrl: './roulette.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RouletteComponent implements AfterViewInit {
+export class Roulette implements AfterViewInit {
   @ViewChild('wheelCanvas') private canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private readonly zone = inject(NgZone);
@@ -43,8 +43,8 @@ export class RouletteComponent implements AfterViewInit {
 
   // Static DATA
   private readonly REDS = new Set([
-    1, 3, 5, 7, 9, 12, 14, 16, 18,
-    19, 21, 23, 25, 27, 30, 32, 34, 36,
+    1, 3, 5, 7, 9, 11, 13, 15, 17,
+    19, 21, 23, 25, 27, 29, 31, 33, 35,
   ]);
 
   /** Felt grid — 3 rows * 12 columns, displayed top-to-bottom */
