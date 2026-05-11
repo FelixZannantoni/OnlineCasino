@@ -5,6 +5,7 @@ import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
+import { pokerService, userService } from "../app";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -211,7 +212,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }, 5000);
     }
 
-    public handlePlayerMove(playerId: string, action: string, amount?: number) {
+    public async handlePlayerMove(playerId: string, action: string, amount?: number) {
         const player = this.players[this.currentPlayerIndex];
 
         if (player.getPlayerId() !== playerId) {
@@ -267,6 +268,8 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.hasActedThisRound.add(playerId);
+        // Balance in der db updaten
+        await userService.updateUserBalance(playerId, player.getBalance());
         
         // Überprüfen, ob nur noch ein Spieler übrig ist
         const activePlayers = this.players.filter(p => !p.getPressedFold());

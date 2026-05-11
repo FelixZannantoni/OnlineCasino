@@ -115,4 +115,23 @@ export class UserService {
             return null;
         }
     }
+
+    async updateUserBalance(userId: string, newBalance: number): Promise<boolean> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+
+            const result = connection.prepare<{userId: string, newBalance: number}>("UPDATE users SET balance = :newBalance WHERE uuid = :userId").run({
+                userId,
+                newBalance
+            });
+
+            await connection.close();
+
+            const success: boolean = result.changes === 1;
+            return success;
+        } catch (error) {
+            console.error(`Something happened while trying to update user balance for user #${userId}: ${error}`);
+            return false;
+        }
+    }
 }

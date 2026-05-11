@@ -34,7 +34,8 @@ const socketUserMap: Map<string, string> = new Map();
 
 const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
-export { pokerService, blackjackService };
+const userService: UserService = new UserService();
+export { pokerService, blackjackService, userService };
 
 // Socket.io connection handling
 io.on("connection", (socket: Socket) => {
@@ -75,7 +76,7 @@ io.on("connection", (socket: Socket) => {
                     userId,
                     user?.username ?? '-',
                     user?.displayname ?? 'Guest',
-                    startBalance,
+                    user?.balance ?? startBalance,
                     false,
                     0,
                     gameId
@@ -85,7 +86,7 @@ io.on("connection", (socket: Socket) => {
                     userId,
                     user?.username ?? '-',
                     user?.displayname ?? 'Guest',
-                    startBalance,
+                    user?.balance ?? startBalance,
                     gameId
                 );
             }
