@@ -3,7 +3,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 
 export interface PokerPlayer {
   id: string;
-  name?: string;
+  displayname?: string;
   balance: number;
   bet: number;
   folded: boolean;

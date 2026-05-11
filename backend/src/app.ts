@@ -99,12 +99,12 @@ io.on("connection", (socket: Socket) => {
         }
 
         const playerCount = game.getGameState().players.length;
-        if (service === pokerService && playerCount === 2) {
+        // Start game based on type
+        if (service === pokerService && playerCount >= 2 && playerCount <= 5) {
             game.startGame();
-        } else if (service === blackjackService && playerCount === 1) {
+        } else if (service === blackjackService && playerCount >= 1) {
             game.startGame();
         }
-
         socket.emit("game_state", game.getGameState());
     });
 
@@ -132,8 +132,13 @@ io.on("connection", (socket: Socket) => {
                 actionResult = await pokerService.call(playerId, gameId);
                 break;
             case "bet":
-                if (amount !== undefined)
+                if (amount !== undefined) {
+                    // Try poker first, then blackjack
                     actionResult = await pokerService.bet(playerId, gameId, amount);
+                    if (!actionResult.success) {
+                        actionResult = await blackjackService.bet(playerId, gameId, amount);
+                    }
+                }
                 break;
             case "raise":
                 if (amount !== undefined)
