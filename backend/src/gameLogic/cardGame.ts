@@ -8,8 +8,8 @@ export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T>
         super(gameId);
     }
 
-    protected setDefaultDealerChip() {
-        this.players[Math.floor(Math.random() * this.players.length) + 1].setDealerChip(true);
+    public setDefaultDealerChip() {
+        this.players[Math.floor(Math.random() * this.players.length)].setDealerChip(true);
     }
 
     protected updateDealerChip() {
