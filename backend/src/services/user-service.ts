@@ -125,8 +125,6 @@ export class UserService {
                 newBalance
             });
 
-            await connection.close();
-
             const success: boolean = result.changes === 1;
             return success;
         } catch (error) {
