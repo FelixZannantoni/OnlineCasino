@@ -2,16 +2,16 @@ import { SinglePlayerGame } from "./singlePlayerGame";
 import { SlotmachinePlayer } from "./slotmachinePlayer";
 
 export enum Symbols {
-    "ans" = 1,
-    "zwa" = 2,
-    "drei" = 3,
-    "vier" = 4,
-    "fünf" = 5,
-    "sex" = 6,
-    "siebn" = 7,
-    "acht" = 8,
-    "neun" = 9,
-    "zehn" = 10
+    Bar = 1,
+    Cherry = 2,
+    DoubleBar = 3,
+    Bell = 4,
+    Horseshoe = 5,
+    Star = 6,
+    Clover = 7,
+    Wild = 8,
+    Diamond = 9,
+    Seven = 10
 }
 
 export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
@@ -20,16 +20,16 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     private lastWin: number = 0;
 
     private static readonly PAYOUTS: Record<number, number[]> = {
-        [Symbols.ans]: [0, 0, 2, 5, 10],
-        [Symbols.zwa]: [0, 0, 2, 5, 10],
-        [Symbols.drei]: [0, 0, 3, 10, 20],
-        [Symbols.vier]: [0, 0, 3, 10, 20],
-        [Symbols.fünf]: [0, 0, 5, 15, 40],
-        [Symbols.sex]: [0, 0, 5, 15, 40],
-        [Symbols.siebn]: [0, 0, 10, 30, 100],
-        [Symbols.acht]: [0, 0, 10, 30, 100],
-        [Symbols.neun]: [0, 0, 20, 100, 500],
-        [Symbols.zehn]: [0, 0, 50, 200, 1000]
+        [Symbols.Bar]: [0, 0, 2, 5, 10],
+        [Symbols.Cherry]: [0, 0, 2, 5, 10],
+        [Symbols.DoubleBar]: [0, 0, 3, 10, 20],
+        [Symbols.Bell]: [0, 0, 3, 10, 20],
+        [Symbols.Horseshoe]: [0, 0, 5, 15, 40],
+        [Symbols.Star]: [0, 0, 5, 15, 40],
+        [Symbols.Clover]: [0, 0, 10, 30, 100],
+        [Symbols.Wild]: [0, 0, 10, 30, 100],
+        [Symbols.Diamond]: [0, 0, 20, 100, 500],
+        [Symbols.Seven]: [0, 0, 50, 200, 1000]
     };
 
     private static readonly LINES = [
