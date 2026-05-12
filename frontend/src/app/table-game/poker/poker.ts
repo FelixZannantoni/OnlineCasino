@@ -34,6 +34,7 @@ type PokerGameState = {
   players: PokerPlayerState[];
   board: PokerBoardCard[];
   currentPlayerId: string | null;
+  isLoading: boolean;
 };
 
 @Component({
