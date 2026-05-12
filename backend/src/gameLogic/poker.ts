@@ -102,18 +102,18 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private setInitialBlinds() {
         const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
-        
+
         if (this.players.length === 2) {
             // Heads-up Regeln
             const sbIdx = dealerIdx;
             const bbIdx = Player.nextPlayer(this.players, dealerIdx);
-            
+
             this.players[sbIdx].makeNewBet(this.defaultBet / 2);
             this.players[bbIdx].makeNewBet(this.defaultBet);
         } else {
             const sbIdx = Player.nextPlayer(this.players, dealerIdx);
             const bbIdx = Player.xNextPlayer(this.players, dealerIdx, 2);
-            
+
             this.players[sbIdx].makeNewBet(this.defaultBet / 2);
             this.players[bbIdx].makeNewBet(this.defaultBet);
         }
@@ -167,11 +167,11 @@ export class Poker extends CardGame<PokerPlayer> {
         this.currentBet = 0;
         this.hasActedThisRound.clear();
         this.players.forEach(p => p.makeNewBet(0));
-        
+
         // Nach dem Flop beginnt der Spieler links vom Dealer
         const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
         this.currentPlayerIndex = Player.nextPlayer(this.players, dealerIdx);
-        
+
         // Falls der Spieler gefaltet hat, zum nächsten
         if (this.players[this.currentPlayerIndex].getPressedFold()) {
             this.moveToNextActivePlayer();
@@ -180,7 +180,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private handleShowdown() {
         this.checkPlayersHands();
-        
+
         let highestValue = -1;
         let winners: PokerPlayer[] = [];
 
@@ -188,7 +188,7 @@ export class Poker extends CardGame<PokerPlayer> {
             if (!p.getPressedFold()) {
                 const comboValue = p.getCardCombinationValue();
                 const tieBreaker = p.getValueOfCardCombination();
-                
+
                 // Wir kombinieren comboValue und tieBreaker für den Vergleich
                 // In der PokerPlayer Klasse ist comboValue die Kategorie (z.B. PAIR_VALUE)
                 if (comboValue > highestValue) {
@@ -259,7 +259,7 @@ export class Poker extends CardGame<PokerPlayer> {
                 // Wir folgen hier der Logik: Erhöhung des aktuellen Gebots
                 const totalNewBet = this.currentBet + betAmount;
                 const additionalContribution = totalNewBet - player.getBet();
-                
+
                 player.makeIncreasedBet(totalNewBet);
                 this.currentBet = totalNewBet;
                 this.pot += additionalContribution;
@@ -275,7 +275,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.hasActedThisRound.add(playerId);
         // Balance in der db updaten
         await userService.updateUserBalance(playerId, player.getBalance());
-        
+
         // Überprüfen, ob nur noch ein Spieler übrig ist
         const activePlayers = this.players.filter(p => !p.getPressedFold());
         if (activePlayers.length === 1) {
@@ -305,7 +305,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private isRoundFinished(): boolean {
         const activePlayers = this.players.filter(p => !p.getPressedFold());
-        
+
         // Jeder aktive Spieler muss reagiert haben und das aktuelle Gebot halten
         const allActed = activePlayers.every(p => this.hasActedThisRound.has(p.getPlayerId()));
         const allMatched = activePlayers.every(p => p.getBet() === this.currentBet);
@@ -352,4 +352,4 @@ export class Poker extends CardGame<PokerPlayer> {
             default: return "";
         }
     }
-    }
+}
