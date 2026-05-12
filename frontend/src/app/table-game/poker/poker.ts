@@ -80,6 +80,13 @@ export class Poker implements OnInit {
 
     const userId = this.dataService.userId();
 
+    if (!userId) {
+      console.warn("No user logged in. Cannot join game.");
+      // Optional: Redirect to login
+      // this.router.navigate(['/login']);
+      return;
+    }
+
     this.socketService.onEvent('game_state', (state: unknown) => {
       const s = state as PokerGameState;
       this.gameState.set(s);
