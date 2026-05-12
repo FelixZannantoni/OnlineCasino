@@ -55,10 +55,6 @@ export class PokerPlayer extends CardGamePlayer {
         this.pressedFold = folded;
     }
 
-    public isFolded(): boolean {
-        return this.pressedFold;
-    }
-
     public getPressedFold(): boolean {
         return this.pressedFold;
     }
@@ -378,7 +374,7 @@ export class PokerPlayer extends CardGamePlayer {
         return hasPair;
     }
 
-    getHighCard(cards: Card[]) {
+    private getHighCard(cards: Card[]) {
         cards.sort((a, b) => b.value - a.value);
         const topFive = cards.slice(0, 5).map(c => c.value);
         this.valueOfHand = [HIGHCARD_VALUE, ...topFive];

@@ -41,7 +41,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         this.playRound();
     }
 
-    public nextRound() {
+    private nextRound() {
         if (this.player.getPressedAutoSpin()) {
             this.player.makeBet();
             this.playRound();
