@@ -58,7 +58,7 @@ export class BlackjackBot {
 
     public hasBlackJack(): boolean {
         if (this.cards.length == 2) {
-            this.checkHandValue(;
+            this.checkHandValue();
             if (this.handValue == 21) {
                 return true;
             }
