@@ -15,14 +15,13 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-/* Fixed-size panoramic panel */
 .panel {
     width: 100%;
-    max-width: 1100px;
-    height: 600px;
+    max-width: 1200px;
+    height: 620px;
     display: grid;
-    grid-template-columns: 230px 1fr 230px;
-    grid-template-rows: 1fr 120px;
+    grid-template-columns: 210px 1fr 210px;
+    grid-template-rows: 1fr 90px;
     background: linear-gradient(135deg, #18181f 0%, #111118 60%, #141420 100%);
     border: 1px solid rgba(180, 145, 60, 0.35);
     border-radius: 4px;
@@ -68,7 +67,7 @@
 
 .brand-eyebrow {
     font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
+    font-size: 0.52rem;
     letter-spacing: 4px;
     color: rgba(200, 165, 80, 0.5);
     text-transform: uppercase;
@@ -85,7 +84,7 @@
 
 .brand-sub {
     font-family: 'Cinzel', serif;
-    font-size: 0.5rem;
+    font-size: 0.46rem;
     letter-spacing: 3px;
     color: rgba(200, 165, 80, 0.35);
     margin-top: 0.25rem;
@@ -107,7 +106,7 @@
 }
 
 .stat-label {
-    font-size: 0.52rem;
+    font-size: 0.48rem;
     font-weight: 600;
     letter-spacing: 3px;
     color: rgba(200, 165, 80, 0.4);
@@ -117,7 +116,7 @@
 
 .stat-val {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     font-weight: 600;
     color: #e0c878;
     letter-spacing: 1px;
@@ -125,7 +124,7 @@
 }
 
 .bet-label {
-    font-size: 0.52rem;
+    font-size: 0.48rem;
     font-weight: 600;
     letter-spacing: 3px;
     color: rgba(200, 165, 80, 0.4);
@@ -140,13 +139,13 @@
 }
 
 .bet-btn {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 2px;
     border: 1px solid rgba(200, 165, 80, 0.3);
     background: transparent;
     color: #c8a550;
-    font-size: 1.1rem;
+    font-size: 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -174,7 +173,7 @@
     flex: 1;
     text-align: center;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: #e0c878;
     letter-spacing: 2px;
@@ -182,7 +181,7 @@
     padding-bottom: 2px;
 }
 
-/* CENTER TOP: reels */
+/* CENTER */
 .center {
     grid-column: 2;
     grid-row: 1;
@@ -190,7 +189,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     overflow: hidden;
 }
 
@@ -209,17 +208,17 @@
 
 .center-label {
     font-family: 'Cinzel', serif;
-    font-size: 0.6rem;
+    font-size: 0.56rem;
     letter-spacing: 5px;
     color: rgba(200, 165, 80, 0.4);
     text-transform: uppercase;
 }
 
-/* Reel frame clips the strips */
+/* Reel frame: exactly 3 rows tall (3 × 150px) */
 .reel-frame {
     width: 100%;
-    flex: 1;
-    min-height: 0;
+    height: 450px;
+    flex-shrink: 0;
     background: #080810;
     border: 1px solid rgba(180, 145, 60, 0.25);
     border-radius: 2px;
@@ -228,6 +227,7 @@
     box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.95);
 }
 
+/* Center payline hairline */
 .reel-frame::before {
     content: '';
     position: absolute;
@@ -241,6 +241,7 @@
     pointer-events: none;
 }
 
+/* Top/bottom vignette fades the outer rows slightly */
 .reel-frame::after {
     content: '';
     position: absolute;
@@ -248,10 +249,10 @@
     pointer-events: none;
     z-index: 8;
     background: linear-gradient(to bottom,
-            rgba(8, 8, 16, 0.92) 0%,
-            transparent 28%,
-            transparent 72%,
-            rgba(8, 8, 16, 0.92) 100%);
+            rgba(8, 8, 16, 0.85) 0%,
+            transparent 22%,
+            transparent 78%,
+            rgba(8, 8, 16, 0.85) 100%);
 }
 
 .win-line {
@@ -279,7 +280,6 @@
     z-index: 1;
 }
 
-/* Each reel clips its strip to show only one symbol height */
 .reel {
     flex: 1;
     height: 100%;
@@ -299,7 +299,7 @@
     will-change: transform;
 }
 
-/* Symbol cell — 150px tall, must match SYM_H in slotmachine.ts */
+/* Symbol cell — must match SYM_H in slotmachine.ts */
 .sym {
     width: 100%;
     height: 150px;
@@ -307,6 +307,12 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+/* Placeholder shown before JS initializes the strip */
+.sym.placeholder {
+    background: rgba(200, 165, 80, 0.03);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.06);
 }
 
 .win-msg,
@@ -322,28 +328,33 @@
     text-align: center;
 }
 
-/* CENTER BOTTOM: buttons */
+/* BOTTOM */
 .bottom {
     grid-column: 2;
     grid-row: 2;
-    padding: 0 1rem 1rem;
+    padding: 0 1rem 0;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
     border-top: 1px solid rgba(180, 145, 60, 0.12);
 }
 
-.spin-btn {
+.btn-row {
+    display: flex;
+    gap: 0.6rem;
     width: 100%;
-    padding: 0.75rem;
+    align-items: center;
+}
+
+.spin-btn {
+    flex: 2;
+    padding: 0.65rem;
     border-radius: 2px;
     border: 1px solid rgba(200, 165, 80, 0.5);
     background: transparent;
     color: #c8a550;
     font-family: 'Cinzel', serif;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 6px;
     text-transform: uppercase;
@@ -366,21 +377,43 @@
     cursor: not-allowed;
 }
 
-.btn-row {
-    display: flex;
-    gap: 0.5rem;
-    width: 100%;
+.auto-btn {
+    flex: 1;
+    padding: 0.65rem;
+    border-radius: 2px;
+    border: 1px solid rgba(200, 165, 80, 0.3);
+    background: transparent;
+    color: rgba(200, 165, 80, 0.55);
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.auto-btn:hover {
+    border-color: rgba(200, 165, 80, 0.6);
+    color: #c8a550;
+}
+
+.auto-btn.active {
+    border-color: #c8a550;
+    color: #e0c878;
+    background: rgba(200, 165, 80, 0.07);
+    box-shadow: 0 0 16px rgba(200, 165, 80, 0.1);
 }
 
 .aux-btn {
     flex: 1;
-    padding: 0.45rem;
+    padding: 0.65rem;
     border-radius: 2px;
     border: 1px solid rgba(200, 165, 80, 0.15);
     background: transparent;
-    color: rgba(200, 165, 80, 0.4);
+    color: rgba(200, 165, 80, 0.35);
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.52rem;
+    font-size: 0.45rem;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -398,7 +431,7 @@
     cursor: not-allowed;
 }
 
-/* RIGHT SIDEBAR: paytable */
+/* RIGHT SIDEBAR */
 .right {
     grid-column: 3;
     grid-row: 1 / 3;
@@ -411,11 +444,11 @@
 
 .pt-eyebrow {
     font-family: 'Cinzel', serif;
-    font-size: 0.55rem;
+    font-size: 0.52rem;
     letter-spacing: 3px;
     color: rgba(200, 165, 80, 0.4);
     text-transform: uppercase;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
     flex-shrink: 0;
 }
 
@@ -430,7 +463,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.2rem 0;
+    padding: 0.18rem 0;
     border-bottom: 1px solid rgba(200, 165, 80, 0.06);
 }
 
@@ -441,13 +474,13 @@
 .pt-icon {
     display: flex;
     align-items: center;
-    width: 26px;
+    width: 22px;
     flex-shrink: 0;
 }
 
 .pt-name {
-    font-size: 0.62rem;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.4);
     font-weight: 300;
     letter-spacing: 1px;
     flex: 1;
@@ -455,7 +488,7 @@
 
 .pt-mult {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #c8a550;
     font-weight: 600;
 }

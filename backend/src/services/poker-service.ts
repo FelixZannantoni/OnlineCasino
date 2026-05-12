@@ -4,145 +4,109 @@ import { PokerPlayer } from "../gameLogic/pokerPlayer";
 import { DB } from "../data";
 
 export class PokerService {
-    static pokerGames: Poker[] =  [];
+  static pokerGames: Poker[] = [];
 
+  async fold(playerId: string, gameId: string): Promise<{ success: boolean; message: string }> {
+    const { game } = this.getGameById(gameId);
+    if (!game) return { success: false, message: `Game #${gameId} not found` };
+    return game.handlePlayerMove(playerId, "fold");
+  }
 
-    async fold(playerId: string, gameId: string): Promise<boolean> {
-        // get the game and player objects
-        console.log(`Looking for game(${gameId}) in: [${PokerService.pokerGames.length}]`)
-        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
-        console.log(game);
-        
-        if(!game) return false;
+  async check(playerId: string, gameId: string): Promise<{ success: boolean; message: string }> {
+    const { game } = this.getGameById(gameId);
+    if (!game) return { success: false, message: `Game #${gameId} not found` };
+    return game.handlePlayerMove(playerId, "check");
+  }
 
-        const player: PokerPlayer | undefined = game.getPlayers().find(p => p.getPlayerId() === playerId);
+  async bet(
+    playerId: string,
+    gameId: string,
+    betAmount: number
+  ): Promise<{ success: boolean; message: string }> {
+    const { game } = this.getGameById(gameId);
+    if (!game) return { success: false, message: `Game #${gameId} not found` };
+    return game.handlePlayerMove(playerId, "bet", betAmount);
+  }
 
-        if(!player) {
-            console.error(`Player with the id ${playerId} was not found in game ${gameId}`);
-            console.log(game.getPlayers());
-            
-            return false;
-        }
-        player.setPressedFold(true);
-        game.emit("playerMove", { playerId });
-        return true;
+  async call(playerId: string, gameId: string): Promise<{ success: boolean; message: string }> {
+    const { game } = this.getGameById(gameId);
+    if (!game) return { success: false, message: `Game #${gameId} not found` };
+    return game.handlePlayerMove(playerId, "call");
+  }
+
+  async raise(
+    playerId: string,
+    gameId: string,
+    raiseAmount: number
+  ): Promise<{ success: boolean; message: string }> {
+    const { game } = this.getGameById(gameId);
+    if (!game) return { success: false, message: `Game #${gameId} not found` };
+    return game.handlePlayerMove(playerId, "raise", raiseAmount);
+  }
+
+  async addPlayer(
+    playerId: string,
+    username: string,
+    displayname: string,
+    balance: number,
+    _hasDealerChip: boolean,
+    _bet: number,
+    gameId: string
+  ): Promise<{ success: boolean; message: string }> {
+    const gameResult = this.getGameById(gameId);
+    if (!gameResult.game) {
+      return { success: false, message: gameResult.message };
     }
 
-    async check(playerId: string, gameId: string): Promise<boolean> {
-        // get the game and player objects
-        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
-        
-        if(!game) return false;
+    const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
+    gameResult.game.addPlayer(newPlayer);
 
-        const player: PokerPlayer | undefined = game.getPlayers().find(p => p.getPlayerId() === playerId);
-
-        if(!player) {
-            console.error(`Player with the id ${playerId} was not found in game ${gameId}`);
-            return false;
-        }
-        player.setPressedCheck(true);
-        game.emit("playerMove", { playerId });
-        return true;
+    if (gameResult.game.getPlayers().length === 1) {
+      gameResult.game.setDefaultDealerChip();
     }
 
-    async bet(playerId: string, gameId: string, betAmount: number): Promise<boolean> {
-        // get the game and player objects
-        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
-        
-        if(!game) return false;
+    return {
+      success: true,
+      message: `Successfully added player ${playerId} to game ${gameId}`,
+    };
+  }
 
-        const player: PokerPlayer | undefined = game.getPlayers().find(p => p.getPlayerId() === playerId);
+  async loadAllPokerGames(): Promise<void> {
+    try {
+      const connection: Database = await DB.createDBConnection();
+      const type = "POKER";
 
-        if(!player) {
-            console.error(`Player with the id ${playerId} was not found in game ${gameId}`);
-            return false;
-        }
-        /*
-        player.setPressedBet(true);
-        player.setBet(2.0);
-        */
-       // set desired bet for player
-       game.emit("playerMove", { playerId });
-        return true;
+      type GameRow = {
+        gameId: string;
+        type: string;
+      };
+
+      const result = connection
+        .prepare<[string], GameRow>("SELECT * FROM games WHERE type = ?")
+        .all(type);
+
+      if (!result) {
+        throw new Error("FAIL");
+      }
+
+      result.forEach((pokergameData) => {
+        const poker = new Poker(pokergameData.gameId);
+        PokerService.pokerGames.push(poker);
+      });
+    } catch (err) {
+      console.error(`Something happened while trying to get all games from the db: ${err}`);
+    }
+  }
+
+  getGameById(gameId: string): { game: Poker | null; message: string } {
+    const game: Poker | undefined = PokerService.pokerGames.find(
+      (g) => g.getGameId().toString() === gameId
+    );
+
+    if (!game) {
+      return { game: null, message: `Game with the id ${gameId} was not found` };
     }
 
-    /**
-     * Add a player to a game of poker.
-     * @param playerId 
-     * @param username 
-     * @param displayname 
-     * @param balance 
-     * @param hasDealerChip 
-     * @param bet 
-     * @param gameId 
-     */
-    async addPlayer(playerId: string, username: string, displayname: string, balance: number, hasDealerChip: boolean, bet: number, gameId: string): Promise<void> {
-        // get the game object
-        const game = PokerService.pokerGames.find(g => g.getGameId() === gameId);
-        if(!game) return;
-
-        const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
-        game.addPlayer(newPlayer);
-    }
-
-    async loadAllPokerGames(): Promise<void> {
-        console.log("Loading games...");
-        
-        try {
-            const connection: Database = await DB.createDBConnection();
-            const type = "POKER";
-
-            type GameRow = {
-                gameId: string;
-                type: string;
-            };
-
-            const result = connection.prepare<[string], GameRow>("SELECT * FROM games WHERE type = ?")
-                .all(type);
-        
-            // await connection.close();
-
-            if(!result) {
-                throw new Error("FAIL");
-            }
-
-            result.forEach(pokergameData => {
-                const poker = new Poker(pokergameData.gameId);
-                PokerService.pokerGames.push(poker);
-            });
-
-            return;
-        } catch(err) {
-            console.error(`Something happened while trying to get all games from the db: ${err}`);
-            return;
-        }
-    }
-
-    async getGameById(gameId: string): Promise<Poker | null> {
-        try {
-            const connection: Database = await DB.createDBConnection();
-            const type = "POKER";
-
-            type GameRow = {
-                gameId: string;
-                type: string;
-            };
-
-            const result = connection.prepare<[string, string], GameRow>("SELECT * FROM games WHERE gameId = ? AND type = ?")
-                .get(gameId, type);
-        
-            // await connection.close();
-
-            if(!result) {
-                console.error(`Game with the id ${gameId} was not found`);
-                return null;
-            }
-
-            const poker = new Poker(gameId);
-            return poker;
-        } catch(err) {
-            console.error(`Something happened while trying to get the game with id ${gameId}: ${err}`);
-            return null;
-        }
-    }
+    return { game, message: "Game found" };
+  }
 }

@@ -1,0 +1,118 @@
+.players-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .player-slot {
+      position: relative;
+      padding: 15px;
+      background: rgba(30, 30, 30, 0.8);
+      border: 2px solid #444;
+      border-radius: 10px;
+      text-align: center;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .player-slot.active {
+      border-color: #ffd700;
+      background: rgba(50, 40, 20, 0.9);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+
+    .player-slot.folded {
+      opacity: 0.5;
+      border-color: #888;
+    }
+
+    /* Heiligenschein Effekt */
+    .halo {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border: 3px solid transparent;
+      border-radius: 10px;
+      background: 
+        linear-gradient(rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 0.3)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: halo-glow 2s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes halo-glow {
+      0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.6),
+                    0 0 20px rgba(255, 215, 0, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+                    0 0 30px rgba(255, 215, 0, 0.5);
+      }
+    }
+
+    .player-avatar {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid #888;
+      position: relative;
+      z-index: 1;
+    }
+
+    .player-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .player-info {
+      position: relative;
+      z-index: 1;
+    }
+
+    .player-name {
+      font-weight: bold;
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-balance {
+      color: #4ade80;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .player-bet {
+      color: #ffd700;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .folded-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ef4444;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      z-index: 2;
+    }

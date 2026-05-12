@@ -31,14 +31,14 @@
             <div class="bet-block">
                 <div class="bet-label">Adjust Wager</div>
                 <div class="bet-ctrl">
-                    <button class="bet-btn" (click)="decreaseBet()" [disabled]="spinning">-</button>
+                    <button class="bet-btn" (click)="decreaseBet()" [disabled]="spinning && !autoSpin">-</button>
                     <div class="bet-val">{{ bet }}</div>
-                    <button class="bet-btn" (click)="increaseBet()" [disabled]="spinning">+</button>
+                    <button class="bet-btn" (click)="increaseBet()" [disabled]="spinning && !autoSpin">+</button>
                 </div>
             </div>
         </div>
 
-        <!-- CENTER REELS -->
+        <!-- CENTER: reels -->
         <div class="center">
             <div class="center-top">
                 <span class="ornament">-</span>
@@ -49,37 +49,38 @@
             <div class="reel-frame" [class.lit]="isWin">
                 <div class="win-line"></div>
                 <div class="reels">
+                    @for (r of reels; track r) {
                     <div class="reel" [class.winner]="isWin">
-                        <div class="strip" #strip></div>
+                        <div class="strip" #strip>
+                            <div class="sym placeholder"></div>
+                            <div class="sym placeholder"></div>
+                            <div class="sym placeholder"></div>
+                        </div>
                     </div>
-                    <div class="reel" [class.winner]="isWin">
-                        <div class="strip" #strip></div>
-                    </div>
-                    <div class="reel" [class.winner]="isWin">
-                        <div class="strip" #strip></div>
-                    </div>
+                    }
                 </div>
             </div>
 
             @if (isWin) {
-            <div class="win-msg">— Congratulations —</div>
+            <div class="win-msg">Congratulations</div>
             } @else {
             <div class="win-msg-placeholder"></div>
             }
         </div>
 
-        <!-- CENTER BOTTOM BUTTONS -->
+        <!-- BOTTOM: buttons -->
         <div class="bottom">
-            <button class="spin-btn" (click)="spin()" [disabled]="spinning">
-                Spin
-            </button>
             <div class="btn-row">
-                <button class="aux-btn" (click)="setMaxBet()" [disabled]="spinning">Maximum Wager</button>
-                <button class="aux-btn" (click)="resetCredits()" [disabled]="spinning">Reset Credits</button>
+                <button class="aux-btn" (click)="setMaxBet()" [disabled]="spinning">Max Wager</button>
+                <button class="spin-btn" (click)="spin()" [disabled]="spinning || autoSpin">Spin</button>
+                <button class="auto-btn" (click)="toggleAutoSpin()" [class.active]="autoSpin">
+                    @if (autoSpin) { Stop } @else { Auto }
+                </button>
+                <button class="aux-btn" (click)="resetCredits()">Reset</button>
             </div>
         </div>
 
-        <!-- RIGHT SIDEBAR: PAYTABLE -->
+        <!-- RIGHT SIDEBAR: paytable -->
         <div class="right">
             <div class="pt-eyebrow">Payout Schedule</div>
             <div class="pt-list">

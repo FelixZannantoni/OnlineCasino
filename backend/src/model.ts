@@ -5,6 +5,7 @@ export type User = {
     username: string,
     displayname: string,
     email: string,
+    balance: number,
     streakCount: number,
     passwordHash: string
 }

@@ -49,22 +49,21 @@ export class Deck {
     }
 
     public dealCard(cardDeck: Card[], id: string): Card {
-        let b: boolean = true;
-        let i = 0;
-        do {
-            if (cardDeck[i].owner == DEALER_ID) {
-                b = false;
-            }
-            else {
-                i++;
-                if (i < cardDeck.length) {
-                    throw new Error(`Error: To few Cards. All Cards are already owned by Players`);
-                    b = false;
-                }
-            }
-        } while (b);
-        cardDeck[i].owner = id;
-        return cardDeck[i];
+        const cardIdx = cardDeck.findIndex(c => c.owner === DEALER_ID);
+
+        if(cardIdx === -1) {
+            throw new Error('No cards left in deck to deal.');
+        }
+
+        const card = cardDeck[cardIdx];
+
+        if(!card) {
+            throw new Error('Card is undefined!');
+        }
+
+        card.owner = id;
+
+        return card;
     }
 
     public getDeck(): Card[] {
