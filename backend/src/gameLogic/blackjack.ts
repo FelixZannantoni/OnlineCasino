@@ -116,7 +116,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     private makeBets() {
         for (let i: number = 0; i < this.players.length; i++) {
             const bet: number = this.players[i].getDesiredBet();
-            this.players[i].setBet(bet);
+            this.players[i].makeIncreasedBet(bet);
             if (bet == 0) {
                 //TODO player darf runde nicht mitspielen
             }
@@ -125,7 +125,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     private resetBets() {
         for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].setBet(0);
+            this.players[i].makeIncreasedBet(0);
         }
     }
 

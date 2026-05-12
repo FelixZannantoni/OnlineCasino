@@ -14,7 +14,7 @@ const blackjackCardValue: Map<CardName, number> = new Map([
     [CardName.jack, 10],
     [CardName.queen, 10],
     [CardName.king, 10],
-    [CardName.ace, 11]//oder 1
+    [CardName.ace, 11]//TODO oder 1
 ]);
 
 export class BlackjackDeck extends Deck {
