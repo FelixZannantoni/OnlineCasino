@@ -6,6 +6,7 @@ export interface SpinResult {
   slots: number[][];
   win: number;
   balance: number;
+  winningLines: number[];
 }
 
 @Injectable({

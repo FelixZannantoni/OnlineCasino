@@ -12,7 +12,7 @@ export class SlotmachineService {
         return gameId;
     }
 
-    public async spin(gameId: string, bet: number): Promise<{ slots: Symbols[][], win: number, balance: number } | null> {
+    public async spin(gameId: string, bet: number): Promise<{ slots: Symbols[][], win: number, balance: number, winningLines: number[] } | null> {
         const game = SlotmachineService.games.get(gameId);
         if (!game) return null;
 
@@ -27,7 +27,8 @@ export class SlotmachineService {
             return {
                 slots: game.getSlots(),
                 win: game.getLastWin(),
-                balance: player.getBalance()
+                balance: player.getBalance(),
+                winningLines: game.getWinningLines()
             };
         } catch (e) {
             console.error("Spin failed:", e);
