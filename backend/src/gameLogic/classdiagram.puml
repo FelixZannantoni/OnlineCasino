@@ -39,7 +39,23 @@ enum CardVisibility {
   all = "all"
 }
 
+enum Symbols {
+  ans = 1
+  zwa = 2
+  drei = 3
+  vier = 4
+  fünf = 5
+  sex = 6
+  siebn = 7
+  acht = 8
+  neun = 9
+  zehn = 10
+}
+
 ' Classes
+class EventEmitter {
+}
+
 class Game<T extends Player = Player> {
   #players: T[]
   -gameId: string
@@ -47,6 +63,28 @@ class Game<T extends Player = Player> {
   +getGameId(): string
   +addPlayer(player: T): void
   +getPlayers(): T[]
+}
+
+class SinglePlayerGame<T extends Player = Player> {
+  -gameId: string
+  #player: T
+  +constructor(gameId: string, player: T)
+  +getGameId(): string
+  +getPlayer(): T | null
+}
+
+class Slotmachine {
+  -slots: Symbols[][]
+  -lastWin: number = 0
+  +constructor(gameId: string, player: SlotmachinePlayer)
+  +getSlots(): Symbols[][]
+  +getLastWin(): number
+  +startGame(): void
+  +nextRound(): void
+  +playRound(): void
+  -spin(): void
+  -checkSpin(): void
+  +handleMove(): void
 }
 
 class CardGame<T extends CardGamePlayer = CardGamePlayer> {
@@ -122,20 +160,37 @@ class Player {
   +getBet(): number
   +getDesiredBet(): number
   +setDesiredBet(desiredBet: number): boolean
-  +setBet(bet: number): void
+  +makeBet(): void
+  +makeNewBet(bet: number): void
+  +makeIncreasedBet(bet: number): void
   +winMoney(win: number): void
   {static} +xNextPlayer(players: Player[], i: number, x: number): number
   {static} +nextPlayer(players: Player[], i: number): number
   +isOutOfMoney(): boolean
 }
 
+class SlotmachinePlayer {
+  -pressedSpin: boolean
+  -pressedAutoSpin: boolean
+  -currentBet: number
+  +constructor(playerId: string, username: string, \n  displayname: string, balance: number)
+  +getPressedSpin(): boolean
+  +getPressedAutoSpin(): boolean
+  +userPressedSpin(): void
+  +userPressedAutoSpin(): void
+  -resetActions(): void
+}
+
 class CardGamePlayer {
   #cards: Card[]
   -hasDealerChip: boolean
+  #madeMove: boolean
   +constructor(playerId: string, username: string, \n  displayname: string, balance: number)
   +getCards(): Card[]
   +getDealerChip(): boolean
+  +getMadeMove(): boolean
   +setDealerChip(hasDealerChip: boolean): void
+  +resetMadeMove(): void
   +addCard(card: Card): void
   {static} +playerWithDealerChip(players: CardGamePlayer[]): number
   +clearHand(): void
@@ -162,6 +217,7 @@ class PokerPlayer {
   +setPressedCall(pressedCall: boolean): void
   +setPressedRaise(pressedRaise: boolean): void
   -resetActions(): void
+  +resetMadeMove(): void
   +checkHand(cards: Card[]): void
   -hasRoyalFlush(cards: Card[]): boolean
   -hasStraightFlush(cards: Card[]): boolean
@@ -214,17 +270,21 @@ class PokerDeck {
 }
 
 ' Inheritance
+EventEmitter <|-- Game
 Game <|-- CardGame
 CardGame <|-- Poker
 CardGame <|-- Blackjack
+SinglePlayerGame <|-- Slotmachine
 Deck <|-- BlackjackDeck
 Deck <|-- PokerDeck
 Player <|-- CardGamePlayer
+Player <|-- SlotmachinePlayer
 CardGamePlayer <|-- PokerPlayer
 CardGamePlayer <|-- BlackjackPlayer
 
 ' Associations
 Game o-- "many" Player : contains
+SinglePlayerGame o-- "1" Player : contains
 Poker *-- "many" Card : pokerDeskCards
 CardGamePlayer *-- "many" Card : cards
 Deck *-- "many" Card : deck
@@ -232,6 +292,7 @@ Poker o-- "1" PokerDeck : uses
 Blackjack o-- "1" BlackjackDeck : uses
 Blackjack *-- "1" BlackjackBot : blackJackBot
 BlackjackBot *-- "many" Card : cards
+Slotmachine *-- "many" Symbols : slots
 
 @enduml
 
