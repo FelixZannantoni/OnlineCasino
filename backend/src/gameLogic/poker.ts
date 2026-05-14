@@ -170,14 +170,12 @@ export class Poker extends CardGame<PokerPlayer> {
         this.hasActedThisRound.clear();
         this.players.forEach(p => p.makeNewBet(0));
 
-        // Nach dem Flop beginnt der Spieler links vom Dealer
+        // Nach dem Flop beginnt der erste aktive Spieler links vom Dealer
         const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
-        this.currentPlayerIndex = Player.nextPlayer(this.players, dealerIdx);
+        this.currentPlayerIndex = dealerIdx;
+        this.moveToNextActivePlayer(); // Moves to the first active player after dealer
 
-        // Falls der Spieler gefaltet hat, zum nächsten
-        if (this.players[this.currentPlayerIndex].getPressedFold()) {
-            this.moveToNextActivePlayer();
-        }
+        this.emit("gameState", this.getGameState());
     }
 
     private handleShowdown() {
@@ -191,13 +189,10 @@ export class Poker extends CardGame<PokerPlayer> {
                 const comboValue = p.getCardCombinationValue();
                 const tieBreaker = p.getValueOfCardCombination();
 
-                // Wir kombinieren comboValue und tieBreaker für den Vergleich
-                // In der PokerPlayer Klasse ist comboValue die Kategorie (z.B. PAIR_VALUE)
                 if (comboValue > highestValue) {
                     highestValue = comboValue;
                     winners = [p];
                 } else if (comboValue === highestValue) {
-                    // Bei gleicher Kategorie entscheidet der Tie-Breaker
                     const currentWinnerTie = winners[0].getValueOfCardCombination();
                     if (tieBreaker > currentWinnerTie) {
                         winners = [p];
@@ -241,12 +236,17 @@ export class Poker extends CardGame<PokerPlayer> {
                 break;
 
             case "call":
-                if (player.getBet() < this.currentBet) {
-                    const diff = this.currentBet - player.getBet();
-                    player.makeIncreasedBet(this.currentBet);
-                    this.pot += diff;
-                } else {
-                    return { success: false, message: "Nothing to call" };
+                const diff = this.currentBet - player.getBet();
+                if (diff > 0) {
+                    try {
+                        player.makeIncreasedBet(this.currentBet);
+                        this.pot += diff;
+                    } catch (e) {
+                        // All-in call
+                        const remaining = player.getBalance();
+                        player.makeIncreasedBet(player.getBet() + remaining);
+                        this.pot += remaining;
+                    }
                 }
                 break;
 
@@ -257,17 +257,17 @@ export class Poker extends CardGame<PokerPlayer> {
                     return { success: false, message: "Invalid amount" };
                 }
 
-                // In der externen Logik: currentBet += bet; pot += bet;
-                // Wir folgen hier der Logik: Erhöhung des aktuellen Gebots
                 const totalNewBet = this.currentBet + betAmount;
                 const additionalContribution = totalNewBet - player.getBet();
 
-                player.makeIncreasedBet(totalNewBet);
-                this.currentBet = totalNewBet;
-                this.pot += additionalContribution;
-
-                // Alle anderen müssen erneut reagieren
-                this.hasActedThisRound.clear();
+                try {
+                    player.makeIncreasedBet(totalNewBet);
+                    this.currentBet = totalNewBet;
+                    this.pot += additionalContribution;
+                    this.hasActedThisRound.clear();
+                } catch (e) {
+                    return { success: false, message: "Not enough money" };
+                }
                 break;
 
             default:
@@ -275,10 +275,8 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.hasActedThisRound.add(playerId);
-        // Balance in der db updaten
         await userService.updateUserBalance(playerId, player.getBalance());
 
-        // Überprüfen, ob nur noch ein Spieler übrig ist
         const activePlayers = this.players.filter(p => !p.getPressedFold());
         if (activePlayers.length === 1) {
             activePlayers[0].winMoney(this.pot);
@@ -287,10 +285,10 @@ export class Poker extends CardGame<PokerPlayer> {
             return { success: true, message: "Only one player left" };
         }
 
-        this.moveToNextActivePlayer();
-
         if (this.isRoundFinished()) {
             this.nextPhase();
+        } else {
+            this.moveToNextActivePlayer();
         }
 
         this.emit("gameState", this.getGameState());
@@ -299,18 +297,25 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private moveToNextActivePlayer() {
         let tries = 0;
+        const totalPlayers = this.players.length;
         do {
-            this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+            this.currentPlayerIndex = (this.currentPlayerIndex + 1) % totalPlayers;
             tries++;
-        } while (this.players[this.currentPlayerIndex].getPressedFold() && tries < this.players.length);
+            // Skip players who folded OR are all-in (unless it's the start of the round and they need to check/call)
+            // In a real poker game, all-in players are skipped for the rest of the hand.
+            const p = this.players[this.currentPlayerIndex];
+            if (!p.getPressedFold() && p.getBalance() > 0) return;
+        } while (tries < totalPlayers);
     }
 
     private isRoundFinished(): boolean {
         const activePlayers = this.players.filter(p => !p.getPressedFold());
+        const needsToAct = activePlayers.filter(p => p.getBalance() > 0);
 
-        // Jeder aktive Spieler muss reagiert haben und das aktuelle Gebot halten
-        const allActed = activePlayers.every(p => this.hasActedThisRound.has(p.getPlayerId()));
-        const allMatched = activePlayers.every(p => p.getBet() === this.currentBet);
+        if (needsToAct.length === 0) return true;
+
+        const allActed = needsToAct.every(p => this.hasActedThisRound.has(p.getPlayerId()));
+        const allMatched = needsToAct.every(p => p.getBet() === this.currentBet);
 
         return allActed && allMatched;
     }
