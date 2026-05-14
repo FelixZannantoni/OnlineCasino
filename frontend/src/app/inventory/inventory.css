@@ -1,5 +1,3 @@
-/* Inventory Component Styles */
-
 :host {
     display: block;
     background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
@@ -13,7 +11,7 @@
     padding-bottom: 6rem;
 }
 
-/* ── Top Bar ── */
+/* Top Bar  */
 .inventory-top-bar {
     display: flex;
     justify-content: space-between;
@@ -81,7 +79,7 @@
     color: #2ecc71;
 }
 
-/* ── Section Heading ── */
+/* Section Heading */
 .section-heading {
     display: flex;
     align-items: center;
@@ -101,7 +99,7 @@
     height: 1.3rem;
 }
 
-/* ── Loadout Preview ── */
+/* Loadout Preview */
 .loadout-section {
     margin-bottom: 2rem;
 }
@@ -196,7 +194,7 @@
     font-style: italic;
 }
 
-/* ── Rarity Pill ── */
+/* Rarity Pill */
 .rarity-pill {
     display: inline-block;
     padding: 0.15rem 0.6rem;
@@ -232,7 +230,7 @@
     border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
-/* ── Filter Tabs ── */
+/* Filter Tabs */
 .filter-tabs {
     display: flex;
     gap: 0.75rem;
@@ -297,14 +295,14 @@
     color: var(--text-gold-dark);
 }
 
-/* ── Items Grid ── */
+/* Items Grid */
 .items-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.25rem;
 }
 
-/* ── Cosmetic Card ── */
+/* Cosmetic Card  */
 .cosmetic-card {
     position: relative;
     background: linear-gradient(145deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.9) 100%);
@@ -363,7 +361,7 @@
     height: 0.85rem;
 }
 
-/* ── Card Preview Area ── */
+/* Card Preview Area */
 .card-preview {
     position: relative;
     height: 150px;
@@ -529,7 +527,7 @@
 .felt-line.top-line { top: 22%; }
 .felt-line.bottom-line { bottom: 22%; }
 
-/* ── Card Info ── */
+/* Card Info */
 .card-info {
     padding: 1rem 1.1rem 1.1rem;
     display: flex;
@@ -559,7 +557,7 @@
     line-height: 1.4;
 }
 
-/* ── Equip Button ── */
+/* Equip Button */
 .equip-btn {
     display: flex;
     align-items: center;
@@ -614,7 +612,7 @@
     transform: none;
 }
 
-/* ── Responsive ── */
+/* Responsive  */
 @media (max-width: 900px) {
     .loadout-grid {
         grid-template-columns: repeat(2, 1fr);

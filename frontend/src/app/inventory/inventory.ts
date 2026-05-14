@@ -16,7 +16,7 @@ export interface OwnedCosmetic {
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [MatIconModule, NgClass],
+  imports: [MatIconModule],
   templateUrl: './inventory.html',
   styleUrls: ['./inventory.css']
 })
