@@ -10,6 +10,11 @@ export class BlackjackBot {
         this.handValue = 0;
     }
 
+    public getCards() {
+        return this.cards;
+    }
+
+
     public getHandValue() {
         this.checkHandValue();
         return this.handValue;
@@ -26,10 +31,20 @@ export class BlackjackBot {
         }
     }
 
+
     private checkHandValue() {
         this.handValue = 0;
+        let aceCount = 0;
         for (let i: number = 0; i < this.cards.length; i++) {
             this.handValue += this.cards[i].value;
+            if (this.cards[i].name === "ace") {
+                aceCount++;
+            }
+        }
+
+        while (this.handValue > 21 && aceCount > 0) {
+            this.handValue -= 10;
+            aceCount--;
         }
     }
 
@@ -48,5 +63,10 @@ export class BlackjackBot {
             }
         }
         return false;
+    }
+
+    public clearHand(): void {
+        this.cards = [];
+        this.handValue = 0;
     }
 }

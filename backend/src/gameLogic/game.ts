@@ -27,4 +27,8 @@ export class Game<T extends Player = Player> extends EventEmitter {
     public getPlayers(): T[] {
         return this.players;
     }
+
+    public removePlayer(playerId: string): void {
+        this.players = this.players.filter(p => p.getPlayerId() !== playerId);
+    }
 }

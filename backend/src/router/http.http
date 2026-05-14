@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:3000
+
+
+
+
+###
+POST {{baseUrl}}/poker/addPlayer
+Content-Type: application/json
+
+{
+  "playerId": "1",
+  "username": "TestUser",
+  "displayname": "TestUser",
+  "balance": 1000,
+  "hasDealerChip": false,
+  "bet": 0,
+  "gameId": "1"
+}
+
+###
+PUT {{baseUrl}}/poker/fold
+Content-Type: application/json
+
+{
+  "playerId": "1",
+  "gameId": "1"
+}

@@ -1,4 +1,5 @@
 import { Card } from "../model";
+import { CardVisibility } from "./deck";
 import { CardGamePlayer } from "./cardGamePlayer";
 
 export class BlackjackPlayer extends CardGamePlayer {
@@ -32,31 +33,49 @@ export class BlackjackPlayer extends CardGamePlayer {
         return this.pressedDouble;
     }
 
-    public setPressedHit(pressedHit: boolean) {
-        if (pressedHit) this.resetActions();
-        this.pressedHit = pressedHit;
+    public userPressedHit() {
+        this.resetActions();
+        this.pressedHit = true;
+        this.madeMove = true;
     }
 
-    public setPressedStand(pressedStand: boolean) {
-        if (pressedStand) this.resetActions();
-        this.pressedStand = pressedStand;
+    public userPressedStand() {
+        this.resetActions();
+        this.pressedStand = true;
+        this.madeMove = true;
     }
 
-    private setPressedDouble(pressedDouble: boolean) {
-        if (pressedDouble) this.resetActions();
-        this.pressedDouble = pressedDouble;
+    public userPressedDouble() {
+        this.resetActions();
+        this.pressedDouble = true;
+        this.madeMove = true;
+    }
+
+    public override addCard(card: Card): void {
+        this.cards.push(card);
+        card.visibility = CardVisibility.all;
     }
 
     private resetActions(): void {
         this.pressedHit = false;
         this.pressedStand = false;
         this.pressedDouble = false;
+        this.madeMove = false;
     }
 
     public checkHandValue() {
         this.handValue = 0;
+        let aceCount = 0;
         for (let i: number = 0; i < this.cards.length; i++) {
             this.handValue += this.cards[i].value;
+            if (this.cards[i].name === "ace") {
+                aceCount++;
+            }
+        }
+
+        while (this.handValue > 21 && aceCount > 0) {
+            this.handValue -= 10;
+            aceCount--;
         }
     }
 }

@@ -2,47 +2,48 @@ import { SinglePlayerGame } from "./singlePlayerGame";
 import { SlotmachinePlayer } from "./slotmachinePlayer";
 
 export enum Symbols {
-    "ans" = 1,
-    "zwa" = 2,
-    "drei" = 3,
-    "vier" = 4,
-    "fünf" = 5,
-    "sex" = 6,
-    "siebn" = 7,
-    "acht" = 8,
-    "neun" = 9,
-    "zehn" = 10
+    Bar = 1,
+    Cherry = 2,
+    DoubleBar = 3,
+    Bell = 4,
+    Horseshoe = 5,
+    Star = 6,
+    Clover = 7,
+    Wild = 8,
+    Diamond = 9,
+    Seven = 10
 }
 
 export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
     private slots: Symbols[][]; // [row][col] -> 3 rows, 5 columns
     private lastWin: number = 0;
+    private winningLines: number[] = [];
 
     private static readonly PAYOUTS: Record<number, number[]> = {
-        [Symbols.ans]: [0, 0, 2, 5, 10],
-        [Symbols.zwa]: [0, 0, 2, 5, 10],
-        [Symbols.drei]: [0, 0, 3, 10, 20],
-        [Symbols.vier]: [0, 0, 3, 10, 20],
-        [Symbols.fünf]: [0, 0, 5, 15, 40],
-        [Symbols.sex]: [0, 0, 5, 15, 40],
-        [Symbols.siebn]: [0, 0, 10, 30, 100],
-        [Symbols.acht]: [0, 0, 10, 30, 100],
-        [Symbols.neun]: [0, 0, 20, 100, 500],
-        [Symbols.zehn]: [0, 0, 50, 200, 1000]
+        [Symbols.Bar]: [0, 0, 2, 5, 10],
+        [Symbols.Cherry]: [0, 0, 2, 5, 10],
+        [Symbols.DoubleBar]: [0, 0, 3, 10, 20],
+        [Symbols.Bell]: [0, 0, 3, 10, 20],
+        [Symbols.Horseshoe]: [0, 0, 5, 15, 40],
+        [Symbols.Star]: [0, 0, 5, 15, 40],
+        [Symbols.Clover]: [0, 0, 10, 30, 100],
+        [Symbols.Wild]: [0, 0, 10, 30, 100],
+        [Symbols.Diamond]: [0, 0, 20, 100, 500],
+        [Symbols.Seven]: [0, 0, 50, 200, 1000]
     };
 
-    private static readonly LINES = [
-        [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]], // Horizontal Middle
-        [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], // Horizontal Top
-        [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]], // Horizontal Bottom
-        [[0, 0], [1, 1], [2, 2], [1, 3], [0, 4]], // V-Shape (Down-Up)
-        [[2, 0], [1, 1], [0, 2], [1, 3], [2, 4]], // V-Shape (Up-Down)
-        [[1, 0], [2, 1], [2, 2], [2, 3], [1, 4]], // Middle-Bottom-Middle
-        [[1, 0], [0, 1], [0, 2], [0, 3], [1, 4]], // Middle-Top-Middle
-        [[2, 0], [2, 1], [1, 2], [0, 3], [0, 4]], // Bottom-Middle-Top Zigzag
-        [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]], // Top-Middle-Bottom Zigzag
-        [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape
+    public static readonly LINES = [
+        [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]], // Horizontal Middle (Line 0)
+        [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], // Horizontal Top (Line 1)
+        [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]], // Horizontal Bottom (Line 2)
+        [[0, 0], [1, 1], [2, 2], [1, 3], [0, 4]], // V-Shape (Down-Up) (Line 3)
+        [[2, 0], [1, 1], [0, 2], [1, 3], [2, 4]], // V-Shape (Up-Down) (Line 4)
+        [[1, 0], [2, 1], [2, 2], [2, 3], [1, 4]], // Middle-Bottom-Middle (Line 5)
+        [[1, 0], [0, 1], [0, 2], [0, 3], [1, 4]], // Middle-Top-Middle (Line 6)
+        [[2, 0], [2, 1], [1, 2], [0, 3], [0, 4]], // Bottom-Middle-Top Zigzag (Line 7)
+        [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]], // Top-Middle-Bottom Zigzag (Line 8)
+        [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape (Line 9)
     ];
 
     constructor(gameId: string, player: SlotmachinePlayer) {
@@ -58,6 +59,10 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
     public getLastWin(): number {
         return this.lastWin;
+    }
+
+    public getWinningLines(): number[] {
+        return this.winningLines;
     }
 
     public startGame() {
@@ -102,8 +107,10 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
     private checkSpin() {
         let totalWinMultiplier = 0;
+        this.winningLines = [];
 
-        for (const line of Slotmachine.LINES) {
+        for (let lineIdx = 0; lineIdx < Slotmachine.LINES.length; lineIdx++) {
+            const line = Slotmachine.LINES[lineIdx];
             let matchingCount = 1;
             const firstSymbol = this.slots[line[0][0]][line[0][1]];
 
@@ -119,6 +126,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
             if (matchingCount >= 3) {
                 const payoutArray = Slotmachine.PAYOUTS[firstSymbol];
                 totalWinMultiplier += payoutArray[matchingCount - 1];
+                this.winningLines.push(lineIdx);
             }
         }
 

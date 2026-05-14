@@ -1,7 +1,8 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { SlotmachineService, SpinResult } from './slotmachine.service';
 
-// SVG symbol functions
+// SVG symbol definitions
 
 function svgSeven(s: number): string {
   return `<svg width="${s}" height="${s}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -79,24 +80,52 @@ function svgBar(s: number): string {
   </svg>`;
 }
 
+function svgHorseshoe(s: number): string {
+  return `<svg width="${s}" height="${s}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 52 L16 28 A16 16 0 0 1 48 28 L48 52" fill="none" stroke="#c8a000" stroke-width="8" stroke-linecap="round"/>
+    <line x1="10" y1="52" x2="22" y2="52" stroke="#c8a000" stroke-width="6" stroke-linecap="round"/>
+    <line x1="42" y1="52" x2="54" y2="52" stroke="#c8a000" stroke-width="6" stroke-linecap="round"/>
+    <path d="M16 52 L16 28 A16 16 0 0 1 48 28 L48 52" fill="none" stroke="#ffd700" stroke-width="4" stroke-linecap="round"/>
+    <line x1="10" y1="52" x2="22" y2="52" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="42" y1="52" x2="54" y2="52" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function svgClover(s: number): string {
+  return `<svg width="${s}" height="${s}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="20" r="11" fill="#22c55e"/>
+    <circle cx="20" cy="34" r="11" fill="#22c55e"/>
+    <circle cx="44" cy="34" r="11" fill="#22c55e"/>
+    <rect x="28" y="36" width="8" height="16" rx="2" fill="#22c55e"/>
+    <ellipse cx="32" cy="50" rx="8" ry="3" fill="#16a34a"/>
+    <circle cx="32" cy="20" r="6" fill="#16a34a" opacity="0.3"/>
+    <circle cx="20" cy="34" r="6" fill="#16a34a" opacity="0.3"/>
+    <circle cx="44" cy="34" r="6" fill="#16a34a" opacity="0.3"/>
+  </svg>`;
+}
+
 export interface SlotSymbol {
+  id: number;
   name: string;
   mult: number;
-  weight: number;
   svgFn: (size: number) => string;
   svgHtml: SafeHtml;
 }
 
-const SYMBOL_DEFS = [
-  { name: 'Seven', svgFn: svgSeven, mult: 50, weight: 2 },
-  { name: 'Diamond', svgFn: svgDiamond, mult: 30, weight: 4 },
-  { name: 'Wild', svgFn: svgWild, mult: 20, weight: 5 },
-  { name: 'Star', svgFn: svgStar, mult: 15, weight: 7 },
-  { name: 'Bell', svgFn: svgBell, mult: 10, weight: 10 },
-  { name: 'Double Bar', svgFn: svgDoubleBar, mult: 7, weight: 12 },
-  { name: 'Cherry', svgFn: svgCherry, mult: 5, weight: 14 },
-  { name: 'Bar', svgFn: svgBar, mult: 3, weight: 18 },
-];
+const SYMBOL_DEFS: Record<number, any> = {
+  1: { name: 'Bar', svgFn: svgBar, mult: 10 },
+  2: { name: 'Cherry', svgFn: svgCherry, mult: 10 },
+  3: { name: 'Dbl Bar', svgFn: svgDoubleBar, mult: 20 },
+  4: { name: 'Bell', svgFn: svgBell, mult: 20 },
+  5: { name: 'Horseshoe', svgFn: svgHorseshoe, mult: 40 },
+  6: { name: 'Star', svgFn: svgStar, mult: 40 },
+  7: { name: 'Clover', svgFn: svgClover, mult: 100 },
+  8: { name: 'Wild', svgFn: svgWild, mult: 100 },
+  9: { name: 'Diamond', svgFn: svgDiamond, mult: 500 },
+  10: { name: 'Seven', svgFn: svgSeven, mult: 1000 },
+};
+
+const REEL_COUNT = 5;
 
 @Component({
   selector: 'app-slotmachine',
@@ -105,64 +134,122 @@ const SYMBOL_DEFS = [
   templateUrl: './slotmachine.html',
   styleUrl: './slotmachine.css',
 })
-export class Slotmachine implements AfterViewInit {
+export class Slotmachine implements AfterViewInit, OnDestroy {
 
-  // QueryList picks up all three #strip elements from the template
   @ViewChildren('strip') stripRefs!: QueryList<ElementRef<HTMLElement>>;
 
-  // UI state — wire to a service later as needed
-  credits = 1_000;
+  credits = 1000;
   bet = 10;
   spins = 0;
   isWin = false;
+  winAmount = 0;
   spinning = false;
+  autoSpin = false;
+  initializing = true;
 
+  readonly reels = Array.from({ length: REEL_COUNT }, (_, i) => i);
   readonly symbols: SlotSymbol[];
   readonly paytableSymbols: SlotSymbol[];
 
-  private readonly STRIP_LEN = 28;
-  private readonly SYM_H = 150; // must stay in sync with CSS .sym { height }
+  private readonly STRIP_LEN = 30;
+  private readonly SYM_H = 120; 
   private readonly BET_STEPS = [10, 25, 50, 100, 250, 500];
 
   private strips: HTMLElement[] = [];
+  private autoSpinTimer: any = null;
+  private gameId: string | null = null;
 
-  constructor(private sanitizer: DomSanitizer) {
-    this.symbols = SYMBOL_DEFS.map(d => ({
+  constructor(private sanitizer: DomSanitizer, private smService: SlotmachineService, private cdr: ChangeDetectorRef) {
+    this.symbols = Object.entries(SYMBOL_DEFS).map(([id, d]) => ({
+      id: Number(id),
       ...d,
       svgHtml: this.sanitizer.bypassSecurityTrustHtml(d.svgFn(18)),
     }));
     this.paytableSymbols = [...this.symbols].sort((a, b) => b.mult - a.mult);
   }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     this.strips = this.stripRefs.map(r => r.nativeElement);
     this.strips.forEach(el => this.buildStrip(el));
+    
+    try {
+      this.gameId = await this.smService.createGame("user-1", "testuser", "Test User", this.credits);
+      this.initializing = false;
+      this.cdr.detectChanges();
+    } catch (e) {
+      console.error("Failed to create game:", e);
+      // Even if it fails, allow the UI to stop showing "initializing" state
+      this.initializing = false;
+      this.cdr.detectChanges();
+    }
   }
 
-  // Spin: rolls random symbols on each reel with a staggered scroll animation
+  ngOnDestroy(): void {
+    this.stopAutoSpin();
+  }
+
+  get canSpin(): boolean {
+    return !this.spinning && !this.initializing && !!this.gameId;
+  }
+
   async spin(): Promise<void> {
-    if (this.spinning) return;
+    if (!this.canSpin || !this.gameId) return;
 
     this.spinning = true;
     this.isWin = false;
+    this.winAmount = 0;
     this.spins++;
 
-    const results = [
-      this.randomSymbolIndex(),
-      this.randomSymbolIndex(),
-      this.randomSymbolIndex(),
-    ];
+    try {
+      const result = await this.smService.spin(this.gameId, this.bet);
+      
+      if (!result) {
+        throw new Error("Spin result was null");
+      }
 
-    await Promise.all([
-      this.animateReel(0, results[0], 0),
-      this.animateReel(1, results[1], 380),
-      this.animateReel(2, results[2], 760),
-    ]);
+      const reelResults = this.reels.map(col => [
+        result.slots[0][col],
+        result.slots[1][col],
+        result.slots[2][col]
+      ]);
 
-    await this.wait(200);
+      await Promise.all(
+        this.reels.map((_, i) => this.animateReel(i, reelResults[i], i * 120))
+      );
 
-    this.isWin = results[0] === results[1] && results[1] === results[2];
-    this.spinning = false;
+      await this.wait(150);
+
+      this.isWin = result.win > 0;
+      this.winAmount = result.win;
+      this.credits = result.balance;
+      
+    } catch (e) {
+      console.error("Spin failed:", e);
+      this.stopAutoSpin();
+    } finally {
+      this.spinning = false;
+      if (this.autoSpin) {
+        this.autoSpinTimer = setTimeout(() => this.spin(), 800);
+      }
+      this.cdr.detectChanges();
+    }
+  }
+
+  toggleAutoSpin(): void {
+    this.autoSpin = !this.autoSpin;
+    if (this.autoSpin && this.canSpin) {
+      this.spin();
+    } else if (!this.autoSpin) {
+      this.stopAutoSpin();
+    }
+  }
+
+  private stopAutoSpin(): void {
+    if (this.autoSpinTimer) {
+      clearTimeout(this.autoSpinTimer);
+      this.autoSpinTimer = null;
+    }
+    this.autoSpin = false;
   }
 
   increaseBet(): void {
@@ -180,68 +267,79 @@ export class Slotmachine implements AfterViewInit {
   }
 
   resetCredits(): void {
-    this.credits = 1_000;
+    this.stopAutoSpin();
+    this.credits = 1000;
     this.spins = 0;
     this.isWin = false;
+    this.winAmount = 0;
   }
 
-  // Weighted random: heavier weight = more frequent
-  private randomSymbolIndex(): number {
-    const total = this.symbols.reduce((sum, s) => sum + s.weight, 0);
-    let r = Math.random() * total;
-    for (let i = 0; i < this.symbols.length; i++) {
-      r -= this.symbols[i].weight;
-      if (r <= 0) return i;
-    }
-    return this.symbols.length - 1;
-  }
-
-  // Fills a strip with STRIP_LEN random symbol nodes, centered in view
   private buildStrip(el: HTMLElement): void {
     el.innerHTML = '';
     for (let i = 0; i < this.STRIP_LEN; i++) {
-      el.appendChild(this.makeSymNode(this.randomSymbolIndex()));
+      el.appendChild(this.makeSymNode(Math.floor(Math.random() * 10) + 1));
     }
-    const mid = Math.floor(this.STRIP_LEN / 2);
-    el.style.transform = `translateY(${-mid * this.SYM_H}px)`;
+    this.snapToCenter(el, 2);
   }
 
-  private makeSymNode(symIdx: number): HTMLElement {
+  private makeSymNode(symId: number): HTMLElement {
     const div = document.createElement('div');
     div.className = 'sym';
-    div.innerHTML = this.symbols[symIdx].svgFn(68);
+    const def = SYMBOL_DEFS[symId];
+    div.innerHTML = def ? def.svgFn(80) : '';
     return div;
   }
 
-  // Snaps the center row of a strip to the given symbol
-  private setCenterSymbol(reelIdx: number, symIdx: number): void {
-    const el = this.strips[reelIdx];
-    const mid = Math.floor(this.STRIP_LEN / 2);
-    (el.children[mid] as HTMLElement).innerHTML = this.symbols[symIdx].svgFn(68);
+  private snapToCenter(el: HTMLElement, rowIdx: number): void {
+    const offset = -(rowIdx - 1) * this.SYM_H;
     el.style.transition = 'none';
-    el.style.transform = `translateY(${-mid * this.SYM_H}px)`;
+    el.style.transform = `translateY(${offset}px)`;
   }
 
-  // Scrolls a reel for a number of frames then snaps to the final symbol
-  private animateReel(reelIdx: number, finalSym: number, delayMs: number): Promise<void> {
+  private setReelSymbols(reelIdx: number, symIds: number[]): void {
+    const el = this.strips[reelIdx];
+    if (!el || !symIds || symIds.length < 3) return;
+
+    try {
+      // Index 1, 2, 3 are the visible ones when translated by -150px
+      if (el.children[1]) (el.children[1] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[0]]?.svgFn(80) || '';
+      if (el.children[2]) (el.children[2] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[1]]?.svgFn(80) || '';
+      if (el.children[3]) (el.children[3] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[2]]?.svgFn(80) || '';
+      this.snapToCenter(el, 2);
+    } catch (e) {
+      console.error("Error setting reel symbols:", e);
+    }
+  }
+
+  private animateReel(reelIdx: number, finalSyms: number[], delayMs: number): Promise<void> {
     return new Promise(resolve => {
       const el = this.strips[reelIdx];
-      const totalFrames = 20 + reelIdx * 9;
+      if (!el) {
+        resolve();
+        return;
+      }
+
+      const totalFrames = 20 + reelIdx * 5;
       let frame = 0;
-      let pos = -Math.floor(this.STRIP_LEN / 2) * this.SYM_H;
+      let pos = -(1) * this.SYM_H; // Start at center (row 2)
 
       const tick = () => {
         if (frame >= totalFrames) {
-          this.setCenterSymbol(reelIdx, finalSym);
+          this.setReelSymbols(reelIdx, finalSyms);
           resolve();
           return;
         }
+
         pos -= this.SYM_H;
-        if (pos < -(this.STRIP_LEN - 1) * this.SYM_H) pos = 0;
+        // Keep pos within a reasonable range to simulate continuous scrolling
+        const minPos = -(this.STRIP_LEN - 4) * this.SYM_H;
+        if (pos < minPos) pos = 0;
+
         el.style.transition = 'none';
         el.style.transform = `translateY(${pos}px)`;
+        
         frame++;
-        setTimeout(tick, 55);
+        setTimeout(tick, 40 + frame); // Slightly decelerate
       };
 
       setTimeout(tick, delayMs);
