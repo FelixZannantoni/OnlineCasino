@@ -47,7 +47,10 @@
       @if (opponents()[0]; as opponent) {
         <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
           @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+          <div class="player-avatar">
+            <img src="assets/default-avatar.png" alt="Opponent" />
+            @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
+          </div>
           <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
@@ -59,7 +62,10 @@
       @if (opponents()[1]; as opponent) {
         <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
           @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+          <div class="player-avatar">
+            <img src="assets/default-avatar.png" alt="Opponent" />
+            @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
+          </div>
 <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
@@ -71,7 +77,10 @@
       @if (opponents()[2]; as opponent) {
         <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
           @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+          <div class="player-avatar">
+            <img src="assets/default-avatar.png" alt="Opponent" />
+            @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
+          </div>
 <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
@@ -88,7 +97,10 @@
       @if (myPlayer(); as player) {
         <div class="player-display" [class.active]="player.id === gameState()?.currentPlayerId">
           @if (player.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Me" /></div>
+          <div class="player-avatar">
+            <img src="assets/default-avatar.png" alt="Me" />
+            @if (player.isDealer) { <div class="dealer-chip">D</div> }
+          </div>
           <div class="player-name">{{ 'You' }}</div>
           <div class="player-bet">Bet: {{ player.bet }}</div>
         </div>
@@ -102,7 +114,10 @@
       @if (opponents()[3]; as opponent) {
         <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
           @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar"><img src="assets/default-avatar.png" alt="Opponent" /></div>
+          <div class="player-avatar">
+            <img src="assets/default-avatar.png" alt="Opponent" />
+            @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
+          </div>
 <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>

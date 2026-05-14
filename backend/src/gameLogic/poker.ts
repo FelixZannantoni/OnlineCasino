@@ -38,17 +38,19 @@ export class Poker extends CardGame<PokerPlayer> {
         if (this.isStarted) return;
         this.isStarted = true;
         this.setDefaultDealerChip();
-        this.startNewHand();
+        this.startNewHand(true);
     }
 
-    private startNewHand() {
+    private startNewHand(isFirstHand: boolean = false) {
         if (this.players.length < 2) {
             this.isStarted = false;
             return;
         }
 
         this.isLoading = false;
-        this.updateDealerChip();
+        if (!isFirstHand) {
+            this.updateDealerChip();
+        }
         this.pokerDeck = new PokerDeck();
         this.board = [];
         this.pot = 0;

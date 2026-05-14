@@ -24,6 +24,7 @@ type PokerPlayerState = {
   folded: boolean;
   balance: number;
   cards: PokerBoardCard[];
+  isDealer: boolean;
 };
 
 type PokerGameState = {

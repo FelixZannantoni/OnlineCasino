@@ -66,3 +66,23 @@
     color: white !important;
     box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4) !important;
 }
+
+/* Dealer Chip */
+::ng-deep .dealer-chip {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 2px solid #333;
+    border-radius: 50%;
+    color: #000;
+    font-weight: bold;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
