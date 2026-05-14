@@ -152,7 +152,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   readonly paytableSymbols: SlotSymbol[];
 
   private readonly STRIP_LEN = 30;
-  private readonly SYM_H = 150; 
+  private readonly SYM_H = 120; 
   private readonly BET_STEPS = [10, 25, 50, 100, 250, 500];
 
   private strips: HTMLElement[] = [];
