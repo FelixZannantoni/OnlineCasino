@@ -27,6 +27,9 @@
 
     <div class="player-cards">
       @if (myPlayer(); as player) {
+        @if (player.handName) {
+          <div class="my-hand-name-badge">{{ player.handName }}</div>
+        }
         @for (card of player.cards; track $index) {
           <div class="card" 
                [class]="'card-' + card.color.toLowerCase()" 
@@ -66,7 +69,7 @@
             <img src="assets/default-avatar.png" alt="Opponent" />
             @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-<div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
       }
@@ -81,7 +84,7 @@
             <img src="assets/default-avatar.png" alt="Opponent" />
             @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-<div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
       }
@@ -118,7 +121,7 @@
             <img src="assets/default-avatar.png" alt="Opponent" />
             @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-<div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
       }

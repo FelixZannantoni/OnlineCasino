@@ -120,24 +120,16 @@ export class PokerPlayer extends CardGamePlayer {
 
     public checkHand(cards: Card[]) {
         const c = [...cards];
-        if (this.hasRoyalFlush(c)) {
-        }
-        else if (this.hasStraightFlush(c)) {
-        }
-        else if (this.hasQuadruple(c)) {
-        }
-        else if (this.hasFullHouse(c)) {
-        }
-        else if (this.hasFlush(c)) {
-        }
-        else if (this.hasStraight(c)) {
-        }
-        else if (this.hasTripple(c)) {
-        }
-        else if (this.hasTwoPair(c)) {
-        }
-        else if (this.hasPair(c)) {
-        }
+        
+        if (this.hasRoyalFlush(c)) {}
+        else if (this.hasStraightFlush(c)) {}
+        else if (this.hasQuadruple(c)) {}
+        else if (this.hasFullHouse(c)) {}
+        else if (this.hasFlush(c)) {}
+        else if (this.hasStraight(c)) {}
+        else if (this.hasTripple(c)) {}
+        else if (this.hasTwoPair(c)) {}
+        else if (this.hasPair(c)) {}
         else {
             this.getHighCard(c);
         }
@@ -201,34 +193,34 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasFullHouse(cards: Card[]): boolean {
-        let hasTripple: boolean = false;
-        let valueOfTripple: number = 0;
+        const counts: { [name: string]: number } = {};
+        for (const card of cards) {
+            counts[card.name] = (counts[card.name] || 0) + 1;
+        }
 
-        for (let i: number = 0; i < cards.length - 2; i++) {
-            for (let j: number = i + 1; j < cards.length - 1; j++) {
-                for (let k: number = j + 1; k < cards.length; k++) {
-                    if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
-                        hasTripple = true;
-                        valueOfTripple = cards[i].value;
-                        for (let l: number = 0; l < cards.length; l++) {
-                            if (cards[l].name == cards[i].name)
-                                cards.splice(l, 1);
-                        }
-                    }
-                }
+        let tripleValue = 0;
+        let pairValue = 0;
+
+        for (const name in counts) {
+            if (counts[name] === 3) {
+                // Get the value of the card that formed the triple
+                const card = cards.find(c => c.name === name);
+                if (card) tripleValue = card.value;
             }
         }
-        if (!hasTripple) {
-            return false;
-        }
-        for (let i: number = 0; i < cards.length - 1; i++) {
-            for (let j: number = i + 1; j < cards.length; j++) {
-                if (cards[i].name == cards[j].name) {
-                    this.valueOfHand = [FULLHOUSE_VALUE, valueOfTripple, cards[i].value];
-                    return true;
-                }
 
+        if (tripleValue === 0) return false;
+
+        for (const name in counts) {
+            if (counts[name] >= 2 && tripleValue !== (cards.find(c => c.name === name)?.value)) {
+                 const card = cards.find(c => c.name === name);
+                 if (card) pairValue = card.value;
             }
+        }
+
+        if (tripleValue > 0 && pairValue > 0) {
+            this.valueOfHand = [FULLHOUSE_VALUE, tripleValue, pairValue];
+            return true;
         }
         return false;
     }

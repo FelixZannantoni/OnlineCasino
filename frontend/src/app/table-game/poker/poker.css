@@ -86,3 +86,32 @@
     z-index: 5;
     box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
+
+::ng-deep .my-hand-name-badge {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffd700;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: 2px solid #ffd700;
+    z-index: 30;
+    white-space: nowrap;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+::ng-deep .player-hand-value {
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-top: 4px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    text-shadow: 0 0 5px rgba(0,0,0,1);
+}

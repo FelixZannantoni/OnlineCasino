@@ -145,7 +145,8 @@ export class Poker extends CardGame<PokerPlayer> {
                 this.handleShowdown();
                 return;
         }
-
+        
+        this.checkPlayersHands();
         this.emit("gameState", this.getGameState());
     }
 
