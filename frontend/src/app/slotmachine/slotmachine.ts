@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { SlotmachineService, SpinResult } from './slotmachine.service';
+import { SlotmachineService } from './slotmachine.service';
 
 // SVG symbol definitions
 
