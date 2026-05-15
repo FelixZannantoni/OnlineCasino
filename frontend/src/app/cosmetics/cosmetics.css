@@ -1,0 +1,125 @@
+/* ══════════════════════════════════════
+   app-cosmetic — combined cosmetic CSS
+   ══════════════════════════════════════ */
+
+:host {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cosmetic-svg {
+    display: block;
+}
+
+/* ── Avatar: sits on top of the player image ── */
+:host([type="avatar"]) {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+:host([type="avatar"]) .cosmetic-svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ── Card back: fills its container ── */
+:host([type="card-back"]) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    overflow: hidden;
+}
+
+:host([type="card-back"]) .cosmetic-svg {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+}
+
+/* ════ Rarity glow effects (set data-cosmetic-rarity on the parent element) ════ */
+
+/* Legendary — gold/cyan pulse depending on type */
+:host-context([data-cosmetic-rarity="legendary"]) .cosmetic-svg {
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7))
+            drop-shadow(0 0 14px rgba(255, 215, 0, 0.35));
+    animation: pulseLegendary 2.5s ease-in-out infinite;
+}
+
+/* Crystal chip is legendary but cyan — override via cosmeticId class if needed */
+:host-context([data-cosmetic-rarity="legendary"][data-cosmetic-type="chip"]) .cosmetic-svg {
+    filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.7))
+            drop-shadow(0 0 14px rgba(0, 229, 255, 0.35));
+    animation: pulseNeon 2.5s ease-in-out infinite;
+}
+
+/* Epic — purple pulse */
+:host-context([data-cosmetic-rarity="epic"]) .cosmetic-svg {
+    filter: drop-shadow(0 0 6px rgba(155, 89, 182, 0.8))
+            drop-shadow(0 0 14px rgba(155, 89, 182, 0.35));
+    animation: pulseEpic 2.8s ease-in-out infinite;
+}
+
+/* Gold chip is epic — gold glow override */
+:host-context([data-cosmetic-rarity="epic"][data-cosmetic-type="chip"]) .cosmetic-svg {
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7))
+            drop-shadow(0 0 14px rgba(255, 215, 0, 0.3));
+    animation: pulseGold 2.8s ease-in-out infinite;
+}
+
+/* Rare — blue glow, no animation */
+:host-context([data-cosmetic-rarity="rare"]) .cosmetic-svg {
+    filter: drop-shadow(0 0 5px rgba(66, 133, 244, 0.6));
+}
+
+/* Common — no glow */
+:host-context([data-cosmetic-rarity="common"]) .cosmetic-svg {
+    filter: none;
+}
+
+/* ════ Keyframes ════ */
+@keyframes pulseLegendary {
+    0%, 100% {
+        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7))
+                drop-shadow(0 0 14px rgba(255, 215, 0, 0.35));
+    }
+    50% {
+        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 1))
+                drop-shadow(0 0 28px rgba(255, 215, 0, 0.6));
+    }
+}
+
+@keyframes pulseEpic {
+    0%, 100% {
+        filter: drop-shadow(0 0 6px rgba(155, 89, 182, 0.8))
+                drop-shadow(0 0 14px rgba(155, 89, 182, 0.35));
+    }
+    50% {
+        filter: drop-shadow(0 0 12px rgba(206, 147, 216, 1))
+                drop-shadow(0 0 26px rgba(155, 89, 182, 0.6));
+    }
+}
+
+@keyframes pulseGold {
+    0%, 100% {
+        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7))
+                drop-shadow(0 0 14px rgba(255, 215, 0, 0.3));
+    }
+    50% {
+        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 1))
+                drop-shadow(0 0 26px rgba(255, 215, 0, 0.6));
+    }
+}
+
+@keyframes pulseNeon {
+    0%, 100% {
+        filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.7))
+                drop-shadow(0 0 14px rgba(0, 229, 255, 0.35));
+    }
+    50% {
+        filter: drop-shadow(0 0 12px rgba(0, 229, 255, 1))
+                drop-shadow(0 0 28px rgba(0, 229, 255, 0.6));
+    }
+}
