@@ -93,7 +93,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         if (this.slots[2][0] == this.slots[2][1] && this.slots[2][1] == this.slots[1][2] && this.slots[1][2] == this.slots[0][3] && this.slots[0][3] == this.slots[0][4]) { winningLines++; }
 
         // 9. Top-Middle-Bottom Zigzag
-        if (this.slots[0][0] == this.slots[0][1] && this.slots[1][2] == this.slots[1][2] && this.slots[1][2] == this.slots[2][3] && this.slots[2][3] == this.slots[2][4]) { winningLines++; }
+        if (this.slots[0][0] == this.slots[0][1] && this.slots[0][1] == this.slots[1][2] && this.slots[1][2] == this.slots[2][3] && this.slots[2][3] == this.slots[2][4]) { winningLines++; }
 
         // 10. Bottom-Middle-Top-Middle-Bottom (M-Shape)
         if (this.slots[2][0] == this.slots[1][1] && this.slots[1][1] == this.slots[1][2] && this.slots[1][2] == this.slots[1][3] && this.slots[1][3] == this.slots[0][4]) { winningLines++; }

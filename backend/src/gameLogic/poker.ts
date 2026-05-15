@@ -316,7 +316,7 @@ export class Poker extends CardGame<PokerPlayer> {
         if (needsToAct.length === 0) return true;
 
         const allActed = needsToAct.every(p => this.hasActedThisRound.has(p.getPlayerId()));
-        const allMatched = needsToAct.every(p => p.getBet() === this.currentBet);
+        const allMatched = needsToAct.every(p => p.getBet() === this.currentBet || p.getBalance() === 0);
 
         return allActed && allMatched;
     }

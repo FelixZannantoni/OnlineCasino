@@ -44,8 +44,7 @@ export class PokerPlayer extends CardGamePlayer {
         let valueOfCardCombination: number = 0;
 
         for (let i: number = 1; i < this.valueOfHand.length; i++) {
-            valueOfCardCombination += this.valueOfHand[i];
-            valueOfCardCombination *= 10;
+            valueOfCardCombination = valueOfCardCombination * 15 + this.valueOfHand[i];
         }
 
         return valueOfCardCombination;
