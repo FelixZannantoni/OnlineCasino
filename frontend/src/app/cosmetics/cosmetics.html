@@ -1,0 +1,303 @@
+<!-- AVATAR  -->
+@if (type === 'avatar') {
+<svg class="cosmetic-svg avatar-ring" [attr.width]="size" [attr.height]="size" viewBox="0 0 120 120"
+    xmlns="http://www.w3.org/2000/svg">
+
+    @switch (cosmeticId) {
+    @case (1) {
+    <circle cx="60" cy="60" r="55" fill="none" stroke="#616161" stroke-width="4" />
+    }
+    @case (2) {
+    <defs>
+        <linearGradient [id]="uid+'_g'" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ce93d8" />
+            <stop offset="100%" stop-color="#6a0dad" />
+        </linearGradient>
+    </defs>
+    <circle cx="60" cy="60" r="57" fill="none" stroke="#ce93d8" stroke-width="1" opacity="0.25" />
+    <circle cx="60" cy="60" r="53" fill="none" [attr.stroke]="'url(#'+uid+'_g)'" stroke-width="7" />
+    <circle cx="60" cy="60" r="46" fill="none" stroke="#9c27b0" stroke-width="1" opacity="0.4" stroke-dasharray="5 4" />
+    <path d="M40,16 L48,30 L60,18 L72,30 L80,16 L83,34 L37,34 Z" fill="#ce93d8" />
+    <rect x="37" y="33" width="46" height="6" rx="2.5" fill="#9c27b0" />
+    <circle cx="48" cy="21" r="3" fill="white" opacity="0.85" />
+    <circle cx="60" cy="15" r="3.5" fill="#ffd700" opacity="0.95" />
+    <circle cx="72" cy="21" r="3" fill="white" opacity="0.85" />
+    }
+    @case (3) {
+    <defs>
+        <linearGradient [id]="uid+'_g'" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffd86e" />
+            <stop offset="50%" stop-color="#ffd700" />
+            <stop offset="100%" stop-color="#d19e1d" />
+        </linearGradient>
+        <linearGradient [id]="uid+'_d'" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e0f7ff" />
+            <stop offset="100%" stop-color="#64b5f6" />
+        </linearGradient>
+    </defs>
+    <circle cx="60" cy="60" r="57" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.25" />
+    <circle cx="60" cy="60" r="52" fill="none" [attr.stroke]="'url(#'+uid+'_g)'" stroke-width="7" />
+    <circle cx="60" cy="60" r="45" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.3" stroke-dasharray="4 4" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="60,5  63,11 60,16 57,11" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="99,21 103,28 98,32 94,25" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="115,60 109,63 104,60 109,57" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="99,99  95,96 98,88 103,92" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="60,115 57,109 60,104 63,109" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="21,99  17,92 22,88 26,95" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="5,60   11,57 16,60 11,63" />
+    <polygon [attr.fill]="'url(#'+uid+'_d)'" points="21,21  25,17 28,24 24,28" />
+    <ellipse cx="34" cy="29" rx="8" ry="4" fill="white" opacity="0.12" transform="rotate(-40 34 29)" />
+    }
+    @case (4) {
+    <defs>
+        <radialGradient [id]="uid+'_glow'" cx="50%" cy="50%" r="55%">
+            <stop offset="55%" stop-color="#ff6b6b" stop-opacity="0" />
+            <stop offset="100%" stop-color="#ff6b6b" stop-opacity="0.2" />
+        </radialGradient>
+        <linearGradient [id]="uid+'_g'" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ff9f43" />
+            <stop offset="100%" stop-color="#c92a2a" />
+        </linearGradient>
+    </defs>
+    <circle cx="60" cy="60" r="58" [attr.fill]="'url(#'+uid+'_glow)'" />
+    <circle cx="60" cy="60" r="52" fill="none" [attr.stroke]="'url(#'+uid+'_g)'" stroke-width="7" />
+    <circle cx="60" cy="60" r="45" fill="none" stroke="#ff6b6b" stroke-width="1" opacity="0.35"
+        stroke-dasharray="5 4" />
+    <path d="M60,5   Q66,17 60,24 Q54,17 60,5Z" fill="#ff9f43" opacity="0.95" />
+    <path d="M115,60 Q103,66 96,60 Q103,54 115,60Z" fill="#ff9f43" opacity="0.95" />
+    <path d="M60,115 Q54,103 60,96 Q66,103 60,115Z" fill="#ff9f43" opacity="0.95" />
+    <path d="M5,60   Q17,54 24,60 Q17,66 5,60Z" fill="#ff9f43" opacity="0.95" />
+    <path d="M22,22  Q28,31 22,38 Q16,31 22,22Z" fill="#ff6b6b" opacity="0.6" />
+    <path d="M98,22  Q92,31 98,38 Q104,31 98,22Z" fill="#ff6b6b" opacity="0.6" />
+    <path d="M22,98  Q28,89 22,82 Q16,89 22,98Z" fill="#ff6b6b" opacity="0.6" />
+    <path d="M98,98  Q92,89 98,82 Q104,89 98,98Z" fill="#ff6b6b" opacity="0.6" />
+    }
+    @case (5) {
+    <defs>
+        <linearGradient [id]="uid+'_g'" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#90caf9" />
+            <stop offset="100%" stop-color="#0d47a1" />
+        </linearGradient>
+    </defs>
+    <circle cx="60" cy="60" r="57" fill="none" stroke="#64b5f6" stroke-width="1" opacity="0.2" />
+    <circle cx="60" cy="60" r="52" fill="none" [attr.stroke]="'url(#'+uid+'_g)'" stroke-width="6" />
+    <circle cx="60" cy="60" r="45" fill="none" stroke="#90caf9" stroke-width="1" opacity="0.3" stroke-dasharray="3 5" />
+    <polygon points="60,5  63,16 60,23 57,16" fill="#b3e5fc" opacity="0.85" />
+    <polygon points="109,33 101,40 95,37 101,28" fill="#b3e5fc" opacity="0.85" />
+    <polygon points="109,87 101,80 101,74 109,81" fill="#b3e5fc" opacity="0.85" />
+    <polygon points="60,115 57,104 60,97 63,104" fill="#b3e5fc" opacity="0.85" />
+    <polygon points="11,87  19,80 25,83 19,92" fill="#b3e5fc" opacity="0.85" />
+    <polygon points="11,33  19,40 19,46 11,39" fill="#b3e5fc" opacity="0.85" />
+    }
+    @default {
+    <circle cx="60" cy="60" r="55" fill="none" stroke="#616161" stroke-width="4" />
+    }
+    }
+</svg>
+}
+
+<!-- CARD BACK -->
+@if (type === 'card-back') {
+<svg class="cosmetic-svg card-back-svg" viewBox="0 0 63 88" xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="xMidYMid slice">
+
+    @switch (cosmeticId) {
+    @case (5) {
+    <rect width="63" height="88" rx="6" fill="#8B0000" />
+    <rect x="3.5" y="3.5" width="56" height="81" rx="4" fill="none" stroke="#ffd700" stroke-width="1.5" />
+    <line x1="0" y1="22" x2="22" y2="0" stroke="#b00" stroke-width="1.3" opacity="0.55" />
+    <line x1="0" y1="44" x2="44" y2="0" stroke="#b00" stroke-width="1.3" opacity="0.55" />
+    <line x1="0" y1="66" x2="63" y2="3" stroke="#b00" stroke-width="1.3" opacity="0.55" />
+    <line x1="0" y1="88" x2="63" y2="25" stroke="#b00" stroke-width="1.3" opacity="0.55" />
+    <line x1="19" y1="88" x2="63" y2="44" stroke="#b00" stroke-width="1.3" opacity="0.55" />
+    <line x1="40" y1="88" x2="63" y2="65" stroke="#b00" stroke-width="1.3" opacity="0.55" />
+    <line x1="22" y1="88" x2="0" y2="66" stroke="#b00" stroke-width="1.3" opacity="0.4" />
+    <line x1="44" y1="88" x2="0" y2="44" stroke="#b00" stroke-width="1.3" opacity="0.4" />
+    <line x1="63" y1="88" x2="0" y2="25" stroke="#b00" stroke-width="1.3" opacity="0.4" />
+    <line x1="63" y1="66" x2="22" y2="0" stroke="#b00" stroke-width="1.3" opacity="0.4" />
+    <line x1="63" y1="44" x2="44" y2="0" stroke="#b00" stroke-width="1.3" opacity="0.4" />
+    <polygon points="31.5,30 39,44 31.5,58 24,44" fill="none" stroke="#ffd700" stroke-width="1.5" />
+    <polygon points="31.5,36 36,44 31.5,52 27,44" fill="#ffd700" opacity="0.2" />
+    <circle cx="31.5" cy="44" r="2.5" fill="#ffd700" opacity="0.5" />
+    }
+    @case (6) {
+    <rect width="63" height="88" rx="6" fill="#0a1628" />
+    <rect x="3.5" y="3.5" width="56" height="81" rx="4" fill="none" stroke="#4fc3f7" stroke-width="1.5" />
+    <path d="M0,16 Q16,10 31.5,16 Q47,22 63,16" fill="none" stroke="#4fc3f7" stroke-width="1.3" opacity="0.6" />
+    <path d="M0,27 Q16,21 31.5,27 Q47,33 63,27" fill="none" stroke="#4fc3f7" stroke-width="1.3" opacity="0.6" />
+    <path d="M0,38 Q16,32 31.5,38 Q47,44 63,38" fill="none" stroke="#4fc3f7" stroke-width="1.3" opacity="0.6" />
+    <path d="M0,49 Q16,43 31.5,49 Q47,55 63,49" fill="none" stroke="#4fc3f7" stroke-width="1.3" opacity="0.6" />
+    <path d="M0,60 Q16,54 31.5,60 Q47,66 63,60" fill="none" stroke="#4fc3f7" stroke-width="1.3" opacity="0.6" />
+    <path d="M0,71 Q16,65 31.5,71 Q47,77 63,71" fill="none" stroke="#4fc3f7" stroke-width="1.3" opacity="0.6" />
+    <circle cx="31.5" cy="44" r="9" fill="none" stroke="#4fc3f7" stroke-width="1" opacity="0.5" />
+    <line x1="31.5" y1="35" x2="31.5" y2="53" stroke="#4fc3f7" stroke-width="0.8" opacity="0.5" />
+    <line x1="22.5" y1="44" x2="40.5" y2="44" stroke="#4fc3f7" stroke-width="0.8" opacity="0.5" />
+    <circle cx="31.5" cy="44" r="2.5" fill="#4fc3f7" opacity="0.4" />
+    }
+    @case (7) {
+    <rect width="63" height="88" rx="6" fill="#0d0d0d" />
+    <rect x="3" y="3" width="57" height="82" rx="5" fill="none" stroke="#ffd700" stroke-width="2" />
+    <rect x="7.5" y="7.5" width="48" height="73" rx="3.5" fill="none" stroke="#ffd700" stroke-width="0.8"
+        opacity="0.4" />
+    <line x1="31.5" y1="7.5" x2="31.5" y2="80.5" stroke="#ffd700" stroke-width="0.6" opacity="0.25" />
+    <line x1="7.5" y1="44" x2="55.5" y2="44" stroke="#ffd700" stroke-width="0.6" opacity="0.25" />
+    <path d="M7.5,7.5   Q18,7.5  18,18" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.85" />
+    <path d="M7.5,7.5   Q7.5,18  16,20" fill="none" stroke="#ffd700" stroke-width="0.9" opacity="0.5" />
+    <path d="M55.5,7.5  Q45,7.5  45,18" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.85" />
+    <path d="M55.5,7.5  Q55.5,18 47,20" fill="none" stroke="#ffd700" stroke-width="0.9" opacity="0.5" />
+    <path d="M7.5,80.5  Q18,80.5 18,70" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.85" />
+    <path d="M7.5,80.5  Q7.5,70  16,68" fill="none" stroke="#ffd700" stroke-width="0.9" opacity="0.5" />
+    <path d="M55.5,80.5 Q45,80.5 45,70" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.85" />
+    <path d="M55.5,80.5 Q55.5,70 47,68" fill="none" stroke="#ffd700" stroke-width="0.9" opacity="0.5" />
+    <polygon points="31.5,32 40.5,44 31.5,56 22.5,44" fill="none" stroke="#ffd700" stroke-width="1.5" />
+    <polygon points="31.5,37 36.5,44 31.5,51 26.5,44" fill="#ffd700" opacity="0.18" />
+    <circle cx="31.5" cy="44" r="3" fill="#ffd700" opacity="0.6" />
+    <circle cx="31.5" cy="7.5" r="1.5" fill="#ffd700" opacity="0.7" />
+    <circle cx="31.5" cy="80.5" r="1.5" fill="#ffd700" opacity="0.7" />
+    <circle cx="7.5" cy="44" r="1.5" fill="#ffd700" opacity="0.7" />
+    <circle cx="55.5" cy="44" r="1.5" fill="#ffd700" opacity="0.7" />
+    }
+    @case (8) {
+    <rect width="63" height="88" rx="6" fill="#0a3d1f" />
+    <rect x="3.5" y="3.5" width="56" height="81" rx="4" fill="none" stroke="#2ecc71" stroke-width="1.5" />
+    <line x1="15.75" y1="3.5" x2="15.75" y2="84.5" stroke="#2ecc71" stroke-width="0.7" opacity="0.4" />
+    <line x1="31.5" y1="3.5" x2="31.5" y2="84.5" stroke="#2ecc71" stroke-width="0.7" opacity="0.4" />
+    <line x1="47.25" y1="3.5" x2="47.25" y2="84.5" stroke="#2ecc71" stroke-width="0.7" opacity="0.4" />
+    <line x1="3.5" y1="22" x2="59.5" y2="22" stroke="#2ecc71" stroke-width="0.7" opacity="0.4" />
+    <line x1="3.5" y1="44" x2="59.5" y2="44" stroke="#2ecc71" stroke-width="0.7" opacity="0.4" />
+    <line x1="3.5" y1="66" x2="59.5" y2="66" stroke="#2ecc71" stroke-width="0.7" opacity="0.4" />
+    <circle cx="31.5" cy="44" r="11" fill="none" stroke="#2ecc71" stroke-width="1.5" />
+    <circle cx="31.5" cy="33" r="4.5" fill="none" stroke="#2ecc71" stroke-width="1" opacity="0.65" />
+    <circle cx="31.5" cy="55" r="4.5" fill="none" stroke="#2ecc71" stroke-width="1" opacity="0.65" />
+    <circle cx="20.5" cy="44" r="4.5" fill="none" stroke="#2ecc71" stroke-width="1" opacity="0.65" />
+    <circle cx="42.5" cy="44" r="4.5" fill="none" stroke="#2ecc71" stroke-width="1" opacity="0.65" />
+    <circle cx="31.5" cy="44" r="4" fill="#2ecc71" opacity="0.2" />
+    <circle cx="31.5" cy="44" r="1.5" fill="#2ecc71" opacity="0.7" />
+    }
+    @default {
+    <rect width="63" height="88" rx="6" fill="#0d1f3c" />
+    <rect x="3.5" y="3.5" width="56" height="81" rx="4" fill="none" stroke="#d19e1d" stroke-width="1" />
+    }
+    }
+</svg>
+}
+
+<!-- CHIP -->
+@if (type === 'chip') {
+<svg class="cosmetic-svg chip-svg" [attr.width]="size" [attr.height]="size" viewBox="0 0 80 80"
+    xmlns="http://www.w3.org/2000/svg">
+
+    @switch (cosmeticId) {
+    @case (9) {
+    <circle cx="40" cy="40" r="38" fill="#4a4a4a" />
+    <circle cx="40" cy="40" r="38" fill="none" stroke="#888" stroke-width="4" />
+    <path d="M40,40 L40,2  A38,38 0 0,1 72,21 Z" fill="#e53935" opacity="0.95" />
+    <path d="M40,40 L72,59 A38,38 0 0,1 40,78 Z" fill="#e53935" opacity="0.95" />
+    <path d="M40,40 L8,59  A38,38 0 0,1 40,2 Z" fill="#fff" opacity="0.9" />
+    <path d="M40,40 L40,78 A38,38 0 0,1 8,59 Z" fill="#fff" opacity="0.9" />
+    <path d="M40,40 L72,21 A38,38 0 0,1 72,59 Z" fill="#fff" opacity="0.9" />
+    <circle cx="40" cy="40" r="31" fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="6 4" />
+    <circle cx="40" cy="40" r="22" fill="#4a4a4a" />
+    <circle cx="40" cy="40" r="22" fill="none" stroke="#777" stroke-width="1.5" />
+    <circle cx="40" cy="40" r="14" fill="#3a3a3a" />
+    @if (label) {
+    <text x="40" y="44.5" text-anchor="middle" font-size="10" font-weight="700" fill="white"
+        font-family="Arial,sans-serif">{{ label }}</text>
+    }
+    <ellipse cx="29" cy="28" rx="7" ry="4" fill="white" opacity="0.07" transform="rotate(-35 29 28)" />
+    }
+    @case (10) {
+    <defs>
+        <radialGradient [id]="uid+'_a'" cx="38%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#fff8dc" />
+            <stop offset="30%" stop-color="#ffd86e" />
+            <stop offset="70%" stop-color="#d19e1d" />
+            <stop offset="100%" stop-color="#7d5a0a" />
+        </radialGradient>
+        <radialGradient [id]="uid+'_b'" cx="38%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#ffd86e" />
+            <stop offset="100%" stop-color="#8B6914" />
+        </radialGradient>
+    </defs>
+    <circle cx="40" cy="40" r="38" [attr.fill]="'url(#'+uid+'_a)'" />
+    <circle cx="40" cy="40" r="38" fill="none" stroke="#ffd700" stroke-width="4" />
+    <circle cx="40" cy="40" r="32" fill="none" stroke="#ffd86e" stroke-width="2" stroke-dasharray="7 4" />
+    <circle cx="40" cy="40" r="22" [attr.fill]="'url(#'+uid+'_b)'" />
+    <circle cx="40" cy="40" r="22" fill="none" stroke="#ffd700" stroke-width="2" />
+    <circle cx="40" cy="40" r="14" fill="rgba(0,0,0,0.3)" />
+    <circle cx="40" cy="40" r="14" fill="none" stroke="#ffd86e" stroke-width="1" />
+    <circle cx="40" cy="40" r="8" [attr.fill]="'url(#'+uid+'_a)'" />
+    @if (label) {
+    <text x="40" y="44.5" text-anchor="middle" font-size="9" font-weight="700" fill="#5a3e00"
+        font-family="Arial,sans-serif">{{ label }}</text>
+    }
+    <ellipse cx="27" cy="25" rx="9" ry="5" fill="white" opacity="0.28" transform="rotate(-35 27 25)" />
+    }
+    @case (11) {
+    <defs>
+        <radialGradient [id]="uid+'_a'" cx="38%" cy="32%" r="70%">
+            <stop offset="0%" stop-color="#e0f7ff" />
+            <stop offset="25%" stop-color="#b3e5fc" />
+            <stop offset="55%" stop-color="#80deea" stop-opacity="0.85" />
+            <stop offset="100%" stop-color="#00acc1" stop-opacity="0.4" />
+        </radialGradient>
+    </defs>
+    <circle cx="40" cy="40" r="38" [attr.fill]="'url(#'+uid+'_a)'" />
+    <circle cx="40" cy="40" r="38" fill="none" stroke="#b2ebf2" stroke-width="3.5" />
+    <path d="M40,40 L40,2  A38,38 0 0,1 72,21 Z" fill="#ff80ab" opacity="0.1" />
+    <path d="M40,40 L72,21 A38,38 0 0,1 72,59 Z" fill="#ea80fc" opacity="0.08" />
+    <path d="M40,40 L72,59 A38,38 0 0,1 40,78 Z" fill="#82b1ff" opacity="0.1" />
+    <path d="M40,40 L40,78 A38,38 0 0,1 8,59 Z" fill="#80d8ff" opacity="0.1" />
+    <path d="M40,40 L8,59  A38,38 0 0,1 8,21 Z" fill="#a7ffeb" opacity="0.1" />
+    <path d="M40,40 L8,21  A38,38 0 0,1 40,2 Z" fill="#ccff90" opacity="0.1" />
+    <circle cx="40" cy="40" r="31" fill="none" stroke="#80deea" stroke-width="1" stroke-dasharray="5 4" opacity="0.6" />
+    <circle cx="40" cy="40" r="21" fill="rgba(255,255,255,0.2)" />
+    <circle cx="40" cy="40" r="21" fill="none" stroke="#b2ebf2" stroke-width="1.5" />
+    @if (label) {
+    <text x="40" y="44.5" text-anchor="middle" font-size="9" font-weight="700" fill="#006064"
+        font-family="Arial,sans-serif">{{ label }}</text>
+    }
+    <ellipse cx="27" cy="24" rx="11" ry="6" fill="white" opacity="0.4" transform="rotate(-35 27 24)" />
+    }
+    @case (12) {
+    <defs>
+        <radialGradient [id]="uid+'_glow'" cx="50%" cy="50%" r="54%">
+            <stop offset="55%" stop-color="#00e5ff" stop-opacity="0" />
+            <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.3" />
+        </radialGradient>
+    </defs>
+    <circle cx="40" cy="40" r="39" [attr.fill]="'url(#'+uid+'_glow)'" />
+    <circle cx="40" cy="40" r="36" fill="#0d0d1a" />
+    <circle cx="40" cy="40" r="36" fill="none" stroke="#00e5ff" stroke-width="4" />
+    <circle cx="40" cy="40" r="30" fill="none" stroke="#00b0ff" stroke-width="1.5" stroke-dasharray="4 5"
+        opacity="0.7" />
+    <circle cx="40" cy="40" r="22" fill="#0a0a14" />
+    <circle cx="40" cy="40" r="22" fill="none" stroke="#00e5ff" stroke-width="2" />
+    <circle cx="40" cy="40" r="15" fill="none" stroke="#00b0ff" stroke-width="0.8" opacity="0.4"
+        stroke-dasharray="3 4" />
+    <circle cx="40" cy="40" r="11" fill="#001f3f" />
+    <circle cx="40" cy="40" r="11" fill="none" stroke="#00e5ff" stroke-width="1.5" />
+    <circle cx="40" cy="40" r="6" fill="#00e5ff" opacity="0.65" />
+    <circle cx="40" cy="40" r="3" fill="#00e5ff" opacity="0.9" />
+    <circle cx="40" cy="4" r="2.5" fill="#00e5ff" />
+    <circle cx="76" cy="40" r="2.5" fill="#00e5ff" />
+    <circle cx="40" cy="76" r="2.5" fill="#00e5ff" />
+    <circle cx="4" cy="40" r="2.5" fill="#00e5ff" />
+    @if (label) {
+    <text x="40" y="44.5" text-anchor="middle" font-size="8" font-weight="700" fill="#00e5ff"
+        font-family="Arial,sans-serif">{{ label }}</text>
+    }
+    }
+    @default {
+    <circle cx="40" cy="40" r="38" fill="#555" />
+    <circle cx="40" cy="40" r="38" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"
+        stroke-dasharray="4 3" />
+    @if (label) {
+    <text x="40" y="44.5" text-anchor="middle" font-size="10" font-weight="700" fill="white"
+        font-family="Arial,sans-serif">{{ label }}</text>
+    }
+    }
+    }
+</svg>
+}
