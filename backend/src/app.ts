@@ -48,8 +48,8 @@ io.on("connection", (socket: Socket) => {
         socket.join(gameId);
         console.log(`User ${userId} joined game: ${gameId}`);
 
-        const userService = new UserService();
         const user = await userService.getUserById(userId);
+        console.log("User data retrieved:", user);
         const startBalance: number = 1000;
 
         let game: any = PokerService.pokerGames.find(
@@ -69,14 +69,18 @@ io.on("connection", (socket: Socket) => {
             return;
         }
 
-        const alreadyIn = game.getGameState().players.some((p: any) => p.id === userId);
-        if (!alreadyIn) {
+        const username = user?.username ?? '-';
+        const displayname = user?.displayname || user?.username || 'Guest';
+        const balance = user?.balance ?? startBalance;
+
+        const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
+        if (!existingPlayer) {
             if (service === pokerService) {
                 await pokerService.addPlayer(
                     userId,
-                    user?.username ?? '-',
-                    user?.displayname ?? 'Guest',
-                    user?.balance ?? startBalance,
+                    username,
+                    displayname,
+                    balance,
                     false,
                     0,
                     gameId
@@ -84,12 +88,19 @@ io.on("connection", (socket: Socket) => {
             } else {
                 await blackjackService.addPlayer(
                     userId,
-                    user?.username ?? '-',
-                    user?.displayname ?? 'Guest',
-                    user?.balance ?? startBalance,
+                    username,
+                    displayname,
+                    balance,
                     gameId
                 );
             }
+        } else {
+            // Update existing player info in case it was "Guest" before
+            existingPlayer.updatePlayerInfo(username, displayname);
+            console.log(`Updated existing player ${userId} info: ${displayname}`);
+            
+            // Emit updated state to everyone so they see the name change
+            io.to(gameId).emit("game_state", game.getGameState());
         }
 
         if (game.listenerCount("gameState") === 0) {

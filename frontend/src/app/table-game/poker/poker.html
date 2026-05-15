@@ -104,7 +104,7 @@
             <img src="assets/default-avatar.png" alt="Me" />
             @if (player.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-          <div class="player-name">{{ 'You' }}</div>
+          <div class="player-name">You ({{ player.displayname || (player.id | slice:0:8) + '...' }})</div>
           <div class="player-bet">Bet: {{ player.bet }}</div>
         </div>
       }

@@ -106,4 +106,9 @@ export class Player {
         }
         return false;
     }
+
+    public updatePlayerInfo(username: string, displayname: string): void {
+        this.username = username;
+        this.displayname = displayname;
+    }
 }
