@@ -130,9 +130,44 @@
   </div>
 
   <!-- ACTION BUTTONS -->
-  <div game-actions style="position: relative; z-index: 30;">
-    <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">Fold</button>
-    <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ checkOrCallLabel() }}</button>
-    <button class="btn-bet" (click)="makeBetOrRaise()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ betOrRaiseLabel() }}</button>
+  <div game-actions style="position: relative; z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+    
+    <!-- Vertical Betting Slider Pop-up -->
+    @if (showBetSlider() && isMyTurn()) {
+      <div class="betting-slider-popup" style="position: absolute; bottom: 100%; margin-bottom: 20px; background: rgba(0,0,0,0.85); padding: 20px; border-radius: 15px; border: 2px solid #ffd700; display: flex; flex-direction: column; align-items: center; gap: 15px; box-shadow: 0 0 25px rgba(0,0,0,0.8);">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+           <span style="color: #ffd700; font-weight: bold; font-size: 0.9rem;">{{ selectedBetAmount() }}</span>
+           <input type="number" 
+                  [min]="minBet()" 
+                  [max]="maxBet()" 
+                  [value]="selectedBetAmount()" 
+                  (change)="updateBetAmount($event)"
+                  style="width: 60px; background: #222; color: #fff; border: 1px solid #555; border-radius: 4px; padding: 2px 4px; text-align: center; font-size: 0.8rem;">
+        </div>
+        
+        <div class="vertical-slider-container">
+          <input type="range" 
+                 class="vertical-slider"
+                 [min]="minBet()" 
+                 [max]="maxBet()" 
+                 [value]="selectedBetAmount()" 
+                 (input)="updateBetAmount($event)"
+                 orient="vertical">
+        </div>
+
+        <button (click)="showBetSlider.set(false)" style="background: transparent; border: none; color: #999; cursor: pointer; font-size: 0.7rem;">Close</button>
+      </div>
+    }
+
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">Fold</button>
+      <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ checkOrCallLabel() }}</button>
+      
+      @if (showBetSlider()) {
+        <button class="btn-bet" (click)="confirmBet()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ betOrRaiseLabel() }}</button>
+      } @else {
+        <button class="btn-bet" (click)="toggleBetSlider()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ betOrRaiseLabel() }}</button>
+      }
+    </div>
   </div>
 </app-table-game>

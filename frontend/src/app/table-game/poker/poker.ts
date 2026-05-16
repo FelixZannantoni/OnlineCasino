@@ -21,6 +21,7 @@ type PokerPlayerState = {
   id: string;
   displayname: string;
   bet: number;
+  desiredBet: number;
   folded: boolean;
   balance: number;
   cards: PokerBoardCard[];
@@ -61,6 +62,23 @@ export class Poker implements OnInit {
 
   protected readonly getCardRank = getCardRank;
 
+  // Local state for the betting UI
+  protected selectedBetAmount = signal<number>(20);
+  protected showBetSlider = signal<boolean>(false);
+
+  protected readonly minBet = computed(() => {
+    const state = this.gameState();
+    if (!state) return 10;
+    // Standard raise is usually at least currentBet + bigBlind (10)
+    return Math.max(10, state.currentBet + 10);
+  });
+
+  protected readonly maxBet = computed(() => {
+    const me = this.myPlayer();
+    if (!me) return 1000;
+    return me.balance;
+  });
+
   protected readonly myPlayer = computed(() => {
     const state = this.gameState();
     if (!state) return null;
@@ -84,8 +102,6 @@ export class Poker implements OnInit {
 
     if (!userId) {
       console.warn("No user logged in. Cannot join game.");
-      // Optional: Redirect to login
-      // this.router.navigate(['/login']);
       return;
     }
 
@@ -95,9 +111,14 @@ export class Poker implements OnInit {
 
       // Keep table-game bindings in sync with backend state
       if (typeof s?.pot === 'number') this.pot = s.pot;
-      if (Array.isArray(s?.players)) {
-        const me = s.players.find((p) => p.id === userId);
-        if (me && typeof me.balance === 'number') this.balance = me.balance;
+      
+      const me = s.players.find((p) => p.id === userId);
+      if (me) {
+        if (typeof me.balance === 'number') this.balance = me.balance;
+        // Sync selectedBetAmount with server's desiredBet if it's different
+        if (me.desiredBet !== this.selectedBetAmount()) {
+          this.selectedBetAmount.set(me.desiredBet || this.minBet());
+        }
       }
     });
 
@@ -122,13 +143,19 @@ export class Poker implements OnInit {
     const gid = this.gameId();
     if (!gid) return;
 
-    const userId = this.dataService.userId(); // for debug/logging only; socket uses socketUserMap
-    void userId;
-
     this.socketService.emitEvent('player_move', {
       gameId: gid,
       action,
       amount,
+    });
+  }
+
+  updateBetAmount(event: Event): void {
+    const amount = parseInt((event.target as HTMLInputElement).value, 10);
+    this.selectedBetAmount.set(amount);
+    this.socketService.emitEvent('set_desired_bet', {
+      gameId: this.gameId(),
+      amount: amount
     });
   }
 
@@ -150,24 +177,43 @@ export class Poker implements OnInit {
     const me = this.getMyPlayer();
     if (!state || !me) return 'Check';
 
-    return me.bet === state.currentBet ? 'Check' : 'Call';
+    if (me.bet === state.currentBet) {
+      return 'Check';
+    } else {
+      const callAmount = state.currentBet - me.bet;
+      return `Call ${callAmount}`;
+    }
   }
 
   makeBetOrRaise(): void {
     const state = this.gameState();
     if (!state) return;
 
-    const amount = 20; // from old template
+    const totalBet = this.selectedBetAmount();
+    // In Poker, 'bet' and 'raise' amounts in handlePlayerMove are increments
+    const increment = totalBet - state.currentBet;
+
     if (state.currentBet === 0) {
-      this.makeMove('bet', amount);
+      this.makeMove('bet', totalBet);
     } else {
-      this.makeMove('raise', amount);
+      this.makeMove('raise', increment);
     }
+  }
+
+  toggleBetSlider(): void {
+    if (!this.isMyTurn()) return;
+    this.showBetSlider.update(v => !v);
+  }
+
+  confirmBet(): void {
+    this.makeBetOrRaise();
+    this.showBetSlider.set(false);
   }
 
   betOrRaiseLabel(): string {
     const state = this.gameState();
     if (!state) return 'Bet';
-    return state.currentBet === 0 ? 'Bet 20' : 'Raise';
+    return state.currentBet === 0 ? 'Bet' : 'Raise';
   }
 }
+
