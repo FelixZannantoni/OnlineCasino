@@ -332,6 +332,7 @@ export class Poker extends CardGame<PokerPlayer> {
                 username: p.getUsername(),
                 displayname: p.getDisplayname(),
                 bet: p.getBet(),
+                desiredBet: p.getDesiredBet(),
                 folded: p.getPressedFold(),
                 balance: p.getBalance(),
                 cards: p.getCards(),

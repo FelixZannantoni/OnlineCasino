@@ -37,7 +37,6 @@ const blackjackService: BlackjackService = new BlackjackService();
 const userService: UserService = new UserService();
 export { pokerService, blackjackService, userService };
 
-// Socket.io connection handling
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
@@ -49,7 +48,6 @@ io.on("connection", (socket: Socket) => {
         console.log(`User ${userId} joined game: ${gameId}`);
 
         const user = await userService.getUserById(userId);
-        console.log("User data retrieved:", user);
         const startBalance: number = 1000;
 
         let game: any = PokerService.pokerGames.find(
@@ -168,6 +166,21 @@ io.on("connection", (socket: Socket) => {
 
         if (!actionResult.success) {
             console.warn(`Action failed for player ${playerId} in game ${gameId}: ${actionResult.message}`);
+        }
+    });
+
+    socket.on("set_desired_bet", async (data: { gameId: string; amount: number }) => {
+        const { gameId, amount } = data;
+        const playerId = socketUserMap.get(socket.id);
+        if (!playerId) return;
+
+        const { game } = pokerService.getGameById(gameId);
+        if (game) {
+            const player = game.getPlayers().find(p => p.getPlayerId() === playerId);
+            if (player) {
+                player.setDesiredBet(amount);
+                io.to(gameId).emit("game_state", game.getGameState());
+            }
         }
     });
 
