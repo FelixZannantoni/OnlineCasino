@@ -150,13 +150,17 @@ export class Poker implements OnInit {
     });
   }
 
-  updateBetAmount(event: Event): void {
-    const amount = parseInt((event.target as HTMLInputElement).value, 10);
+  private setBetAmount(amount: number): void {
     this.selectedBetAmount.set(amount);
     this.socketService.emitEvent('set_desired_bet', {
       gameId: this.gameId(),
       amount: amount
     });
+  }
+
+  updateBetAmount(event: Event): void {
+    const amount = parseInt((event.target as HTMLInputElement).value, 10);
+    this.setBetAmount(amount);
   }
 
   makeCheckOrCall(): void {
@@ -208,6 +212,24 @@ export class Poker implements OnInit {
   confirmBet(): void {
     this.makeBetOrRaise();
     this.showBetSlider.set(false);
+  }
+
+  setHalfPot(): void {
+    const state = this.gameState();
+    if (!state) return;
+    const amount = Math.max(this.minBet(), Math.min(this.maxBet(), Math.floor(state.pot / 2)));
+    this.setBetAmount(amount);
+  }
+
+  setPot(): void {
+    const state = this.gameState();
+    if (!state) return;
+    const amount = Math.max(this.minBet(), Math.min(this.maxBet(), state.pot));
+    this.setBetAmount(amount);
+  }
+
+  setAllIn(): void {
+    this.setBetAmount(this.maxBet());
   }
 
   betOrRaiseLabel(): string {
