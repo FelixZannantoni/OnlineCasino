@@ -1,0 +1,161 @@
+<div class="inventory-wrapper">
+
+    <!-- Top Bar -->
+    <div class="inventory-top-bar">
+        <div class="inventory-title">
+            <mat-icon>inventory_2</mat-icon>
+            <h1>My <span>Inventory</span></h1>
+        </div>
+        <div class="equipped-summary">
+            <span class="equipped-label">
+                <mat-icon>check_circle</mat-icon>
+                {{ equippedItems.length }} Equipped
+            </span>
+        </div>
+    </div>
+
+    <!-- Equipped Loadout Preview -->
+    <div class="loadout-section">
+        <h2 class="section-heading">
+            <mat-icon>person_pin</mat-icon>
+            Current Loadout
+        </h2>
+        <div class="loadout-grid">
+            @for (slot of categories.slice(1); track slot.id) {
+                @if (getEquipped(slot.id); as item) {
+                    <div class="loadout-slot equipped" [attr.data-rarity]="item.rarity">
+                        <div class="loadout-icon-wrap"
+                             [style.background]="'linear-gradient(135deg, ' + item.previewColors![0] + '33, ' + item.previewColors![1] + '22)'">
+                            <mat-icon [style.color]="item.previewColors![0]">{{ item.icon }}</mat-icon>
+                        </div>
+                        <div class="loadout-info">
+                            <span class="loadout-slot-label">{{ slot.label }}</span>
+                            <span class="loadout-item-name">{{ item.name }}</span>
+                            <span class="rarity-pill" [attr.data-rarity]="item.rarity">{{ rarityLabel(item.rarity) }}</span>
+                        </div>
+                    </div>
+                } @else {
+                    <div class="loadout-slot empty">
+                        <div class="loadout-icon-wrap empty-icon">
+                            <mat-icon>{{ slot.icon }}</mat-icon>
+                        </div>
+                        <div class="loadout-info">
+                            <span class="loadout-slot-label">{{ slot.label }}</span>
+                            <span class="loadout-item-name empty-text">None equipped</span>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        @for (cat of categories; track cat.id) {
+            <button class="filter-tab" [class.active]="selectedCategory === cat.id"
+                    (click)="selectedCategory = cat.id">
+                <mat-icon>{{ cat.icon }}</mat-icon>
+                <span>{{ cat.label }}</span>
+                <span class="tab-count">{{ countByCategory(cat.id) }}</span>
+            </button>
+        }
+    </div>
+
+    <!-- Items Grid -->
+    <div class="items-grid">
+        @for (item of filteredItems; track item.id) {
+            <div class="cosmetic-card" [attr.data-rarity]="item.rarity" [class.is-equipped]="item.isEquipped">
+
+                <!-- Equipped ribbon -->
+                @if (item.isEquipped) {
+                    <div class="equipped-ribbon">
+                        <mat-icon>check</mat-icon>
+                        Equipped
+                    </div>
+                }
+
+                <!-- Visual Preview Area -->
+                <div class="card-preview"
+                     [style.background]="item.previewColors
+                        ? 'linear-gradient(135deg, ' + item.previewColors[0] + '22 0%, ' + item.previewColors[1] + '11 100%)'
+                        : 'rgba(255,255,255,0.03)'">
+
+                    <!-- Category-specific cosmetic visuals -->
+                    @if (item.category === 'avatars') {
+                        <div class="avatar-preview" [style.border-color]="item.previewColors ? item.previewColors[0] + '88' : 'rgba(255,215,0,0.3)'">
+                            <mat-icon [style.color]="item.previewColors ? item.previewColors[0] : 'var(--light-gold)'">{{ item.icon }}</mat-icon>
+                        </div>
+                    }
+
+                    @if (item.category === 'card-backs') {
+                        <div class="card-back-preview">
+                            <div class="mini-card top-card"
+                                 [style.background]="item.previewColors ? 'linear-gradient(135deg, ' + item.previewColors[0] + ', ' + item.previewColors[1] + ')' : '#333'">
+                                <mat-icon>{{ item.icon }}</mat-icon>
+                            </div>
+                            <div class="mini-card mid-card"
+                                 [style.background]="item.previewColors ? 'linear-gradient(135deg, ' + item.previewColors[0] + ', ' + item.previewColors[1] + ')' : '#333'">
+                                <mat-icon>{{ item.icon }}</mat-icon>
+                            </div>
+                            <div class="mini-card bot-card"
+                                 [style.background]="item.previewColors ? 'linear-gradient(135deg, ' + item.previewColors[0] + ', ' + item.previewColors[1] + ')' : '#333'">
+                                <mat-icon>{{ item.icon }}</mat-icon>
+                            </div>
+                        </div>
+                    }
+
+                    @if (item.category === 'chip-designs') {
+                        <div class="chip-preview-wrap">
+                            <div class="chip-visual large-chip"
+                                 [style.border-color]="item.previewColors ? item.previewColors[0] : '#ffd700'"
+                                 [style.background]="item.previewColors ? 'radial-gradient(circle at 35% 35%, ' + item.previewColors[0] + ', ' + item.previewColors[1] + ')' : 'radial-gradient(circle at 35% 35%, #aaa, #555)'">
+                                <span class="chip-inner"></span>
+                            </div>
+                            <div class="chip-visual small-chip-1"
+                                 [style.border-color]="item.previewColors ? item.previewColors[0] + 'aa' : '#ffd700aa'"
+                                 [style.background]="item.previewColors ? 'radial-gradient(circle, ' + item.previewColors[0] + 'cc, ' + item.previewColors[1] + 'cc)' : '#888'">
+                            </div>
+                            <div class="chip-visual small-chip-2"
+                                 [style.border-color]="item.previewColors ? item.previewColors[0] + 'aa' : '#ffd700aa'"
+                                 [style.background]="item.previewColors ? 'radial-gradient(circle, ' + item.previewColors[0] + 'cc, ' + item.previewColors[1] + 'cc)' : '#888'">
+                            </div>
+                        </div>
+                    }
+
+                    @if (item.category === 'table-felts') {
+                        <div class="felt-preview"
+                             [style.background]="item.previewColors ? 'linear-gradient(135deg, ' + item.previewColors[0] + ', ' + item.previewColors[1] + ')' : '#1b5e20'">
+                            <div class="felt-oval"></div>
+                            <div class="felt-line top-line"></div>
+                            <div class="felt-line bottom-line"></div>
+                        </div>
+                    }
+
+                </div>
+
+                <!-- Info -->
+                <div class="card-info">
+                    <div class="card-header-row">
+                        <h3 class="item-name">{{ item.name }}</h3>
+                        <span class="rarity-pill" [attr.data-rarity]="item.rarity">{{ rarityLabel(item.rarity) }}</span>
+                    </div>
+                    <p class="item-desc">{{ item.description }}</p>
+
+                    <button class="equip-btn"
+                            [class.equipped-btn]="item.isEquipped"
+                            (click)="equip(item)"
+                            [disabled]="item.isEquipped">
+                        @if (item.isEquipped) {
+                            <mat-icon>check_circle</mat-icon>
+                            <span>Equipped</span>
+                        } @else {
+                            <mat-icon>swap_horiz</mat-icon>
+                            <span>Equip</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
