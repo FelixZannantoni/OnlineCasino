@@ -135,7 +135,7 @@
                     <div class="slide-controls">
                         <div class="slider-tab" [ngStyle]="{'left': showLeaderboard ? '50%' : '0'}"></div>
                         <button class="slide" [class.active]="!showLeaderboard" (click)="setSlide('friends')">
-                            <span>Freundesliste</span>
+                            <span>Members</span>
                         </button>
                         <button class="slide" [class.active]="showLeaderboard" (click)="setSlide('leaderboard')">
                             <span>Leaderboard</span>
@@ -152,19 +152,19 @@
                                     <li class="friend-item online">
                                         <button class="friend-btn">
                                             <span class="status-dot"></span>
-                                            <span class="friend-name">Freund 1</span>
+                                            <span class="friend-name">Member 1</span>
                                         </button>
                                     </li>
                                     <li class="friend-item online">
                                         <button class="friend-btn">
                                             <span class="status-dot"></span>
-                                            <span class="friend-name">Freund 2</span>
+                                            <span class="friend-name">Member 2</span>
                                         </button>
                                     </li>
                                     <li class="friend-item offline">
                                         <button class="friend-btn">
                                             <span class="status-dot"></span>
-                                            <span class="friend-name">Freund 3</span>
+                                            <span class="friend-name">Member 3</span>
                                         </button>
                                     </li>
                                 </ul>
