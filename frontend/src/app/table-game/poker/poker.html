@@ -157,7 +157,7 @@
           {{ selectedBetAmount() | number }}
         </div>
 
-        <button class="btn-confirm-bet" (click)="confirmBet()" [disabled]="(gameState()?.isLoading ?? false)">
+        <button class="btn-confirm-bet" (click)="confirmBet()" [disabled]="(gameState()?.isLoading ?? false) || isProcessing()">
           BESTÄTIGEN
         </button>
         
@@ -166,13 +166,13 @@
     }
 
     <div style="display: flex; gap: 10px;">
-      <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">Fold</button>
-      <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ checkOrCallLabel() }}</button>
+      <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">Fold</button>
+      <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">{{ checkOrCallLabel() }}</button>
       
       @if (showBetSlider()) {
-        <button class="btn-bet" (click)="confirmBet()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ betOrRaiseLabel() }}</button>
+        <button class="btn-bet" (click)="confirmBet()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">{{ betOrRaiseLabel() }}</button>
       } @else {
-        <button class="btn-bet" (click)="toggleBetSlider()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false)">{{ betOrRaiseLabel() }}</button>
+        <button class="btn-bet" (click)="toggleBetSlider()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">{{ betOrRaiseLabel() }}</button>
       }
     </div>
   </div>

@@ -281,6 +281,7 @@ export class Poker extends CardGame<PokerPlayer> {
         const activePlayers = this.players.filter(p => !p.getPressedFold());
         if (activePlayers.length === 1) {
             activePlayers[0].winMoney(this.pot);
+            this.isLoading = true;
             this.emit("gameState", this.getGameState());
             setTimeout(() => this.startNewHand(), 3000);
             return { success: true, message: "Only one player left" };

@@ -57,6 +57,7 @@ export class Poker implements OnInit {
   pot = 0;
 
   public gameState = signal<PokerGameState | null>(null);
+  protected isProcessing = signal<boolean>(false);
 
   private readonly gameId = signal<string>('1');
 
@@ -108,6 +109,7 @@ export class Poker implements OnInit {
     this.socketService.onEvent('game_state', (state: unknown) => {
       const s = state as PokerGameState;
       this.gameState.set(s);
+      this.isProcessing.set(false);
 
       // Keep table-game bindings in sync with backend state
       if (typeof s?.pot === 'number') this.pot = s.pot;
@@ -143,6 +145,7 @@ export class Poker implements OnInit {
     const gid = this.gameId();
     if (!gid) return;
 
+    this.isProcessing.set(true);
     this.socketService.emitEvent('player_move', {
       gameId: gid,
       action,
