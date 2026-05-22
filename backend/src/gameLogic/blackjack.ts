@@ -34,7 +34,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.isRunning = true;
         this.setDefaultDealerChip();
 
-        while (this.isRunning && this.players.length > 0) {
+        while (this.isRunning) {
+            if (this.players.length === 0) {
+                // Wait a bit to see if someone joins, or just stop
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                if (this.players.length === 0) break;
+            }
+
             await this.playRound();
             this.updateDealerChip();
             this.currentPhase = BlackjackPhase.FINISHED;
@@ -44,6 +50,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
         this.isRunning = false;
         this.currentPhase = BlackjackPhase.WAITING;
+        this.emit("gameState", this.getGameState());
     }
 
     public stopGame() {
@@ -60,7 +67,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         // Only players who made a bet participate
         const activePlayers = this.players.filter(p => p.getBet() > 0);
-        if (activePlayers.length === 0 && this.players.length > 0) {
+        if (activePlayers.length === 0) {
             return;
         }
 
@@ -75,7 +82,15 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         this.currentPhase = BlackjackPhase.DEALER_TURN;
         this.currentPlayerId = BLACKJACK_BOT_ID;
-        this.dealerPlay();
+        
+        // Skip dealer play if all active players busted
+        const anyPlayerStillIn = this.players.some(p => p.getBet() > 0 && p.getHandValue() <= 21);
+        if (anyPlayerStillIn) {
+            this.dealerPlay();
+        } else {
+            this.blackJackBot.revealCards(); // Just reveal the hidden card
+        }
+        
         this.emit("gameState", this.getGameState());
         this.handOutWin();
         this.currentPlayerId = null;
@@ -96,7 +111,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             for (let j: number = 0; j < this.players.length; j++) {
                 const playerIndex = Player.xNextPlayer(this.players, dealerChipIndex, j + 1);
                 const player = this.players[playerIndex];
-                if (player.getBet() > 0) {
+                if (player && player.getBet() > 0) {
                     player.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), player.getPlayerId()));
                 }
             }
@@ -226,22 +241,33 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         // Wait for all players to place a bet or timeout
         await new Promise<void>((resolve) => {
             const betTimeout = setTimeout(() => {
-                this.removeListener("playerBet", handleBet);
+                cleanup();
                 resolve();
             }, 15000); // 15 seconds for betting
 
             const handleBet = () => {
                 const allBet = this.players.every(p => p.getBet() > 0 || p.getBalance() === 0);
                 if (allBet) {
-                    clearTimeout(betTimeout);
-                    this.removeListener("playerBet", handleBet);
+                    cleanup();
                     resolve();
                 }
                 this.emit("gameState", this.getGameState());
             };
 
+            const handleLeft = () => {
+                // If a player leaves, re-check if everyone else has bet
+                handleBet();
+            };
+
+            const cleanup = () => {
+                clearTimeout(betTimeout);
+                this.removeListener("playerBet", handleBet);
+                this.removeListener("playerLeft", handleLeft);
+            };
+
             this.on("playerBet", handleBet);
-            // Trigger check immediately in case all players already have bets (e.g. via desiredBet)
+            this.on("playerLeft", handleLeft);
+
             handleBet();
         });
     }
