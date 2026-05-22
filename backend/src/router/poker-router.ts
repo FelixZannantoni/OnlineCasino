@@ -19,7 +19,6 @@ pokerRouter.post("/addPlayer", async (req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({ message: "Added Player to pokergame" });
 });
 
-// route for pressing fold
 pokerRouter.put("/fold", async (req: Request, res: Response) => {
     const [playerId, gameId]: [string, string] = [req.body.playerId, req.body.gameId];
     if (!playerId || !gameId) {

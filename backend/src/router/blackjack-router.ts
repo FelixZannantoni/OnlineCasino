@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import { blackjackService } from "../app";
+import { BlackjackService } from "../services/blackjack-service";
 
 export const blackjackRouter = Router();
 
@@ -66,4 +67,36 @@ blackjackRouter.put("/double", async (req: Request, res: Response) => {
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ message: result.message });
     }
+});
+
+blackjackRouter.put("/bet", async (req: Request, res: Response) => {
+    const { playerId, gameId, amount } = req.body;
+    if (!playerId || !gameId || amount === undefined) {
+        res.status(StatusCodes.BAD_REQUEST).json({ error: "Missing playerId, gameId or amount in request body" });
+        return;
+    }
+
+    const result = await blackjackService.bet(playerId, gameId, amount);
+
+    if (result.success) {
+        res.status(StatusCodes.OK).json({ message: "Bet placed" });
+    } else {
+        res.status(StatusCodes.BAD_REQUEST).json({ message: result.message });
+    }
+});
+
+blackjackRouter.get("/gameState/:gameId", async (req: Request, res: Response) => {
+    const gameId = req.params.gameId;
+    const { game } = blackjackService.getGameById(gameId as string);
+
+    if (game) {
+        res.status(StatusCodes.OK).json(game.getGameState());
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ message: `Game with id ${gameId} not found` });
+    }
+});
+
+blackjackRouter.get("/games", async (req: Request, res: Response) => {
+    const games = BlackjackService.blackjackGames.map(game => game.getGameState());
+    res.status(StatusCodes.OK).json(games);
 });
