@@ -120,6 +120,15 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
+    public override removePlayer(playerId: string): void {
+        const index = this.players.findIndex(p => p.getPlayerId() === playerId);
+        if (index !== -1) {
+            this.players.splice(index, 1);
+            this.emit("playerLeft", { playerId });
+            this.emit("gameState", this.getGameState());
+        }
+    }
+
     private async makeMove() {
         const dealerChipIndex = CardGamePlayer.playerWithDealerChip(this.players);
         for (let i: number = 0; i < this.players.length; i++) {
@@ -127,7 +136,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             const playerOnMove: BlackjackPlayer = this.players[playerIndex];
 
             // Only active players move
-            if (playerOnMove.getBet() === 0) continue;
+            if (!playerOnMove || playerOnMove.getBet() === 0) continue;
             // If player has Blackjack, they stand automatically
             if (playerOnMove.getHandValue() === 21 && playerOnMove.getCards().length === 2) continue;
 
@@ -137,7 +146,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                 this.emit("gameState", this.getGameState());
                 await new Promise<void>((resolve) => {
                     const timeout = setTimeout(() => {
-                        this.removeListener("playerMove", handleMove);
+                        cleanup();
                         turnOver = true;
                         resolve();
                     }, 15000); // 15s timeout
@@ -145,9 +154,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                     const handleMove = (detail: { playerId: string }) => {
                         if (detail && detail.playerId == playerOnMove.getPlayerId()) {
                             if (playerOnMove.getMadeMove()) {
-                                clearTimeout(timeout);
-                                this.removeListener("playerMove", handleMove);
-
+                                cleanup();
                                 if (playerOnMove.getPressedStand()) {
                                     turnOver = true;
                                 }
@@ -159,15 +166,12 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                     }
                                 }
                                 else if (playerOnMove.getPressedDouble()) {
-                                    // Double Down: increase bet, get one card, end turn
                                     const currentBet = playerOnMove.getBet();
                                     try {
                                         playerOnMove.makeIncreasedBet(currentBet * 2);
                                         playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
                                         playerOnMove.checkHandValue();
-                                    } catch (e) {
-                                        // Should be validated in handlePlayerMove
-                                    }
+                                    } catch (e) {}
                                     turnOver = true;
                                 }
                                 playerOnMove.resetMadeMove();
@@ -177,8 +181,28 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                         }
                     };
 
+                    const handleRemoval = (detail: { playerId: string }) => {
+                        if (detail && detail.playerId === playerOnMove.getPlayerId()) {
+                            cleanup();
+                            turnOver = true;
+                            resolve();
+                        }
+                    };
+
+                    const cleanup = () => {
+                        clearTimeout(timeout);
+                        this.removeListener("playerMove", handleMove);
+                        this.removeListener("playerLeft", handleRemoval);
+                    };
+
                     this.on("playerMove", handleMove);
+                    this.on("playerLeft", handleRemoval);
                 });
+
+                // Check if player was removed during the wait
+                if (!this.players.find(p => p.getPlayerId() === playerOnMove.getPlayerId())) {
+                    turnOver = true;
+                }
             }
         }
         this.currentPlayerId = null;
@@ -186,6 +210,19 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     private async waitForBets() {
         this.emit("gameState", this.getGameState());
+
+        // Automatically apply desired bets for players who have them
+        for (const player of this.players) {
+            const desired = player.getDesiredBet();
+            if (desired > 0) {
+                try {
+                    player.makeNewBet(desired);
+                } catch (e) {
+                    // Not enough money for desired bet, player will have to bet manually
+                }
+            }
+        }
+
         // Wait for all players to place a bet or timeout
         await new Promise<void>((resolve) => {
             const betTimeout = setTimeout(() => {
@@ -204,6 +241,8 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             };
 
             this.on("playerBet", handleBet);
+            // Trigger check immediately in case all players already have bets (e.g. via desiredBet)
+            handleBet();
         });
     }
 
