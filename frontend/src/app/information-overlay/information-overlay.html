@@ -1,0 +1,85 @@
+<div class="info-overlay" [class.active]="isOpen">
+    <!-- Backdrop -->
+    <div class="overlay-backdrop" (click)="close()"></div>
+
+    <!-- Dialog Card -->
+    @if (currentGame) {
+    <div class="info-dialog">
+
+        <!-- Close Button -->
+        <button class="close-btn" (click)="close()" aria-label="Close">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <!-- Header -->
+        <div class="info-header">
+            <div class="game-icon-wrap">
+                <mat-icon>{{ currentGame.icon }}</mat-icon>
+            </div>
+            <div class="header-text">
+                <h2 class="game-title">{{ currentGame.title }}</h2>
+                @if (currentGame.badge) {
+                <span class="badge">{{ currentGame.badge }}</span>
+                }
+            </div>
+        </div>
+
+        <!-- Scrollable Body -->
+        <div class="info-body">
+
+            <!-- Description -->
+            <p class="description">{{ currentGame.description }}</p>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-item">
+                    <mat-icon>trending_up</mat-icon>
+                    <span class="stat-label">Schwierigkeit</span>
+                    <span class="stat-value" [style.color]="getDifficultyColor(currentGame.difficulty)">
+                        {{ currentGame.difficulty }}
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <mat-icon>people</mat-icon>
+                    <span class="stat-label">Spieler</span>
+                    <span class="stat-value">{{ currentGame.players }}</span>
+                </div>
+                <div class="stat-item">
+                    <mat-icon>payments</mat-icon>
+                    <span class="stat-label">Min Einsatz</span>
+                    <span class="stat-value">{{ currentGame.minBet }}</span>
+                </div>
+                <div class="stat-item">
+                    <mat-icon>monetization_on</mat-icon>
+                    <span class="stat-label">Max Einsatz</span>
+                    <span class="stat-value">{{ currentGame.maxBet }}</span>
+                </div>
+            </div>
+
+            <!-- How to Play -->
+            <div class="how-to-play">
+                <h3 class="section-title">
+                    <mat-icon>menu_book</mat-icon>
+                    Wie spielt man?
+                </h3>
+                <ol class="steps-list">
+                    @for (step of currentGame.howToPlay; track $index) {
+                    <li class="step-item">
+                        <span class="step-number">{{ $index + 1 }}</span>
+                        <span class="step-text">{{ step }}</span>
+                    </li>
+                    }
+                </ol>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="info-footer">
+            <button class="close-action-btn" (click)="close()">
+                <mat-icon>check</mat-icon>
+                Verstanden
+            </button>
+        </div>
+    </div>
+    }
+</div>
