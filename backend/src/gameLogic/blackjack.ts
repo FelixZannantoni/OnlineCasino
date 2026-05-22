@@ -6,7 +6,7 @@ import { CardGamePlayer } from "./cardGamePlayer";
 import { Player } from "./player";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
-export const BALCKJACK_BOT_ID: string = "BlackjackBot";
+export const BLACKJACK_BOT_ID: string = "BlackjackBot";
 
 export enum BlackjackPhase {
     WAITING = "WAITING",
@@ -74,7 +74,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
 
         this.currentPhase = BlackjackPhase.DEALER_TURN;
-        this.currentPlayerId = BALCKJACK_BOT_ID;
+        this.currentPlayerId = BLACKJACK_BOT_ID;
         this.dealerPlay();
         this.emit("gameState", this.getGameState());
         this.handOutWin();
@@ -82,8 +82,9 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     private dealerPlay() {
+        this.blackJackBot.revealCards();
         while (this.blackJackBot.makesHit()) {
-            this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BALCKJACK_BOT_ID));
+            this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BLACKJACK_BOT_ID));
         }
     }
 
@@ -102,7 +103,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
 
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
-            this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BALCKJACK_BOT_ID));
+            this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BLACKJACK_BOT_ID));
         }
     }
 
@@ -119,7 +120,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
-    private async makeMove() {//TODO mit websockets
+    private async makeMove() {
         const dealerChipIndex = CardGamePlayer.playerWithDealerChip(this.players);
         for (let i: number = 0; i < this.players.length; i++) {
             const playerIndex = Player.xNextPlayer(this.players, dealerChipIndex, i + 1);
@@ -139,7 +140,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                         this.removeListener("playerMove", handleMove);
                         turnOver = true;
                         resolve();
-                    }, 15000); // Increased to 15s
+                    }, 15000); // 15s timeout
 
                     const handleMove = (detail: { playerId: string }) => {
                         if (detail && detail.playerId == playerOnMove.getPlayerId()) {
@@ -158,14 +159,14 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                     }
                                 }
                                 else if (playerOnMove.getPressedDouble()) {
-                                    // Double Down
+                                    // Double Down: increase bet, get one card, end turn
                                     const currentBet = playerOnMove.getBet();
                                     try {
                                         playerOnMove.makeIncreasedBet(currentBet * 2);
                                         playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
                                         playerOnMove.checkHandValue();
                                     } catch (e) {
-                                        // If not enough money, maybe just hit? For now just end turn.
+                                        // Should be validated in handlePlayerMove
                                     }
                                     turnOver = true;
                                 }
@@ -206,7 +207,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         });
     }
 
-    public handlePlayerMove(playerId: string, action: string, amount?: number) {//TODO Double
+    public handlePlayerMove(playerId: string, action: string, amount?: number) {
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
 
@@ -238,6 +239,12 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                 player.userPressedStand();
                 break;
             case "double":
+                if (player.getCards().length !== 2) {
+                    return { success: false, message: "Can only double on first move" };
+                }
+                if (player.getBalance() < player.getBet()) {
+                    return { success: false, message: "Not enough balance to double" };
+                }
                 player.userPressedDouble();
                 break;
             default:
@@ -249,6 +256,11 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     public getGameState() {
+        const botVisibleCards = this.blackJackBot.getCards();
+        const botHandValue = (this.currentPhase === BlackjackPhase.DEALER_TURN || this.currentPhase === BlackjackPhase.FINISHED) 
+            ? this.blackJackBot.getHandValue() 
+            : (botVisibleCards.length > 1 ? botVisibleCards[1].value : 0);
+
         return {
             gameId: this.getGameId(),
             isRunning: this.isRunning,
@@ -265,9 +277,9 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                 isDealer: p.getDealerChip()
             })),
             bot: {
-                id: BALCKJACK_BOT_ID,
-                cards: this.blackJackBot.getCards(),
-                handValue: this.blackJackBot.getHandValue()
+                id: BLACKJACK_BOT_ID,
+                cards: botVisibleCards,
+                handValue: botHandValue
             }
         };
     }
