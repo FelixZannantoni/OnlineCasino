@@ -19,6 +19,8 @@ export class Blackjack implements OnInit, OnDestroy {
   userId: string | null = null;
   gameId: string = '2';
   betAmount: number = 10;
+  balance: number = 1000;
+  pot: number = 0;
 
   constructor(
     private socketService: SocketService,
@@ -34,7 +36,17 @@ export class Blackjack implements OnInit, OnDestroy {
 
     this.socketService.onEvent('game_state', (data: any) => {
       console.log('Blackjack State Update:', data);
-      this.gameState.set(data as BlackjackGameState);
+      const state = data as BlackjackGameState;
+      this.gameState.set(state);
+      const me = state.players.find(p => p.id === this.userId);
+      if (me) {
+        if (typeof me.balance === 'number') {
+          this.balance = me.balance;
+        }
+        if (typeof me.bet === 'number') {
+          this.pot = me.bet;
+        }
+      }
     });
 
     this.socketService.onEvent('error', (data: any) => {
