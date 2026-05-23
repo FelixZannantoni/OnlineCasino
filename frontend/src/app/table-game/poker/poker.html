@@ -191,6 +191,7 @@
     }
 
     <div style="display: flex; gap: 10px;">
+      <button class="btn-tip" (click)="tipDealer()" [disabled]="(gameState()?.isLoading ?? false)">Tip Dealer (10)</button>
       <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">Fold</button>
       <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">{{ checkOrCallLabel() }}</button>
       

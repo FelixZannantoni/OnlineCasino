@@ -46,6 +46,19 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
+    public async tipDealer(playerId: string) {
+        const player = this.players.find(p => p.getPlayerId() === playerId);
+        if (!player) return { success: false, message: "Player not found" };
+        try {
+            player.makeTip(10);
+            await userService.updateUserBalance(playerId, player.getBalance());
+            this.emit("gameState", this.getGameState());
+            return { success: true, message: "Dealer: Thank you for the tip!" };
+        } catch (e) {
+            return { success: false, message: "Not enough money to tip" };
+        }
+    }
+
     private startTurnTimer() {
         this.stopTurnTimer();
         const currentPlayer = this.players[this.currentPlayerIndex];

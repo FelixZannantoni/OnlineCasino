@@ -185,6 +185,18 @@ io.on("connection", (socket: Socket) => {
         }
     });
 
+    socket.on("tip_dealer", async (data: { gameId: string }) => {
+        const { gameId } = data;
+        const playerId = socketUserMap.get(socket.id);
+        if (!playerId) return;
+
+        console.log(`Player ${playerId} is tipping the dealer in game: ${gameId}`);
+        const result = await pokerService.tipDealer(playerId, gameId);
+        if (!result.success) {
+            socket.emit("error", { message: result.message });
+        }
+    });
+
     socket.on("disconnect", () => {
         const userId = socketUserMap.get(socket.id);
         console.log(`User disconnected: ${socket.id} (User: ${userId})`);

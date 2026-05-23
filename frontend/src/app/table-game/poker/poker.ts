@@ -266,5 +266,14 @@ export class Poker implements OnInit {
     if (!state) return 'Bet';
     return state.currentBet === 0 ? 'Bet' : 'Raise';
   }
+
+  tipDealer(): void {
+    const gid = this.gameId();
+    if (!gid) return;
+
+    this.socketService.emitEvent('tip_dealer', {
+      gameId: gid
+    });
+  }
 }
 
