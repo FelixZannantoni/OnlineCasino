@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableGameComponent } from '../table-game';
 import { SocketService } from '../../services/socket.service';
@@ -6,11 +6,12 @@ import { DataService } from '../../services/data-service';
 import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.models';
 import { getCardRank } from '../../services/card-utils';
 import { FormsModule } from '@angular/forms';
+import {PlayerSlot} from '../player-slot/player-slot';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, FormsModule],
+  imports: [CommonModule, TableGameComponent, FormsModule, PlayerSlot],
   templateUrl: './blackjack.html',
   styleUrl: './blackjack.css',
 })
@@ -21,6 +22,18 @@ export class Blackjack implements OnInit, OnDestroy {
   betAmount: number = 10;
   balance: number = 1000;
   pot: number = 0;
+
+  protected readonly me = computed(() => {
+    const state = this.gameState();
+    if (!state) return null;
+    return state.players.find(p => p.id === this.userId) || null;
+  });
+
+  protected readonly opponents = computed(() => {
+    const state = this.gameState();
+    if (!state) return [];
+    return state.players.filter(p => p.id !== this.userId);
+  });
 
   constructor(
     private socketService: SocketService,
@@ -38,49 +51,23 @@ export class Blackjack implements OnInit, OnDestroy {
       console.log('Blackjack State Update:', data);
       const state = data as BlackjackGameState;
       this.gameState.set(state);
+
       const me = state.players.find(p => p.id === this.userId);
       if (me) {
-        if (typeof me.balance === 'number') {
-          this.balance = me.balance;
-        }
-        if (typeof me.bet === 'number') {
-          this.pot = me.bet;
-        }
+        if (typeof me.balance === 'number') this.balance = me.balance;
+        if (typeof me.bet === 'number') this.pot = me.bet; // Oder Summe aller Bets?
       }
     });
 
     this.socketService.onEvent('error', (data: any) => {
-        alert(data.message);
+      console.error('Socket Error:', data);
+      alert(data.message);
     });
   }
 
   ngOnDestroy() {
     this.socketService.offEvent('game_state');
     this.socketService.offEvent('error');
-  }
-
-  get me(): BlackjackPlayer | undefined {
-    return this.gameState()?.players.find(p => p.id === this.userId);
-  }
-
-  get isMyTurn(): boolean {
-    return this.gameState()?.currentPlayerId === this.userId;
-  }
-
-  get canHit(): boolean {
-    return this.isMyTurn && this.gameState()?.phase === 'PLAYING';
-  }
-
-  get canStand(): boolean {
-    return this.isMyTurn && this.gameState()?.phase === 'PLAYING';
-  }
-
-  get canDouble(): boolean {
-    return this.isMyTurn && this.gameState()?.phase === 'PLAYING' && this.me?.cards.length === 2;
-  }
-
-  get isBettingPhase(): boolean {
-    return this.gameState()?.phase === 'BETTING';
   }
 
   hit() {
@@ -112,19 +99,17 @@ export class Blackjack implements OnInit, OnDestroy {
     });
   }
 
-  setDesiredBet(amount: number) {
-      this.betAmount = amount;
-      this.socketService.emitEvent('set_desired_bet', {
-          gameId: this.gameId,
-          amount: amount
-      });
+  get canDouble(): boolean {
+    return this.gameState()?.phase === 'PLAYING' &&
+      this.gameState()?.currentPlayerId === this.userId &&
+      this.me()?.cards?.length === 2;
+  }
+
+  get isMyTurn(): boolean {
+    return this.gameState()?.currentPlayerId === this.userId;
   }
 
   getRank(cardName: string): string {
     return getCardRank(cardName);
-  }
-
-  getSuitClass(color: string): string {
-    return color.toLowerCase();
   }
 }
