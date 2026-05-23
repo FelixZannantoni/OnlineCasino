@@ -109,7 +109,7 @@ io.on("connection", (socket: Socket) => {
 
         const playerCount = game.getGameState().players.length;
         // Start game based on type
-        if (service === pokerService && playerCount >= 2 && playerCount <= 5) {
+        if (service === pokerService && playerCount >= 4 && playerCount <= 5) {
             game.startGame();
         } else if (service === blackjackService && playerCount >= 1) {
             game.startGame();

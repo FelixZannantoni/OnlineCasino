@@ -84,6 +84,8 @@ export class Poker extends CardGame<PokerPlayer> {
     public startGame() {
         if (this.isStarted) return;
         this.isStarted = true;
+        // Clean up any existing dealer chips to ensure only one exists
+        this.players.forEach(p => p.setDealerChip(false));
         this.setDefaultDealerChip();
         this.startNewHand(true);
     }
@@ -92,6 +94,8 @@ export class Poker extends CardGame<PokerPlayer> {
         if (this.players.length < 2) {
             this.isStarted = false;
             this.stopTurnTimer();
+            // Clean up dealer chips if game can't start
+            this.players.forEach(p => p.setDealerChip(false));
             return;
         }
 
