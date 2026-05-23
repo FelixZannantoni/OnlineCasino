@@ -271,3 +271,11 @@
 ::ng-deep .btn-close-slider:hover {
     color: #bbb;
 }
+
+::ng-deep .turn-timer {
+    color: #ff4444;
+    font-weight: bold;
+    margin-left: 5px;
+    text-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
+    font-size: 0.9em;
+}

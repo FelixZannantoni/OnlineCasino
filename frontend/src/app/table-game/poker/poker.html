@@ -54,7 +54,12 @@
             <img src="assets/default-avatar.png" alt="Opponent" />
             @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-          <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-name">
+            {{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}
+            @if (opponent.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
       }
@@ -69,7 +74,12 @@
             <img src="assets/default-avatar.png" alt="Opponent" />
             @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-          <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-name">
+            {{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}
+            @if (opponent.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
       }
@@ -84,7 +94,12 @@
             <img src="assets/default-avatar.png" alt="Opponent" />
             @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-          <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-name">
+            {{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}
+            @if (opponent.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
       }
@@ -104,7 +119,12 @@
             <img src="assets/default-avatar.png" alt="Me" />
             @if (player.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-          <div class="player-name">You ({{ player.displayname || (player.id | slice:0:8) + '...' }})</div>
+          <div class="player-name">
+            You ({{ player.displayname || (player.id | slice:0:8) + '...' }})
+            @if (player.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
           <div class="player-bet">Bet: {{ player.bet }}</div>
         </div>
       }
@@ -121,7 +141,12 @@
             <img src="assets/default-avatar.png" alt="Opponent" />
             @if (opponent.isDealer) { <div class="dealer-chip">D</div> }
           </div>
-          <div class="player-name">{{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}</div>
+          <div class="player-name">
+            {{ opponent.displayname || (opponent.id | slice:0:8) + '...' }}
+            @if (opponent.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
           <div class="player-bet">Bet: {{ opponent.bet }}</div>
         </div>
       }

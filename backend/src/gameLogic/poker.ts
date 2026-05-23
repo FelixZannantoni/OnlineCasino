@@ -29,7 +29,8 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private isLoading: boolean = false;
     private turnTimer: NodeJS.Timeout | null = null;
-    private readonly TURN_TIMEOUT_MS: number = 30000; // 30 seconds for Poker
+    private turnEndTime: number | null = null;
+    private readonly TURN_TIMEOUT_MS: number = 10000; // 10 seconds for Poker
 
     constructor(gameId: string) {
         super(gameId);
@@ -50,7 +51,9 @@ export class Poker extends CardGame<PokerPlayer> {
         const currentPlayer = this.players[this.currentPlayerIndex];
         if (!currentPlayer) return;
 
-        console.log(`Starting turn timer for player ${currentPlayer.getPlayerId()} (${this.TURN_TIMEOUT_MS}ms)`);
+        this.turnEndTime = Date.now() + this.TURN_TIMEOUT_MS;
+        console.log(`Starting turn timer for player ${currentPlayer.getPlayerId()} (Ends at: ${new Date(this.turnEndTime).toLocaleTimeString()})`);
+        
         this.turnTimer = setTimeout(() => {
             console.log(`Turn timeout for player ${currentPlayer.getPlayerId()}. Auto-folding...`);
             this.handlePlayerMove(currentPlayer.getPlayerId(), "fold");
@@ -62,6 +65,7 @@ export class Poker extends CardGame<PokerPlayer> {
             clearTimeout(this.turnTimer);
             this.turnTimer = null;
         }
+        this.turnEndTime = null;
     }
 
     public startGame() {
@@ -103,8 +107,8 @@ export class Poker extends CardGame<PokerPlayer> {
             this.currentPlayerIndex = Player.nextPlayer(this.players, bigBlindIdx);
         }
 
-        this.emit("gameState", this.getGameState());
         this.startTurnTimer();
+        this.emit("gameState", this.getGameState());
     }
 
     private resetPlayers() {
@@ -208,6 +212,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.currentPlayerIndex = dealerIdx;
         this.moveToNextActivePlayer(); // Moves to the first active player after dealer
 
+        this.startTurnTimer();
         this.emit("gameState", this.getGameState());
     }
 
@@ -251,7 +256,7 @@ export class Poker extends CardGame<PokerPlayer> {
     public async handlePlayerMove(playerId: string, action: string, amount?: number) {
         const player = this.players[this.currentPlayerIndex];
 
-        if (player.getPlayerId() !== playerId) {
+        if (!player || player.getPlayerId() !== playerId) {
             return { success: false, message: "Not your turn" };
         }
 
@@ -344,7 +349,6 @@ export class Poker extends CardGame<PokerPlayer> {
             this.currentPlayerIndex = (this.currentPlayerIndex + 1) % totalPlayers;
             tries++;
             // Skip players who folded OR are all-in (unless it's the start of the round and they need to check/call)
-            // In a real poker game, all-in players are skipped for the rest of the hand.
             const p = this.players[this.currentPlayerIndex];
             if (!p.getPressedFold() && p.getBalance() > 0) return;
         } while (tries < totalPlayers);
@@ -363,11 +367,16 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     public getGameState() {
+        const now = Date.now();
+        const turnRemainingSeconds = this.turnEndTime ? Math.max(0, Math.round((this.turnEndTime - now) / 1000)) : null;
+
         return {
             gameId: this.getGameId(),
             phase: this.phase,
             pot: this.pot,
             currentBet: this.currentBet,
+            turnEndsAt: this.turnEndTime,
+            turnRemainingSeconds: turnRemainingSeconds,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),
