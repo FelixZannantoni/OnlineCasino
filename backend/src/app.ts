@@ -166,6 +166,7 @@ io.on("connection", (socket: Socket) => {
 
         if (!actionResult.success) {
             console.warn(`Action failed for player ${playerId} in game ${gameId}: ${actionResult.message}`);
+            socket.emit("error", { message: actionResult.message });
         }
     });
 
@@ -185,7 +186,23 @@ io.on("connection", (socket: Socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log(`User disconnected: ${socket.id}`);
+        const userId = socketUserMap.get(socket.id);
+        console.log(`User disconnected: ${socket.id} (User: ${userId})`);
+        
+        if (userId) {
+            // Notify games about disconnection
+            PokerService.pokerGames.forEach(game => {
+                if (typeof (game as any).handlePlayerDisconnect === 'function') {
+                    (game as any).handlePlayerDisconnect(userId);
+                }
+            });
+            BlackjackService.blackjackGames.forEach(game => {
+                if (typeof (game as any).handlePlayerDisconnect === 'function') {
+                    (game as any).handlePlayerDisconnect(userId);
+                }
+            });
+        }
+        
         socketUserMap.delete(socket.id);
     });
 });
