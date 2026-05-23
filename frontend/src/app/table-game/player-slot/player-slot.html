@@ -1,0 +1,48 @@
+<div class="player-display" [class.active]="isCurrent()">
+  @if (isCurrent()) { <div class="halo"></div> }
+
+  <div class="player-avatar">
+    <img src="assets/default-avatar.png" alt="Avatar" />
+    @if (isDealer()) { <div class="dealer-chip">D</div> }
+  </div>
+
+  <div class="player-info">
+    <div class="player-name">{{ displayName() }}</div>
+    <div class="player-balance">{{ balance() }}</div>
+    @if (bet() > 0) {
+      <div class="player-bet">Bet: {{ bet() }}</div>
+    }
+  </div>
+
+  <!-- KARTEN ANZEIGE -->
+  @if (showCards() && cards().length > 0) {
+    <div class="player-hand" [class.my-hand]="isMe()">
+      @for (card of cards(); track $index) {
+        <!-- Logik: Ich sehe immer meine Karten. Gegner nur wenn visibility 'all' -->
+        @if (isMe() || card.visibility === 'all') {
+          <div class="card"
+               [class]="'card-' + card.color.toLowerCase()"
+               [style.width.px]="cardSize() === 'small' ? 40 : 50"
+               [style.height.px]="cardSize() === 'small' ? 56 : 70"
+               [style.transform]="'rotate(' + ($index * 10 - 10) + 'deg)'">
+            <div class="card-top" [style.font-size.px]="cardSize() === 'small' ? 8 : 10">
+              <span>{{ getRank(card.name) }}</span>
+              <span [class]="'card-suit suit-' + card.color.toLowerCase()"></span>
+            </div>
+            <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
+          </div>
+        } @else {
+          <!-- Rückseite für Gegner-Karten während des Spiels -->
+          <div class="card card-back"
+               [style.width.px]="cardSize() === 'small' ? 40 : 50"
+               [style.height.px]="cardSize() === 'small' ? 56 : 70"
+               [style.transform]="'rotate(' + ($index * 10 - 10) + 'deg)'">
+          </div>
+        }
+      }
+      @if (!isMe() && handValue() > 0) {
+        <div class="hand-value-badge">{{ handValue() }}</div>
+      }
+    </div>
+  }
+</div>

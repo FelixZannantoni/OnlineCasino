@@ -1,0 +1,13 @@
+.player-display { position: relative; text-align: center; width: 100px; pointer-events: auto; z-index: 20; }
+.player-avatar { width: 50px; height: 50px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; overflow: hidden; position: relative; background: #000; }
+.player-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.player-name { color: white; font-size: 12px; font-weight: bold; text-shadow: 0 1px 2px black; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-balance { color: #4ade80; font-size: 10px; }
+.player-bet { color: #ffd700; font-size: 10px; }
+.player-hand { display: flex; justify-content: center; gap: 2px; margin-top: 5px; position: relative; height: 60px; }
+.card { position: relative; border-radius: 4px; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); background: white; }
+.card-back { background: repeating-linear-gradient(45deg, #b71c1c, #b71c1c 5px, #d32f2f 5px, #d32f2f 10px); border: 1px solid #fff; }
+.hand-value-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; white-space: nowrap; border: 1px solid #ffd700; }
+.dealer-chip { position: absolute; bottom: 0; right: 0; background: white; color: black; border-radius: 50%; width: 15px; height: 15px; font-size: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid black; font-weight: bold; }
+.halo { position: absolute; inset: -5px; border: 2px solid #ffd700; border-radius: 50%; box-shadow: 0 0 10px #ffd700; animation: pulse 1.5s infinite; pointer-events: none; }
+@keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
