@@ -1,13 +1,102 @@
-.player-display { position: relative; text-align: center; width: 100px; pointer-events: auto; z-index: 20; }
-.player-avatar { width: 50px; height: 50px; margin: 0 auto; border-radius: 50%; border: 2px solid #fff; overflow: hidden; position: relative; background: #000; }
+.player-slot {
+  position: relative;
+  padding: 15px;
+  background: rgba(30, 30, 30, 0.8);
+  border: 2px solid #444;
+  border-radius: 10px;
+  text-align: center;
+  width: 140px;
+  transition: all 0.3s ease;
+  overflow: visible; /* Wichtig damit Karten rausragen können */
+}
+.player-slot.active {
+  border-color: #ffd700;
+  background: rgba(50, 40, 20, 0.9);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+.halo {
+  position: absolute;
+  top: -5px; left: -5px; right: -5px; bottom: -5px;
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background: linear-gradient(rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 0.3)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: halo-glow 2s ease-in-out infinite;
+  z-index: -1;
+}
+@keyframes halo-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+.player-avatar {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #888;
+  position: relative;
+  z-index: 1;
+}
 .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.player-name { color: white; font-size: 12px; font-weight: bold; text-shadow: 0 1px 2px black; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.player-balance { color: #4ade80; font-size: 10px; }
-.player-bet { color: #ffd700; font-size: 10px; }
-.player-hand { display: flex; justify-content: center; gap: 2px; margin-top: 5px; position: relative; height: 60px; }
-.card { position: relative; border-radius: 4px; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); background: white; }
-.card-back { background: repeating-linear-gradient(45deg, #b71c1c, #b71c1c 5px, #d32f2f 5px, #d32f2f 10px); border: 1px solid #fff; }
-.hand-value-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; white-space: nowrap; border: 1px solid #ffd700; }
-.dealer-chip { position: absolute; bottom: 0; right: 0; background: white; color: black; border-radius: 50%; width: 15px; height: 15px; font-size: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid black; font-weight: bold; }
-.halo { position: absolute; inset: -5px; border: 2px solid #ffd700; border-radius: 50%; box-shadow: 0 0 10px #ffd700; animation: pulse 1.5s infinite; pointer-events: none; }
-@keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+.dealer-chip {
+  position: absolute; bottom: 0; right: 0;
+  width: 18px; height: 18px;
+  background: #fff; border: 2px solid #333;
+  border-radius: 50%; color: #000;
+  font-weight: bold; font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.player-name { font-weight: bold; color: #fff; font-size: 12px; margin-bottom: 2px; }
+.player-balance { color: #4ade80; font-size: 11px; font-weight: bold; }
+.player-bet { color: #ffd700; font-size: 10px; font-weight: bold; }
+
+/* Karten unter dem Avatar */
+.player-hand {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 8px;
+  position: relative;
+  height: 40px; /* Platz für Mini-Karten */
+}
+.mini-card {
+  width: 30px;
+  height: 42px;
+  border-radius: 3px;
+  background: white;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  position: relative;
+}
+.card-back {
+  background: repeating-linear-gradient(45deg, #b71c1c, #b71c1c 3px, #d32f2f 3px, #d32f2f 6px);
+  border: 1px solid #fff;
+}
+.card-top-mini {
+  position: absolute;
+  top: 2px; left: 2px;
+  font-size: 8px;
+  line-height: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card-suit-mini { font-size: 8px; }
+.suit-hearts, .suit-diamonds { color: red; }
+.suit-clubs, .suit-spades { color: black; }
+
+.hand-value-mini {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: #ffd700;
+  padding: 1px 4px;
+  border-radius: 5px;
+  font-size: 9px;
+  font-weight: bold;
+  white-space: nowrap;
+}

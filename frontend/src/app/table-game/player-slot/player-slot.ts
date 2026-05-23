@@ -8,7 +8,6 @@ import {getCardRank} from '../../services/card-utils';
   styleUrl: './player-slot.css',
 })
 export class PlayerSlot {
-  // Inputs
   displayName = input.required<string>();
   balance = input.required<number>();
   bet = input<number>(0);
@@ -18,9 +17,6 @@ export class PlayerSlot {
 
   cards = input<any[]>([]);
   handValue = input<number>(0);
-
-  showCards = input<boolean>(true);
-  cardSize = input<'small' | 'normal'>('normal');
 
   getRank(name: string): string {
     return getCardRank(name);
