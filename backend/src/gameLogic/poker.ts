@@ -28,10 +28,40 @@ export class Poker extends CardGame<PokerPlayer> {
     private hasActedThisRound: Set<string> = new Set();
 
     private isLoading: boolean = false;
+    private turnTimer: NodeJS.Timeout | null = null;
+    private readonly TURN_TIMEOUT_MS: number = 30000; // 30 seconds for Poker
 
     constructor(gameId: string) {
         super(gameId);
         this.pokerDeck = new PokerDeck();
+    }
+
+    public handlePlayerDisconnect(playerId: string) {
+        console.log(`Player ${playerId} disconnected from Poker game ${this.getGameId()}`);
+        const currentPlayer = this.players[this.currentPlayerIndex];
+        if (currentPlayer && currentPlayer.getPlayerId() === playerId) {
+            console.log(`It was player ${playerId}'s turn. Auto-folding...`);
+            this.handlePlayerMove(playerId, "fold");
+        }
+    }
+
+    private startTurnTimer() {
+        this.stopTurnTimer();
+        const currentPlayer = this.players[this.currentPlayerIndex];
+        if (!currentPlayer) return;
+
+        console.log(`Starting turn timer for player ${currentPlayer.getPlayerId()} (${this.TURN_TIMEOUT_MS}ms)`);
+        this.turnTimer = setTimeout(() => {
+            console.log(`Turn timeout for player ${currentPlayer.getPlayerId()}. Auto-folding...`);
+            this.handlePlayerMove(currentPlayer.getPlayerId(), "fold");
+        }, this.TURN_TIMEOUT_MS);
+    }
+
+    private stopTurnTimer() {
+        if (this.turnTimer) {
+            clearTimeout(this.turnTimer);
+            this.turnTimer = null;
+        }
     }
 
     public startGame() {
@@ -44,6 +74,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private startNewHand(isFirstHand: boolean = false) {
         if (this.players.length < 2) {
             this.isStarted = false;
+            this.stopTurnTimer();
             return;
         }
 
@@ -73,6 +104,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.emit("gameState", this.getGameState());
+        this.startTurnTimer();
     }
 
     private resetPlayers() {
@@ -180,6 +212,7 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     private handleShowdown() {
+        this.stopTurnTimer();
         this.checkPlayersHands();
 
         let highestValue = -1;
@@ -222,6 +255,8 @@ export class Poker extends CardGame<PokerPlayer> {
             return { success: false, message: "Not your turn" };
         }
 
+        this.stopTurnTimer();
+
         let success = true;
         let message = "ok";
 
@@ -232,6 +267,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
             case "check":
                 if (player.getBet() < this.currentBet) {
+                    this.startTurnTimer();
                     return { success: false, message: "Cannot check, must call or raise" };
                 }
                 break;
@@ -255,6 +291,7 @@ export class Poker extends CardGame<PokerPlayer> {
             case "raise":
                 const betAmount = amount || 0;
                 if (betAmount <= 0) {
+                    this.startTurnTimer();
                     return { success: false, message: "Invalid amount" };
                 }
 
@@ -267,11 +304,13 @@ export class Poker extends CardGame<PokerPlayer> {
                     this.pot += additionalContribution;
                     this.hasActedThisRound.clear();
                 } catch (e) {
+                    this.startTurnTimer();
                     return { success: false, message: "Not enough money" };
                 }
                 break;
 
             default:
+                this.startTurnTimer();
                 return { success: false, message: "Unknown action" };
         }
 
@@ -291,6 +330,7 @@ export class Poker extends CardGame<PokerPlayer> {
             this.nextPhase();
         } else {
             this.moveToNextActivePlayer();
+            this.startTurnTimer();
         }
 
         this.emit("gameState", this.getGameState());
