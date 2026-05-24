@@ -9,6 +9,7 @@ import { userRouter } from "./router/user-router";
 import { pokerRouter } from "./router/poker-router";
 import { blackjackRouter } from "./router/blackjack-router";
 import { PokerService } from "./services/poker-service";
+import { slotmachineRouter } from "./router/slotmachine-router";
 import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
@@ -29,6 +30,8 @@ app.use(express.json());
 app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
+app.use("/slotmachine", slotmachineRouter);
+
 
 const socketUserMap: Map<string, string> = new Map();
 
