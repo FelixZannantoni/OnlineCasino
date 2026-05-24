@@ -59,8 +59,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     private async playRound() {
-        this.resetBets();
-        this.resetCards();
+        this.reset();
         this.blackjackDeck = new BlackjackDeck(); // New deck for each round
 
         this.currentPhase = BlackjackPhase.BETTING;
@@ -121,13 +120,6 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         for (let i: number = 0; i < PLAYER_CARDS_NUMBER; i++) {
             this.blackJackBot.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), BLACKJACK_BOT_ID));
         }
-    }
-
-    private resetCards() {
-        for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].clearHand();
-        }
-        this.blackJackBot.clearHand();
     }
 
     private checkHandsValue() {
@@ -346,14 +338,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         };
     }
 
-    private makeBets() {
-        // This is now handled by waitForBets and handlePlayerMove("bet")
-    }
-
-    private resetBets() {
+    private reset() {
         for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].makeNewBet(0);
+            this.players[i].clearHand(); //reset Cards
+            this.players[i].makeNewBet(0); //reset Bets
+            this.players[i].resetBust; // reset Bust
         }
+        this.blackJackBot.clearHand();
     }
 
     private handOutWin() {
