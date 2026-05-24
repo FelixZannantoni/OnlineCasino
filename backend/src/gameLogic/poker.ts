@@ -29,13 +29,11 @@ export class Poker extends CardGame<PokerPlayer> {
     private lastWinners: { id: string, handName: string }[] = [];
 
     private isLoading: boolean = false;
-    private turnTimer: NodeJS.Timeout | null = null;
-    private turnEndTime: number | null = null;
-    private readonly TURN_TIMEOUT_MS: number = 10000;
 
     constructor(gameId: string) {
         super(gameId);
         this.pokerDeck = new PokerDeck();
+        this.defaultTurnTimeoutMs = 10000; // Poker uses 10s
     }
 
     public handlePlayerDisconnect(playerId: string) {
@@ -61,28 +59,20 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     private startTurnTimer() {
-        this.stopTurnTimer();
         const currentPlayer = this.players[this.currentPlayerIndex];
         if (!currentPlayer) return;
 
-        this.turnEndTime = Date.now() + this.TURN_TIMEOUT_MS;
-        console.log(`Starting turn timer for player ${currentPlayer.getPlayerId()} (Ends at: ${new Date(this.turnEndTime).toLocaleTimeString()})`);
-
-        this.turnTimer = setTimeout(() => {
+        this.startTurnTimerInherited(this.defaultTurnTimeoutMs, () => {
             if (currentPlayer.getBet() == this.currentBet) {
                 this.handlePlayerMove(currentPlayer.getPlayerId(), "check");
             } else {
                 this.handlePlayerMove(currentPlayer.getPlayerId(), "fold");
             }
-        }, this.TURN_TIMEOUT_MS);
+        });
     }
 
-    private stopTurnTimer() {
-        if (this.turnTimer) {
-            clearTimeout(this.turnTimer);
-            this.turnTimer = null;
-        }
-        this.turnEndTime = null;
+    private startTurnTimerInherited(timeoutMs: number, onTimeout: () => void) {
+        super.startTurnTimer(timeoutMs, onTimeout);
     }
 
     public startGame() {
