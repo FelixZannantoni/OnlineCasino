@@ -99,7 +99,7 @@ io.on("connection", (socket: Socket) => {
             // Update existing player info in case it was "Guest" before
             existingPlayer.updatePlayerInfo(username, displayname);
             console.log(`Updated existing player ${userId} info: ${displayname}`);
-            
+
             // Emit updated state to everyone so they see the name change
             io.to(gameId).emit("game_state", game.getGameState());
         }
@@ -178,9 +178,13 @@ io.on("connection", (socket: Socket) => {
         const playerId = socketUserMap.get(socket.id);
         if (!playerId) return;
 
-        const { game } = pokerService.getGameById(gameId);
+        let { game } = pokerService.getGameById(gameId);
+        if (!game) {
+            game = blackjackService.getGameById(gameId).game as any;
+        }
+
         if (game) {
-            const player = game.getPlayers().find(p => p.getPlayerId() === playerId);
+            const player = game.getPlayers().find((p: any) => p.getPlayerId() === playerId);
             if (player) {
                 player.setDesiredBet(amount);
                 io.to(gameId).emit("game_state", game.getGameState());
@@ -218,6 +222,16 @@ io.on("connection", (socket: Socket) => {
             });
         }
         
+        console.log(`User disconnected: ${socket.id}`);
+        const userId = socketUserMap.get(socket.id);
+        if (userId) {
+            // Find games the user might be in and remove them
+            [...PokerService.pokerGames, ...BlackjackService.blackjackGames].forEach(game => {
+                if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
+                    game.removePlayer(userId);
+                }
+            });
+        }
         socketUserMap.delete(socket.id);
     });
 });

@@ -12,12 +12,12 @@
 /* EIGENE KARTEN: Sichtbar machen! */
 ::ng-deep .player-cards {
     position: absolute;
-    
+
     /* OPTION A: Zentriert vor dem Tisch (wie auf dem Screenshot) */
     bottom: 15%; /* Abstand vom unteren Tischrand */
     left: 50%;
     transform: translateX(-50%);
-    
+
     /* OPTION B: Wenn sie beim Avatar (unten links) sein sollen: */
     /* bottom: 10%; */
     /* left: 15%; */ /* Anpassen basierend auf Avatar-Position */
