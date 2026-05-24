@@ -3,7 +3,8 @@
   background: var(--casino-bg);
   color: #e8e0d0;
   border-radius: 18px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
   min-height: 700px;
   display: flex;
   flex-direction: column;
@@ -24,7 +25,6 @@
   left: 0;
   right: 0;
   height: 2px;
-  /*background: var(--primary-gold-gradient);*/
 }
 
 .f-header-ornament {
@@ -32,9 +32,10 @@
   top: 12px;
   right: 24px;
   font-size: 26px;
-  opacity: 0.15;
+  opacity: 0.08;
   color: var(--text-gold);
   letter-spacing: 12px;
+  pointer-events: none;
 }
 
 .f-title-row {
@@ -54,8 +55,12 @@
   align-items: center;
   justify-content: center;
   color: var(--text-gold);
-  font-size: 18px;
   box-shadow: 0 0 12px rgba(209, 158, 29, 0.2), inset 0 1px 0 rgba(255, 216, 110, 0.15);
+  flex-shrink: 0;
+}
+
+.f-crown-icon .material-icons {
+  font-size: 20px;
 }
 
 .f-title {
@@ -92,11 +97,11 @@
   cursor: pointer;
   color: #6a6880;
   border-bottom: 2px solid transparent;
-  transition: all 0.25s;
-  background: none;
   border-top: none;
   border-left: none;
   border-right: none;
+  transition: all 0.25s;
+  background: none;
   font-family: 'Montserrat', sans-serif;
 }
 
@@ -132,6 +137,7 @@
   display: none;
   flex: 1;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .f-panel.active {
@@ -151,6 +157,8 @@
   flex-direction: column;
   border-right: 1px solid rgba(209, 158, 29, 0.35);
   transition: width 0.3s ease;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .f-left-col.split {
@@ -162,11 +170,13 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden;
 }
 
 .f-search-bar {
   padding: 18px 20px 14px;
   border-bottom: 1px solid rgba(209, 158, 29, 0.1);
+  flex-shrink: 0;
 }
 
 .f-search-wrap {
@@ -179,8 +189,8 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-gold-dark);
-  font-size: 16px;
   pointer-events: none;
+  font-size: 20px !important;
 }
 
 .f-search-input {
@@ -189,7 +199,7 @@
   background: var(--casino-surface);
   border: 1px solid rgba(209, 158, 29, 0.35);
   border-radius: 10px;
-  padding: 10px 14px 10px 42px;
+  padding: 10px 14px 10px 44px;
   color: #e8e0d0;
   font-size: 13px;
   font-family: 'Montserrat', sans-serif;
@@ -213,12 +223,27 @@
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--text-gold-dark);
+  flex-shrink: 0;
 }
 
 .f-list {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 4px 12px 16px;
+}
+
+.f-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.f-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.f-list::-webkit-scrollbar-thumb {
+  background: rgba(209, 158, 29, 0.3);
+  border-radius: 4px;
 }
 
 .f-friend-card {
@@ -228,15 +253,17 @@
   padding: 12px 14px;
   border-radius: 12px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
+  transition: background 0.2s, border-color 0.2s;
   margin-bottom: 4px;
   border: 1px solid transparent;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 
 .f-friend-card:hover {
   background: var(--casino-surface);
   border-color: rgba(209, 158, 29, 0.35);
-  transform: translateX(2px);
 }
 
 .f-friend-card.selected {
@@ -329,6 +356,7 @@
   gap: 6px;
   opacity: 0;
   transition: opacity 0.2s;
+  flex-shrink: 0;
 }
 
 .f-friend-card:hover .f-friend-actions {
@@ -346,14 +374,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  transition: all 0.2s;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.f-action-btn .material-icons {
+  font-size: 17px;
 }
 
 .f-action-btn:hover {
   background: rgba(209, 158, 29, 0.18);
   border-color: var(--text-gold);
-  transform: scale(1.1);
 }
 
 .f-action-btn.danger {
@@ -369,8 +401,8 @@
 
 .f-stats-row {
   display: flex;
-  /*border-top: 1px solid rgba(209, 158, 29, 0.35);*/
-  margin-top: auto;
+  border-top: 1px solid rgba(209, 158, 29, 0.35);
+  flex-shrink: 0;
 }
 
 .f-stat {
@@ -406,6 +438,7 @@
   flex: 1;
   flex-direction: column;
   background: var(--casino-bg);
+  overflow: hidden;
 }
 
 .f-chat-panel.open {
@@ -419,6 +452,7 @@
   padding: 16px 20px;
   border-bottom: 1px solid rgba(209, 158, 29, 0.35);
   background: linear-gradient(135deg, var(--casino-bg), var(--casino-accent));
+  flex-shrink: 0;
 }
 
 .f-chat-name {
@@ -448,8 +482,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.f-chat-close .material-icons {
+  font-size: 18px;
 }
 
 .f-chat-close:hover {
@@ -474,6 +513,12 @@
   align-items: center;
   gap: 6px;
   margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.f-chat-invite-btn .material-icons {
+  font-size: 16px;
 }
 
 .f-chat-invite-btn:hover {
@@ -484,10 +529,20 @@
 .f-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.f-messages::-webkit-scrollbar {
+  width: 3px;
+}
+
+.f-messages::-webkit-scrollbar-thumb {
+  background: rgba(209, 158, 29, 0.3);
+  border-radius: 4px;
 }
 
 .f-msg {
@@ -520,6 +575,7 @@
   border-radius: 14px;
   font-size: 13px;
   line-height: 1.5;
+  word-break: break-word;
 }
 
 .f-msg.theirs .f-msg-bubble {
@@ -542,6 +598,7 @@
   padding: 0 4px;
   white-space: nowrap;
   align-self: flex-end;
+  flex-shrink: 0;
 }
 
 .f-system-msg {
@@ -553,6 +610,7 @@
   align-items: center;
   gap: 10px;
   padding: 4px 0;
+  flex-shrink: 0;
 }
 
 .f-system-msg::before,
@@ -569,15 +627,17 @@
 
 .f-chat-input-wrap {
   padding: 14px 20px;
-  /*border-top: 1px solid rgba(209, 158, 29, 0.35);*/
+  border-top: 1px solid rgba(209, 158, 29, 0.35);
   background: var(--navbar-dark);
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .f-chat-input {
   flex: 1;
+  min-width: 0;
   background: var(--casino-surface);
   border: 1px solid rgba(209, 158, 29, 0.25);
   border-radius: 10px;
@@ -608,9 +668,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
   transition: all 0.2s;
   flex-shrink: 0;
+  padding: 0;
+}
+
+.f-send-btn .material-icons {
+  font-size: 18px;
 }
 
 .f-send-btn:hover {
@@ -629,8 +693,9 @@
 }
 
 .f-empty-icon {
-  font-size: 40px;
+  font-size: 40px !important;
   color: rgba(209, 158, 29, 0.15);
+  display: block;
 }
 
 .f-empty-text {
@@ -657,6 +722,7 @@
   z-index: 100;
   letter-spacing: 1px;
   animation: toastIn 0.3s ease;
+  max-width: 320px;
 }
 
 .f-invite-toast.show {
@@ -679,6 +745,7 @@
   display: none;
   flex: 1;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .f-add-panel.active {
@@ -691,6 +758,7 @@
   border: 1px solid rgba(209, 158, 29, 0.35);
   border-radius: 14px;
   padding: 24px;
+  flex-shrink: 0;
 }
 
 .f-add-title {
@@ -715,6 +783,7 @@
 
 .f-add-input {
   flex: 1;
+  min-width: 0;
   background: var(--casino-surface);
   border: 1px solid rgba(209, 158, 29, 0.35);
   border-radius: 10px;
@@ -751,6 +820,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
+}
+
+.f-add-btn .material-icons {
+  font-size: 18px;
 }
 
 .f-add-btn:hover {
@@ -799,6 +873,7 @@
   margin-left: auto;
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .f-req-accept {
@@ -824,12 +899,17 @@
   background: none;
   border: 1px solid rgba(226, 75, 74, 0.3);
   border-radius: 8px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   color: #e24b4a;
-  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
-  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.f-req-decline .material-icons {
+  font-size: 16px;
 }
 
 .f-req-decline:hover {
