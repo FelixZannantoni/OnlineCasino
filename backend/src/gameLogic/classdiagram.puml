@@ -40,34 +40,32 @@ enum CardVisibility {
 }
 
 enum Symbols {
-    ans = 1
-    zwa = 2
-    drei = 3
-    vier = 4
-    fünf = 5
-    sex = 6
-    siebn = 7
-    acht = 8
-    neun = 9
-    zehn = 10
+  Bar = 1
+  Cherry = 2
+  DoubleBar = 3
+  Bell = 4
+  Horseshoe = 5
+  Star = 6
+  Clover = 7
+  Wild = 8
+  Diamond = 9
+  Seven = 10
 }
 
 enum BlackjackPhase {
-    WAITING
-    BETTING
-    PLAYING
-    DEALER_TURN
-    FINISHED
-  ans = 1
-  zwa = 2
-  drei = 3
-  vier = 4
-  fünf = 5
-  sex = 6
-  siebn = 7
-  acht = 8
-  neun = 9
-  zehn = 10
+  WAITING = "WAITING"
+  BETTING = "BETTING"
+  PLAYING = "PLAYING"
+  DEALER_TURN = "DEALER_TURN"
+  FINISHED = "FINISHED"
+}
+
+enum GamePhase {
+  pre-flop
+  flop
+  turn
+  river
+  showdown
 }
 
 ' Classes
@@ -85,14 +83,6 @@ class Game<T extends Player = Player> {
 }
 
 class SinglePlayerGame<T extends Player = Player> {
-    -gameId: string
-    #player: T
-    +constructor(gameId: string, player: T)
-    +getGameId(): string
-    +getPlayer(): T | null
-}
-
-class SinglePlayerGame<T extends Player = Player> {
   -gameId: string
   #player: T
   +constructor(gameId: string, player: T)
@@ -103,9 +93,13 @@ class SinglePlayerGame<T extends Player = Player> {
 class Slotmachine {
   -slots: Symbols[][]
   -lastWin: number = 0
+  -winningLines: number[]
+  {static} -PAYOUTS: Record<number, number[]>
+  {static} +LINES: number[][][]
   +constructor(gameId: string, player: SlotmachinePlayer)
   +getSlots(): Symbols[][]
   +getLastWin(): number
+  +getWinningLines(): number[]
   +startGame(): void
   +nextRound(): void
   +playRound(): void
@@ -177,30 +171,16 @@ class Blackjack {
   -handOutWin(): void
 }
 
-class Slotmachine {
-    -slots: Symbols[][]
-    -lastWin: number = 0
-    +constructor(gameId: string, player: SlotmachinePlayer)
-    +getSlots(): Symbols[][]
-    +getLastWin(): number
-    +startGame(): void
-    +nextRound(): void
-    +playRound(): void
-    -spin(): void
-    -checkSpin(): void
-    +handleMove(): void
-}
-
 class BlackjackBot {
   -cards: Card[]
   -handValue: number
   +constructor()
+  +getCards(): Card[]
   +getHandValue(): number
   +addCard(card: Card): void
   -checkHandValue(): void
   +makesHit(): boolean
   +hasBlackJack(): boolean
-  +getCards(): Card[]
   +clearHand(): void
 }
 
@@ -231,12 +211,13 @@ class Player {
 class SlotmachinePlayer {
   -pressedSpin: boolean
   -pressedAutoSpin: boolean
-  -currentBet: number
   +constructor(playerId: string, username: string, \n  displayname: string, balance: number)
   +getPressedSpin(): boolean
   +getPressedAutoSpin(): boolean
   +userPressedSpin(): void
   +userPressedAutoSpin(): void
+  +stopAutoSpin(): void
+  +setBet(bet: number): void
   -resetActions(): void
 }
 
@@ -313,18 +294,6 @@ class BlackjackPlayer {
   +checkHandValue(): void
 }
 
-class SlotmachinePlayer {
-    -pressedSpin: boolean
-    -pressedAutoSpin: boolean
-    -currentBet: number
-    +constructor(playerId: string, username: string, \n  displayname: string, balance: number)
-    +getPressedSpin(): boolean
-    +getPressedAutoSpin(): boolean
-    +userPressedSpin(): void
-    +userPressedAutoSpin(): void
-    -resetActions(): void
-}
-
 class Deck {
   {static} +DEALER_ID: string = "Dealer"
   #deck: Card[]
@@ -347,7 +316,6 @@ class PokerDeck {
 ' Inheritance
 EventEmitter <|-- Game
 Game <|-- CardGame
-SinglePlayerGame <|-- Slotmachine
 CardGame <|-- Poker
 CardGame <|-- Blackjack
 SinglePlayerGame <|-- Slotmachine
@@ -360,16 +328,15 @@ CardGamePlayer <|-- BlackjackPlayer
 
 ' Associations
 Game o-- "many" Player : contains
-SinglePlayerGame o-- "1" Player : player
-Poker *-- "many" Card : board
 SinglePlayerGame o-- "1" Player : contains
-Poker *-- "many" Card : pokerDeskCards
+Poker *-- "many" Card : board
 CardGamePlayer *-- "many" Card : cards
 Deck *-- "many" Card : deck
-Poker o-- "1" PokerDeck : pokerDeck
-Blackjack o-- "1" BlackjackDeck : blackjackDeck
+Poker o-- "1" PokerDeck : uses
+Blackjack o-- "1" BlackjackDeck : uses
 Blackjack *-- "1" BlackjackBot : blackJackBot
 BlackjackBot *-- "many" Card : cards
 Slotmachine *-- "many" Symbols : slots
 
 @enduml
+
