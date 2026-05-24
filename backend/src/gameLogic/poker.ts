@@ -26,6 +26,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private currentPlayerIndex: number = 0;
     private isStarted: boolean = false;
     private hasActedThisRound: Set<string> = new Set();
+    private lastWinners: { id: string, handName: string }[] = [];
 
     private isLoading: boolean = false;
     private turnTimer: NodeJS.Timeout | null = null;
@@ -100,6 +101,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.isLoading = false;
+        this.lastWinners = [];
         if (!isFirstHand) {
             this.updateDealerChip();
         }
@@ -262,6 +264,11 @@ export class Poker extends CardGame<PokerPlayer> {
         const winAmount = this.pot / winners.length;
         winners.forEach(w => w.winMoney(winAmount));
 
+        this.lastWinners = winners.map(w => ({
+            id: w.getPlayerId(),
+            handName: this.getHandName(w.getCardCombinationValue())
+        }));
+
         this.isLoading = true;
         this.emit("gameState", this.getGameState());
 
@@ -341,7 +348,12 @@ export class Poker extends CardGame<PokerPlayer> {
 
         const activePlayers = this.players.filter(p => !p.getPressedFold());
         if (activePlayers.length === 1) {
-            activePlayers[0].winMoney(this.pot);
+            const winner = activePlayers[0];
+            winner.winMoney(this.pot);
+            this.lastWinners = [{
+                id: winner.getPlayerId(),
+                handName: "Last player standing"
+            }];
             this.isLoading = true;
             this.emit("gameState", this.getGameState());
             setTimeout(() => this.startNewHand(), 3000);
@@ -394,6 +406,7 @@ export class Poker extends CardGame<PokerPlayer> {
             currentBet: this.currentBet,
             turnEndsAt: this.turnEndTime,
             turnRemainingSeconds: turnRemainingSeconds,
+            lastWinners: this.lastWinners,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),
