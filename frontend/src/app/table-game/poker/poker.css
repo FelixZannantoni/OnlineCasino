@@ -67,6 +67,30 @@
     box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4) !important;
 }
 
+::ng-deep .btn-tip {
+    background: linear-gradient(135deg, #f1c40f, #f39c12) !important;
+    border: 2px solid #f1c40f !important;
+    color: #000 !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase !important;
+    font-size: 0.9rem !important;
+}
+
+::ng-deep .btn-tip:hover:not(:disabled) {
+    background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.6) !important;
+    transform: translateY(-2px) !important;
+}
+
+::ng-deep .btn-tip:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
 /* Dealer Chip */
 ::ng-deep .dealer-chip {
     position: absolute;
@@ -270,4 +294,12 @@
 
 ::ng-deep .btn-close-slider:hover {
     color: #bbb;
+}
+
+::ng-deep .turn-timer {
+    color: #ff4444;
+    font-weight: bold;
+    margin-left: 5px;
+    text-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
+    font-size: 0.9em;
 }

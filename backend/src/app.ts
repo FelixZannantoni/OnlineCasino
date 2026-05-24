@@ -9,6 +9,7 @@ import { userRouter } from "./router/user-router";
 import { pokerRouter } from "./router/poker-router";
 import { blackjackRouter } from "./router/blackjack-router";
 import { PokerService } from "./services/poker-service";
+import { slotmachineRouter } from "./router/slotmachine-router";
 import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
@@ -29,6 +30,8 @@ app.use(express.json());
 app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
+app.use("/slotmachine", slotmachineRouter);
+
 
 const socketUserMap: Map<string, string> = new Map();
 
@@ -109,7 +112,7 @@ io.on("connection", (socket: Socket) => {
 
         const playerCount = game.getGameState().players.length;
         // Start game based on type
-        if (service === pokerService && playerCount >= 2 && playerCount <= 5) {
+        if (service === pokerService && playerCount >= 4 && playerCount <= 5) {
             game.startGame();
         } else if (service === blackjackService && playerCount >= 1) {
             game.startGame();
@@ -189,7 +192,36 @@ io.on("connection", (socket: Socket) => {
         }
     });
 
+    socket.on("tip_dealer", async (data: { gameId: string }) => {
+        const { gameId } = data;
+        const playerId = socketUserMap.get(socket.id);
+        if (!playerId) return;
+
+        console.log(`Player ${playerId} is tipping the dealer in game: ${gameId}`);
+        const result = await pokerService.tipDealer(playerId, gameId);
+        if (!result.success) {
+            socket.emit("error", { message: result.message });
+        }
+    });
+
     socket.on("disconnect", () => {
+        const userId = socketUserMap.get(socket.id);
+        console.log(`User disconnected: ${socket.id} (User: ${userId})`);
+        
+        if (userId) {
+            // Notify games about disconnection
+            PokerService.pokerGames.forEach(game => {
+                if (typeof (game as any).handlePlayerDisconnect === 'function') {
+                    (game as any).handlePlayerDisconnect(userId);
+                }
+            });
+            BlackjackService.blackjackGames.forEach(game => {
+                if (typeof (game as any).handlePlayerDisconnect === 'function') {
+                    (game as any).handlePlayerDisconnect(userId);
+                }
+            });
+        }
+        
         console.log(`User disconnected: ${socket.id}`);
         const userId = socketUserMap.get(socket.id);
         if (userId) {

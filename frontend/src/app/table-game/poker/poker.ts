@@ -38,6 +38,7 @@ type PokerGameState = {
   board: PokerBoardCard[];
   currentPlayerId: string | null;
   isLoading: boolean;
+  turnRemainingSeconds: number | null;
 };
 
 @Component({
@@ -58,6 +59,8 @@ export class Poker implements OnInit {
 
   public gameState = signal<PokerGameState | null>(null);
   protected isProcessing = signal<boolean>(false);
+  protected turnRemaining = signal<number | null>(null);
+  private timerInterval: any = null;
 
   private readonly gameId = signal<string>('1');
 
@@ -111,6 +114,14 @@ export class Poker implements OnInit {
       this.gameState.set(s);
       this.isProcessing.set(false);
 
+      // Handle Timer
+      if (s.turnRemainingSeconds !== null) {
+        this.turnRemaining.set(s.turnRemainingSeconds);
+        this.startLocalTimer();
+      } else {
+        this.stopLocalTimer();
+      }
+
       // Keep table-game bindings in sync with backend state
       if (typeof s?.pot === 'number') this.pot = s.pot;
       
@@ -125,6 +136,21 @@ export class Poker implements OnInit {
     });
 
     this.socketService.joinGame(id, userId);
+  }
+
+  private startLocalTimer(): void {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = setInterval(() => {
+      this.turnRemaining.update(v => v !== null && v > 0 ? v - 1 : 0);
+    }, 1000);
+  }
+
+  private stopLocalTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+    this.turnRemaining.set(null);
   }
 
   private getMyPlayer(): PokerPlayerState | null {
@@ -239,6 +265,15 @@ export class Poker implements OnInit {
     const state = this.gameState();
     if (!state) return 'Bet';
     return state.currentBet === 0 ? 'Bet' : 'Raise';
+  }
+
+  tipDealer(): void {
+    const gid = this.gameId();
+    if (!gid) return;
+
+    this.socketService.emitEvent('tip_dealer', {
+      gameId: gid
+    });
   }
 }
 

@@ -4,13 +4,11 @@ export class SlotmachinePlayer extends Player {
 
     private pressedSpin: boolean;
     private pressedAutoSpin: boolean;
-    private currentBet: number;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
         this.pressedSpin = false;
         this.pressedAutoSpin = false;
-        this.currentBet = 0;
     }
 
     public getPressedSpin(): boolean {
@@ -27,12 +25,19 @@ export class SlotmachinePlayer extends Player {
     }
 
     public userPressedAutoSpin(): void {
-        this.resetActions();
-        this.pressedAutoSpin = true;
+        // Toggle auto spin
+        this.pressedAutoSpin = !this.pressedAutoSpin;
+    }
+
+    public stopAutoSpin(): void {
+        this.pressedAutoSpin = false;
+    }
+
+    public setBet(bet: number): void {
+        this.setDesiredBet(bet);
     }
 
     private resetActions(): void {
         this.pressedSpin = false;
-        this.pressedAutoSpin = false;
     }
 }
