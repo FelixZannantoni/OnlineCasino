@@ -31,7 +31,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private isLoading: boolean = false;
     private turnTimer: NodeJS.Timeout | null = null;
     private turnEndTime: number | null = null;
-    private readonly TURN_TIMEOUT_MS: number = 10000; // 10 seconds for Poker
+    private readonly TURN_TIMEOUT_MS: number = 10000;
 
     constructor(gameId: string) {
         super(gameId);

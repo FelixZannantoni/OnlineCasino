@@ -22,6 +22,9 @@ export class Blackjack implements OnInit, OnDestroy {
   balance: number = 1000;
   pot: number = 0;
 
+  protected turnRemaining = signal<number | null>(null);
+  private timerInterval: any = null;
+
   protected readonly me = computed(() => {
     const state = this.gameState();
     if (!state) return null;
@@ -51,6 +54,14 @@ export class Blackjack implements OnInit, OnDestroy {
       const state = data as BlackjackGameState;
       this.gameState.set(state);
 
+      // Handle Timer
+      if (state.turnRemainingSeconds !== null) {
+        this.turnRemaining.set(state.turnRemainingSeconds);
+        this.startLocalTimer();
+      } else {
+        this.stopLocalTimer();
+      }
+
       const me = state.players.find(p => p.id === this.userId);
       if (me) {
         if (typeof me.balance === 'number') this.balance = me.balance;
@@ -64,7 +75,23 @@ export class Blackjack implements OnInit, OnDestroy {
     });
   }
 
+  private startLocalTimer(): void {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = setInterval(() => {
+      this.turnRemaining.update(v => v !== null && v > 0 ? v - 1 : 0);
+    }, 1000);
+  }
+
+  private stopLocalTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+    this.turnRemaining.set(null);
+  }
+
   ngOnDestroy() {
+    this.stopLocalTimer();
     this.socketService.offEvent('game_state');
     this.socketService.offEvent('error');
   }

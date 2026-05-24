@@ -22,6 +22,8 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     private isRunning: boolean = false;
     private currentPhase: BlackjackPhase = BlackjackPhase.WAITING;
     private currentPlayerId: string | null = null;
+    private turnEndTime: number | null = null;
+    private readonly TURN_TIMEOUT_MS: number = 10000;
 
     constructor(gameId: string) {
         super(gameId);
@@ -158,13 +160,14 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             this.currentPlayerId = playerOnMove.getPlayerId();
             let turnOver = false;
             while (!turnOver && playerOnMove.getHandValue() < 21) {
+                this.turnEndTime = Date.now() + this.TURN_TIMEOUT_MS;
                 this.emit("gameState", this.getGameState());
                 await new Promise<void>((resolve) => {
                     const timeout = setTimeout(() => {
                         cleanup();
                         turnOver = true;
                         resolve();
-                    }, 15000); // 15s timeout
+                    }, this.TURN_TIMEOUT_MS);
 
                     const handleMove = (detail: { playerId: string }) => {
                         if (detail && detail.playerId == playerOnMove.getPlayerId()) {
@@ -190,6 +193,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                     turnOver = true;
                                 }
                                 playerOnMove.resetMadeMove();
+                                this.turnEndTime = null;
                                 this.emit("gameState", this.getGameState());
                                 resolve();
                             }
@@ -221,11 +225,10 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
         }
         this.currentPlayerId = null;
+        this.turnEndTime = null;
     }
 
     private async waitForBets() {
-        this.emit("gameState", this.getGameState());
-
         // Automatically apply desired bets for players who have them
         for (const player of this.players) {
             const desired = player.getDesiredBet();
@@ -237,6 +240,9 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                 }
             }
         }
+
+        this.turnEndTime = Date.now() + 15000;
+        this.emit("gameState", this.getGameState());
 
         // Wait for all players to place a bet or timeout
         await new Promise<void>((resolve) => {
@@ -270,6 +276,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
             handleBet();
         });
+        this.turnEndTime = null;
     }
 
     public handlePlayerMove(playerId: string, action: string, amount?: number) {
@@ -326,11 +333,16 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             ? this.blackJackBot.getHandValue()
             : (botVisibleCards.length > 1 ? botVisibleCards[1].value : 0);
 
+        const now = Date.now();
+        const turnRemainingSeconds = this.turnEndTime ? Math.max(0, Math.round((this.turnEndTime - now) / 1000)) : null;
+
         return {
             gameId: this.getGameId(),
             isRunning: this.isRunning,
             phase: this.currentPhase,
             currentPlayerId: this.currentPlayerId,
+            turnEndsAt: this.turnEndTime,
+            turnRemainingSeconds: turnRemainingSeconds,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),
