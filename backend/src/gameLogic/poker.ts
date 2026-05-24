@@ -237,6 +237,14 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private handleShowdown() {
         this.stopTurnTimer();
+        
+        // Reveal cards of all players who didn't fold
+        this.players.forEach(p => {
+            if (!p.getPressedFold()) {
+                p.getCards().forEach(c => c.visibility = CardVisibility.all);
+            }
+        });
+
         this.checkPlayersHands();
 
         let highestValue = -1;
