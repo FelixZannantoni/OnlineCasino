@@ -82,7 +82,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         this.currentPhase = BlackjackPhase.DEALER_TURN;
         this.currentPlayerId = BLACKJACK_BOT_ID;
-        
+
         // Skip dealer play if all active players busted
         const anyPlayerStillIn = this.players.some(p => p.getBet() > 0 && p.getHandValue() <= 21);
         if (anyPlayerStillIn) {
@@ -90,7 +90,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         } else {
             this.blackJackBot.revealCards(); // Just reveal the hidden card
         }
-        
+
         this.emit("gameState", this.getGameState());
         this.handOutWin();
         this.currentPlayerId = null;
@@ -186,7 +186,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                         playerOnMove.makeIncreasedBet(currentBet * 2);
                                         playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
                                         playerOnMove.checkHandValue();
-                                    } catch (e) {}
+                                    } catch (e) { }
                                     turnOver = true;
                                 }
                                 playerOnMove.resetMadeMove();
@@ -322,8 +322,8 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
     public getGameState() {
         const botVisibleCards = this.blackJackBot.getCards();
-        const botHandValue = (this.currentPhase === BlackjackPhase.DEALER_TURN || this.currentPhase === BlackjackPhase.FINISHED) 
-            ? this.blackJackBot.getHandValue() 
+        const botHandValue = (this.currentPhase === BlackjackPhase.DEALER_TURN || this.currentPhase === BlackjackPhase.FINISHED)
+            ? this.blackJackBot.getHandValue()
             : (botVisibleCards.length > 1 ? botVisibleCards[1].value : 0);
 
         return {

@@ -96,7 +96,7 @@ io.on("connection", (socket: Socket) => {
             // Update existing player info in case it was "Guest" before
             existingPlayer.updatePlayerInfo(username, displayname);
             console.log(`Updated existing player ${userId} info: ${displayname}`);
-            
+
             // Emit updated state to everyone so they see the name change
             io.to(gameId).emit("game_state", game.getGameState());
         }
