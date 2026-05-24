@@ -1,29 +1,33 @@
 import { Database } from "better-sqlite3";
+import { v4 as generateUUID } from "uuid";
 import { DB } from "../data";
 import { User } from "../model";
 import { hashPassword, verifyPassword } from "../utils";
 
 export class UserService {
-    // TODO
 
     async getAllUsers(): Promise<User[]> {
-        let result: User[] = [];
-
         const connection: Database = await DB.createDBConnection();
 
-        result = connection.prepare<{}, User>("SELECT uuid, userName, displayName, email, streakCount FROM users").all({});
-        return result;
+        const rows: any[] = connection.prepare("SELECT * FROM users").all();
+        return rows.map(row => ({
+            uuid: row.uuid,
+            username: row.userName,
+            displayname: row.displayName,
+            email: row.email,
+            balance: row.balance,
+            streakCount: row.streakCount,
+            passwordHash: row.passwordHash
+        }));
     }
 
     async checkUserCredentials(username: string, password: string): Promise<[boolean, string]> {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const rows = connection.prepare<{username: string}, User>("SELECT * FROM users WHERE userName = :username AND isFromGithub = 0").all({username: username});
+            const rows: any[] = connection.prepare("SELECT uuid, passwordHash FROM users WHERE userName = ? AND isFromGithub = 0").all(username);
 
-            //await connection.close();
-
-            const user: User = rows[0];
+            const user = rows[0];
             if(!user) return [false, "-1"];
 
             const passwordHash = user.passwordHash;
@@ -38,18 +42,20 @@ export class UserService {
     async registerUser(username: string, password: string): Promise<[boolean, string]> {
         try {
             const pwHash: string = await hashPassword(password);
+            const uuid: string = generateUUID();
 
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare<{usernameInput: string, passwordHash: string}, {}>("INSERT INTO users (userName, passwordHash) VALUES (:usernameInput, :passwordHash)").run({
-                usernameInput: username,
-                passwordHash: pwHash
-            });
+            const result = connection.prepare("INSERT INTO users (uuid, userName, passwordHash) VALUES (?, ?, ?)").run(
+                uuid,
+                username,
+                pwHash
+            );
 
             // await connection.close();
 
             if(result.changes === 1) {
-                return [true, result.lastInsertRowid.toString()];
+                return [true, uuid];
             }
             return [false, "Invalid credentials!"];
         } catch(err) {
@@ -74,7 +80,7 @@ export class UserService {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare<{  }>("SELECT * FROM users WHERE uuid = :githubId AND isFromGithub = 1").all({ githubId: githubId });
+            const result = connection.prepare("SELECT * FROM users WHERE uuid = ? AND isFromGithub = 1").all(githubId.toString());
 
             if (result.length > 0) {
                 // await connection.close();
@@ -82,11 +88,11 @@ export class UserService {
             }
 
             // If user doesn't exist, create a new one
-            const newUserResult = connection.prepare<{ githubId: number, username: string, displayName: string }>("INSERT INTO users (uuid, userName, displayName, isFromGithub) VALUES (:githubId, :username, :displayName, 1)").run({
-                githubId: githubId,
-                username: username,
-                displayName: displayName
-            });
+            const newUserResult = connection.prepare("INSERT INTO users (uuid, userName, displayName, isFromGithub) VALUES (?, ?, ?, 1)").run(
+                githubId.toString(),
+                username,
+                displayName
+            );
 
             // await connection.close();
 
@@ -107,9 +113,25 @@ export class UserService {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare<{ userId: string }, User>(`SELECT * FROM users WHERE uuid = :userId`)
-            .get({ userId: userId});
-            return result ?? null;
+            // First try by uuid
+            let row: any = connection.prepare(`SELECT * FROM users WHERE uuid = ?`).get(userId);
+            
+            // If not found, try by userName (just in case frontend sends username)
+            if (!row) {
+                row = connection.prepare(`SELECT * FROM users WHERE userName = ?`).get(userId);
+            }
+
+            if (!row) return null;
+
+            return {
+                uuid: row.uuid,
+                username: row.userName,
+                displayname: row.displayName,
+                email: row.email,
+                balance: row.balance,
+                streakCount: row.streakCount,
+                passwordHash: row.passwordHash
+            };
         } catch (error) {
             console.error(`Something happened while trying to get user by id: ${error}`);
             return null;
