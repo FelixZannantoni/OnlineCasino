@@ -27,7 +27,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         super(gameId);
         this.blackjackDeck = new BlackjackDeck();
         this.blackJackBot = new BlackjackBot();
-        this.defaultTurnTimeoutMs = 15000; // Blackjack uses 15s
+        this.defaultTurnTimeoutMs = 10000;
     }
 
     public async startGame() {

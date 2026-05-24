@@ -5,7 +5,7 @@ import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
-import { pokerService, userService } from "../app";
+import { userService } from "../app";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -58,7 +58,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
-    private startTurnTimer() {
+    protected startTurnTimer() {
         const currentPlayer = this.players[this.currentPlayerIndex];
         if (!currentPlayer) return;
 
