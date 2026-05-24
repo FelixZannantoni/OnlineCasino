@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 export class Blackjack implements OnInit, OnDestroy {
   gameState = signal<BlackjackGameState | null>(null);
   userId: string | null = null;
-  gameId: string = '2';
+  gameId: string = '2'; // Default
   betAmount: number = 10;
   balance: number = 1000;
   pot: number = 0;
@@ -42,6 +42,9 @@ export class Blackjack implements OnInit, OnDestroy {
     private dataService: DataService
   ) {
     this.userId = this.dataService.getUserId();
+    if (this.userId) {
+      this.gameId = `bj-${this.userId}`;
+    }
   }
 
   ngOnInit() {
