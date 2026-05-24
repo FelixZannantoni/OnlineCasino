@@ -67,10 +67,13 @@ export class Poker extends CardGame<PokerPlayer> {
 
         this.turnEndTime = Date.now() + this.TURN_TIMEOUT_MS;
         console.log(`Starting turn timer for player ${currentPlayer.getPlayerId()} (Ends at: ${new Date(this.turnEndTime).toLocaleTimeString()})`);
-        
+
         this.turnTimer = setTimeout(() => {
-            console.log(`Turn timeout for player ${currentPlayer.getPlayerId()}. Auto-folding...`);
-            this.handlePlayerMove(currentPlayer.getPlayerId(), "fold");
+            if (currentPlayer.getBet() == this.currentBet) {
+                this.handlePlayerMove(currentPlayer.getPlayerId(), "check");
+            } else {
+                this.handlePlayerMove(currentPlayer.getPlayerId(), "fold");
+            }
         }, this.TURN_TIMEOUT_MS);
     }
 
@@ -200,7 +203,7 @@ export class Poker extends CardGame<PokerPlayer> {
                 this.handleShowdown();
                 return;
         }
-        
+
         this.checkPlayersHands();
         this.emit("gameState", this.getGameState());
     }
@@ -237,7 +240,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
     private handleShowdown() {
         this.stopTurnTimer();
-        
+
         // Reveal cards of all players who didn't fold
         this.players.forEach(p => {
             if (!p.getPressedFold()) {
