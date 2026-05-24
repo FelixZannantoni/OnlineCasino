@@ -287,12 +287,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         switch (action) {
             case "hit":
+                if (player.getHandValue() >= 21) {
+                    return { success: false, message: "Cannot hit with 21 or more" };
+                }
                 player.userPressedHit();
                 break;
             case "stand":
                 player.userPressedStand();
                 break;
             case "double":
+                if (player.getHandValue() >= 21) {
+                    return { success: false, message: "Cannot double with 21 or more" };
+                }
                 if (player.getCards().length !== 2) {
                     return { success: false, message: "Can only double on first move" };
                 }
