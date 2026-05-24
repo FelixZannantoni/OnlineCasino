@@ -24,8 +24,8 @@
           <div class="f-search-bar">
             <div class="f-search-wrap">
               <i class="ti ti-search f-search-icon"></i>
-              <input class="f-search-input" type="text" placeholder="Search allies..."
-                     [(ngModel)]="searchQuery" (input)="filterFriends()">
+              <input class="f-search-input" type="text" placeholder="Search allies..." [(ngModel)]="searchQuery"
+                (input)="filterFriends()">
             </div>
           </div>
 
@@ -33,22 +33,26 @@
             <ng-container *ngFor="let section of sections">
               <ng-container *ngIf="getSectionFriends(section.status).length > 0">
                 <div class="f-section-label">{{ section.label }}</div>
-                <div class="f-friend-card"
-                     *ngFor="let f of getSectionFriends(section.status)"
-                     [class.selected]="activeFriend?.id === f.id"
-                     (click)="openChat(f)">
+                <div class="f-friend-card" *ngFor="let f of getSectionFriends(section.status)"
+                  [class.selected]="activeFriend?.id === f.id" (click)="openChat(f)">
                   <div class="f-avatar">
                     <div class="f-avatar-circle" [style.background]="f.color" [style.color]="f.hue">{{ f.init }}</div>
                     <div class="f-status-dot" [class]="f.status"></div>
                   </div>
                   <div class="f-friend-info">
                     <p class="f-friend-name">{{ f.name }}</p>
-                    <p class="f-friend-status" [class.playing]="f.activity.startsWith('Playing')" [class.online-text]="f.status === 'online' && !f.activity.startsWith('Playing')">{{ f.activity }}</p>
+                    <p class="f-friend-status" [class.playing]="f.activity.startsWith('Playing')"
+                      [class.online-text]="f.status === 'online' && !f.activity.startsWith('Playing')">{{ f.activity }}
+                    </p>
                   </div>
                   <div class="f-friend-actions">
-                    <button class="f-action-btn" (click)="$event.stopPropagation(); openChat(f)" title="Message"><i class="ti ti-message"></i></button>
-                    <button class="f-action-btn" *ngIf="f.status === 'online'" (click)="$event.stopPropagation(); inviteFriend(f.name)" title="Invite"><i class="ti ti-cards"></i></button>
-                    <button class="f-action-btn danger" (click)="$event.stopPropagation(); removeFriend(f.id)" title="Remove"><i class="ti ti-user-minus"></i></button>
+                    <button class="f-action-btn" (click)="$event.stopPropagation(); openChat(f)" title="Message"><i
+                        class="ti ti-message"></i></button>
+                    <button class="f-action-btn" *ngIf="f.status === 'online'"
+                      (click)="$event.stopPropagation(); inviteFriend(f.name)" title="Invite"><i
+                        class="ti ti-cards"></i></button>
+                    <button class="f-action-btn danger" (click)="$event.stopPropagation(); removeFriend(f.id)"
+                      title="Remove"><i class="ti ti-user-minus"></i></button>
                   </div>
                 </div>
               </ng-container>
@@ -56,8 +60,14 @@
           </div>
 
           <div class="f-stats-row">
-            <div class="f-stat"><div class="f-stat-val">{{ friends.length }}</div><div class="f-stat-lbl">Allies</div></div>
-            <div class="f-stat"><div class="f-stat-val">{{ onlineCount }}</div><div class="f-stat-lbl">Online</div></div>
+            <div class="f-stat">
+              <div class="f-stat-val">{{ friends.length }}</div>
+              <div class="f-stat-lbl">Allies</div>
+            </div>
+            <div class="f-stat">
+              <div class="f-stat-val">{{ onlineCount }}</div>
+              <div class="f-stat-lbl">Online</div>
+            </div>
           </div>
         </div>
 
@@ -65,25 +75,30 @@
         <div class="f-right-col" *ngIf="activeFriend !== null">
           <div class="f-chat-panel open">
             <div class="f-chat-header">
-              <div class="f-avatar-circle chat-avatar" [style.background]="activeFriend.color" [style.color]="activeFriend.hue">{{ activeFriend.init }}</div>
+              <div class="f-avatar-circle chat-avatar" [style.background]="activeFriend.color"
+                [style.color]="activeFriend.hue">{{ activeFriend.init }}</div>
               <div>
                 <p class="f-chat-name">{{ activeFriend.name }} {{ activeFriend.tag }}</p>
-                <p class="f-chat-sub">{{ activeFriend.status === 'online' ? activeFriend.activity : activeFriend.status }}</p>
+                <p class="f-chat-sub">{{ activeFriend.status === 'online' ? activeFriend.activity : activeFriend.status
+                  }}</p>
               </div>
-              <button class="f-chat-invite-btn" (click)="sendInvite()"><i class="ti ti-cards"></i> Invite to Game</button>
+              <button class="f-chat-invite-btn" (click)="sendInvite()"><i class="ti ti-cards"></i> Invite to
+                Game</button>
               <button class="f-chat-close" (click)="closeChat()"><i class="ti ti-x"></i></button>
             </div>
             <div class="f-messages" #messageContainer>
-              <div class="f-system-msg">{{ getMessages().length === 0 ? 'Start of your conversation with ' + activeFriend.name : 'Today' }}</div>
+              <div class="f-system-msg">{{ getMessages().length === 0 ? 'Start of your conversation with ' +
+                activeFriend.name : 'Today' }}</div>
               <div class="f-msg" *ngFor="let m of getMessages()" [class.mine]="m.mine" [class.theirs]="!m.mine">
-                <div class="f-msg-avatar" *ngIf="!m.mine" [style.background]="activeFriend.color" [style.color]="activeFriend.hue">{{ activeFriend.init }}</div>
+                <div class="f-msg-avatar" *ngIf="!m.mine" [style.background]="activeFriend.color"
+                  [style.color]="activeFriend.hue">{{ activeFriend.init }}</div>
                 <div class="f-msg-bubble">{{ m.text }}</div>
                 <span class="f-msg-time">{{ m.time }}</span>
               </div>
             </div>
             <div class="f-chat-input-wrap">
-              <input class="f-chat-input" type="text" placeholder="Send a message..."
-                     [(ngModel)]="messageInput" (keydown.enter)="sendMsg()">
+              <input class="f-chat-input" type="text" placeholder="Send a message..." [(ngModel)]="messageInput"
+                (keydown.enter)="sendMsg()">
               <button class="f-send-btn" (click)="sendMsg()"><i class="ti ti-send"></i></button>
             </div>
           </div>
@@ -109,8 +124,8 @@
           <p class="f-add-title">Summon an Ally</p>
           <p class="f-add-desc">Enter a player's username to extend your fellowship.</p>
           <div class="f-add-row">
-            <input class="f-add-input" type="text" placeholder="Username or #tag..."
-                   [(ngModel)]="addInput" (keydown.enter)="sendFriendReq()">
+            <input class="f-add-input" type="text" placeholder="Username or #tag..." [(ngModel)]="addInput"
+              (keydown.enter)="sendFriendReq()">
             <button class="f-add-btn" (click)="sendFriendReq()">
               <i class="ti ti-user-plus"></i> Send Request
             </button>
@@ -122,7 +137,8 @@
           <div>
             <div class="f-req-card" *ngFor="let req of pendingRequests">
               <div class="f-avatar">
-                <div class="f-avatar-circle" style="width:40px;height:40px;font-size:14px;" [style.background]="req.color" [style.color]="req.hue">{{ req.init }}</div>
+                <div class="f-avatar-circle" style="width:40px;height:40px;font-size:14px;"
+                  [style.background]="req.color" [style.color]="req.hue">{{ req.init }}</div>
                 <div class="f-status-dot" [class]="req.statusDot"></div>
               </div>
               <div class="f-friend-info">
