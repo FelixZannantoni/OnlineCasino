@@ -32,7 +32,7 @@
   top: 12px;
   right: 24px;
   font-size: 26px;
-  opacity: 0.08;
+  opacity: 0.215;
   color: var(--text-gold);
   letter-spacing: 12px;
   pointer-events: none;
@@ -76,7 +76,7 @@
 
 .f-subtitle {
   font-size: 11px;
-  color: var(--text-gold-dark);
+  color: var(--text-gold);
   letter-spacing: 3px;
   text-transform: uppercase;
   margin: 0;
@@ -188,7 +188,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-gold-dark);
+  color: var(--text-gold);
   pointer-events: none;
   font-size: 20px !important;
 }
@@ -222,7 +222,7 @@
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--text-gold-dark);
+  color: var(--text-gold);
   flex-shrink: 0;
 }
 
@@ -316,7 +316,7 @@
 }
 
 .f-status-dot.offline {
-  background: #555570;
+  background: #f44336;
 }
 
 .f-friend-info {
@@ -344,7 +344,7 @@
 }
 
 .f-friend-status.playing {
-  color: var(--text-gold-dark);
+  color: var(--text-gold);
 }
 
 .f-friend-status.online-text {
@@ -474,7 +474,7 @@
   margin-left: auto;
   background: none;
   border: 1px solid rgba(209, 158, 29, 0.35);
-  color: var(--text-gold-dark);
+  color: var(--text-gold);
   width: 28px;
   height: 28px;
   border-radius: 7px;
@@ -604,7 +604,7 @@
 .f-system-msg {
   text-align: center;
   font-size: 11px;
-  color: var(--text-gold-dark);
+  color: var(--text-gold);
   letter-spacing: 1px;
   display: flex;
   align-items: center;
@@ -716,7 +716,7 @@
   font-size: 13px;
   color: var(--light-gold);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(209, 158, 29, 0.2);
-  display: none;
+  display: flex;
   gap: 10px;
   align-items: center;
   z-index: 100;
@@ -725,8 +725,8 @@
   max-width: 320px;
 }
 
-.f-invite-toast.show {
-  display: flex;
+.f-invite-toast.hidden {
+  display: none;
 }
 
 @keyframes toastIn {

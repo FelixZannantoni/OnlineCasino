@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 interface Friend {
@@ -31,9 +31,10 @@ interface PendingRequest {
 
 @Component({
   selector: 'app-friends',
+  standalone: true,
   imports: [FormsModule],
   templateUrl: './friends.html',
-  styleUrl: './friends.css',
+  styleUrls: ['./friends.css'],
 })
 export class Friends implements AfterViewChecked {
   @ViewChild('messageContainer') messageContainer!: ElementRef;
@@ -43,7 +44,7 @@ export class Friends implements AfterViewChecked {
   searchQuery = '';
   messageInput = '';
   addInput = '';
-  toastVisible = false;
+  toastHidden: WritableSignal<boolean> = signal(true);
   toastMessage = '';
   private toastTimer: any;
   private shouldScroll = false;
@@ -54,11 +55,11 @@ export class Friends implements AfterViewChecked {
     { label: 'Offline', status: 'offline' },
   ];
 
+  // temp friends
   friends: Friend[] = [
     { id: 'velvet', name: 'VelvetAce', tag: '#1337', status: 'online', activity: 'Playing Poker', color: 'linear-gradient(135deg,#1a1228,#261840)', init: 'VA', hue: '#7F77DD' },
     { id: 'golden', name: 'GoldenRush', tag: '#8821', status: 'online', activity: 'Playing Blackjack', color: 'linear-gradient(135deg,#1e1a10,#2a2210)', init: 'GR', hue: '#d4a017' },
     { id: 'night', name: 'NightDealer', tag: '#5503', status: 'online', activity: 'In Lobby', color: 'linear-gradient(135deg,#0f1e1a,#122820)', init: 'ND', hue: '#1D9E75' },
-    { id: 'rouge', name: 'RougeReine', tag: '#2214', status: 'online', activity: 'Playing Slots', color: 'linear-gradient(135deg,#1e1018,#281220)', init: 'RR', hue: '#D4537E' },
     { id: 'blaze', name: 'BlazeMerchant', tag: '#9900', status: 'away', activity: 'Away', color: 'linear-gradient(135deg,#1e1510,#2a1e10)', init: 'BM', hue: '#EF9F27' },
     { id: 'steel', name: 'SteelBluff', tag: '#4412', status: 'offline', activity: 'Last seen 2h ago', color: 'linear-gradient(135deg,#141428,#1e1e34)', init: 'SB', hue: '#85B7EB' },
     { id: 'dusk', name: 'DuskCroupier', tag: '#7731', status: 'offline', activity: 'Last seen yesterday', color: 'linear-gradient(135deg,#1e1818,#2a2020)', init: 'DC', hue: '#F09595' },
@@ -161,9 +162,9 @@ export class Friends implements AfterViewChecked {
 
   private showToast(msg: string): void {
     this.toastMessage = msg;
-    this.toastVisible = true;
+    this.toastHidden.set(false);
     clearTimeout(this.toastTimer);
-    this.toastTimer = setTimeout(() => this.toastVisible = false, 3200);
+    this.toastTimer = setTimeout(() => this.toastHidden.set(true), 3200);
   }
 
   private nowTime(): string {

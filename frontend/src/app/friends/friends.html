@@ -124,7 +124,7 @@
         </div>
         }
 
-        <div class="f-invite-toast" [class.show]="toastVisible">
+        <div class="f-invite-toast" [class.hidden]="toastHidden()">
           <span class="material-icons" style="color:var(--text-gold);font-size:18px">workspace_premium</span>
           <span>{{ toastMessage }}</span>
         </div>
