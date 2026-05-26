@@ -33,6 +33,10 @@ export class Poker extends CardGame<PokerPlayer> {
     private turnEndTime: number | null = null;
     private readonly TURN_TIMEOUT_MS: number = 10000; // 10 seconds for Poker
 
+    private gameStartTimer: NodeJS.Timeout | null = null;
+    private gameStartEndTime: number | null = null;
+    private readonly GAME_START_DELAY_MS: number = 10000; // 10 seconds delay before starting the game, so enough players can join
+
     constructor(gameId: string) {
         super(gameId);
         this.pokerDeck = new PokerDeck();
@@ -58,6 +62,21 @@ export class Poker extends CardGame<PokerPlayer> {
         } catch (e) {
             return { success: false, message: "Not enough money to tip" };
         }
+    }
+
+    public startGameStartTimer() {
+        if(this.gameStartTimer) {
+            // reset timer if it's already running (e.g. a new player joined)
+            clearTimeout(this.gameStartTimer);
+        }
+
+        console.log(`Starting game start timer for game ${this.getGameId()}!`);
+        this.gameStartEndTime = Date.now() + this.GAME_START_DELAY_MS;
+        this.gameStartTimer = setTimeout(() => {
+            if (!this.isStarted) {
+                this.startGame();
+            }
+        }, this.GAME_START_DELAY_MS);
     }
 
     private startTurnTimer() {
@@ -409,12 +428,15 @@ export class Poker extends CardGame<PokerPlayer> {
     public getGameState() {
         const now = Date.now();
         const turnRemainingSeconds = this.turnEndTime ? Math.max(0, Math.round((this.turnEndTime - now) / 1000)) : null;
+        const gameStartRemainingSeconds = this.gameStartEndTime ? Math.max(0, Math.round((this.gameStartEndTime - now) / 1000)) : null;
 
         return {
             gameId: this.getGameId(),
             phase: this.phase,
             pot: this.pot,
             currentBet: this.currentBet,
+            gameStartsAt: this.gameStartEndTime,
+            gameStartRemainingSeconds: gameStartRemainingSeconds,
             turnEndsAt: this.turnEndTime,
             turnRemainingSeconds: turnRemainingSeconds,
             lastWinners: this.lastWinners,

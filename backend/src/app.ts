@@ -112,12 +112,14 @@ io.on("connection", (socket: Socket) => {
 
         const playerCount = game.getGameState().players.length;
         // Start game based on type
-        if (service === pokerService && playerCount >= 4 && playerCount <= 5) {
-            game.startGame();
+        if (service === pokerService && playerCount >= 2 && playerCount <= 5) {
+            game.startGameStartTimer();
         } else if (service === blackjackService && playerCount >= 1) {
             game.startGame();
         }
         socket.emit("game_state", game.getGameState());
+        // send game state to everyone in the room when a new player joins
+        socket.to(gameId).emit("game_state", game.getGameState());
     });
 
     socket.on("player_move", async (data: { gameId: string; action: string; amount?: number }) => {
