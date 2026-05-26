@@ -48,16 +48,38 @@ export class Player {
         return true;
     }
 
-    public setBet(bet: number): void {
+    public makeBet(): void {
+        if ((this.bet) > (this.getBalance())) {
+            throw new Error(`Not enogh money`);
+        }
+        this.balance -= this.bet;
+    }
+
+    public makeNewBet(bet: number) {
+        if ((bet) > (this.getBalance())) {
+            throw new Error(`Not enogh money`);
+        }
+        this.bet = bet;
+        this.makeBet()
+    }
+
+    public makeIncreasedBet(bet: number): void {
         if ((bet - this.bet) > (this.getBalance())) {
             throw new Error(`Not enogh money`);
         }
-        this.balance -= bet - this.bet
+        this.balance -= (bet - this.bet);
         this.bet = bet;
     }
 
     public winMoney(win: number) {
         this.balance += win;
+    }
+
+    public makeTip(amount: number): void {
+        if (amount > this.balance) {
+            throw new Error(`Not enough money`);
+        }
+        this.balance -= amount;
     }
 
     public static xNextPlayer(players: Player[], i: number, x: number): number {
@@ -67,16 +89,22 @@ export class Player {
         return i;
     }
 
+    /**
+     * 
+     * @param players an array of players
+     * @param i the index of the current player
+     * @returns the index of the next player
+     */
     public static nextPlayer(players: Player[], i: number) {
-        if (i < players.length) {
-            return i + 1;
+        if(players.length === 0) {
+            throw new Error(`No players available!`);
         }
-        else if (i == players.length) {
-            return 0;
+
+        if(i < 0 || i >= players.length) {
+            throw new Error(`Player index out of bounds`);
         }
-        else {
-            throw new Error(`Player not found`);
-        }
+
+        return (i+1) % players.length;
     }
 
     public isOutOfMoney(): boolean {
@@ -86,4 +114,8 @@ export class Player {
         return false;
     }
 
+    public updatePlayerInfo(username: string, displayname: string): void {
+        this.username = username;
+        this.displayname = displayname;
+    }
 }

@@ -9,9 +9,12 @@
                     <mat-icon class="news-icon">stars</mat-icon>
                     <span>What you friends play</span>
                 </button>
-                <button class="game-card featured" routerLink="/slotmachine"> <!-- Slotmachine non-existend atm -->
+                <button class="game-card featured" routerLink="/slotmachine">
                     <button class="favorite-btn" (click)="toggleFavorite('Slotmachine', $event)">
                         <mat-icon>{{ isFavorite('Slotmachine') ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
+                    <button class="info-btn" (click)="openInfo('Slotmachine', $event)" aria-label="Game Info">
+                        <mat-icon>info_outline</mat-icon>
                     </button>
                     <div class="game-card-content">
                         <span class="game-title">Slotmachine</span>
@@ -39,6 +42,9 @@
                     <button class="favorite-btn" (click)="toggleFavorite('Blackjack', $event)">
                         <mat-icon>{{ isFavorite('Blackjack') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
+                    <button class="info-btn" (click)="openInfo('Blackjack', $event)" aria-label="Game Info">
+                        <mat-icon>info_outline</mat-icon>
+                    </button>
                     <div class="game-card-content">
                         <span class="game-title">Blackjack</span>
                     </div>
@@ -64,6 +70,9 @@
                 <button class="game-card featured" routerLink="/poker">
                     <button class="favorite-btn" (click)="toggleFavorite('PokerTexas', $event)">
                         <mat-icon>{{ isFavorite('PokerTexas') ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
+                    <button class="info-btn" (click)="openInfo('PokerTexas', $event)" aria-label="Game Info">
+                        <mat-icon>info_outline</mat-icon>
                     </button>
                     <div class="game-card-content">
                         <span class="game-title">Poker Texas Hold'em</span>
@@ -94,6 +103,9 @@
                 <button class="game-card featured" [routerLink]="game.route">
                     <button class="favorite-btn" (click)="toggleFavorite(game.key, $event)">
                         <mat-icon>{{ isFavorite(game.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
+                    <button class="info-btn" (click)="openInfo(game.key, $event)" aria-label="Game Info">
+                        <mat-icon>info_outline</mat-icon>
                     </button>
                     <div class="game-card-content">
                         <span class="game-title">{{ game.title }}</span>
@@ -138,7 +150,7 @@
                     <div class="slide-controls">
                         <div class="slider-tab" [ngStyle]="{'left': showLeaderboard ? '50%' : '0'}"></div>
                         <button class="slide" [class.active]="!showLeaderboard" (click)="setSlide('friends')">
-                            <span>Freundesliste</span>
+                            <span>Members</span>
                         </button>
                         <button class="slide" [class.active]="showLeaderboard" (click)="setSlide('leaderboard')">
                             <span>Leaderboard</span>
@@ -155,19 +167,19 @@
                                     <li class="friend-item online">
                                         <button class="friend-btn">
                                             <span class="status-dot"></span>
-                                            <span class="friend-name">Freund 1</span>
+                                            <span class="friend-name">Member 1</span>
                                         </button>
                                     </li>
                                     <li class="friend-item online">
                                         <button class="friend-btn">
                                             <span class="status-dot"></span>
-                                            <span class="friend-name">Freund 2</span>
+                                            <span class="friend-name">Member 2</span>
                                         </button>
                                     </li>
                                     <li class="friend-item offline">
                                         <button class="friend-btn">
                                             <span class="status-dot"></span>
-                                            <span class="friend-name">Freund 3</span>
+                                            <span class="friend-name">Member 3</span>
                                         </button>
                                     </li>
                                 </ul>

@@ -5,6 +5,7 @@ import { Login } from './login/login';
 import { ProfileOverlay } from './profile-overlay/profile-overlay';
 import { SettingsOverlay } from './settings-overlay/settings-overlay';
 import { QuitOverlay } from './quit-overlay/quit-overlay';
+import { InformationOverlay } from './information-overlay/information-overlay';
 
 import { filter } from 'rxjs/operators';
 
@@ -16,7 +17,8 @@ import { filter } from 'rxjs/operators';
     Navbar,
     ProfileOverlay,
     SettingsOverlay,
-    QuitOverlay
+    QuitOverlay,
+    InformationOverlay
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -26,7 +28,6 @@ export class App {
   showLogin = true;
 
   constructor(private router: Router) {
-
     this.showLogin = this.shouldShowLogin(this.router.url);
     
     this.router.events.pipe(

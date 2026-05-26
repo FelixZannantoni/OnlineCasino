@@ -10,7 +10,6 @@ body {
     position: relative;
     font-family: 'Montserrat', sans-serif;
     box-sizing: border-box;
-    
 }
 
 /* Top Bar */
@@ -157,7 +156,7 @@ body {
 /* Pot */
 .pot {
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -180%);
     display: flex;
@@ -183,6 +182,150 @@ body {
 .pot-amount {
     font-size: 1.1rem;
 }
+
+/* Grid Layout für Spieler rundum */
+[game-content] {
+    display: grid;
+    grid-template-columns: 140px 1fr 140px;
+    grid-template-rows: 140px 1fr 140px;
+    gap: 20px;
+    padding: 40px 20px 20px 20px;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    align-items: center;
+    justify-items: center;
+}
+
+.grid-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 140px;
+    width: 100%;
+}
+
+.grid-cell.center {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 520px;
+    width: 100%;
+    max-width: 900px;
+}
+
+/* --- POSITIONIERUNG DER SPIELER --- */
+
+/* OBEN: Etwas weniger nach oben schieben, damit sie nicht den Rand sprengen */
+.grid-cell.top-left, .grid-cell.top-center, .grid-cell.top-right {
+    align-items: flex-start;
+    transform: translateY(-50%); /* War -60%, jetzt etwas näher am Tisch */
+}
+
+/* UNTEN: Etwas weniger nach unten schieben, damit Platz für Buttons bleibt */
+.grid-cell.bottom-left, .grid-cell.bottom-center, .grid-cell.bottom-right {
+    align-items: flex-end;
+    transform: translateY(50%); /* War 60%, jetzt etwas näher am Tisch */
+}
+
+/* LINKS/RECHTS: Unverändert lassen oder leicht anpassen */
+.grid-cell.middle-left {
+    justify-content: flex-start;
+    transform: translateX(-50%);
+}
+
+.grid-cell.middle-right {
+    justify-content: flex-end;
+    transform: translateX(50%);
+}
+
+/* ECKEN: Diagonal anpassen */
+.grid-cell.top-left { transform: translate(-40%, -40%); }
+.grid-cell.top-right { transform: translate(40%, -40%); }
+.grid-cell.bottom-left { transform: translate(-40%, 40%); }
+.grid-cell.bottom-right { transform: translate(40%, 40%); }
+/* ... existing code ... */
+
+/* Player Displays - Jetzt transparenter Container */
+.player-display {
+    pointer-events: auto;
+    z-index: 20;
+    position: relative;
+
+    /* ÄNDERUNG: Hintergrund transparent oder sehr schwach, damit nur das Bild/Halo sichtbar ist */
+    background: rgba(0, 0, 0, 0.0);
+    border: none; /* Kein Rahmen mehr um den ganzen Block */
+    border-radius: 0;
+    padding: 0;
+    text-align: center;
+    color: #fff;
+    font-size: 11px;
+    transition: all 0.2s ease;
+    width: 120px;
+    box-shadow: none; /* Kein Schatten mehr um den Block */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* Abstand zwischen Bild und Name */
+}
+
+/* Der Halo muss jetzt exakt um das AVATAR-BILD passen */
+.halo {
+    position: absolute;
+    top: -6px;   /* Etwas größer als das Avatar-Bild (46px + Border) */
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+
+    border-radius: 50%; /* RUND, passend zum Avatar */
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.6);
+    animation: pulse-halo 1.5s infinite alternate;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes pulse-halo {
+    from { opacity: 0.5; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1.05); }
+}
+
+/* Avatar Bild Styling sicherstellen */
+.player-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0; /* Margin entfernt, da Flexbox gap genutzt wird */
+    border: 2px solid #666;
+    position: relative;
+    z-index: 2; /* Über dem Halo */
+    background: #000; /* Falls Bild nicht lädt */
+}
+
+.player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.player-name {
+    font-weight: 700;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Damit man den Namen auch auf hellem Hintergrund liest */
+}
+
+.player-bet {
+    color: #ffd700;
+    font-size: 10px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* ... rest of css ... */
 
 /* Action Buttons */
 .action-buttons {
@@ -213,6 +356,38 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(209, 158, 29, 0.4);
     border-color: transparent;
+}
+
+.action-buttons button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #666;
+    color: #999;
+    background: rgba(255, 255, 255, 0.05);
+    transform: none;
+    box-shadow: none;
+}
+
+.action-buttons button:disabled:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #999;
+    transform: none;
+    box-shadow: none;
+    border-color: #666;
+}
+
+.btn-fold:hover {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-color: #e74c3c;
+    color: white;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-check:hover {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border-color: #3498db;
+    color: white;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
 }
 
 /* Back Home Button */
@@ -289,4 +464,141 @@ body {
     .back-home-btn:hover {
         transform: translateX(-50%) translateY(-3px);
     }
+}
+
+/* ... existing code ... */
+
+/* Game Table Container */
+.game-table {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    height: 500px;
+    margin: 100px auto 30px;
+    border-radius: 250px / 150px;
+
+    /* WICHTIG: Overflow visible, damit Spieler am Rand nicht abgeschnitten werden */
+    overflow: visible !important;
+
+    z-index: 5;
+}
+
+/* ... Wood frame & Felt styles remain unchanged ... */
+
+/*
+   GRID OVERLAY
+   Dieses Grid liegt ÜBER dem Tisch (z-index höher als Filz),
+   deckt ihn aber vollständig ab.
+*/
+[game-content] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    /* 3 Spalten: Links (Avatar), Mitte (Frei für Karten), Rechts (Avatar) */
+    grid-template-columns: 1fr 2fr 1fr;
+    /* 3 Reihen: Oben (Avatar), Mitte (Frei für Karten), Unten (Avatar) */
+    grid-template-rows: 1fr 2fr 1fr;
+
+    gap: 0;
+    padding: 0;
+
+    /* WICHTIG: Pointer events none, damit man durch das Grid auf den Tisch klicken kann
+       (falls nötig). Die Player-Displays bekommen pointer-events: auto zurück. */
+    pointer-events: none;
+    z-index: 4; /* Über dem Filz (z-index 2), unter den Karten (z-index 10) */
+}
+
+.grid-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* CENTER ZELLE FREILASSEN */
+/* Die Center-Zelle existiert im Grid, bleibt aber leer oder dient nur als Abstandshalter.
+   Da [game-content] pointer-events: none hat, stört sie die Karten in der Mitte nicht. */
+.grid-cell.center {
+    grid-column: 2;
+    grid-row: 2;
+    /* Kein Inhalt hier, oder pointer-events: none */
+}
+
+/* --- POSITIONIERUNG DER SPIELER AM RAND --- */
+/* Wir schieben die Avatare aus dem Grid heraus, sodass sie auf dem "Rand" sitzen */
+
+/* OBEN: Nach oben schieben */
+.grid-cell.top-left, .grid-cell.top-center, .grid-cell.top-right {
+    align-items: flex-start;
+    transform: translateY(-60%); /* Schiebt den Avatar über den oberen Rand */
+}
+
+/* UNTEN: Nach unten schieben */
+.grid-cell.bottom-left, .grid-cell.bottom-center, .grid-cell.bottom-right {
+    align-items: flex-end;
+    transform: translateY(60%); /* Schiebt den Avatar über den unteren Rand */
+}
+
+/* LINKS: Nach links schieben */
+.grid-cell.middle-left {
+    justify-content: flex-start;
+    transform: translateX(-60%);
+}
+
+/* RECHTS: Nach rechts schieben */
+.grid-cell.middle-right {
+    justify-content: flex-end;
+    transform: translateX(60%);
+}
+
+/* ECKEN: Diagonal schieben */
+.grid-cell.top-left { transform: translate(-50%, -50%); }
+.grid-cell.top-right { transform: translate(50%, -50%); }
+.grid-cell.bottom-left { transform: translate(-100%, 300%); }
+.grid-cell.bottom-right { transform: translate(50%, 50%); }
+
+
+/* --- SPIELER DARSTELLUNG --- */
+
+.player-display {
+    pointer-events: auto; /* Klicks aktivieren */
+    z-index: 20; /* Höher als alles andere */
+    position: relative;
+    background: rgba(10, 10, 10, 0.92);
+    border: 1px solid #444;
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+    color: #fff;
+    font-size: 11px;
+    transition: all 0.2s ease;
+    width: 120px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.player-display.active {
+    border-color: #ffd700;
+    box-shadow: 0 0 24px rgba(255, 215, 0, 0.8);
+}
+
+/* HALO EFFEKT */
+.halo {
+    position: absolute;
+    top: -10px; left: -10px; right: -10px; bottom: -10px;
+    border-radius: 16px;
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.6);
+    animation: pulse-halo 1.5s infinite alternate;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes pulse-halo {
+    from { opacity: 0.5; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1.02); }
 }

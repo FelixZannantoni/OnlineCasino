@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
+import { DataService } from '../services/data-service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class Login implements OnInit {
   isSignUp = false;
   isBrowser: boolean;
   private router = inject(Router);
+  private dataService = inject(DataService);
 
   loginEmail = '';
   loginPassword = '';
@@ -59,8 +61,10 @@ export class Login implements OnInit {
       return;
     }
 
-    // note from julian: login success ->
-    // note from victor: W JJ
+    const userId = (await res.json()).userId;
+
+    localStorage.setItem('userId', userId);
+    this.dataService.userId.set(userId);
 
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
@@ -90,13 +94,10 @@ export class Login implements OnInit {
     }
   }
 
-
   async onLogin(event?: Event): Promise<void> {
     event?.preventDefault();
     if (!this.isBrowser) return;
     console.log('onLogin called, navigating...');
-
-    //#region login
 
     const res = await fetch('http://localhost:3000/users/login', {
       method: 'POST',
@@ -114,9 +115,9 @@ export class Login implements OnInit {
       return;
     }
 
-    //#endregion
-
-    // note from julian: login success ->
+    const userId = (await res.json()).userId;
+    localStorage.setItem('userId', userId);
+    this.dataService.userId.set(userId);
 
     this.router.navigate(['/home']).then(() => {
       console.log('Navigation successful');
@@ -131,11 +132,6 @@ export class Login implements OnInit {
       alert('Passwords do not match!');
       return;
     }
-
-    // note from julian: we could do some validation like checking if the email has a valid format, or password strength, etc.
-    // note from victor: thought about it too, but I'm pretty sure that's something for later on.
-
-    //#region registering
 
     const res = await fetch('http://localhost:3000/users/register', {
       method: 'POST',
@@ -154,9 +150,9 @@ export class Login implements OnInit {
       return;
     }
 
-    //#endregion
-
-    // note from julian: registration success ->
+    const userId = (await res.json()).userId;
+    localStorage.setItem('userId', userId);
+    this.dataService.userId.set(userId);
 
     console.log('Navigating to /home from register');
     this.router.navigate(['/home']);
@@ -164,7 +160,7 @@ export class Login implements OnInit {
 
   handleGithubLogin() {
     const GITHUB_CLIENT_ID = 'Ov23liyXKzvf4zPI8g7J';
-    const REDIRECT_URI = 'http://localhost:4200/login'; // Url, zu der zurückgeleitet werden soll
+    const REDIRECT_URI = 'http://localhost:4200/login';
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=read:user`;
     window.location.href = githubAuthUrl;
