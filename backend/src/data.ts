@@ -110,6 +110,12 @@ export class DB {
                 type: "POKER"
             });
 
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 2,
+                name: "Blackjack Table 1",
+                type: "BLACKJACK"
+            });
+
         } catch(err) {
             console.error("Error inserting sample data:", err);
         }

@@ -1,24 +1,50 @@
-import { Game } from "./game";
 import { SinglePlayerGame } from "./singlePlayerGame";
 import { SlotmachinePlayer } from "./slotmachinePlayer";
 
 export enum Symbols {
-    "ans" = 1,
-    "zwa" = 2,
-    "drei" = 3,
-    "vier" = 4,
-    "fünf" = 5,
-    "sex" = 6,
-    "siebn" = 7,
-    "acht" = 8,
-    "neun" = 9,
-    "zehn" = 10
+    Bar = 1,
+    Cherry = 2,
+    DoubleBar = 3,
+    Bell = 4,
+    Horseshoe = 5,
+    Star = 6,
+    Clover = 7,
+    Wild = 8,
+    Diamond = 9,
+    Seven = 10
 }
 
 export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
-    private slots: Symbols[][];//3,5
+    private slots: Symbols[][]; // [row][col] -> 3 rows, 5 columns
     private lastWin: number = 0;
+    private winningLines: number[] = [];
+
+    private static readonly PAYOUTS: Record<number, number[]> = {
+        [Symbols.Bar]: [0, 0, 2, 5, 10],
+        [Symbols.Cherry]: [0, 0, 2, 5, 10],
+        [Symbols.DoubleBar]: [0, 0, 3, 10, 20],
+        [Symbols.Bell]: [0, 0, 3, 10, 20],
+        [Symbols.Horseshoe]: [0, 0, 5, 15, 40],
+        [Symbols.Star]: [0, 0, 5, 15, 40],
+        [Symbols.Clover]: [0, 0, 10, 30, 100],
+        [Symbols.Wild]: [0, 0, 10, 30, 100],
+        [Symbols.Diamond]: [0, 0, 20, 100, 500],
+        [Symbols.Seven]: [0, 0, 50, 200, 1000]
+    };
+
+    public static readonly LINES = [
+        [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]], // Horizontal Middle (Line 0)
+        [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], // Horizontal Top (Line 1)
+        [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]], // Horizontal Bottom (Line 2)
+        [[0, 0], [1, 1], [2, 2], [1, 3], [0, 4]], // V-Shape (Down-Up) (Line 3)
+        [[2, 0], [1, 1], [0, 2], [1, 3], [2, 4]], // V-Shape (Up-Down) (Line 4)
+        [[1, 0], [2, 1], [2, 2], [2, 3], [1, 4]], // Middle-Bottom-Middle (Line 5)
+        [[1, 0], [0, 1], [0, 2], [0, 3], [1, 4]], // Middle-Top-Middle (Line 6)
+        [[2, 0], [2, 1], [1, 2], [0, 3], [0, 4]], // Bottom-Middle-Top Zigzag (Line 7)
+        [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]], // Top-Middle-Bottom Zigzag (Line 8)
+        [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape (Line 9)
+    ];
 
     constructor(gameId: string, player: SlotmachinePlayer) {
         super(gameId, player);
@@ -35,16 +61,26 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         return this.lastWin;
     }
 
+    public getWinningLines(): number[] {
+        return this.winningLines;
+    }
+
     public startGame() {
         const bet: number = this.player.getDesiredBet();
         this.player.makeNewBet(bet);
         this.playRound();
     }
 
-    public nextRound() {
+    private nextRound() {
         if (this.player.getPressedAutoSpin()) {
-            this.player.makeBet();
-            this.playRound();
+            try {
+                this.player.makeBet();
+                this.playRound();
+            } catch (e) {
+                // Not enough money for auto spin
+                this.player.stopAutoSpin();
+                this.handleMove();
+            }
         }
         else {
             this.handleMove()
@@ -61,52 +97,52 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         for (let x: number = 0; x < 3; x++) {
             this.slots[x] = [];
             for (let y: number = 0; y < 5; y++) {
-                this.slots[x][y] = (Math.floor(Math.random() * 10) + 1) as Symbols;
+                // Randomly pick a symbol
+                const symbolValues = Object.values(Symbols).filter(v => typeof v === 'number') as number[];
+                const randomSymbol = symbolValues[Math.floor(Math.random() * symbolValues.length)];
+                this.slots[x][y] = randomSymbol as Symbols;
             }
         }
     }
 
     private checkSpin() {
-        let winningLines: number = 0;
-        // 1. Horizontal Middle
-        if (this.slots[1][0] == this.slots[1][1] && this.slots[1][1] == this.slots[1][2] && this.slots[1][2] == this.slots[1][3] && this.slots[1][3] == this.slots[1][4]) { winningLines++; }
+        let totalWinMultiplier = 0;
+        this.winningLines = [];
 
-        // 2. Horizontal Top
-        if (this.slots[0][0] == this.slots[0][1] && this.slots[0][1] == this.slots[0][2] && this.slots[0][2] == this.slots[0][3] && this.slots[0][3] == this.slots[0][4]) { winningLines++; }
+        for (let lineIdx = 0; lineIdx < Slotmachine.LINES.length; lineIdx++) {
+            const line = Slotmachine.LINES[lineIdx];
+            let matchingCount = 1;
+            const firstSymbol = this.slots[line[0][0]][line[0][1]];
 
-        // 3. Horizontal Bottom
-        if (this.slots[2][0] == this.slots[2][1] && this.slots[2][1] == this.slots[2][2] && this.slots[2][2] == this.slots[2][3] && this.slots[2][3] == this.slots[2][4]) { winningLines++; }
+            for (let i = 1; i < line.length; i++) {
+                const currentSymbol = this.slots[line[i][0]][line[i][1]];
+                if (currentSymbol === firstSymbol) {
+                    matchingCount++;
+                } else {
+                    break;
+                }
+            }
 
-        // 4. V-Shape (Down-Up)
-        if (this.slots[0][0] == this.slots[1][1] && this.slots[1][1] == this.slots[2][2] && this.slots[2][2] == this.slots[1][3] && this.slots[1][3] == this.slots[0][4]) { winningLines++; }
-
-        // 5. V-Shape (Up-Down)
-        if (this.slots[2][0] == this.slots[1][1] && this.slots[1][1] == this.slots[0][2] && this.slots[0][2] == this.slots[1][3] && this.slots[1][3] == this.slots[2][4]) { winningLines++; }
-
-        // 6. Middle-Bottom-Middle Curve
-        if (this.slots[1][0] == this.slots[2][1] && this.slots[2][1] == this.slots[2][2] && this.slots[2][2] == this.slots[2][3] && this.slots[2][3] == this.slots[1][4]) { winningLines++; }
-
-        // 7. Middle-Top-Middle Curve
-        if (this.slots[1][0] == this.slots[0][1] && this.slots[0][1] == this.slots[0][2] && this.slots[0][2] == this.slots[0][3] && this.slots[0][3] == this.slots[1][4]) { winningLines++; }
-
-        // 8. Bottom-Middle-Top Zigzag
-        if (this.slots[2][0] == this.slots[2][1] && this.slots[2][1] == this.slots[1][2] && this.slots[1][2] == this.slots[0][3] && this.slots[0][3] == this.slots[0][4]) { winningLines++; }
-
-        // 9. Top-Middle-Bottom Zigzag
-        if (this.slots[0][0] == this.slots[0][1] && this.slots[1][2] == this.slots[1][2] && this.slots[1][2] == this.slots[2][3] && this.slots[2][3] == this.slots[2][4]) { winningLines++; }
-
-        // 10. Bottom-Middle-Top-Middle-Bottom (M-Shape)
-        if (this.slots[2][0] == this.slots[1][1] && this.slots[1][1] == this.slots[1][2] && this.slots[1][2] == this.slots[1][3] && this.slots[1][3] == this.slots[0][4]) { winningLines++; }
+            if (matchingCount >= 3) {
+                const payoutArray = Slotmachine.PAYOUTS[firstSymbol];
+                totalWinMultiplier += payoutArray[matchingCount - 1];
+                this.winningLines.push(lineIdx);
+            }
+        }
 
         const bet = this.player.getBet();
-        this.lastWin = winningLines * bet * 5; //TODO make real win multipliers
+        this.lastWin = totalWinMultiplier * bet;
         this.player.winMoney(this.lastWin);
     }
 
-    handleMove() {
+    public handleMove() {
         if (this.player.getPressedSpin()) {
-            this.playRound();
+            try {
+                this.player.makeBet();
+                this.playRound();
+            } catch (e) {
+                // Not enough money
+            }
         }
-        //TODO bet
     }
 }

@@ -44,8 +44,7 @@ export class PokerPlayer extends CardGamePlayer {
         let valueOfCardCombination: number = 0;
 
         for (let i: number = 1; i < this.valueOfHand.length; i++) {
-            valueOfCardCombination += this.valueOfHand[i];
-            valueOfCardCombination *= 10;
+            valueOfCardCombination = valueOfCardCombination * 15 + this.valueOfHand[i];
         }
 
         return valueOfCardCombination;
@@ -53,10 +52,6 @@ export class PokerPlayer extends CardGamePlayer {
 
     public setFolded(folded: boolean): void {
         this.pressedFold = folded;
-    }
-
-    public isFolded(): boolean {
-        return this.pressedFold;
     }
 
     public getPressedFold(): boolean {
@@ -124,24 +119,16 @@ export class PokerPlayer extends CardGamePlayer {
 
     public checkHand(cards: Card[]) {
         const c = [...cards];
-        if (this.hasRoyalFlush(c)) {
-        }
-        else if (this.hasStraightFlush(c)) {
-        }
-        else if (this.hasQuadruple(c)) {
-        }
-        else if (this.hasFullHouse(c)) {
-        }
-        else if (this.hasFlush(c)) {
-        }
-        else if (this.hasStraight(c)) {
-        }
-        else if (this.hasTripple(c)) {
-        }
-        else if (this.hasTwoPair(c)) {
-        }
-        else if (this.hasPair(c)) {
-        }
+        
+        if (this.hasRoyalFlush(c)) {}
+        else if (this.hasStraightFlush(c)) {}
+        else if (this.hasQuadruple(c)) {}
+        else if (this.hasFullHouse(c)) {}
+        else if (this.hasFlush(c)) {}
+        else if (this.hasStraight(c)) {}
+        else if (this.hasTripple(c)) {}
+        else if (this.hasTwoPair(c)) {}
+        else if (this.hasPair(c)) {}
         else {
             this.getHighCard(c);
         }
@@ -205,34 +192,34 @@ export class PokerPlayer extends CardGamePlayer {
     }
 
     private hasFullHouse(cards: Card[]): boolean {
-        let hasTripple: boolean = false;
-        let valueOfTripple: number = 0;
+        const counts: { [name: string]: number } = {};
+        for (const card of cards) {
+            counts[card.name] = (counts[card.name] || 0) + 1;
+        }
 
-        for (let i: number = 0; i < cards.length - 2; i++) {
-            for (let j: number = i + 1; j < cards.length - 1; j++) {
-                for (let k: number = j + 1; k < cards.length; k++) {
-                    if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
-                        hasTripple = true;
-                        valueOfTripple = cards[i].value;
-                        for (let l: number = 0; l < cards.length; l++) {
-                            if (cards[l].name == cards[i].name)
-                                cards.splice(l, 1);
-                        }
-                    }
-                }
+        let tripleValue = 0;
+        let pairValue = 0;
+
+        for (const name in counts) {
+            if (counts[name] === 3) {
+                // Get the value of the card that formed the triple
+                const card = cards.find(c => c.name === name);
+                if (card) tripleValue = card.value;
             }
         }
-        if (!hasTripple) {
-            return false;
-        }
-        for (let i: number = 0; i < cards.length - 1; i++) {
-            for (let j: number = i + 1; j < cards.length; j++) {
-                if (cards[i].name == cards[j].name) {
-                    this.valueOfHand = [FULLHOUSE_VALUE, valueOfTripple, cards[i].value];
-                    return true;
-                }
 
+        if (tripleValue === 0) return false;
+
+        for (const name in counts) {
+            if (counts[name] >= 2 && tripleValue !== (cards.find(c => c.name === name)?.value)) {
+                 const card = cards.find(c => c.name === name);
+                 if (card) pairValue = card.value;
             }
+        }
+
+        if (tripleValue > 0 && pairValue > 0) {
+            this.valueOfHand = [FULLHOUSE_VALUE, tripleValue, pairValue];
+            return true;
         }
         return false;
     }
@@ -297,17 +284,19 @@ export class PokerPlayer extends CardGamePlayer {
                     if (cards[i].name == cards[j].name && cards[j].name == cards[k].name) {
                         valueOfTripple = cards[i].value;
                         hasTripple = true;
-                        cards.splice(i, 1);
-                        cards.splice(j - 1, 1);
-                        cards.splice(k - 2, 1);
+                        break;
                     }
                 }
+                if (hasTripple) break;
             }
+            if (hasTripple) break;
         }
 
         if (hasTripple) {
-            cards.sort((a, b) => b.value - a.value);
-            this.valueOfHand = [TRIPPLE_VALUE, valueOfTripple, cards[0].value, cards[1].value];
+            const tripleName = cards.find(c => c.value === valueOfTripple)?.name;
+            const remainingCards = cards.filter(c => c.name !== tripleName);
+            remainingCards.sort((a, b) => b.value - a.value);
+            this.valueOfHand = [TRIPPLE_VALUE, valueOfTripple, remainingCards[0].value, remainingCards[1].value];
         }
 
         return hasTripple;
@@ -324,31 +313,33 @@ export class PokerPlayer extends CardGamePlayer {
                 if (cards[i].name == cards[j].name) {
                     valueOfFstPair = cards[i].value;
                     hasOnePair = true;
-                    cards.splice(i, 1);
-                    cards.splice(j - 1, 1);
+                    break;
                 }
             }
+            if (hasOnePair) break;
         }
 
         if (!hasOnePair) {
             return false;
         }
 
-        for (let i: number = 0; i < cards.length - 1; i++) {
-            for (let j: number = i + 1; j < cards.length; j++) {
-                if (cards[i].name == cards[j].name) {
-                    valueOfSndPair = cards[i].value;
+        const remainingAfterFirst = cards.filter(c => c.value !== valueOfFstPair);
+
+        for (let i: number = 0; i < remainingAfterFirst.length - 1; i++) {
+            for (let j: number = i + 1; j < remainingAfterFirst.length; j++) {
+                if (remainingAfterFirst[i].name == remainingAfterFirst[j].name) {
+                    valueOfSndPair = remainingAfterFirst[i].value;
                     hasTwoPair = true;
-                    cards.splice(i, 1);
-                    cards.splice(j - 1, 1);
+                    break;
                 }
             }
+            if (hasTwoPair) break;
         }
 
         if (hasTwoPair) {
-            cards.sort((a, b) => b.value - a.value);
-            const kickers = cards.slice(0, 1).map(c => c.value);
-            this.valueOfHand = [TWOPAIR_VALUE, Math.max(valueOfFstPair, valueOfSndPair), Math.min(valueOfFstPair, valueOfSndPair), ...kickers];
+            const finalRemaining = remainingAfterFirst.filter(c => c.value !== valueOfSndPair);
+            finalRemaining.sort((a, b) => b.value - a.value);
+            this.valueOfHand = [TWOPAIR_VALUE, Math.max(valueOfFstPair, valueOfSndPair), Math.min(valueOfFstPair, valueOfSndPair), finalRemaining[0].value];
         }
 
         return hasTwoPair;
@@ -363,22 +354,23 @@ export class PokerPlayer extends CardGamePlayer {
                 if (cards[i].name == cards[j].name) {
                     hasPair = true;
                     valueOfPair = cards[i].value;
-                    cards.splice(i, 1);
-                    cards.splice(j - 1, 1); // j - 1, weil durch das Splice vorher schon ein Element weniger im Array ist
+                    break;
                 }
             }
+            if (hasPair) break;
         }
 
         if (hasPair) {
-            cards.sort((a, b) => b.value - a.value);
-            const kickers = cards.slice(0, 3).map(c => c.value);
-            this.valueOfHand = [PAIR_VALUE, valueOfPair, this.getPlayerHighCard(), ...kickers];
+            const remainingCards = cards.filter(c => c.value !== valueOfPair);
+            remainingCards.sort((a, b) => b.value - a.value);
+            const kickers = remainingCards.slice(0, 3).map(c => c.value);
+            this.valueOfHand = [PAIR_VALUE, valueOfPair, ...kickers];
         }
 
         return hasPair;
     }
 
-    getHighCard(cards: Card[]) {
+    private getHighCard(cards: Card[]) {
         cards.sort((a, b) => b.value - a.value);
         const topFive = cards.slice(0, 5).map(c => c.value);
         this.valueOfHand = [HIGHCARD_VALUE, ...topFive];
