@@ -207,7 +207,7 @@ io.on("connection", (socket: Socket) => {
     socket.on("disconnect", () => {
         const userId = socketUserMap.get(socket.id);
         console.log(`User disconnected: ${socket.id} (User: ${userId})`);
-        
+
         if (userId) {
             // Notify games about disconnection
             PokerService.pokerGames.forEach(game => {
@@ -220,7 +220,9 @@ io.on("connection", (socket: Socket) => {
                     (game as any).handlePlayerDisconnect(userId);
                 }
             });
+        }
 
+        if (userId) {
             // Find games the user might be in and remove them
             [...PokerService.pokerGames, ...BlackjackService.blackjackGames].forEach(game => {
                 if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
