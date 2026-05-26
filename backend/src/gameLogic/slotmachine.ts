@@ -34,17 +34,17 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape (Line 9)
     ];
 
-    private static readonly SYMBOL_DEFS: Record<number, { mult: number }> = {
-        [Symbols.Bar]: { mult: 10 },
-        [Symbols.Cherry]: { mult: 10 },
-        [Symbols.DoubleBar]: { mult: 20 },
-        [Symbols.Bell]: { mult: 20 },
-        [Symbols.Horseshoe]: { mult: 40 },
-        [Symbols.Star]: { mult: 40 },
-        [Symbols.Clover]: { mult: 100 },
-        [Symbols.Wild]: { mult: 100 },
-        [Symbols.Diamond]: { mult: 500 },
-        [Symbols.Seven]: { mult: 1000 },
+    private static readonly SYMBOL_DEFS: Record<number, { mult: number, weight: number }> = {
+        [Symbols.Bar]: { mult: 10, weight: 100 },
+        [Symbols.Cherry]: { mult: 10, weight: 100 },
+        [Symbols.DoubleBar]: { mult: 20, weight: 50 },
+        [Symbols.Bell]: { mult: 20, weight: 50 },
+        [Symbols.Horseshoe]: { mult: 40, weight: 25 },
+        [Symbols.Star]: { mult: 40, weight: 25 },
+        [Symbols.Clover]: { mult: 100, weight: 10 },
+        [Symbols.Wild]: { mult: 100, weight: 10 },
+        [Symbols.Diamond]: { mult: 500, weight: 5 },
+        [Symbols.Seven]: { mult: 1000, weight: 2 },
     };
 
     constructor(gameId: string, player: SlotmachinePlayer) {
@@ -99,12 +99,23 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     }
 
     private spin() {
-        const symbolValues = Object.values(Symbols).filter(v => typeof v === 'number') as number[];
+        const symbolEntries = Object.entries(Slotmachine.SYMBOL_DEFS);
+        const totalWeight = symbolEntries.reduce((acc, [_, def]) => acc + def.weight, 0);
+
         this.slots = [[], [], []];
         for (let x: number = 0; x < 3; x++) {
             for (let y: number = 0; y < 5; y++) {
-                const randomIndex = Math.floor(Math.random() * symbolValues.length);
-                this.slots[x][y] = symbolValues[randomIndex] as Symbols;
+                let random = Math.random() * totalWeight;
+                let selectedSymbol = Symbols.Bar;
+
+                for (const [id, def] of symbolEntries) {
+                    if (random < def.weight) {
+                        selectedSymbol = Number(id) as Symbols;
+                        break;
+                    }
+                    random -= def.weight;
+                }
+                this.slots[x][y] = selectedSymbol;
             }
         }
     }
@@ -136,10 +147,8 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
                 this.winningLines.push(i);
                 const baseMult = Slotmachine.SYMBOL_DEFS[targetSymbol].mult;
 
-                // Adjust multiplier based on match count
-                // 3 symbols: 10%, 4 symbols: 40%, 5 symbols: 100% of the base multiplier
-                if (matchCount === 3) totalWinMultiplier += baseMult * 0.1;
-                else if (matchCount === 4) totalWinMultiplier += baseMult * 0.4;
+                if (matchCount === 3) totalWinMultiplier += baseMult * 0.2;
+                else if (matchCount === 4) totalWinMultiplier += baseMult * 0.5;
                 else if (matchCount === 5) totalWinMultiplier += baseMult;
             }
         }
