@@ -20,6 +20,12 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     private lastWin: number = 0;
     private winningLines: number[] = [];
 
+    private static readonly MATCH_MULTIPLIERS: Record<number, number> = {
+        3: 0.2,
+        4: 0.5,
+        5: 1.0
+    };
+
 
     public static readonly WIN_LINES = [
         [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]], // Horizontal Middle (Line 0)
@@ -34,7 +40,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape (Line 9)
     ];
 
-    private static readonly SYMBOL_DEFS: Record<number, { mult: number, weight: number }> = {
+    private static readonly SYMBOLS: Record<number, { mult: number, weight: number }> = {
         [Symbols.Bar]: { mult: 10, weight: 100 },
         [Symbols.Cherry]: { mult: 10, weight: 100 },
         [Symbols.DoubleBar]: { mult: 20, weight: 50 },
@@ -99,7 +105,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     }
 
     private spin() {
-        const symbolEntries = Object.entries(Slotmachine.SYMBOL_DEFS);
+        const symbolEntries = Object.entries(Slotmachine.SYMBOLS);
         const totalWeight = symbolEntries.reduce((acc, [_, def]) => acc + def.weight, 0);
 
         this.slots = [[], [], []];
@@ -145,11 +151,10 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
             if (matchCount >= 3) {
                 this.winningLines.push(i);
-                const baseMult = Slotmachine.SYMBOL_DEFS[targetSymbol].mult;
-
-                if (matchCount === 3) totalWinMultiplier += baseMult * 0.2;
-                else if (matchCount === 4) totalWinMultiplier += baseMult * 0.5;
-                else if (matchCount === 5) totalWinMultiplier += baseMult;
+                const baseMult = Slotmachine.SYMBOLS[targetSymbol].mult;
+                const matchFactor = Slotmachine.MATCH_MULTIPLIERS[matchCount] || 0;
+                
+                totalWinMultiplier += baseMult * matchFactor;
             }
         }
 
