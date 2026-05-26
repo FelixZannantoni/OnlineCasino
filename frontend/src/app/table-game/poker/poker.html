@@ -3,27 +3,36 @@
   <div game-content>
     
     <!-- Cards -->
-    <div class="board-cards">
-       @if (gameState(); as state) {
-        @for (card of state.board; track $index) {
-          @if (card.visibility === 'all') {
-            <div class="card" [class]="'card-' + card.color.toLowerCase()" style="width: 84px; height: 117px;">
-              <div class="card-top"><span class="card-rank">{{ getCardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
-              <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
-              <div class="card-bottom"><span class="card-rank">{{ getCardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
-            </div>
-          } @else {
-            <div class="card card-back" style="width: 84px; height: 117px;"></div>
-          }
-        }
-      } @else {
-        <div class="card card-back" style="width: 84px; height: 117px;"></div>
-        <div class="card card-back" style="width: 84px; height: 117px;"></div>
-        <div class="card card-back" style="width: 84px; height: 117px;"></div>
-        <div class="card card-back" style="width: 84px; height: 117px;"></div>
-        <div class="card card-back" style="width: 84px; height: 117px;"></div>
+     <div class="board-area">
+      @if (gameStartsIn() !== null && gameStartsIn()! > 0) {
+        <div class="game-start-timer">
+          Game starts in {{ gameStartsIn() }}s
+        </div>
       }
-    </div>
+
+      <div class="board-cards">
+        @if (gameState(); as state) {
+          @for (card of state.board; track $index) {
+            @if (card.visibility === 'all') {
+              <div class="card" [class]="'card-' + card.color.toLowerCase()" style="width: 84px; height: 117px;">
+                <div class="card-top"><span class="card-rank">{{ getCardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+                <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
+                <div class="card-bottom"><span class="card-rank">{{ getCardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+              </div>
+            } @else {
+              <div class="card card-back" style="width: 84px; height: 117px;"></div>
+            }
+          }
+        } @else {
+          <div class="card card-back" style="width: 84px; height: 117px;"></div>
+          <div class="card card-back" style="width: 84px; height: 117px;"></div>
+          <div class="card card-back" style="width: 84px; height: 117px;"></div>
+          <div class="card card-back" style="width: 84px; height: 117px;"></div>
+          <div class="card card-back" style="width: 84px; height: 117px;"></div>
+        }
+      </div>
+     </div>
+    
 
     <div class="player-cards">
       @if (myPlayer(); as player) {
