@@ -77,6 +77,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         try {
             this.player.makeNewBet(bet);
             this.playRound();
+            this.nextRound();
         } catch (e) {
            console.error("Failed to start slot game:", e);
            throw e;
@@ -88,14 +89,12 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
             try {
                 this.player.makeBet();
                 this.playRound();
+                setTimeout(() => this.nextRound(), 1000); // Use a small timeout or process next tick to avoid stack overflow
             } catch (e) {
                 this.player.stopAutoSpin();
-                this.handleMove();
             }
         }
-        else {
-            this.handleMove()
-        }
+        this.playRound();
     }
 
 
@@ -167,7 +166,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         if (this.player.getPressedSpin()) {
             try {
                 this.player.makeBet();
-                this.playRound();
+                this.nextRound();
             } catch (e) {
                 console.error("Slotmachine move failed:", e);
             }
