@@ -1,0 +1,917 @@
+.f-root {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--casino-bg);
+  color: #e8e0d0;
+  border-radius: 18px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  min-height: 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+.f-header {
+  background: linear-gradient(135deg, var(--casino-bg) 0%, var(--casino-accent) 50%, var(--casino-bg) 100%);
+  border-bottom: 1px solid rgba(209, 158, 29, 0.35);
+  padding: 24px 28px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.f-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+
+.f-header-ornament {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  font-size: 26px;
+  opacity: 0.215;
+  color: var(--text-gold);
+  letter-spacing: 12px;
+  pointer-events: none;
+}
+
+.f-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.f-crown-icon {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #1e1a10, #2a2210);
+  border: 1px solid rgba(209, 158, 29, 0.4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-gold);
+  box-shadow: 0 0 12px rgba(209, 158, 29, 0.2), inset 0 1px 0 rgba(255, 216, 110, 0.15);
+  flex-shrink: 0;
+}
+
+.f-crown-icon .material-icons {
+  font-size: 20px;
+}
+
+.f-title {
+  font-size: 20px;
+  font-weight: 700;
+  background: var(--primary-gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.f-subtitle {
+  font-size: 11px;
+  color: var(--text-gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.f-tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.f-tab {
+  padding: 10px 22px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #6a6880;
+  border-bottom: 2px solid transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  transition: all 0.25s;
+  background: none;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.f-tab.active {
+  color: var(--light-gold);
+  border-bottom-color: var(--text-gold);
+}
+
+.f-tab:hover:not(.active) {
+  color: #a09880;
+}
+
+.f-badge {
+  display: inline-block;
+  background: var(--primary-gold-gradient);
+  color: var(--text-gold-dark);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  vertical-align: middle;
+  line-height: 14px;
+}
+
+.f-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.f-panel {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.f-panel.active {
+  display: flex;
+}
+
+.f-wrap {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.f-left-col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(209, 158, 29, 0.35);
+  transition: width 0.3s ease;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.f-left-col.split {
+  width: 42%;
+}
+
+.f-right-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.f-search-bar {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(209, 158, 29, 0.1);
+  flex-shrink: 0;
+}
+
+.f-search-wrap {
+  position: relative;
+}
+
+.f-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-gold);
+  pointer-events: none;
+  font-size: 20px !important;
+}
+
+.f-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--casino-surface);
+  border: 1px solid rgba(209, 158, 29, 0.35);
+  border-radius: 10px;
+  padding: 10px 14px 10px 44px;
+  color: #e8e0d0;
+  font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.f-search-input:focus {
+  border-color: var(--text-gold);
+  box-shadow: 0 0 0 3px rgba(209, 158, 29, 0.15);
+}
+
+.f-search-input::placeholder {
+  color: #504e68;
+}
+
+.f-section-label {
+  padding: 16px 24px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-gold);
+  flex-shrink: 0;
+}
+
+.f-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 12px 16px;
+}
+
+.f-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.f-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.f-list::-webkit-scrollbar-thumb {
+  background: rgba(209, 158, 29, 0.3);
+  border-radius: 4px;
+}
+
+.f-friend-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
+}
+
+.f-friend-card:hover {
+  background: var(--casino-surface);
+  border-color: rgba(209, 158, 29, 0.35);
+}
+
+.f-friend-card.selected {
+  background: linear-gradient(135deg, rgba(209, 158, 29, 0.08), rgba(209, 158, 29, 0.04));
+  border-color: rgba(209, 158, 29, 0.5);
+}
+
+.f-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.f-avatar-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  border: 2px solid rgba(209, 158, 29, 0.35);
+  overflow: hidden;
+}
+
+.chat-avatar {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 13px !important;
+  flex-shrink: 0;
+}
+
+.f-status-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--casino-bg);
+}
+
+.f-status-dot.online {
+  background: #3ecf6e;
+  box-shadow: 0 0 6px rgba(62, 207, 110, 0.6);
+}
+
+.f-status-dot.away {
+  background: #e0a030;
+}
+
+.f-status-dot.offline {
+  background: #f44336;
+}
+
+.f-friend-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.f-friend-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #e8e0d0;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.f-friend-status {
+  font-size: 11px;
+  color: #6a6880;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.f-friend-status.playing {
+  color: var(--text-gold);
+}
+
+.f-friend-status.online-text {
+  color: #2ea854;
+}
+
+.f-friend-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.f-friend-card:hover .f-friend-actions {
+  opacity: 1;
+}
+
+.f-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(209, 158, 29, 0.35);
+  background: rgba(209, 158, 29, 0.06);
+  color: var(--text-gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.f-action-btn .material-icons {
+  font-size: 17px;
+}
+
+.f-action-btn:hover {
+  background: rgba(209, 158, 29, 0.18);
+  border-color: var(--text-gold);
+}
+
+.f-action-btn.danger {
+  border-color: rgba(226, 75, 74, 0.4);
+  color: #e24b4a;
+  background: rgba(226, 75, 74, 0.06);
+}
+
+.f-action-btn.danger:hover {
+  background: rgba(226, 75, 74, 0.18);
+  border-color: #e24b4a;
+}
+
+.f-stats-row {
+  display: flex;
+  border-top: 1px solid rgba(209, 158, 29, 0.35);
+  flex-shrink: 0;
+}
+
+.f-stat {
+  flex: 1;
+  padding: 12px 10px;
+  text-align: center;
+  border-right: 1px solid rgba(209, 158, 29, 0.1);
+}
+
+.f-stat:last-child {
+  border-right: none;
+}
+
+.f-stat-val {
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--primary-gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.f-stat-lbl {
+  font-size: 9px;
+  color: #504e68;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.f-chat-panel {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  background: var(--casino-bg);
+  overflow: hidden;
+}
+
+.f-chat-panel.open {
+  display: flex;
+}
+
+.f-chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(209, 158, 29, 0.35);
+  background: linear-gradient(135deg, var(--casino-bg), var(--casino-accent));
+  flex-shrink: 0;
+}
+
+.f-chat-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--light-gold);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.f-chat-sub {
+  font-size: 11px;
+  color: #2ea854;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.f-chat-close {
+  margin-left: auto;
+  background: none;
+  border: 1px solid rgba(209, 158, 29, 0.35);
+  color: var(--text-gold);
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.f-chat-close .material-icons {
+  font-size: 18px;
+}
+
+.f-chat-close:hover {
+  color: var(--text-gold);
+  border-color: var(--text-gold);
+}
+
+.f-chat-invite-btn {
+  background: linear-gradient(135deg, rgba(209, 158, 29, 0.15), rgba(209, 158, 29, 0.08));
+  border: 1px solid rgba(209, 158, 29, 0.35);
+  border-radius: 8px;
+  color: var(--text-gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.f-chat-invite-btn .material-icons {
+  font-size: 16px;
+}
+
+.f-chat-invite-btn:hover {
+  background: linear-gradient(135deg, rgba(209, 158, 29, 0.28), rgba(209, 158, 29, 0.15));
+  box-shadow: 0 0 12px rgba(209, 158, 29, 0.2);
+}
+
+.f-messages {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.f-messages::-webkit-scrollbar {
+  width: 3px;
+}
+
+.f-messages::-webkit-scrollbar-thumb {
+  background: rgba(209, 158, 29, 0.3);
+  border-radius: 4px;
+}
+
+.f-msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  max-width: 80%;
+}
+
+.f-msg.mine {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+.f-msg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid rgba(209, 158, 29, 0.35);
+}
+
+.f-msg-bubble {
+  padding: 9px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.f-msg.theirs .f-msg-bubble {
+  background: var(--casino-surface);
+  border: 1px solid rgba(209, 158, 29, 0.12);
+  border-bottom-left-radius: 4px;
+  color: #d8d0c0;
+}
+
+.f-msg.mine .f-msg-bubble {
+  background: linear-gradient(135deg, rgba(209, 158, 29, 0.2), rgba(209, 158, 29, 0.1));
+  border: 1px solid rgba(209, 158, 29, 0.35);
+  border-bottom-right-radius: 4px;
+  color: #f0e8d0;
+}
+
+.f-msg-time {
+  font-size: 10px;
+  color: #4a4860;
+  padding: 0 4px;
+  white-space: nowrap;
+  align-self: flex-end;
+  flex-shrink: 0;
+}
+
+.f-system-msg {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-gold);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  flex-shrink: 0;
+}
+
+.f-system-msg::before,
+.f-system-msg::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(209, 158, 29, 0.35));
+}
+
+.f-system-msg::after {
+  background: linear-gradient(90deg, rgba(209, 158, 29, 0.35), transparent);
+}
+
+.f-chat-input-wrap {
+  padding: 14px 20px;
+  border-top: 1px solid rgba(209, 158, 29, 0.35);
+  background: var(--navbar-dark);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.f-chat-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--casino-surface);
+  border: 1px solid rgba(209, 158, 29, 0.25);
+  border-radius: 10px;
+  padding: 10px 16px;
+  color: #e8e0d0;
+  font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.f-chat-input:focus {
+  border-color: var(--text-gold);
+}
+
+.f-chat-input::placeholder {
+  color: #403e58;
+}
+
+.f-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--primary-gold-gradient);
+  border: none;
+  color: var(--text-gold-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.f-send-btn .material-icons {
+  font-size: 18px;
+}
+
+.f-send-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 14px rgba(209, 158, 29, 0.5);
+}
+
+.f-empty-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px;
+}
+
+.f-empty-icon {
+  font-size: 40px !important;
+  color: rgba(209, 158, 29, 0.15);
+  display: block;
+}
+
+.f-empty-text {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #3a3850;
+  text-align: center;
+}
+
+.f-invite-toast {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: linear-gradient(135deg, var(--casino-accent), var(--casino-bg));
+  border: 1px solid var(--text-gold);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--light-gold);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(209, 158, 29, 0.2);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  z-index: 100;
+  letter-spacing: 1px;
+  animation: toastIn 0.3s ease;
+  max-width: 320px;
+}
+
+.f-invite-toast.hidden {
+  display: none;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.f-add-panel {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.f-add-panel.active {
+  display: flex;
+}
+
+.f-add-box {
+  margin: 24px 20px 0;
+  background: linear-gradient(135deg, rgba(209, 158, 29, 0.06), rgba(209, 158, 29, 0.02));
+  border: 1px solid rgba(209, 158, 29, 0.35);
+  border-radius: 14px;
+  padding: 24px;
+  flex-shrink: 0;
+}
+
+.f-add-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--light-gold);
+  letter-spacing: 2px;
+  margin: 0 0 6px;
+}
+
+.f-add-desc {
+  font-size: 12px;
+  color: #6a6880;
+  margin: 0 0 18px;
+  line-height: 1.6;
+}
+
+.f-add-row {
+  display: flex;
+  gap: 10px;
+}
+
+.f-add-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--casino-surface);
+  border: 1px solid rgba(209, 158, 29, 0.35);
+  border-radius: 10px;
+  padding: 10px 16px;
+  color: #e8e0d0;
+  font-size: 13px;
+  font-family: 'Montserrat', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.f-add-input:focus {
+  border-color: var(--text-gold);
+  box-shadow: 0 0 0 3px rgba(209, 158, 29, 0.15);
+}
+
+.f-add-input::placeholder {
+  color: #403e58;
+}
+
+.f-add-btn {
+  background: var(--primary-gold-gradient);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  color: var(--text-gold-dark);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.f-add-btn .material-icons {
+  font-size: 18px;
+}
+
+.f-add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(209, 158, 29, 0.4);
+}
+
+.f-requests-section {
+  padding: 24px 20px 0;
+}
+
+.f-req-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-gold-dark);
+  margin-bottom: 12px;
+}
+
+.f-req-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: var(--casino-surface);
+  border: 1px solid rgba(209, 158, 29, 0.2);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.f-req-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.f-req-accept {
+  background: linear-gradient(135deg, rgba(62, 207, 110, 0.15), rgba(62, 207, 110, 0.08));
+  border: 1px solid rgba(62, 207, 110, 0.4);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: #3ecf6e;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.f-req-accept:hover {
+  background: rgba(62, 207, 110, 0.25);
+  box-shadow: 0 0 10px rgba(62, 207, 110, 0.3);
+}
+
+.f-req-decline {
+  background: none;
+  border: 1px solid rgba(226, 75, 74, 0.3);
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: #e24b4a;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.f-req-decline .material-icons {
+  font-size: 16px;
+}
+
+.f-req-decline:hover {
+  background: rgba(226, 75, 74, 0.12);
+}
