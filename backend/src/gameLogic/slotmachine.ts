@@ -102,7 +102,10 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
     public playRound() {
         this.spin();
+        console.log("--- New Spin ---");//debug
+        console.table(this.slots.map(row => row.map(s => Symbols[s])));//debug
         this.checkSpin();
+        console.log(`Result - Win: ${this.lastWin}, Lines: [${this.winningLines.join(', ')}]`);//debug
     }
 
     private spin() {
@@ -168,7 +171,10 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         if (this.player.getPressedSpin()) {
             try {
                 this.player.makeBet();
-                this.nextRound();
+                this.playRound();
+                if (this.player.getPressedAutoSpin()) {
+                    setTimeout(() => this.nextRound(), 1000);
+                }
             } catch (e) {
                 console.error("Slotmachine move failed:", e);
             }
