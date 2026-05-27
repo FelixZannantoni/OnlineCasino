@@ -146,10 +146,24 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   spinning = false;
   autoSpin = false;
   initializing = true;
+  winningLineIndices: number[] = [];
 
   readonly reels = Array.from({ length: REEL_COUNT }, (_, i) => i);
   readonly symbols: SlotSymbol[];
   readonly paytableSymbols: SlotSymbol[];
+
+  readonly WIN_LINES = [
+    [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]], // Horizontal Middle (Line 0)
+    [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], // Horizontal Top (Line 1)
+    [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]], // Horizontal Bottom (Line 2)
+    [[0, 0], [1, 1], [2, 2], [1, 3], [0, 4]], // V-Shape (Down-Up) (Line 3)
+    [[2, 0], [1, 1], [0, 2], [1, 3], [2, 4]], // V-Shape (Up-Down) (Line 4)
+    [[1, 0], [2, 1], [2, 2], [2, 3], [1, 4]], // Middle-Bottom-Middle (Line 5)
+    [[1, 0], [0, 1], [0, 2], [0, 3], [1, 4]], // Middle-Top-Middle (Line 6)
+    [[2, 0], [2, 1], [1, 2], [0, 3], [0, 4]], // Bottom-Middle-Top Zigzag (Line 7)
+    [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]], // Top-Middle-Bottom Zigzag (Line 8)
+    [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape (Line 9)
+  ];
 
   private readonly STRIP_LEN = 30;
   private readonly SYM_H = 120; 
@@ -222,6 +236,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
       this.isWin = result.win > 0;
       this.winAmount = result.win;
       this.credits = result.balance;
+      this.winningLineIndices = result.winningLines || [];
       
     } catch (e) {
       console.error("Spin failed:", e);
@@ -272,6 +287,17 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     this.spins = 0;
     this.isWin = false;
     this.winAmount = 0;
+    this.winningLineIndices = [];
+  }
+
+  getWinLinePath(lineIdx: number): string {
+    const line = this.WIN_LINES[lineIdx];
+    if (!line) return '';
+    return line.map((coord, i) => {
+      const x = (coord[1] + 0.5) * 20;
+      const y = (coord[0] + 0.5) * 120;
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ');
   }
 
   private buildStrip(el: HTMLElement): void {
