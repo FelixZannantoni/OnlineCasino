@@ -77,7 +77,9 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         try {
             this.player.makeNewBet(bet);
             this.playRound();
-            this.nextRound();
+            if (this.player.getPressedAutoSpin()) {
+                setTimeout(() => this.nextRound(), 1000);
+            }
         } catch (e) {
            console.error("Failed to start slot game:", e);
            throw e;
