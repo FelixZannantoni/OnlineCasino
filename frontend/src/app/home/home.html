@@ -82,6 +82,9 @@
                     <button class="favorite-btn" (click)="toggleFavorite('Roulette', $event)">
                         <mat-icon>{{ isFavorite('Roulette') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
+                    <button class="info-btn" (click)="openInfo('Roulette', $event)" aria-label="Game Info">
+                        <mat-icon>info_outline</mat-icon>
+                    </button>
                     <div class="game-card-content">
                         <span class="game-title">Roulette</span>
                     </div>
@@ -128,7 +131,7 @@
                         <span class="game-title">Fav game</span>
                     </div>
                 </button>
-            }
+                }
             </div>
         </div>
 
