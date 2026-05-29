@@ -151,6 +151,18 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   initializing = true;
   winningLineIndices: number[] = [];
 
+  get canAffordSpin(): boolean {
+    return this.bet > 0 && this.credits >= this.bet;
+  }
+
+  get canSpin(): boolean {
+    return !this.spinning && !this.initializing && !!this.gameId && this.canAffordSpin;
+  }
+
+  get winningLineLabels(): string[] {
+    return this.winningLineIndices.map(idx => `Line ${idx + 1}`);
+  }
+
   readonly reels = Array.from({ length: REEL_COUNT }, (_, i) => i);
   readonly symbols: SlotSymbol[];
   readonly paytableSymbols: SlotSymbol[];
@@ -214,13 +226,13 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     this.stopAutoSpin();
   }
 
-  get canSpin(): boolean {
-    return !this.spinning && !this.initializing && !!this.gameId;
-  }
-
   async spin(): Promise<void> {
-    if (!this.canSpin || !this.gameId) return;
+    if (!this.canSpin || !this.gameId) {
+      this.stopAutoSpin();
+      return;
+    }
 
+    this.clearWinningSymbolHighlights();
     this.spinning = true;
     this.isWin = false;
     this.winAmount = 0;
@@ -243,12 +255,14 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
         this.reels.map((_, i) => this.animateReel(i, reelResults[i], i * 120))
       );
 
+      this.winningLineIndices = result.winningLines || [];
+      this.highlightWinningSymbols();
+
       await this.wait(150);
 
       this.isWin = result.win > 0;
       this.winAmount = result.win;
       this.credits = result.balance;
-      this.winningLineIndices = result.winningLines || [];
 
     } catch (e) {
       console.error("Spin failed:", e);
@@ -263,10 +277,14 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   }
 
   toggleAutoSpin(): void {
+    if (!this.autoSpin && !this.canSpin) {
+      return;
+    }
+
     this.autoSpin = !this.autoSpin;
-    if (this.autoSpin && this.canSpin) {
+    if (this.autoSpin) {
       this.spin();
-    } else if (!this.autoSpin) {
+    } else {
       this.stopAutoSpin();
     }
   }
@@ -295,6 +313,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
   resetCredits(): void {
     this.stopAutoSpin();
+    this.clearWinningSymbolHighlights();
     this.credits = 1000;
     this.spins = 0;
     this.isWin = false;
@@ -384,7 +403,30 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     });
   }
 
-  private wait(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  private highlightWinningSymbols(): void {
+    this.clearWinningSymbolHighlights();
+
+    for (const lineIdx of this.winningLineIndices) {
+      const line = this.WIN_LINES[lineIdx];
+      if (!line) continue;
+
+      for (const [row, col] of line) {
+        const reel = this.strips[col];
+        const symbolNode = reel?.children[2 + row] as HTMLElement | undefined;
+        if (symbolNode) {
+          symbolNode.classList.add('winning-sym');
+        }
+      }
+    }
+  }
+
+  private clearWinningSymbolHighlights(): void {
+    this.strips.forEach(strip => {
+      strip.querySelectorAll('.winning-sym').forEach(node => node.classList.remove('winning-sym'));
+    });
+  }
+
+  private wait(milliSeconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliSeconds));
   }
 }

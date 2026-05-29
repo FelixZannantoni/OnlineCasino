@@ -72,8 +72,9 @@
         <div class="bottom">
             <div class="btn-row">
                 <button class="aux-btn" (click)="setMaxBet()" [disabled]="spinning">Max Wager</button>
-                <button class="spin-btn" (click)="spin()" [disabled]="spinning || autoSpin">Spin</button>
-                <button class="auto-btn" (click)="toggleAutoSpin()" [class.active]="autoSpin">
+                <button class="spin-btn" (click)="spin()" [disabled]="!canSpin || spinning">Spin</button>
+                <button class="auto-btn" (click)="toggleAutoSpin()" [class.active]="autoSpin"
+                    [disabled]="!autoSpin && !canSpin">
                     @if (autoSpin) { Stop } @else { Auto }
                 </button>
                 <button class="aux-btn" (click)="resetCredits()">Reset</button>
