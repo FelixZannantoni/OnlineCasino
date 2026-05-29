@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
@@ -31,6 +32,17 @@ app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/slotmachine", slotmachineRouter);
+
+// Serve Frontend Static Files
+const publicPath = path.join(__dirname, "../public");
+app.use(express.static(publicPath));
+
+app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/users") || req.path.startsWith("/poker") || req.path.startsWith("/blackjack") || req.path.startsWith("/slotmachine")) {
+        return next();
+    }
+    res.sendFile(path.join(publicPath, "index.html"));
+});
 
 
 const socketUserMap: Map<string, string> = new Map();

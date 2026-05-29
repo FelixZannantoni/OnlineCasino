@@ -46,7 +46,7 @@ export class Login implements OnInit {
   }
 
   async handleGithubLoginWithCode(code: string): Promise<void> {
-    const res = await fetch('http://localhost:3000/users/login/github', {
+    const res = await fetch('/users/login/github', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -99,7 +99,7 @@ export class Login implements OnInit {
     if (!this.isBrowser) return;
     console.log('onLogin called, navigating...');
 
-    const res = await fetch('http://localhost:3000/users/login', {
+    const res = await fetch('/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -133,7 +133,7 @@ export class Login implements OnInit {
       return;
     }
 
-    const res = await fetch('http://localhost:3000/users/register', {
+    const res = await fetch('/users/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -161,7 +161,7 @@ export class Login implements OnInit {
   handleGithubLogin() {
     if (!this.isBrowser) return;
     const GITHUB_CLIENT_ID = 'Ov23liyXKzvf4zPI8g7J';
-    const REDIRECT_URI = 'http://localhost:3000/login';
+    const REDIRECT_URI = '/login';
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=read:user`;
     window.location.href = githubAuthUrl;
