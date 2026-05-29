@@ -41,16 +41,16 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     ];
 
     private static readonly SYMBOLS: Record<number, { mult: number, weight: number }> = {
-        [Symbols.Bar]: { mult: 10, weight: 100 },
-        [Symbols.Cherry]: { mult: 10, weight: 100 },
-        [Symbols.DoubleBar]: { mult: 20, weight: 50 },
-        [Symbols.Bell]: { mult: 20, weight: 50 },
-        [Symbols.Horseshoe]: { mult: 40, weight: 25 },
-        [Symbols.Star]: { mult: 40, weight: 25 },
-        [Symbols.Clover]: { mult: 100, weight: 10 },
-        [Symbols.Wild]: { mult: 100, weight: 10 },
-        [Symbols.Diamond]: { mult: 500, weight: 5 },
-        [Symbols.Seven]: { mult: 1000, weight: 2 },
+        [Symbols.Bar]: { mult: 2, weight: 100 },
+        [Symbols.Cherry]: { mult: 2, weight: 100 },
+        [Symbols.DoubleBar]: { mult: 5, weight: 50 },
+        [Symbols.Bell]: { mult: 5, weight: 50 },
+        [Symbols.Horseshoe]: { mult: 10, weight: 25 },
+        [Symbols.Star]: { mult: 10, weight: 25 },
+        [Symbols.Clover]: { mult: 20, weight: 10 },
+        [Symbols.Wild]: { mult: 20, weight: 10 },
+        [Symbols.Diamond]: { mult: 50, weight: 5 },
+        [Symbols.Seven]: { mult: 100, weight: 2 },
     };
 
     constructor(gameId: string, player: SlotmachinePlayer) {
@@ -81,8 +81,8 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
                 setTimeout(() => this.nextRound(), 1000);
             }
         } catch (e) {
-           console.error("Failed to start slot game:", e);
-           throw e;
+            console.error("Failed to start slot game:", e);
+            throw e;
         }
     }
 
@@ -157,7 +157,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
                 this.winningLines.push(i);
                 const baseMult = Slotmachine.SYMBOLS[targetSymbol].mult;
                 const matchFactor = Slotmachine.MATCH_MULTIPLIERS[matchCount] || 0;
-                
+
                 totalWinMultiplier += baseMult * matchFactor;
             }
         }

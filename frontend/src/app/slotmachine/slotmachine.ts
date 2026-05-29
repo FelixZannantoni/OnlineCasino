@@ -113,16 +113,16 @@ export interface SlotSymbol {
 }
 
 const SYMBOL_DEFS: Record<number, any> = {
-  1: { name: 'Bar', svgFn: svgBar, mult: 10 },
-  2: { name: 'Cherry', svgFn: svgCherry, mult: 10 },
-  3: { name: 'Dbl Bar', svgFn: svgDoubleBar, mult: 20 },
-  4: { name: 'Bell', svgFn: svgBell, mult: 20 },
-  5: { name: 'Horseshoe', svgFn: svgHorseshoe, mult: 40 },
-  6: { name: 'Star', svgFn: svgStar, mult: 40 },
-  7: { name: 'Clover', svgFn: svgClover, mult: 100 },
-  8: { name: 'Wild', svgFn: svgWild, mult: 100 },
-  9: { name: 'Diamond', svgFn: svgDiamond, mult: 500 },
-  10: { name: 'Seven', svgFn: svgSeven, mult: 1000 },
+  1: { name: 'Bar', svgFn: svgBar, mult: 2 },
+  2: { name: 'Cherry', svgFn: svgCherry, mult: 2 },
+  3: { name: 'Dbl Bar', svgFn: svgDoubleBar, mult: 5 },
+  4: { name: 'Bell', svgFn: svgBell, mult: 5 },
+  5: { name: 'Horseshoe', svgFn: svgHorseshoe, mult: 10 },
+  6: { name: 'Star', svgFn: svgStar, mult: 10 },
+  7: { name: 'Clover', svgFn: svgClover, mult: 20 },
+  8: { name: 'Wild', svgFn: svgWild, mult: 20 },
+  9: { name: 'Diamond', svgFn: svgDiamond, mult: 50 },
+  10: { name: 'Seven', svgFn: svgSeven, mult: 100 },
 };
 
 const REEL_COUNT = 5;
@@ -166,7 +166,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   ];
 
   private readonly STRIP_LEN = 30;
-  private readonly SYM_H = 120; 
+  private readonly SYM_H = 120;
   private readonly BET_STEPS = [10, 25, 50, 100, 250, 500];
 
   private strips: HTMLElement[] = [];
@@ -185,7 +185,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   async ngAfterViewInit(): Promise<void> {
     this.strips = this.stripRefs.map(r => r.nativeElement);
     this.strips.forEach(el => this.buildStrip(el));
-    
+
     try {
       this.gameId = await this.smService.createGame("user-1", "testuser", "Test User", this.credits);
       this.initializing = false;
@@ -216,7 +216,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
     try {
       const result = await this.smService.spin(this.gameId, this.bet);
-      
+
       if (!result) {
         throw new Error("Spin result was null");
       }
@@ -237,7 +237,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
       this.winAmount = result.win;
       this.credits = result.balance;
       this.winningLineIndices = result.winningLines || [];
-      
+
     } catch (e) {
       console.error("Spin failed:", e);
       this.stopAutoSpin();
@@ -363,7 +363,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
         el.style.transition = 'none';
         el.style.transform = `translateY(${pos}px)`;
-        
+
         frame++;
         setTimeout(tick, 40 + frame); // Slightly decelerate
       };
