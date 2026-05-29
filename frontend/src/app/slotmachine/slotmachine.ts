@@ -188,9 +188,8 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
       .subscribe((event) => {
-        if (event.key === 'Space') {
+        if (event.code === 'Space') {
           this.spin();
-          console.log('Space pressed -> spin()')
         }
       });
   }
