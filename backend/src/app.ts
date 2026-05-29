@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
@@ -34,13 +35,18 @@ app.use("/blackjack", blackjackRouter);
 app.use("/slotmachine", slotmachineRouter);
 
 // Serve Frontend Static Files
-const publicPath = path.join(__dirname, "../public");
-app.use(express.static(publicPath));
+const publicPath = path.resolve(__dirname, "../public");
+console.log(`Serving static files from: ${publicPath}`);
 
-app.get("*", (req, res, next) => {
-    if (req.path.startsWith("/users") || req.path.startsWith("/poker") || req.path.startsWith("/blackjack") || req.path.startsWith("/slotmachine")) {
-        return next();
-    }
+// 1. Serve static files (js, css, icons)
+app.use(express.static(publicPath, {
+    maxAge: '1y',
+    fallthrough: true // If file not found, continue to the catch-all
+}));
+
+// 2. Catch-all for Angular Routing
+// Using a RegExp object directly bypasses path-to-regexp string parsing
+app.get(/^(?!\/(users|poker|blackjack|slotmachine)).*/, (req, res) => {
     res.sendFile(path.join(publicPath, "index.html"));
 });
 
@@ -184,7 +190,7 @@ io.on("connection", (socket: Socket) => {
         if (!actionResult.success) {
             console.warn(`Action failed for player ${playerId} in game ${gameId}: ${actionResult.message}`);
             socket.emit("error", { message: actionResult.message });
-        }3
+        }
     });
 
     socket.on("set_desired_bet", async (data: { gameId: string; amount: number }) => {
