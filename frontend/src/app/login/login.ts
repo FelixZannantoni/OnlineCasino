@@ -159,6 +159,7 @@ export class Login implements OnInit {
   }
 
   handleGithubLogin() {
+    if (!this.isBrowser) return;
     const GITHUB_CLIENT_ID = 'Ov23liyXKzvf4zPI8g7J';
     const REDIRECT_URI = 'http://localhost:4200/login';
 

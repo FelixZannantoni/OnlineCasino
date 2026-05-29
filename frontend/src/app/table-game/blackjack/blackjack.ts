@@ -1,17 +1,16 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, signal, computed, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TableGameComponent } from '../table-game';
 import { SocketService } from '../../services/socket.service';
 import { DataService } from '../../services/data-service';
 import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.models';
 import { getCardRank } from '../../services/card-utils';
 import { FormsModule } from '@angular/forms';
-import {PlayerSlot} from '../player-slot/player-slot';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, FormsModule, PlayerSlot],
+  imports: [CommonModule, TableGameComponent, FormsModule],
   templateUrl: './blackjack.html',
   styleUrl: './blackjack.css',
 })
@@ -22,6 +21,7 @@ export class Blackjack implements OnInit, OnDestroy {
   betAmount: number = 10;
   balance: number = 1000;
   pot: number = 0;
+  private isBrowser: boolean;
 
   protected readonly me = computed(() => {
     const state = this.gameState();
@@ -37,12 +37,16 @@ export class Blackjack implements OnInit, OnDestroy {
 
   constructor(
     private socketService: SocketService,
-    private dataService: DataService
+    private dataService: DataService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
     this.userId = this.dataService.getUserId();
   }
 
   ngOnInit() {
+    if (!this.isBrowser) return;
+
     if (this.userId) {
       this.socketService.joinGame(this.gameId, this.userId);
     }
@@ -66,6 +70,7 @@ export class Blackjack implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (!this.isBrowser) return;
     this.socketService.offEvent('game_state');
     this.socketService.offEvent('error');
   }

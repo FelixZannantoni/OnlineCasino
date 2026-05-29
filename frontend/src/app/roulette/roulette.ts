@@ -8,8 +8,10 @@ import {
   inject,
   signal,
   computed,
+  Inject,
+  PLATFORM_ID,
 } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
 
 interface Bet {
   label: string;
@@ -44,11 +46,13 @@ interface Payout {
   templateUrl: './roulette.html',
   styleUrl: './roulette.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 export class Roulette implements AfterViewInit {
   @ViewChild('wheelCanvas') private canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private readonly zone = inject(NgZone);
+  private isBrowser: boolean;
 
   //
   readonly balance     = signal(5000);
@@ -124,8 +128,14 @@ export class Roulette implements AfterViewInit {
   private readonly CX   = 150;
   private readonly CY   = 150;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
+
   //
   ngAfterViewInit(): void {
+    if (!this.isBrowser) return;
+
     this.ctx = this.canvasRef.nativeElement.getContext('2d')!;
     // Defer past the first paint so the canvas is fully laid out in the DOM
     setTimeout(() => {
@@ -139,6 +149,8 @@ export class Roulette implements AfterViewInit {
   private idleRafId: number | null = null;
 
   private startIdleLoop(): void {
+    if (!this.isBrowser) return;
+
     const loop = () => {
       if (!this.spinning()) {
         this.drawWheel(this.wheelAngle);
@@ -194,6 +206,7 @@ export class Roulette implements AfterViewInit {
 
   //
   spin(): void {
+    if (!this.isBrowser) return;
     if (this.spinning() || !this.bets().length) return;
     this.spinning.set(true);
     this.resultLabel.set('');
@@ -273,6 +286,7 @@ export class Roulette implements AfterViewInit {
   //     18  hub
   //
   private drawWheel(angle: number): void {
+    if (!this.isBrowser) return;
     const ctx = this.ctx;
     const N     = this.SEQUENCE.length;
     const slice = (Math.PI * 2) / N;
