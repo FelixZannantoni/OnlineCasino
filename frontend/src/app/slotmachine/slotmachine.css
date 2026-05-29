@@ -302,7 +302,7 @@
 /* Symbol cell — must match SYM_H in slotmachine.ts */
 .sym {
     width: 100%;
-    height: 150px;
+    height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;

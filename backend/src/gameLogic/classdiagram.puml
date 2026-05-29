@@ -94,14 +94,15 @@ class Slotmachine {
   -slots: Symbols[][]
   -lastWin: number = 0
   -winningLines: number[]
-  {static} -PAYOUTS: Record<number, number[]>
-  {static} +LINES: number[][][]
+  {static} -MATCH_MULTIPLIERS: Record<number, number>
+  {static} +WIN_LINES: number[][][]
+  {static} -SYMBOLS: Record<number, { mult: number, weight: number }>
   +constructor(gameId: string, player: SlotmachinePlayer)
   +getSlots(): Symbols[][]
   +getLastWin(): number
   +getWinningLines(): number[]
   +startGame(): void
-  +nextRound(): void
+  -nextRound(): void
   +playRound(): void
   -spin(): void
   -checkSpin(): void
@@ -128,10 +129,22 @@ class Poker {
   -currentPlayerIndex: number
   -isStarted: boolean
   -hasActedThisRound: Set<string>
+  -lastWinners: { id: string, handName: string }[]
   -isLoading: boolean
+  -turnTimer: NodeJS.Timeout | null
+  -turnEndTime: number | null
+  -TURN_TIMEOUT_MS: number = 10000
+  -gameStartTimer: NodeJS.Timeout | null
+  -gameStartEndTime: number | null
+  -GAME_START_DELAY_MS: number = 10000
   +constructor(gameId: string)
+  +handlePlayerDisconnect(playerId: string): void
+  +tipDealer(playerId: string): Promise<any>
+  +startGameStartTimer(): void
+  -startTurnTimer(): void
+  -stopTurnTimer(): void
   +startGame(): void
-  -startNewHand(): void
+  -startNewHand(isFirstHand: boolean): void
   -resetPlayers(): void
   -handCardsOut(): void
   -setInitialBlinds(): void
@@ -149,7 +162,7 @@ class Poker {
 
 class Blackjack {
   {static} +PLAYER_CARDS_NUMBER: number = 2
-  {static} +BALCKJACK_BOT_ID: string = "BlackjackBot"
+  {static} +BLACKJACK_BOT_ID: string = "BlackjackBot"
   -blackjackDeck: BlackjackDeck
   -blackJackBot: BlackjackBot
   -isRunning: boolean
@@ -163,6 +176,7 @@ class Blackjack {
   -handCardsOut(): void
   -resetCards(): void
   -checkHandsValue(): void
+  +removePlayer(playerId: string): void
   -makeMove(): Promise<void>
   -waitForBets(): Promise<void>
   +handlePlayerMove(playerId: string, action: string, amount?: number): any
@@ -178,6 +192,7 @@ class BlackjackBot {
   +getCards(): Card[]
   +getHandValue(): number
   +addCard(card: Card): void
+  +revealCards(): void
   -checkHandValue(): void
   +makesHit(): boolean
   +hasBlackJack(): boolean
@@ -203,9 +218,11 @@ class Player {
   +makeNewBet(bet: number): void
   +makeIncreasedBet(bet: number): void
   +winMoney(win: number): void
+  +makeTip(amount: number): void
   {static} +xNextPlayer(players: Player[], i: number, x: number): number
   {static} +nextPlayer(players: Player[], i: number): number
   +isOutOfMoney(): boolean
+  +updatePlayerInfo(username: string, displayname: string): void
 }
 
 class SlotmachinePlayer {
@@ -339,4 +356,3 @@ BlackjackBot *-- "many" Card : cards
 Slotmachine *-- "many" Symbols : slots
 
 @enduml
-
