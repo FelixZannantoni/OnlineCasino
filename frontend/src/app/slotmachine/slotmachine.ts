@@ -182,6 +182,31 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     this.paytableSymbols = [...this.symbols].sort((a, b) => b.mult - a.mult);
   }
 
+    /*ngOnInit(): void {
+      if (!this.isBrowser) return;
+
+      this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleInfoOverlay')
+        .subscribe((event) => {
+          const gameKey = event.detail?.gameKey;
+          const game = GAME_INFO.find(g => g.key === gameKey) ?? null;
+          this.currentGame = game;
+          window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
+          this.isOpen = true;
+          this.updateBodyScroll();
+        });
+  
+      fromEvent(window, 'closeOtherOverlays').subscribe(() => {
+        if (this.isOpen) this.close();
+      });
+  
+      this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+        .subscribe((event) => {
+          if (event.key === 'Space') {
+            this.spin();
+          }
+        });
+    }*/
+
   async ngAfterViewInit(): Promise<void> {
     this.strips = this.stripRefs.map(r => r.nativeElement);
     this.strips.forEach(el => this.buildStrip(el));
