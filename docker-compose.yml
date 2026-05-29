@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_FILE_NAME=resources/casino.db
+      - SAMPLE_USER_FILE_PATH=resources/sample_data/users.csv
+    volumes:
+      - casino-data:/app/resources
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://backend:3000
+
+volumes:
+  casino-data:
