@@ -9,7 +9,7 @@ export class SocketService {
   public isConnected = signal(false);
 
   constructor() {
-    this.socket = io('http://localhost:3000');
+    this.socket = io('http://localhost:4200');
 
     this.socket.on('connect', () => {
       this.isConnected.set(true);

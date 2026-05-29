@@ -46,7 +46,7 @@ export class Login implements OnInit {
   }
 
   async handleGithubLoginWithCode(code: string): Promise<void> {
-    const res = await fetch('http://localhost:3000/users/login/github', {
+    const res = await fetch('http://localhost:4200/users/login/github', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -99,7 +99,7 @@ export class Login implements OnInit {
     if (!this.isBrowser) return;
     console.log('onLogin called, navigating...');
 
-    const res = await fetch('http://localhost:3000/users/login', {
+    const res = await fetch('http://localhost:4200/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -133,7 +133,7 @@ export class Login implements OnInit {
       return;
     }
 
-    const res = await fetch('http://localhost:3000/users/register', {
+    const res = await fetch('http://localhost:4200/users/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

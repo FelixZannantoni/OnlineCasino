@@ -14,7 +14,7 @@ import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4200;
 
 const app = express();
 const httpServer = createServer(app);
@@ -172,7 +172,7 @@ io.on("connection", (socket: Socket) => {
         if (!actionResult.success) {
             console.warn(`Action failed for player ${playerId} in game ${gameId}: ${actionResult.message}`);
             socket.emit("error", { message: actionResult.message });
-        }
+        }3
     });
 
     socket.on("set_desired_bet", async (data: { gameId: string; amount: number }) => {
