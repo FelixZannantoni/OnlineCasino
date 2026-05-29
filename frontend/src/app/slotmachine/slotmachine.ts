@@ -1,6 +1,8 @@
 import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SlotmachineService } from './slotmachine.service';
+import { Subscription, fromEvent } from 'rxjs';
+
 
 // SVG symbol definitions
 
@@ -135,6 +137,7 @@ const REEL_COUNT = 5;
   styleUrl: './slotmachine.css',
 })
 export class Slotmachine implements AfterViewInit, OnDestroy {
+  private keydownSubscription?: Subscription;
 
   @ViewChildren('strip') stripRefs!: QueryList<ElementRef<HTMLElement>>;
 
@@ -182,30 +185,15 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     this.paytableSymbols = [...this.symbols].sort((a, b) => b.mult - a.mult);
   }
 
-    /*ngOnInit(): void {
-      if (!this.isBrowser) return;
-
-      this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleInfoOverlay')
-        .subscribe((event) => {
-          const gameKey = event.detail?.gameKey;
-          const game = GAME_INFO.find(g => g.key === gameKey) ?? null;
-          this.currentGame = game;
-          window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
-          this.isOpen = true;
-          this.updateBodyScroll();
-        });
-  
-      fromEvent(window, 'closeOtherOverlays').subscribe(() => {
-        if (this.isOpen) this.close();
+  ngOnInit(): void {
+    this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+      .subscribe((event) => {
+        if (event.key === 'Space') {
+          this.spin();
+          console.log('Space pressed -> spin()')
+        }
       });
-  
-      this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
-        .subscribe((event) => {
-          if (event.key === 'Space') {
-            this.spin();
-          }
-        });
-    }*/
+  }
 
   async ngAfterViewInit(): Promise<void> {
     this.strips = this.stripRefs.map(r => r.nativeElement);
