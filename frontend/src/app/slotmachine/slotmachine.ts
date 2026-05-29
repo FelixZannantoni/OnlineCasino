@@ -1,6 +1,9 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SlotmachineService } from './slotmachine.service';
+import { Subscription, fromEvent } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+
 
 // SVG symbol definitions
 
@@ -113,16 +116,16 @@ export interface SlotSymbol {
 }
 
 const SYMBOL_DEFS: Record<number, any> = {
-  1: { name: 'Bar', svgFn: svgBar, mult: 10 },
-  2: { name: 'Cherry', svgFn: svgCherry, mult: 10 },
-  3: { name: 'Dbl Bar', svgFn: svgDoubleBar, mult: 20 },
-  4: { name: 'Bell', svgFn: svgBell, mult: 20 },
-  5: { name: 'Horseshoe', svgFn: svgHorseshoe, mult: 40 },
-  6: { name: 'Star', svgFn: svgStar, mult: 40 },
-  7: { name: 'Clover', svgFn: svgClover, mult: 100 },
-  8: { name: 'Wild', svgFn: svgWild, mult: 100 },
-  9: { name: 'Diamond', svgFn: svgDiamond, mult: 500 },
-  10: { name: 'Seven', svgFn: svgSeven, mult: 1000 },
+  1: { name: 'Bar', svgFn: svgBar, mult: 2 },
+  2: { name: 'Cherry', svgFn: svgCherry, mult: 2 },
+  3: { name: 'Dbl Bar', svgFn: svgDoubleBar, mult: 5 },
+  4: { name: 'Bell', svgFn: svgBell, mult: 5 },
+  5: { name: 'Horseshoe', svgFn: svgHorseshoe, mult: 10 },
+  6: { name: 'Star', svgFn: svgStar, mult: 10 },
+  7: { name: 'Clover', svgFn: svgClover, mult: 20 },
+  8: { name: 'Wild', svgFn: svgWild, mult: 20 },
+  9: { name: 'Diamond', svgFn: svgDiamond, mult: 50 },
+  10: { name: 'Seven', svgFn: svgSeven, mult: 100 },
 };
 
 const REEL_COUNT = 5;
@@ -134,7 +137,9 @@ const REEL_COUNT = 5;
   templateUrl: './slotmachine.html',
   styleUrl: './slotmachine.css',
 })
-export class Slotmachine implements AfterViewInit, OnDestroy {
+export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
+  private keydownSubscription?: Subscription;
+  private isBrowser: boolean;
 
   @ViewChildren('strip') stripRefs!: QueryList<ElementRef<HTMLElement>>;
 
@@ -146,20 +151,40 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   spinning = false;
   autoSpin = false;
   initializing = true;
+  winningLineIndices: number[] = [];
 
   readonly reels = Array.from({ length: REEL_COUNT }, (_, i) => i);
   readonly symbols: SlotSymbol[];
   readonly paytableSymbols: SlotSymbol[];
 
+  readonly WIN_LINES = [
+    [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]], // Horizontal Middle (Line 0)
+    [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], // Horizontal Top (Line 1)
+    [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]], // Horizontal Bottom (Line 2)
+    [[0, 0], [1, 1], [2, 2], [1, 3], [0, 4]], // V-Shape (Down-Up) (Line 3)
+    [[2, 0], [1, 1], [0, 2], [1, 3], [2, 4]], // V-Shape (Up-Down) (Line 4)
+    [[1, 0], [2, 1], [2, 2], [2, 3], [1, 4]], // Middle-Bottom-Middle (Line 5)
+    [[1, 0], [0, 1], [0, 2], [0, 3], [1, 4]], // Middle-Top-Middle (Line 6)
+    [[2, 0], [2, 1], [1, 2], [0, 3], [0, 4]], // Bottom-Middle-Top Zigzag (Line 7)
+    [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]], // Top-Middle-Bottom Zigzag (Line 8)
+    [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape (Line 9)
+  ];
+
   private readonly STRIP_LEN = 30;
-  private readonly SYM_H = 120; 
+  private readonly SYM_H = 120;
   private readonly BET_STEPS = [10, 25, 50, 100, 250, 500];
 
   private strips: HTMLElement[] = [];
   private autoSpinTimer: any = null;
   private gameId: string | null = null;
 
-  constructor(private sanitizer: DomSanitizer, private smService: SlotmachineService, private cdr: ChangeDetectorRef) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private smService: SlotmachineService,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
     this.symbols = Object.entries(SYMBOL_DEFS).map(([id, d]) => ({
       id: Number(id),
       ...d,
@@ -168,10 +193,24 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     this.paytableSymbols = [...this.symbols].sort((a, b) => b.mult - a.mult);
   }
 
+  ngOnInit(): void {
+    if (!this.isBrowser) return;
+
+    this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+      .subscribe((event) => {
+        if (event.key === 'Space') {
+          this.spin();
+          console.log('Space pressed -> spin()')
+        }
+      });
+  }
+
   async ngAfterViewInit(): Promise<void> {
+    if (!this.isBrowser) return;
+
     this.strips = this.stripRefs.map(r => r.nativeElement);
     this.strips.forEach(el => this.buildStrip(el));
-    
+
     try {
       this.gameId = await this.smService.createGame("user-1", "testuser", "Test User", this.credits);
       this.initializing = false;
@@ -185,7 +224,10 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stopAutoSpin();
+    if (this.isBrowser) {
+      this.stopAutoSpin();
+      this.keydownSubscription?.unsubscribe();
+    }
   }
 
   get canSpin(): boolean {
@@ -202,7 +244,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
     try {
       const result = await this.smService.spin(this.gameId, this.bet);
-      
+
       if (!result) {
         throw new Error("Spin result was null");
       }
@@ -222,7 +264,8 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
       this.isWin = result.win > 0;
       this.winAmount = result.win;
       this.credits = result.balance;
-      
+      this.winningLineIndices = result.winningLines || [];
+
     } catch (e) {
       console.error("Spin failed:", e);
       this.stopAutoSpin();
@@ -272,6 +315,17 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     this.spins = 0;
     this.isWin = false;
     this.winAmount = 0;
+    this.winningLineIndices = [];
+  }
+
+  getWinLinePath(lineIdx: number): string {
+    const line = this.WIN_LINES[lineIdx];
+    if (!line) return '';
+    return line.map((coord, i) => {
+      const x = (coord[1] + 0.5) * 20;
+      const y = (coord[0] + 0.5) * 120;
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ');
   }
 
   private buildStrip(el: HTMLElement): void {
@@ -283,6 +337,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   }
 
   private makeSymNode(symId: number): HTMLElement {
+    if (!this.isBrowser) return {} as HTMLElement;
     const div = document.createElement('div');
     div.className = 'sym';
     const def = SYMBOL_DEFS[symId];
@@ -302,9 +357,9 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
     try {
       // Index 1, 2, 3 are the visible ones when translated by -150px
-      if (el.children[1]) (el.children[1] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[0]]?.svgFn(80) || '';
-      if (el.children[2]) (el.children[2] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[1]]?.svgFn(80) || '';
-      if (el.children[3]) (el.children[3] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[2]]?.svgFn(80) || '';
+      if (el.children[2]) (el.children[2] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[0]]?.svgFn(80) || '';
+      if (el.children[3]) (el.children[3] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[1]]?.svgFn(80) || '';
+      if (el.children[4]) (el.children[4] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[2]]?.svgFn(80) || '';
       this.snapToCenter(el, 2);
     } catch (e) {
       console.error("Error setting reel symbols:", e);
@@ -337,7 +392,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
         el.style.transition = 'none';
         el.style.transform = `translateY(${pos}px)`;
-        
+
         frame++;
         setTimeout(tick, 40 + frame); // Slightly decelerate
       };
