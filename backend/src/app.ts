@@ -14,7 +14,7 @@ import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 
-const PORT = process.env.PORT || 4200;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 const httpServer = createServer(app);

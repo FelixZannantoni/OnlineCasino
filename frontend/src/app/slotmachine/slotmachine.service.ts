@@ -13,7 +13,7 @@ export interface SpinResult {
   providedIn: 'root'
 })
 export class SlotmachineService {
-  private apiUrl = 'http://localhost:4200/slotmachine';
+  private apiUrl = 'http://localhost:3000/slotmachine';
 
   constructor(private http: HttpClient) {}
 
