@@ -1,9 +1,10 @@
-import { Component, AfterViewInit, OnInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { SlotmachineService } from './slotmachine.service';
 import { Subscription, fromEvent } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 
 // SVG symbol definitions
@@ -139,8 +140,9 @@ const REEL_COUNT = 5;
   styleUrls: ['./slotmachine.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
+export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
   private keydownSubscription?: Subscription;
+  private isBrowser: boolean;
 
   @ViewChildren('strip') stripRefs!: QueryList<ElementRef<HTMLElement>>;
 
@@ -191,7 +193,13 @@ export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
   private autoSpinTimer: any = null;
   private gameId: string | null = null;
 
-  constructor(private sanitizer: DomSanitizer, private smService: SlotmachineService, private cdr: ChangeDetectorRef) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private smService: SlotmachineService,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
     this.symbols = Object.entries(SYMBOL_DEFS).map(([id, d]) => ({
       id: Number(id),
       ...d,
@@ -201,6 +209,8 @@ export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (!this.isBrowser) return;
+
     this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
       .subscribe((event) => {
         if (event.code === 'Space') {
@@ -210,6 +220,8 @@ export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async ngAfterViewInit(): Promise<void> {
+    if (!this.isBrowser) return;
+
     this.strips = this.stripRefs.map(r => r.nativeElement);
     this.strips.forEach(el => this.buildStrip(el));
 
@@ -226,7 +238,10 @@ export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stopAutoSpin();
+    if (this.isBrowser) {
+      this.stopAutoSpin();
+      this.keydownSubscription?.unsubscribe();
+    }
   }
 
   async spin(): Promise<void> {
@@ -343,6 +358,7 @@ export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private makeSymNode(symId: number): HTMLElement {
+    if (!this.isBrowser) return {} as HTMLElement;
     const div = document.createElement('div');
     div.className = 'sym';
     const def = SYMBOL_DEFS[symId];
