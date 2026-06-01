@@ -393,6 +393,9 @@ export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
         pos -= this.SYM_H;
         // Keep pos within a reasonable range to simulate continuous scrolling
         const minPos = -(this.STRIP_LEN - 6) * this.SYM_H;
+        if (pos < minPos) {
+          pos = minPos;
+        }
         el.style.transition = 'none';
         el.style.transform = `translateY(${pos}px)`;
 
