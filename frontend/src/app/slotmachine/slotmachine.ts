@@ -1,5 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { SlotmachineService } from './slotmachine.service';
 import { Subscription, fromEvent } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
@@ -133,9 +135,10 @@ const REEL_COUNT = 5;
 @Component({
   selector: 'app-slotmachine',
   standalone: true,
-  imports: [],
+  imports: [RouterLink, MatIconModule],
   templateUrl: './slotmachine.html',
-  styleUrl: './slotmachine.css',
+  styleUrls: ['./slotmachine.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
   private keydownSubscription?: Subscription;
@@ -152,6 +155,18 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
   autoSpin = false;
   initializing = true;
   winningLineIndices: number[] = [];
+
+  get canAffordSpin(): boolean {
+    return this.bet > 0 && this.credits >= this.bet;
+  }
+
+  get canSpin(): boolean {
+    return !this.spinning && !this.initializing && !!this.gameId && this.canAffordSpin;
+  }
+
+  get winningLineLabels(): string[] {
+    return this.winningLineIndices.map(idx => `Line ${idx + 1}`);
+  }
 
   readonly reels = Array.from({ length: REEL_COUNT }, (_, i) => i);
   readonly symbols: SlotSymbol[];
@@ -198,9 +213,8 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
     this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
       .subscribe((event) => {
-        if (event.key === 'Space') {
+        if (event.code === 'Space') {
           this.spin();
-          console.log('Space pressed -> spin()')
         }
       });
   }
@@ -230,13 +244,13 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  get canSpin(): boolean {
-    return !this.spinning && !this.initializing && !!this.gameId;
-  }
-
   async spin(): Promise<void> {
-    if (!this.canSpin || !this.gameId) return;
+    if (!this.canSpin || !this.gameId) {
+      this.stopAutoSpin();
+      return;
+    }
 
+    this.clearWinningSymbolHighlights();
     this.spinning = true;
     this.isWin = false;
     this.winAmount = 0;
@@ -259,12 +273,14 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
         this.reels.map((_, i) => this.animateReel(i, reelResults[i], i * 120))
       );
 
-      await this.wait(150);
-
+      this.winningLineIndices = result.winningLines || [];
       this.isWin = result.win > 0;
       this.winAmount = result.win;
+      this.highlightWinningSymbols();
+
+      await this.wait(150);
+
       this.credits = result.balance;
-      this.winningLineIndices = result.winningLines || [];
 
     } catch (e) {
       console.error("Spin failed:", e);
@@ -279,10 +295,14 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleAutoSpin(): void {
+    if (!this.autoSpin && !this.canSpin) {
+      return;
+    }
+
     this.autoSpin = !this.autoSpin;
-    if (this.autoSpin && this.canSpin) {
+    if (this.autoSpin) {
       this.spin();
-    } else if (!this.autoSpin) {
+    } else {
       this.stopAutoSpin();
     }
   }
@@ -311,6 +331,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
   resetCredits(): void {
     this.stopAutoSpin();
+    this.clearWinningSymbolHighlights();
     this.credits = 1000;
     this.spins = 0;
     this.isWin = false;
@@ -346,7 +367,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private snapToCenter(el: HTMLElement, rowIdx: number): void {
-    const offset = -(rowIdx - 1) * this.SYM_H;
+    const offset = -((rowIdx - 1) * this.SYM_H) + 55;
     el.style.transition = 'none';
     el.style.transform = `translateY(${offset}px)`;
   }
@@ -356,10 +377,10 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
     if (!el || !symIds || symIds.length < 3) return;
 
     try {
-      // Index 1, 2, 3 are the visible ones when translated by -150px
-      if (el.children[2]) (el.children[2] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[0]]?.svgFn(80) || '';
-      if (el.children[3]) (el.children[3] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[1]]?.svgFn(80) || '';
-      if (el.children[4]) (el.children[4] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[2]]?.svgFn(80) || '';
+      // Map result rows to the three fully visible symbols.
+      if (el.children[1]) (el.children[1] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[0]]?.svgFn(80) || '';
+      if (el.children[2]) (el.children[2] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[1]]?.svgFn(80) || '';
+      if (el.children[3]) (el.children[3] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[2]]?.svgFn(80) || '';
       this.snapToCenter(el, 2);
     } catch (e) {
       console.error("Error setting reel symbols:", e);
@@ -376,7 +397,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
       const totalFrames = 20 + reelIdx * 5;
       let frame = 0;
-      let pos = -(1) * this.SYM_H; // Start at center (row 2)
+      let pos = -(this.SYM_H - 55); // Start with a slightly larger top row visible
 
       const tick = () => {
         if (frame >= totalFrames) {
@@ -387,9 +408,10 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
         pos -= this.SYM_H;
         // Keep pos within a reasonable range to simulate continuous scrolling
-        const minPos = -(this.STRIP_LEN - 4) * this.SYM_H;
-        if (pos < minPos) pos = 0;
-
+        const minPos = -(this.STRIP_LEN - 6) * this.SYM_H;
+        if (pos < minPos) {
+          pos = minPos;
+        }
         el.style.transition = 'none';
         el.style.transform = `translateY(${pos}px)`;
 
@@ -401,7 +423,30 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private wait(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  private highlightWinningSymbols(): void {
+    this.clearWinningSymbolHighlights();
+
+    for (const lineIdx of this.winningLineIndices) {
+      const line = this.WIN_LINES[lineIdx];
+      if (!line) continue;
+
+      for (const [row, col] of line) {
+        const reel = this.strips[col];
+        const symbolNode = reel?.children[1 + row] as HTMLElement | undefined;
+        if (symbolNode) {
+          symbolNode.classList.add('winning-sym');
+        }
+      }
+    }
+  }
+
+  private clearWinningSymbolHighlights(): void {
+    this.strips.forEach(strip => {
+      strip.querySelectorAll('.winning-sym').forEach(node => node.classList.remove('winning-sym'));
+    });
+  }
+
+  private wait(milliSeconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, milliSeconds));
   }
 }
