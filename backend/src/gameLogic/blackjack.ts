@@ -158,6 +158,11 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                         resolve();
                     });
 
+                    const cleanup = () => {
+                        this.off("playerMove", handleMove);
+                        this.off("playerLeft", handleRemoval);
+                    };
+
                     const handleMove = (detail: { playerId: string }) => {
                         if (detail && detail.playerId == playerOnMove.getPlayerId()) {
                             if (playerOnMove.getMadeMove()) {
@@ -183,6 +188,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                 }
                                 playerOnMove.resetMadeMove();
                                 this.emit("gameState", this.getGameState());
+                                cleanup();
                                 resolve();
                             }
                         }
@@ -192,6 +198,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                         if (detail && detail.playerId === playerOnMove.getPlayerId()) {
                             this.stopTurnTimer();
                             turnOver = true;
+                            cleanup();
                             resolve();
                         }
                     };
