@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SlotmachineService } from './slotmachine.service';
 import { Subscription, fromEvent } from 'rxjs';
@@ -134,7 +134,8 @@ const REEL_COUNT = 5;
   standalone: true,
   imports: [],
   templateUrl: './slotmachine.html',
-  styleUrl: './slotmachine.css',
+  styleUrls: ['./slotmachine.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class Slotmachine implements AfterViewInit, OnDestroy {
   private keydownSubscription?: Subscription;
@@ -256,12 +257,12 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
       );
 
       this.winningLineIndices = result.winningLines || [];
+      this.isWin = result.win > 0;
+      this.winAmount = result.win;
       this.highlightWinningSymbols();
 
       await this.wait(150);
 
-      this.isWin = result.win > 0;
-      this.winAmount = result.win;
       this.credits = result.balance;
 
     } catch (e) {
@@ -348,7 +349,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   }
 
   private snapToCenter(el: HTMLElement, rowIdx: number): void {
-    const offset = -(rowIdx - 1) * this.SYM_H;
+    const offset = -(rowIdx - 1) * this.SYM_H + this.SYM_H / 2;
     el.style.transition = 'none';
     el.style.transform = `translateY(${offset}px)`;
   }
@@ -358,10 +359,10 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
     if (!el || !symIds || symIds.length < 3) return;
 
     try {
-      // Index 1, 2, 3 are the visible ones when translated by -150px
-      if (el.children[2]) (el.children[2] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[0]]?.svgFn(80) || '';
-      if (el.children[3]) (el.children[3] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[1]]?.svgFn(80) || '';
-      if (el.children[4]) (el.children[4] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[2]]?.svgFn(80) || '';
+      // Map result rows to the three fully visible symbols.
+      if (el.children[1]) (el.children[1] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[0]]?.svgFn(80) || '';
+      if (el.children[2]) (el.children[2] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[1]]?.svgFn(80) || '';
+      if (el.children[3]) (el.children[3] as HTMLElement).innerHTML = SYMBOL_DEFS[symIds[2]]?.svgFn(80) || '';
       this.snapToCenter(el, 2);
     } catch (e) {
       console.error("Error setting reel symbols:", e);
@@ -378,7 +379,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
       const totalFrames = 20 + reelIdx * 5;
       let frame = 0;
-      let pos = -(1) * this.SYM_H; // Start at center (row 2)
+      let pos = -this.SYM_H / 2; // Start half-way so the top and bottom rows are partially visible
 
       const tick = () => {
         if (frame >= totalFrames) {
@@ -389,9 +390,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
         pos -= this.SYM_H;
         // Keep pos within a reasonable range to simulate continuous scrolling
-        const minPos = -(this.STRIP_LEN - 4) * this.SYM_H;
-        if (pos < minPos) pos = 0;
-
+        const minPos = -(this.STRIP_LEN - 6) * this.SYM_H;
         el.style.transition = 'none';
         el.style.transform = `translateY(${pos}px)`;
 
@@ -412,7 +411,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
       for (const [row, col] of line) {
         const reel = this.strips[col];
-        const symbolNode = reel?.children[2 + row] as HTMLElement | undefined;
+        const symbolNode = reel?.children[1 + row] as HTMLElement | undefined;
         if (symbolNode) {
           symbolNode.classList.add('winning-sym');
         }

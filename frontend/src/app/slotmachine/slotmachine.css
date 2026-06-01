@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;600;700&family=Cinzel:wght@400;700&display=swap');
 
-:host {
-    display: block;
-    height: calc(100vh - 57px);
+html,
+body {
     overflow: hidden;
 }
 
 .sm-root {
-    height: 100%;
+    height: calc(100vh - 57px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem 2rem;
     font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
 }
 
 .panel {
@@ -214,10 +214,10 @@
     text-transform: uppercase;
 }
 
-/* Reel frame: exactly 3 rows tall (3 × 120px) */
+/* Reel frame: 3 fully visible rows, plus partially visible top and bottom rows */
 .reel-frame {
     width: 100%;
-    height: 360px;
+    height: 480px;
     flex-shrink: 0;
     background: #080810;
     border: 1px solid rgba(180, 145, 60, 0.25);
@@ -297,6 +297,7 @@
     flex-direction: column;
     align-items: center;
     will-change: transform;
+    transition: transform 0.08s ease-out;
 }
 
 /* Symbol cell — must match SYM_H in slotmachine.ts */
