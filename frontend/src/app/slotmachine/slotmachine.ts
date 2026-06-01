@@ -1,5 +1,7 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { SlotmachineService } from './slotmachine.service';
 import { Subscription, fromEvent } from 'rxjs';
 
@@ -132,12 +134,12 @@ const REEL_COUNT = 5;
 @Component({
   selector: 'app-slotmachine',
   standalone: true,
-  imports: [],
+  imports: [RouterLink, MatIconModule],
   templateUrl: './slotmachine.html',
   styleUrls: ['./slotmachine.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class Slotmachine implements AfterViewInit, OnDestroy {
+export class Slotmachine implements AfterViewInit, OnInit, OnDestroy {
   private keydownSubscription?: Subscription;
 
   @ViewChildren('strip') stripRefs!: QueryList<ElementRef<HTMLElement>>;
