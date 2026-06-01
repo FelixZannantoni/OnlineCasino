@@ -61,13 +61,12 @@
                     </div>
                     }
                 </div>
+                @if (winAmount > 0) {
+                <div class="win-msg-overlay">+{{ winAmount }}</div>
+                }
             </div>
 
-            @if (isWin) {
-            <div class="win-msg">+{{ winAmount }}</div>
-            } @else {
             <div class="win-msg-placeholder"></div>
-            }
         </div>
 
         <!-- BOTTOM: buttons -->

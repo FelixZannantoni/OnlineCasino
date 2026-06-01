@@ -349,7 +349,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
   }
 
   private snapToCenter(el: HTMLElement, rowIdx: number): void {
-    const offset = -(rowIdx - 1) * this.SYM_H + this.SYM_H / 2;
+    const offset = -((rowIdx - 1) * this.SYM_H) + 55;
     el.style.transition = 'none';
     el.style.transform = `translateY(${offset}px)`;
   }
@@ -379,7 +379,7 @@ export class Slotmachine implements AfterViewInit, OnDestroy {
 
       const totalFrames = 20 + reelIdx * 5;
       let frame = 0;
-      let pos = -this.SYM_H / 2; // Start half-way so the top and bottom rows are partially visible
+      let pos = -(this.SYM_H - 55); // Start with a slightly larger top row visible
 
       const tick = () => {
         if (frame >= totalFrames) {
