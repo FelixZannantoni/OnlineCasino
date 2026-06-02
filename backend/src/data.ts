@@ -89,6 +89,16 @@ export class DB {
                 FOREIGN KEY (userId) REFERENCES users(uuid)
             )
             `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS friendship_requests (
+                senderId text,
+                receiverId text,
+                accepted integer, CHECK (accepted IN (0, 1)) -- 0 for pending, 1 for accepted
+                PRIMARY KEY (senderId, receiverId),
+                FOREIGN KEY (senderId) REFERENCES users(uuid),
+                FOREIGN KEY (receiverId) REFERENCES users(uuid)
+            )
+            `).run();
 
 
         await this.insertUserSampleData(connection);
