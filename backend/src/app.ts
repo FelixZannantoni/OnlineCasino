@@ -33,6 +33,11 @@ app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/slotmachine", slotmachineRouter);
 
+// Redirect root to login page
+app.get("/", (req, res) => {
+    res.redirect("/login");
+})
+
 // Serve Frontend Static Files
 const publicPath = path.resolve(__dirname, "../public");
 console.log(`Serving static files from: ${publicPath}`);
