@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { User } from "../model";
 import { UserService } from "../services/user-service";
 import { StatusCodes } from "http-status-codes";
+import { userService } from "../app";
 
 
 export const userRouter = express.Router();
@@ -78,4 +79,14 @@ userRouter.post("/register", async (req: Request, res: Response) => {
     } else {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Registering user failed!" });
     }
+});
+
+userRouter.get("/:userId/friends", async (req: Request, res: Response) => {
+    const userId: string = req.params.userId.toString();
+
+    const service: UserService = new UserService();
+
+    const friends: User[] = await userService.getFriendsForUser(userId);
+
+    res.status(StatusCodes.OK).json({ friends });
 });

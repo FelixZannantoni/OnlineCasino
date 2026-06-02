@@ -132,4 +132,17 @@ export class UserService {
             return false;
         }
     }
+
+    async getFriendsForUser(userId: string): Promise<User[]> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+
+            // there is a friendship_requests table with senderId and receiverId, we want to get all users that have a sent or received friendship request with accepted = 1 (accepted) and the userId is either senderId or receiverId
+            const result = connection.prepare<{ userId: string }, User>(`SELECT u.* FROM users u JOIN friendship_requests fr ON (u.uuid = fr.senderId OR u.uuid = fr.receiverId) WHERE (fr.senderId = :userId OR fr.receiverId = :userId) AND fr.accepted = 1 AND u.uuid != :userId`).all({ userId: userId });
+            return result;
+        } catch (error) {
+            console.error(`Something happened while trying to retrieve friends for user with id: ${userId}: ${error}`);
+            return [];
+        }
+    }
 }
