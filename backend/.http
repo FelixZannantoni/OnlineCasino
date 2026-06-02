@@ -56,3 +56,5 @@ Content-Type: application/json
 }
 
 ###
+
+GET {{baseUrl}}/users/49c3bd3b-392b-419d-9eb6-b73a0b294d55/friends
