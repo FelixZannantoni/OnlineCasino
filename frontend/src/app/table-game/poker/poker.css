@@ -303,3 +303,32 @@
     text-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
     font-size: 0.9em;
 }
+
+.board-area {
+    position: relative;
+}
+
+.game-start-timer {
+    position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 12px 24px;
+  border-radius: 12px;
+
+  background: rgba(0,0,0,0.85);
+  color: white;
+
+  font-size: 28px;
+  font-weight: bold;
+
+  z-index: 100;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.08); }
+  100% { transform: translateX(-50%) scale(1); }
+}

@@ -22,6 +22,7 @@ export class Home {
 
   // Map favorite keys to display names and routes
   favoriteGameIds = [
+    { key: 'Roulette', title: 'Roulette', route: '/roulette' },
     { key: 'Blackjack', title: 'Blackjack', route: '/blackjack' },
     { key: 'PokerTexas', title: "Poker Texas Hold'em", route: '/poker' },
     { key: 'Slotmachine', title: 'Slotmachine', route: '/slotmachine' }
