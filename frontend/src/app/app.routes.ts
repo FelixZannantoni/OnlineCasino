@@ -6,11 +6,13 @@ import { Blackjack } from './table-game/blackjack/blackjack';
 import { ForgotPassword } from './login/forgot-password/forgot-password';
 import { Shop } from './shop/shop';
 import { Slotmachine } from './slotmachine/slotmachine';
+import { Club } from './club/club';
 
 export const routes: Routes = [
     { path: "home", component: Home },
     { path: "login", component: Login },
     { path: "forgot-password", component: ForgotPassword },
+    { path: "club", component: Club },
     { path: "poker", component: Poker },
     { path: "blackjack", component: Blackjack },
     { path: "slotmachine", component: Slotmachine},
