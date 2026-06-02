@@ -20,20 +20,14 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     private lastWin: number = 0;
     private winningLines: number[] = [];
 
-    private static readonly PAYOUTS: Record<number, number[]> = {
-        [Symbols.Bar]: [0, 0, 2, 5, 10],
-        [Symbols.Cherry]: [0, 0, 2, 5, 10],
-        [Symbols.DoubleBar]: [0, 0, 3, 10, 20],
-        [Symbols.Bell]: [0, 0, 3, 10, 20],
-        [Symbols.Horseshoe]: [0, 0, 5, 15, 40],
-        [Symbols.Star]: [0, 0, 5, 15, 40],
-        [Symbols.Clover]: [0, 0, 10, 30, 100],
-        [Symbols.Wild]: [0, 0, 10, 30, 100],
-        [Symbols.Diamond]: [0, 0, 20, 100, 500],
-        [Symbols.Seven]: [0, 0, 50, 200, 1000]
+    private static readonly MATCH_MULTIPLIERS: Record<number, number> = {
+        3: 0.2,
+        4: 0.5,
+        5: 1.0
     };
 
-    public static readonly LINES = [
+
+    public static readonly WIN_LINES = [
         [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]], // Horizontal Middle (Line 0)
         [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], // Horizontal Top (Line 1)
         [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]], // Horizontal Bottom (Line 2)
@@ -45,6 +39,19 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]], // Top-Middle-Bottom Zigzag (Line 8)
         [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]]  // M-Shape (Line 9)
     ];
+
+    private static readonly SYMBOLS: Record<number, { mult: number, weight: number }> = {
+        [Symbols.Bar]: { mult: 2, weight: 100 },
+        [Symbols.Cherry]: { mult: 2, weight: 100 },
+        [Symbols.DoubleBar]: { mult: 5, weight: 50 },
+        [Symbols.Bell]: { mult: 5, weight: 50 },
+        [Symbols.Horseshoe]: { mult: 10, weight: 25 },
+        [Symbols.Star]: { mult: 10, weight: 25 },
+        [Symbols.Clover]: { mult: 20, weight: 10 },
+        [Symbols.Wild]: { mult: 20, weight: 10 },
+        [Symbols.Diamond]: { mult: 50, weight: 5 },
+        [Symbols.Seven]: { mult: 100, weight: 2 },
+    };
 
     constructor(gameId: string, player: SlotmachinePlayer) {
         super(gameId, player);
@@ -67,71 +74,96 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
 
     public startGame() {
         const bet: number = this.player.getDesiredBet();
-        this.player.makeNewBet(bet);
-        this.playRound();
+        try {
+            this.player.makeNewBet(bet);
+            this.playRound();
+            if (this.player.getPressedAutoSpin()) {
+                setTimeout(() => this.nextRound(), 1000);
+            }
+        } catch (e) {
+            console.error("Failed to start slot game:", e);
+            throw e;
+        }
     }
 
-    public nextRound() {
+    private nextRound() {
         if (this.player.getPressedAutoSpin()) {
             try {
                 this.player.makeBet();
                 this.playRound();
+                setTimeout(() => this.nextRound(), 1000); // Use a small timeout or process next tick to avoid stack overflow
             } catch (e) {
-                // Not enough money for auto spin
                 this.player.stopAutoSpin();
-                this.handleMove();
             }
         }
-        else {
-            this.handleMove()
-        }
+        this.playRound();
     }
 
 
     public playRound() {
         this.spin();
+        console.log("--- New Spin ---");//debug
+        console.table(this.slots.map(row => row.map(s => Symbols[s])));//debug
         this.checkSpin();
+        console.log(`Result - Win: ${this.lastWin}, Lines: [${this.winningLines.join(', ')}]`);//debug
     }
 
     private spin() {
+        const symbolEntries = Object.entries(Slotmachine.SYMBOLS);
+        const totalWeight = symbolEntries.reduce((acc, [_, def]) => acc + def.weight, 0);
+
+        this.slots = [[], [], []];
         for (let x: number = 0; x < 3; x++) {
-            this.slots[x] = [];
             for (let y: number = 0; y < 5; y++) {
-                // Randomly pick a symbol
-                const symbolValues = Object.values(Symbols).filter(v => typeof v === 'number') as number[];
-                const randomSymbol = symbolValues[Math.floor(Math.random() * symbolValues.length)];
-                this.slots[x][y] = randomSymbol as Symbols;
+                let random = Math.random() * totalWeight;
+                let selectedSymbol = Symbols.Bar;
+
+                for (const [id, def] of symbolEntries) {
+                    if (random < def.weight) {
+                        selectedSymbol = Number(id) as Symbols;
+                        break;
+                    }
+                    random -= def.weight;
+                }
+                this.slots[x][y] = selectedSymbol;
             }
         }
     }
 
     private checkSpin() {
-        let totalWinMultiplier = 0;
         this.winningLines = [];
+        let totalWinMultiplier = 0;
 
-        for (let lineIdx = 0; lineIdx < Slotmachine.LINES.length; lineIdx++) {
-            const line = Slotmachine.LINES[lineIdx];
-            let matchingCount = 1;
-            const firstSymbol = this.slots[line[0][0]][line[0][1]];
+        for (let i = 0; i < Slotmachine.WIN_LINES.length; i++) {
+            const line = Slotmachine.WIN_LINES[i];
 
-            for (let i = 1; i < line.length; i++) {
-                const currentSymbol = this.slots[line[i][0]][line[i][1]];
-                if (currentSymbol === firstSymbol) {
-                    matchingCount++;
+            let targetSymbol = Symbols.Wild;
+            let matchCount = 0;
+
+            for (let j = 0; j < line.length; j++) {
+                const currentSymbol = this.slots[line[j][0]][line[j][1]];
+
+                if (targetSymbol === Symbols.Wild) {
+                    targetSymbol = currentSymbol;
+                    matchCount++;
+                } else if (currentSymbol === targetSymbol || currentSymbol === Symbols.Wild) {
+                    matchCount++;
                 } else {
                     break;
                 }
             }
 
-            if (matchingCount >= 3) {
-                const payoutArray = Slotmachine.PAYOUTS[firstSymbol];
-                totalWinMultiplier += payoutArray[matchingCount - 1];
-                this.winningLines.push(lineIdx);
+            if (matchCount >= 3) {
+                this.winningLines.push(i);
+                const baseMult = Slotmachine.SYMBOLS[targetSymbol].mult;
+                const matchFactor = Slotmachine.MATCH_MULTIPLIERS[matchCount] || 0;
+
+                totalWinMultiplier += baseMult * matchFactor;
             }
         }
 
         const bet = this.player.getBet();
-        this.lastWin = totalWinMultiplier * bet;
+        this.lastWin = Math.floor(totalWinMultiplier * bet);
         this.player.winMoney(this.lastWin);
     }
 
@@ -140,8 +172,11 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
             try {
                 this.player.makeBet();
                 this.playRound();
+                if (this.player.getPressedAutoSpin()) {
+                    setTimeout(() => this.nextRound(), 1000);
+                }
             } catch (e) {
-                // Not enough money
+                console.error("Slotmachine move failed:", e);
             }
         }
     }

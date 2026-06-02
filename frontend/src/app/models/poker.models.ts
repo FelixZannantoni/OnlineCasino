@@ -29,5 +29,7 @@ export interface PokerGameState {
     boardCards: Card[];
     pot: number;
     currentBet: number;
-    phase: 'preflop' | 'flop' | 'turn' | 'river' | 'showdown';
+    phase: 'pre-flop' | 'flop' | 'turn' | 'river' | 'showdown' | 'preflop';
+    lastWinners?: { id: string, handName: string }[];
+    turnRemainingSeconds?: number | null;
 }

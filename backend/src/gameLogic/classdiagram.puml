@@ -40,16 +40,32 @@ enum CardVisibility {
 }
 
 enum Symbols {
-  ans = 1
-  zwa = 2
-  drei = 3
-  vier = 4
-  fünf = 5
-  sex = 6
-  siebn = 7
-  acht = 8
-  neun = 9
-  zehn = 10
+  Bar = 1
+  Cherry = 2
+  DoubleBar = 3
+  Bell = 4
+  Horseshoe = 5
+  Star = 6
+  Clover = 7
+  Wild = 8
+  Diamond = 9
+  Seven = 10
+}
+
+enum BlackjackPhase {
+  WAITING = "WAITING"
+  BETTING = "BETTING"
+  PLAYING = "PLAYING"
+  DEALER_TURN = "DEALER_TURN"
+  FINISHED = "FINISHED"
+}
+
+enum GamePhase {
+  pre-flop
+  flop
+  turn
+  river
+  showdown
 }
 
 ' Classes
@@ -63,6 +79,7 @@ class Game<T extends Player = Player> {
   +getGameId(): string
   +addPlayer(player: T): void
   +getPlayers(): T[]
+  +removePlayer(playerId: string): void
 }
 
 class SinglePlayerGame<T extends Player = Player> {
@@ -76,11 +93,16 @@ class SinglePlayerGame<T extends Player = Player> {
 class Slotmachine {
   -slots: Symbols[][]
   -lastWin: number = 0
+  -winningLines: number[]
+  {static} -MATCH_MULTIPLIERS: Record<number, number>
+  {static} +WIN_LINES: number[][][]
+  {static} -SYMBOLS: Record<number, { mult: number, weight: number }>
   +constructor(gameId: string, player: SlotmachinePlayer)
   +getSlots(): Symbols[][]
   +getLastWin(): number
+  +getWinningLines(): number[]
   +startGame(): void
-  +nextRound(): void
+  -nextRound(): void
   +playRound(): void
   -spin(): void
   -checkSpin(): void
@@ -89,7 +111,7 @@ class Slotmachine {
 
 class CardGame<T extends CardGamePlayer = CardGamePlayer> {
   +constructor(gameId: string)
-  #setDefaultDealerChip(): void
+  +setDefaultDealerChip(): void
   #updateDealerChip(): void
 }
 
@@ -99,37 +121,66 @@ class Poker {
   {static} +POKER_CARDS_NUMBER: number = 5
   {static} +POKER_DESK_ID: string = "PokerDesk"
   -pokerDeck: PokerDeck
-  -pokerDeskCards: Card[]
-  -defaultbet: number = 10
+  -board: Card[]
+  -defaultBet: number = 10
   -currentBet: number
   -pot: number
+  -phase: GamePhase
+  -currentPlayerIndex: number
+  -isStarted: boolean
+  -hasActedThisRound: Set<string>
+  -lastWinners: { id: string, handName: string }[]
+  -isLoading: boolean
+  -turnTimer: NodeJS.Timeout | null
+  -turnEndTime: number | null
+  -TURN_TIMEOUT_MS: number = 10000
+  -gameStartTimer: NodeJS.Timeout | null
+  -gameStartEndTime: number | null
+  -GAME_START_DELAY_MS: number = 10000
   +constructor(gameId: string)
+  +handlePlayerDisconnect(playerId: string): void
+  +tipDealer(playerId: string): Promise<any>
+  +startGameStartTimer(): void
+  -startTurnTimer(): void
+  -stopTurnTimer(): void
   +startGame(): void
-  -nextRound(): void
-  -playRound(): void
+  -startNewHand(isFirstHand: boolean): void
+  -resetPlayers(): void
   -handCardsOut(): void
-  -resetCards(): void
-  -resetBets(): void
-  -setDeafaultBets(): void
-  -makeMove(): void
-  -checkHands(): void
-  -handOutWin(): void
+  -setInitialBlinds(): void
+  -nextPhase(): void
+  -reveal(count: number): void
+  -checkPlayersHands(): void
+  -resetBettingRound(): void
+  -handleShowdown(): void
+  +handlePlayerMove(playerId: string, action: string, amount?: number): Promise<any>
+  -moveToNextActivePlayer(): void
+  -isRoundFinished(): boolean
+  +getGameState(): any
+  -getHandName(value: number): string
 }
 
 class Blackjack {
   {static} +PLAYER_CARDS_NUMBER: number = 2
-  {static} +BALCKJACK_BOT_ID: string = "BlackjackBot"
+  {static} +BLACKJACK_BOT_ID: string = "BlackjackBot"
   -blackjackDeck: BlackjackDeck
   -blackJackBot: BlackjackBot
+  -isRunning: boolean
+  -currentPhase: BlackjackPhase
+  -currentPlayerId: string | null
   +constructor(gameId: string)
-  -startGame(): void
-  -nextRound(): void
-  -playRound(): void
+  +startGame(): Promise<void>
+  +stopGame(): void
+  -playRound(): Promise<void>
+  -dealerPlay(): void
   -handCardsOut(): void
   -resetCards(): void
   -checkHandsValue(): void
-  -makeMove(): void
-  -makeBets(): void
+  +removePlayer(playerId: string): void
+  -makeMove(): Promise<void>
+  -waitForBets(): Promise<void>
+  +handlePlayerMove(playerId: string, action: string, amount?: number): any
+  +getGameState(): any
   -resetBets(): void
   -handOutWin(): void
 }
@@ -138,11 +189,14 @@ class BlackjackBot {
   -cards: Card[]
   -handValue: number
   +constructor()
+  +getCards(): Card[]
   +getHandValue(): number
   +addCard(card: Card): void
+  +revealCards(): void
   -checkHandValue(): void
   +makesHit(): boolean
   +hasBlackJack(): boolean
+  +clearHand(): void
 }
 
 class Player {
@@ -164,20 +218,23 @@ class Player {
   +makeNewBet(bet: number): void
   +makeIncreasedBet(bet: number): void
   +winMoney(win: number): void
+  +makeTip(amount: number): void
   {static} +xNextPlayer(players: Player[], i: number, x: number): number
   {static} +nextPlayer(players: Player[], i: number): number
   +isOutOfMoney(): boolean
+  +updatePlayerInfo(username: string, displayname: string): void
 }
 
 class SlotmachinePlayer {
   -pressedSpin: boolean
   -pressedAutoSpin: boolean
-  -currentBet: number
   +constructor(playerId: string, username: string, \n  displayname: string, balance: number)
   +getPressedSpin(): boolean
   +getPressedAutoSpin(): boolean
   +userPressedSpin(): void
   +userPressedAutoSpin(): void
+  +stopAutoSpin(): void
+  +setBet(bet: number): void
   -resetActions(): void
 }
 
@@ -206,16 +263,18 @@ class PokerPlayer {
   +constructor(playerId: string, username: string, \n  displayname: string, balance: number)
   +getCardCombinationValue(): number
   +getValueOfCardCombination(): number
+  +setFolded(folded: boolean): void
+  +isFolded(): boolean
   +getPressedFold(): boolean
   +getPressedCheck(): boolean
   +getPressedBet(): boolean
   +getPressedCall(): boolean
   +getPressedRaise(): boolean
-  +setPressedFold(pressedFold: boolean): void
-  +setPressedCheck(pressedCheck: boolean): void
-  +setPressedBet(pressedBet: boolean): void
-  +setPressedCall(pressedCall: boolean): void
-  +setPressedRaise(pressedRaise: boolean): void
+  +userPressedFold(): void
+  +userPressedCheck(): void
+  +userPressedBet(): void
+  +userPressedCall(): void
+  +userPressedRaise(): void
   -resetActions(): void
   +resetMadeMove(): void
   +checkHand(cards: Card[]): void
@@ -231,6 +290,7 @@ class PokerPlayer {
   +getHighCard(cards: Card[]): void
   -getPlayerHighCard(): number
   -getPlayerLowCard(): number
+  +resetHandValue(): void
 }
 
 class BlackjackPlayer {
@@ -243,9 +303,10 @@ class BlackjackPlayer {
   +getPressedHit(): boolean
   +getPressedStand(): boolean
   +getPressedDouble(): boolean
-  +setPressedHit(pressedHit: boolean): void
-  +setPressedStand(pressedStand: boolean): void
-  -setPressedDouble(pressedDouble: boolean): void
+  +userPressedHit(): void
+  +userPressedStand(): void
+  +userPressedDouble(): void
+  +addCard(card: Card): void
   -resetActions(): void
   +checkHandValue(): void
 }
@@ -285,7 +346,7 @@ CardGamePlayer <|-- BlackjackPlayer
 ' Associations
 Game o-- "many" Player : contains
 SinglePlayerGame o-- "1" Player : contains
-Poker *-- "many" Card : pokerDeskCards
+Poker *-- "many" Card : board
 CardGamePlayer *-- "many" Card : cards
 Deck *-- "many" Card : deck
 Poker o-- "1" PokerDeck : uses
@@ -295,4 +356,3 @@ BlackjackBot *-- "many" Card : cards
 Slotmachine *-- "many" Symbols : slots
 
 @enduml
-

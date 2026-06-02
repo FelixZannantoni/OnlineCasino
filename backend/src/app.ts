@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
@@ -32,6 +33,22 @@ app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/slotmachine", slotmachineRouter);
 
+// Serve Frontend Static Files
+const publicPath = path.resolve(__dirname, "../public");
+console.log(`Serving static files from: ${publicPath}`);
+
+// 1. Serve static files (js, css, icons)
+app.use(express.static(publicPath, {
+    maxAge: '1y',
+    fallthrough: true // If file not found, continue to the catch-all
+}));
+
+// 2. Catch-all for Angular Routing
+// Using a RegExp object directly bypasses path-to-regexp string parsing
+app.get(/^(?!\/(users|poker|blackjack|slotmachine)).*/, (req, res) => {
+    res.sendFile(path.join(publicPath, "index.html"));
+});
+
 
 const socketUserMap: Map<string, string> = new Map();
 
@@ -40,7 +57,6 @@ const blackjackService: BlackjackService = new BlackjackService();
 const userService: UserService = new UserService();
 export { pokerService, blackjackService, userService };
 
-// Socket.io connection handling
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
@@ -51,7 +67,6 @@ io.on("connection", (socket: Socket) => {
         socket.join(gameId);
         console.log(`User ${userId} joined game: ${gameId}`);
 
-        const userService = new UserService();
         const user = await userService.getUserById(userId);
         const startBalance: number = 1000;
 
@@ -72,14 +87,18 @@ io.on("connection", (socket: Socket) => {
             return;
         }
 
-        const alreadyIn = game.getGameState().players.some((p: any) => p.id === userId);
-        if (!alreadyIn) {
+        const username = user?.username ?? '-';
+        const displayname = user?.displayname || user?.username || 'Guest';
+        const balance = user?.balance ?? startBalance;
+
+        const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
+        if (!existingPlayer) {
             if (service === pokerService) {
                 await pokerService.addPlayer(
                     userId,
-                    user?.username ?? '-',
-                    user?.displayname ?? 'Guest',
-                    user?.balance ?? startBalance,
+                    username,
+                    displayname,
+                    balance,
                     false,
                     0,
                     gameId
@@ -87,12 +106,19 @@ io.on("connection", (socket: Socket) => {
             } else {
                 await blackjackService.addPlayer(
                     userId,
-                    user?.username ?? '-',
-                    user?.displayname ?? 'Guest',
-                    user?.balance ?? startBalance,
+                    username,
+                    displayname,
+                    balance,
                     gameId
                 );
             }
+        } else {
+            // Update existing player info in case it was "Guest" before
+            existingPlayer.updatePlayerInfo(username, displayname);
+            console.log(`Updated existing player ${userId} info: ${displayname}`);
+
+            // Emit updated state to everyone so they see the name change
+            io.to(gameId).emit("game_state", game.getGameState());
         }
 
         if (game.listenerCount("gameState") === 0) {
@@ -104,11 +130,13 @@ io.on("connection", (socket: Socket) => {
         const playerCount = game.getGameState().players.length;
         // Start game based on type
         if (service === pokerService && playerCount >= 2 && playerCount <= 5) {
-            game.startGame();
+            game.startGameStartTimer();
         } else if (service === blackjackService && playerCount >= 1) {
             game.startGame();
         }
         socket.emit("game_state", game.getGameState());
+        // send game state to everyone in the room when a new player joins
+        socket.to(gameId).emit("game_state", game.getGameState());
     });
 
     socket.on("player_move", async (data: { gameId: string; action: string; amount?: number }) => {
@@ -160,11 +188,67 @@ io.on("connection", (socket: Socket) => {
 
         if (!actionResult.success) {
             console.warn(`Action failed for player ${playerId} in game ${gameId}: ${actionResult.message}`);
+            socket.emit("error", { message: actionResult.message });
+        }
+    });
+
+    socket.on("set_desired_bet", async (data: { gameId: string; amount: number }) => {
+        const { gameId, amount } = data;
+        const playerId = socketUserMap.get(socket.id);
+        if (!playerId) return;
+
+        let { game } = pokerService.getGameById(gameId);
+        if (!game) {
+            game = blackjackService.getGameById(gameId).game as any;
+        }
+
+        if (game) {
+            const player = game.getPlayers().find((p: any) => p.getPlayerId() === playerId);
+            if (player) {
+                player.setDesiredBet(amount);
+                io.to(gameId).emit("game_state", game.getGameState());
+            }
+        }
+    });
+
+    socket.on("tip_dealer", async (data: { gameId: string }) => {
+        const { gameId } = data;
+        const playerId = socketUserMap.get(socket.id);
+        if (!playerId) return;
+
+        console.log(`Player ${playerId} is tipping the dealer in game: ${gameId}`);
+        const result = await pokerService.tipDealer(playerId, gameId);
+        if (!result.success) {
+            socket.emit("error", { message: result.message });
         }
     });
 
     socket.on("disconnect", () => {
-        console.log(`User disconnected: ${socket.id}`);
+        const userId = socketUserMap.get(socket.id);
+        console.log(`User disconnected: ${socket.id} (User: ${userId})`);
+
+        if (userId) {
+            // Notify games about disconnection
+            PokerService.pokerGames.forEach(game => {
+                if (typeof (game as any).handlePlayerDisconnect === 'function') {
+                    (game as any).handlePlayerDisconnect(userId);
+                }
+            });
+            BlackjackService.blackjackGames.forEach(game => {
+                if (typeof (game as any).handlePlayerDisconnect === 'function') {
+                    (game as any).handlePlayerDisconnect(userId);
+                }
+            });
+        }
+
+        if (userId) {
+            // Find games the user might be in and remove them
+            [...PokerService.pokerGames, ...BlackjackService.blackjackGames].forEach(game => {
+                if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
+                    game.removePlayer(userId);
+                }
+            });
+        }
         socketUserMap.delete(socket.id);
     });
 });

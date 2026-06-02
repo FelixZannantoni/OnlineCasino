@@ -32,6 +32,12 @@ export class BlackjackBot {
     }
 
 
+    public revealCards(): void {
+        for (const card of this.cards) {
+            card.visibility = CardVisibility.all;
+        }
+    }
+
     private checkHandValue() {
         this.handValue = 0;
         let aceCount = 0;
@@ -58,6 +64,7 @@ export class BlackjackBot {
 
     public hasBlackJack(): boolean {
         if (this.cards.length == 2) {
+            this.checkHandValue();
             if (this.handValue == 21) {
                 return true;
             }

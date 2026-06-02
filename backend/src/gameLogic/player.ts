@@ -75,6 +75,13 @@ export class Player {
         this.balance += win;
     }
 
+    public makeTip(amount: number): void {
+        if (amount > this.balance) {
+            throw new Error(`Not enough money`);
+        }
+        this.balance -= amount;
+    }
+
     public static xNextPlayer(players: Player[], i: number, x: number): number {
         for (let j: number = 0; j < x; j++) {
             i = this.nextPlayer(players, i);
@@ -105,5 +112,10 @@ export class Player {
             return true;
         }
         return false;
+    }
+
+    public updatePlayerInfo(username: string, displayname: string): void {
+        this.username = username;
+        this.displayname = displayname;
     }
 }
