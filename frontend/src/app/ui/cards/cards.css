@@ -3,13 +3,13 @@
 
 /* Card design tokens */
 :root {
-  --card-bg:          #fdfaf2;
+  --card-bg: #fdfaf2;
   --card-gold-bright: #ffd86e;
-  --card-gold-mid:    #d19e1d;
-  --card-gold-dark:   #a07010;
-  --card-red:         #c0272d;
-  --card-black:       #1a1a1a;
-  --card-shadow:      rgba(0, 0, 0, 0.6);
+  --card-gold-mid: #d19e1d;
+  --card-gold-dark: #a07010;
+  --card-red: #c0272d;
+  --card-black: #1a1a1a;
+  --card-shadow: rgba(0, 0, 0, 0.6);
 }
 
 /* Karten-Basis */
@@ -32,20 +32,16 @@
   /* Ivory linen texture */
   background-color: var(--card-bg);
   background-image:
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       transparent,
       transparent 3px,
       rgba(0, 0, 0, 0.013) 3px,
-      rgba(0, 0, 0, 0.013) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
+      rgba(0, 0, 0, 0.013) 4px),
+    repeating-linear-gradient(90deg,
       transparent,
       transparent 3px,
       rgba(0, 0, 0, 0.013) 3px,
-      rgba(0, 0, 0, 0.013) 4px
-    ),
+      rgba(0, 0, 0, 0.013) 4px),
     linear-gradient(160deg, #fdfaf2 0%, #f5f0e4 100%);
 
   box-shadow:
@@ -64,12 +60,11 @@
   background:
     linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
     linear-gradient(135deg,
-      rgba(209, 158, 29, 0.7)  0%,
+      rgba(209, 158, 29, 0.7) 0%,
       rgba(255, 216, 110, 0.9) 30%,
-      rgba(160, 112, 16, 0.4)  50%,
+      rgba(160, 112, 16, 0.4) 50%,
       rgba(255, 216, 110, 0.8) 70%,
-      rgba(209, 158, 29, 0.6)  100%
-    ) border-box;
+      rgba(209, 158, 29, 0.6) 100%) border-box;
   pointer-events: none;
   z-index: 2;
 }
@@ -144,8 +139,13 @@
   color: inherit;
 }
 
-.card-sm .card-rank { font-size: 0.72rem; }
-.card-lg .card-rank { font-size: 1.55rem; }
+.card-sm .card-rank {
+  font-size: 0.72rem;
+}
+
+.card-lg .card-rank {
+  font-size: 1.55rem;
+}
 
 /* Karten-Suit Symbol Größe */
 .card-suit {
@@ -154,15 +154,33 @@
   color: inherit;
 }
 
-.card-suit::before { color: inherit; }
+.card-suit::before {
+  color: inherit;
+}
 
-.card-sm .card-suit { font-size: 0.55rem; }
-.card-lg .card-suit { font-size: 1.05rem; }
+.card-sm .card-suit {
+  font-size: 0.55rem;
+}
 
-.card-suit.suit-hearts::before   { content: '♥'; }
-.card-suit.suit-diamonds::before { content: '♦'; }
-.card-suit.suit-clubs::before    { content: '♣'; }
-.card-suit.suit-spades::before   { content: '♠'; }
+.card-lg .card-suit {
+  font-size: 1.05rem;
+}
+
+.card-suit.suit-hearts::before {
+  content: '♥';
+}
+
+.card-suit.suit-diamonds::before {
+  content: '♦';
+}
+
+.card-suit.suit-clubs::before {
+  content: '♣';
+}
+
+.card-suit.suit-spades::before {
+  content: '♠';
+}
 
 /* Karten-Mitte Symbol */
 .card-center {
@@ -178,15 +196,33 @@
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
 }
 
-.card-center::before { color: inherit; }
+.card-center::before {
+  color: inherit;
+}
 
-.card-sm .card-center { font-size: 2.2rem; }
-.card-lg .card-center { font-size: 5.5rem; }
+.card-sm .card-center {
+  font-size: 2.2rem;
+}
 
-.card-center.suit-hearts::before   { content: '♥'; }
-.card-center.suit-diamonds::before { content: '♦'; }
-.card-center.suit-clubs::before    { content: '♣'; }
-.card-center.suit-spades::before   { content: '♠'; }
+.card-lg .card-center {
+  font-size: 5.5rem;
+}
+
+.card-center.suit-hearts::before {
+  content: '♥';
+}
+
+.card-center.suit-diamonds::before {
+  content: '♦';
+}
+
+.card-center.suit-clubs::before {
+  content: '♣';
+}
+
+.card-center.suit-spades::before {
+  content: '♠';
+}
 
 /* Karten-Rückseite - premium casino feel */
 .card-back {
@@ -206,20 +242,16 @@
   inset: 0;
   border-radius: inherit;
   background-image:
-    repeating-linear-gradient(
-      45deg,
+    repeating-linear-gradient(45deg,
       rgba(255, 215, 0, 0.06) 0px,
       rgba(255, 215, 0, 0.06) 1px,
       transparent 1px,
-      transparent 12px
-    ),
-    repeating-linear-gradient(
-      -45deg,
+      transparent 12px),
+    repeating-linear-gradient(-45deg,
       rgba(255, 215, 0, 0.06) 0px,
       rgba(255, 215, 0, 0.06) 1px,
       transparent 1px,
-      transparent 12px
-    );
+      transparent 12px);
   z-index: 1;
 }
 
@@ -261,6 +293,7 @@
     transform: translateY(-100px) rotate(-10deg);
     opacity: 0;
   }
+
   to {
     transform: translateY(0) rotate(0);
     opacity: 1;
@@ -287,4 +320,37 @@
 .card-disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+/*  Card flip animation 
+    Wrap any card in .card-flip-wrapper.
+    Add .flipping to the wrapper to trigger the reveal animation.
+  */
+.card-flip-wrapper {
+  display: inline-block;
+  perspective: 600px;
+}
+
+@keyframes card-flip {
+  0% {
+    transform: rotateY(0deg) scaleX(1);
+  }
+
+  40% {
+    transform: rotateY(90deg) scaleX(0);
+  }
+
+  /* fully edge-on  */
+  60% {
+    transform: rotateY(-90deg) scaleX(0);
+  }
+
+  /* still edge-on, face about to appear */
+  100% {
+    transform: rotateY(0deg) scaleX(1);
+  }
+}
+
+.card-flip-wrapper.flipping .card {
+  animation: card-flip 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

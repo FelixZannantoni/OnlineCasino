@@ -65,6 +65,9 @@ export class Poker implements OnInit {
   private playerTurnTimer: any = null;
   private gameStartTimer: any = null;
 
+  flippingCards = new Set<string>();
+  private revealedCards = new Set<string>();
+
   private readonly gameId = signal<string>('1');
 
   protected readonly getCardRank = getCardRank;
@@ -291,5 +294,32 @@ export class Poker implements OnInit {
       gameId: gid
     });
   }
-}
+  private triggerFlipsForNewlyRevealedCards(newState: PokerGameState): void {
+    newState.board.forEach((card, i) => {
+      const key = `board-${i}`;
+      if (card.visibility === 'all' && !this.revealedCards.has(key)) {
+        this.revealedCards.add(key);
+        this.triggerFlip(key);
+      }
+    });
+    newState.players.forEach(player => {
+      player.cards.forEach((card, i) => {
+        const key = `player-${player.id}-${i}`;
+        if (card.visibility === 'all' && !this.revealedCards.has(key)) {
+          this.revealedCards.add(key);
+          this.triggerFlip(key);
+        }
+      });
+    });
+  }
 
+  private triggerFlip(key: string): void {
+    this.flippingCards.add(key);
+    setTimeout(() => this.flippingCards.delete(key), 520);
+  }
+
+  isFlipping(key: string): boolean {
+    return this.flippingCards.has(key);
+  }
+
+}

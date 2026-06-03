@@ -23,6 +23,11 @@ export class Blackjack implements OnInit, OnDestroy {
   pot: number = 0;
   private isBrowser: boolean;
 
+  // Keys of cards currently playing their flip animation
+  flippingCards = new Set<string>();
+  // Keys of cards that have already been revealed (so we don't re-flip)
+  private revealedCards = new Set<string>();
+
   protected readonly me = computed(() => {
     const state = this.gameState();
     if (!state) return null;
@@ -54,12 +59,13 @@ export class Blackjack implements OnInit, OnDestroy {
     this.socketService.onEvent('game_state', (data: any) => {
       console.log('Blackjack State Update:', data);
       const state = data as BlackjackGameState;
+      this.triggerFlipsForNewlyRevealedCards(state);
       this.gameState.set(state);
 
       const me = state.players.find(p => p.id === this.userId);
       if (me) {
         if (typeof me.balance === 'number') this.balance = me.balance;
-        if (typeof me.bet === 'number') this.pot = me.bet; // Oder Summe aller Bets?
+        if (typeof me.bet === 'number') this.pot = me.bet;
       }
     });
 
@@ -75,33 +81,53 @@ export class Blackjack implements OnInit, OnDestroy {
     this.socketService.offEvent('error');
   }
 
-  hit() {
-    this.socketService.emitEvent('player_move', {
-      gameId: this.gameId,
-      action: 'hit'
+  /** Called before gameState is updated — finds cards that just became visible */
+  private triggerFlipsForNewlyRevealedCards(newState: BlackjackGameState): void {
+    // Dealer cards
+    newState.bot.cards.forEach((card, i) => {
+      const key = `dealer-${i}`;
+      if (card.visibility === 'all' && !this.revealedCards.has(key)) {
+        this.revealedCards.add(key);
+        this.triggerFlip(key);
+      }
     });
+
+    // Player cards (all players, for symmetry)
+    newState.players.forEach(player => {
+      player.cards.forEach((card, i) => {
+        const key = `player-${player.id}-${i}`;
+        if (card.visibility === 'all' && !this.revealedCards.has(key)) {
+          this.revealedCards.add(key);
+          this.triggerFlip(key);
+        }
+      });
+    });
+  }
+
+  private triggerFlip(key: string): void {
+    this.flippingCards.add(key);
+    // Remove after animation completes so it can re-trigger if needed
+    setTimeout(() => this.flippingCards.delete(key), 520);
+  }
+
+  isFlipping(key: string): boolean {
+    return this.flippingCards.has(key);
+  }
+
+  hit() {
+    this.socketService.emitEvent('player_move', { gameId: this.gameId, action: 'hit' });
   }
 
   stand() {
-    this.socketService.emitEvent('player_move', {
-      gameId: this.gameId,
-      action: 'stand'
-    });
+    this.socketService.emitEvent('player_move', { gameId: this.gameId, action: 'stand' });
   }
 
   double() {
-    this.socketService.emitEvent('player_move', {
-      gameId: this.gameId,
-      action: 'double'
-    });
+    this.socketService.emitEvent('player_move', { gameId: this.gameId, action: 'double' });
   }
 
   placeBet() {
-    this.socketService.emitEvent('player_move', {
-      gameId: this.gameId,
-      action: 'bet',
-      amount: this.betAmount
-    });
+    this.socketService.emitEvent('player_move', { gameId: this.gameId, action: 'bet', amount: this.betAmount });
   }
 
   get canDouble(): boolean {
