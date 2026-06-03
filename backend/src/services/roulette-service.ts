@@ -1,0 +1,78 @@
+import { Database } from "better-sqlite3";
+import { Roulette } from "../gameLogic/roulette";
+import { RoulettePlayer } from "../gameLogic/roulettePlayer";
+import { DB } from "../data";
+
+export class RouletteService {
+    static rouletteGames: Roulette[] = [];
+
+    async bet(playerId: string, gameId: string, amount: number, field: string): Promise<{success: boolean, message: string}> {
+        const { game } = this.getGameById(gameId);
+        if(!game) return { success: false, message: `Game #${gameId} not found` };
+        return game.handlePlayerMove(playerId, "bet", amount, field);
+    }
+
+    async spin(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
+        const { game } = this.getGameById(gameId);
+        if(!game) return { success: false, message: `Game #${gameId} not found` };
+        return game.handlePlayerMove(playerId, "spin");
+    }
+
+    async addPlayer(playerId: string, username: string, displayname: string, balance: number, gameId: string): Promise<{success: boolean, message: string}> {
+        const gameResult = this.getGameById(gameId);
+        if(!gameResult.game) {
+            return {
+                success: false,
+                message: gameResult.message
+            };
+        }
+
+        const newPlayer: RoulettePlayer = new RoulettePlayer(playerId, username, displayname, balance);
+        gameResult.game.addPlayer(newPlayer);
+
+        return {
+            success: true,
+            message: `Successfully added player ${playerId} to game ${gameId}`
+        }
+    }
+
+    async loadAllRouletteGames(): Promise<void> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+            const type = "ROULETTE";
+
+            type GameRow = {
+                gameId: string;
+                type: string;
+            };
+
+            const result = connection.prepare<[string], GameRow>("SELECT * FROM games WHERE type = ?")
+                .all(type);
+
+            result.forEach(gameData => {
+                const roulette = new Roulette(gameData.gameId);
+                RouletteService.rouletteGames.push(roulette);
+            });
+
+            return;
+        } catch(err) {
+            console.error(`Something happened while trying to get all roulette games from the db: ${err}`);
+            return;
+        }
+    }
+
+    getGameById(gameId: string): {game: Roulette | null, message: string} {
+        const game: Roulette | undefined = RouletteService.rouletteGames.find(g => g.getGameId().toString() === gameId);
+        if(!game) {
+            return {
+                game: null,
+                message: `Game with the id ${gameId} was not found`
+            };
+        } else {
+            return {
+                game,
+                message: "Game found"
+            };
+        }
+    }
+}
