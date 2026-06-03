@@ -27,6 +27,7 @@ type PokerPlayerState = {
   cards: PokerBoardCard[];
   isDealer: boolean;
   handName: string;
+  handValue: number;
 };
 
 type PokerGameState = {
@@ -102,12 +103,11 @@ export class Poker implements OnInit {
     return state.players.filter(p => p.id !== this.dataService.userId());
   });
 
-  ngOnInit(): void {
+    ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const id = this.route.snapshot.paramMap.get('id') ?? '1';
     this.gameId.set(id);
-
     const userId = this.dataService.userId();
 
     if (!userId) {
@@ -117,7 +117,6 @@ export class Poker implements OnInit {
 
     this.socketService.onEvent('game_state', (state: unknown) => {
       const s = state as PokerGameState;
-      console.log("Received game state update:", s);
       this.gameState.set(s);
       this.isProcessing.set(false);
 
@@ -129,25 +128,74 @@ export class Poker implements OnInit {
         this.stopLocalTimerForPlayerTurn();
       }
 
-      if(s.gameStartRemainingSeconds != null) {
+      if (s.gameStartRemainingSeconds != null) {
         this.gameStartsIn.set(s.gameStartRemainingSeconds);
         this.startLocalTimerForGameStart();
       }
 
-      // Keep table-game bindings in sync with backend state
+      // Keep table-game bindings in sync
       if (typeof s?.pot === 'number') this.pot = s.pot;
       
       const me = s.players.find((p) => p.id === userId);
       if (me) {
         if (typeof me.balance === 'number') this.balance = me.balance;
-        // Sync selectedBetAmount with server's desiredBet if it's different
         if (me.desiredBet !== this.selectedBetAmount()) {
           this.selectedBetAmount.set(me.desiredBet || this.minBet());
         }
       }
+
+      // PAUSE OVERLAY LOGIC
+      this.handlePauseOverlayLogic(s);
     });
 
     this.socketService.joinGame(id, userId);
+  }
+
+  private handlePauseOverlayLogic(s: PokerGameState): void {
+    // 1. Warten auf Gegner
+    if (s.turnRemainingSeconds !== null && s.turnRemainingSeconds > 0 && s.currentPlayerId !== this.dataService.userId()) {
+      const currentPlayer = s.players.find(p => p.id === s.currentPlayerId);
+      window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
+        detail: {
+          title: 'Warte auf Spieler...',
+          message: `${currentPlayer?.displayname || 'Gegner'} denkt nach`,
+          timerSeconds: s.turnRemainingSeconds
+        }
+      }));
+      return;
+    } 
+    
+    // 2. Winning Hand anzeigen (Showdown Phase)
+    // Wir leiten die Gewinner aus den Spielern ab, die nicht gefoldet haben 
+    // und deren handValue dem Maximum entspricht.
+    if (s.phase === 'showdown' && !s.isLoading) {
+      const activePlayers = s.players.filter(p => !p.folded);
+      if (activePlayers.length > 0) {
+        const maxHandValue = Math.max(...activePlayers.map(p => p.handValue || 0));
+        const winners = activePlayers.filter(p => (p.handValue || 0) === maxHandValue);
+        
+        if (winners.length > 0) {
+          const winnerNames = winners.map(w => w.displayname || 'Spieler').join(', ');
+          const winningHandName = winners[0].handName || 'Gewinnende Hand';
+          
+          window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
+            detail: {
+              title: '🏆 Gewinner!',
+              message: `${winnerNames} gewinnt mit ${winningHandName}`,
+              timerSeconds: 5
+            }
+          }));
+          return;
+        }
+      }
+    } 
+    
+    // 3. Overlay schließen wenn keine Pause nötig ist
+    else if (!s.isLoading && s.turnRemainingSeconds === null && s.phase !== 'showdown') {
+      window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
+        detail: { isOpen: false, title: '', message: '' }
+      }));
+    }
   }
 
   private startLocalTimerForPlayerTurn(): void {
