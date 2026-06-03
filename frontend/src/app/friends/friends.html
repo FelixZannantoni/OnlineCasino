@@ -32,8 +32,8 @@
             @for (section of sections; track section.status) {
             @if (getSectionFriends(section.status).length > 0) {
             <div class="f-section-label">{{ section.label }}</div>
-            @for (f of getSectionFriends(section.status); track f.id) {
-            <div class="f-friend-card" [class.selected]="activeFriend?.id === f.id" (click)="openChat(f)">
+            @for (f of getSectionFriends(section.status); track f.uuid) {
+            <div class="f-friend-card" [class.selected]="activeFriend?.uuid === f.uuid" (click)="openChat(f)">
               <div class="f-avatar">
                 <div class="f-avatar-circle" [style.background]="f.color" [style.color]="f.hue">{{ f.init }}</div>
                 <div class="f-status-dot" [class]="f.status"></div>
@@ -53,7 +53,7 @@
                   <span class="material-icons">add_circle</span>
                 </button>
                 }
-                <button class="f-action-btn danger" (click)="$event.stopPropagation(); removeFriend(f.id)"
+                <button class="f-action-btn danger" (click)="$event.stopPropagation(); removeFriend(f.uuid)"
                   title="Remove">
                   <span class="material-icons">person_remove</span>
                 </button>
@@ -66,7 +66,7 @@
 
           <div class="f-stats-row">
             <div class="f-stat">
-              <div class="f-stat-val">{{ friends.length }}</div>
+              <div class="f-stat-val">{{ friends().length }}</div>
               <div class="f-stat-lbl">Allies</div>
             </div>
             <div class="f-stat">
@@ -83,7 +83,7 @@
               <div class="f-avatar-circle chat-avatar" [style.background]="activeFriend.color"
                 [style.color]="activeFriend.hue">{{ activeFriend.init }}</div>
               <div>
-                <p class="f-chat-name">{{ activeFriend.name }} {{ activeFriend.tag }}</p>
+                <p class="f-chat-name">{{ activeFriend.name }} {{ activeFriend.name }}</p> <!-- TODO: zweites {{}} entfernen -->
                 <p class="f-chat-sub">{{ activeFriend.status === 'online' ? activeFriend.activity : activeFriend.status
                   }}</p>
               </div>
@@ -147,7 +147,7 @@
 
         <div class="f-requests-section">
           <div class="f-req-label">Pending Requests</div>
-          @for (req of pendingRequests; track req.id) {
+          @for (req of pendingRequests(); track req.id) {
           <div class="f-req-card">
             <div class="f-avatar">
               <div class="f-avatar-circle" style="width:40px;height:40px;font-size:14px;" [style.background]="req.color"

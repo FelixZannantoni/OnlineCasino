@@ -2,8 +2,8 @@ import { CardColor, CardName, CardVisibility } from "./gameLogic/deck";
 
 export type User = {
     uuid: string,
-    username: string,
-    displayname: string,
+    userName: string,
+    displayName: string,
     email: string,
     balance: number,
     streakCount: number,
@@ -16,4 +16,18 @@ export type Card = {
     color: CardColor,
     owner: string,
     visibility: CardVisibility
+}
+
+export type UserDisplay = {
+    uuid: string,
+    username: string,
+    displayname: string
+}
+
+export type FriendshipRequest = {
+    senderId: string,
+    senderName: string,
+    receiverId: string,
+    receiverName: string,
+    accepted: boolean
 }

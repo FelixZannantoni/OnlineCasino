@@ -1,10 +1,10 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DataService } from '../services/data-service';
 
 interface Friend {
-  id: string;
+  uuid: string;
   name: string;
-  tag: string;
   status: 'online' | 'away' | 'offline';
   activity: string;
   color: string;
@@ -20,6 +20,7 @@ interface Message {
 
 interface PendingRequest {
   id: string;
+  fromUuid: string;
   name: string;
   init: string;
   color: string;
@@ -36,7 +37,7 @@ interface PendingRequest {
   templateUrl: './friends.html',
   styleUrls: ['./friends.css'],
 })
-export class Friends implements AfterViewChecked {
+export class Friends implements AfterViewChecked, OnInit {
   @ViewChild('messageContainer') messageContainer!: ElementRef;
 
   activeTab: 'friends' | 'add' = 'friends';
@@ -49,54 +50,51 @@ export class Friends implements AfterViewChecked {
   private toastTimer: any;
   private shouldScroll = false;
 
+  private dataService: DataService = inject(DataService);
+
   sections = [
     { label: 'Online', status: 'online' },
     { label: 'Away', status: 'away' },
     { label: 'Offline', status: 'offline' },
   ];
 
-  // temp friends
-  friends: Friend[] = [
-    { id: 'velvet', name: 'VelvetAce', tag: '#1337', status: 'online', activity: 'Playing Poker', color: 'linear-gradient(135deg,#1a1228,#261840)', init: 'VA', hue: '#7F77DD' },
-    { id: 'golden', name: 'GoldenRush', tag: '#8821', status: 'online', activity: 'Playing Blackjack', color: 'linear-gradient(135deg,#1e1a10,#2a2210)', init: 'GR', hue: '#d4a017' },
-    { id: 'night', name: 'NightDealer', tag: '#5503', status: 'online', activity: 'In Lobby', color: 'linear-gradient(135deg,#0f1e1a,#122820)', init: 'ND', hue: '#1D9E75' },
-    { id: 'blaze', name: 'BlazeMerchant', tag: '#9900', status: 'away', activity: 'Away', color: 'linear-gradient(135deg,#1e1510,#2a1e10)', init: 'BM', hue: '#EF9F27' },
-    { id: 'steel', name: 'SteelBluff', tag: '#4412', status: 'offline', activity: 'Last seen 2h ago', color: 'linear-gradient(135deg,#141428,#1e1e34)', init: 'SB', hue: '#85B7EB' },
-    { id: 'dusk', name: 'DuskCroupier', tag: '#7731', status: 'offline', activity: 'Last seen yesterday', color: 'linear-gradient(135deg,#1e1818,#2a2020)', init: 'DC', hue: '#F09595' },
-  ];
+  pendingRequests: WritableSignal<PendingRequest[]> = signal([]);
+  friends: WritableSignal<Friend[]> = signal([]); 
 
-  filteredFriends: Friend[] = [...this.friends];
-
-  pendingRequests: PendingRequest[] = [
-    { id: 'req-shadow', name: 'ShadowKing#0042', init: 'SK', color: 'linear-gradient(135deg,#1e1018,#281220)', hue: '#D4537E', statusDot: 'online', label: 'Wants to join your circle', incoming: true },
-  ];
+  filteredFriends: WritableSignal<Friend[]> = signal([]);
 
   private convos: Record<string, Message[]> = {};
 
   get onlineCount(): number {
-    return this.friends.filter(f => f.status === 'online').length;
+    return this.friends().filter(f => f.status === 'online').length;
   }
 
   getSectionFriends(status: string): Friend[] {
-    return this.filteredFriends.filter(f => f.status === status);
+    return this.filteredFriends().filter(f => f.status === status);
   }
 
   getMessages(): Message[] {
-    return this.activeFriend ? (this.convos[this.activeFriend.id] ?? []) : [];
+    return this.activeFriend ? (this.convos[this.activeFriend.uuid] ?? []) : [];
   }
 
   filterFriends(): void {
     const q = this.searchQuery.toLowerCase();
-    this.filteredFriends = this.friends.filter(f => f.name.toLowerCase().includes(q));
+    this.filteredFriends.set(this.friends().filter(f => f.name.toLowerCase().includes(q)));
   }
 
-  switchTab(tab: 'friends' | 'add'): void {
+  async switchTab(tab: 'friends' | 'add'): Promise<void> {
     this.activeTab = tab;
+
+    await this.pendingRequests.set(await this.loadPendingRequests());
+    await this.friends.set(await this.loadFriends());
+    this.filteredFriends.set([...this.friends()]);
+
+    this.closeChat();
   }
 
   openChat(f: Friend): void {
     this.activeFriend = f;
-    if (!this.convos[f.id]) this.convos[f.id] = [];
+    if (!this.convos[f.uuid]) this.convos[f.uuid] = [];
     this.shouldScroll = true;
   }
 
@@ -107,7 +105,7 @@ export class Friends implements AfterViewChecked {
   sendMsg(): void {
     const txt = this.messageInput.trim();
     if (!txt || !this.activeFriend) return;
-    this.convos[this.activeFriend.id].push({ mine: true, text: txt, time: this.nowTime() });
+    this.convos[this.activeFriend.uuid].push({ mine: true, text: txt, time: this.nowTime() });
     this.messageInput = '';
     this.shouldScroll = true;
   }
@@ -120,17 +118,44 @@ export class Friends implements AfterViewChecked {
     this.showToast(`${name} has been invited to your table`);
   }
 
-  removeFriend(id: string): void {
-    this.friends = this.friends.filter(f => f.id !== id);
-    this.filteredFriends = this.filteredFriends.filter(f => f.id !== id);
-    if (this.activeFriend?.id === id) this.activeFriend = null;
+  async removeFriend(id: string): Promise<void> {
+    const response = await fetch('http://localhost:3000/users/friends', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends'
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: this.dataService.userId(),
+        friendId: id
+      })
+    });
+
+    if(response.ok) {
+      this.friends.update(old => old.filter(f => f.uuid !== id));
+    this.filteredFriends.update(old => old.filter(f => f.uuid !== id));
+    if (this.activeFriend?.uuid === id) this.activeFriend = null;
+    }
   }
 
-  sendFriendReq(): void {
+  async sendFriendReq(): Promise<void> {
     const name = this.addInput.trim();
     if (!name) return;
-    this.pendingRequests.push({
+
+    const response = await fetch('http://localhost:3000/users/friends', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends'
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: this.dataService.userId(),
+        toUsername: name
+      })
+    }); 
+
+    if(response.ok) {
+      this.pendingRequests().push({
       id: 'req-' + Date.now(),
+      fromUuid: (await response.json()).uuid,
       name,
       init: name[0].toUpperCase(),
       color: 'linear-gradient(135deg,#1a1228,#261840)',
@@ -141,18 +166,122 @@ export class Friends implements AfterViewChecked {
     });
     this.addInput = '';
     this.showToast(`${name} — request dispatched`);
+    }
+
+    
   }
 
-  acceptReq(req: PendingRequest): void {
-    this.pendingRequests = this.pendingRequests.filter(r => r.id !== req.id);
-    this.showToast(`${req.name} joined your fellowship!`);
+  async loadPendingRequests(): Promise<PendingRequest[]> {
+    const result: PendingRequest[] = [];
+
+    const response = await fetch(`http://localhost:3000/users/${this.dataService.userId()}/friends/pending`, { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/userId/users/friends/pending'
+      method: 'GET'
+    });
+
+    if (response.ok) {
+      const requests: {senderId: string, senderName: string, receiverId: string, receiverName: string}[] = (await response.json()).requests;
+
+      requests.forEach(request => {
+        if(request.senderId === this.dataService.userId()) {
+          // request ist von mir ausgehend
+          result.push({ 
+            id: `req-${request.senderName}-${request.receiverName}`, 
+            fromUuid: request.senderId,
+            name: request.receiverName,
+            init: request.receiverName[0].toUpperCase(), 
+            color: 'linear-gradient(135deg,#1a1228,#261840)', 
+            hue: '#D4537E', 
+            statusDot: 'offline', 
+            label: 'Request sent — awaiting response', 
+            incoming: false });
+        } else {
+          // der request geht an mich
+          result.push({
+            id: `req-${request.senderName}-${request.receiverName}`,
+            fromUuid: request.senderId,
+            name: request.senderName,
+            init: request.senderName[0].toUpperCase(),
+            color: 'linear-gradient(135deg,#1e1018,#281220)',
+            hue: '#D4537E',
+            statusDot: 'offline',
+            label: 'Wants to be your friend',
+            incoming: true
+          });
+        }
+      });
+    }
+
+    return result;
   }
 
-  declineReq(req: PendingRequest): void {
-    this.pendingRequests = this.pendingRequests.filter(r => r.id !== req.id);
+  async loadFriends(): Promise<Friend[]> {
+    const result: Friend[] = [];
+
+    const response = await fetch(`http://localhost:3000/users/${this.dataService.userId()}/friends`, { //TODO Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/userId/friends'
+      method: 'GET'
+    });
+
+    if (response.ok) {
+      const friends: {uuid: string, username: string, displayname: string}[] = (await response.json()).friends;
+
+      friends.forEach(f => {
+        console.log(f);
+        const randomHue = Math.floor(Math.random() * 360);
+        result.push({
+          uuid: f.uuid,
+          name: f.displayname,
+          status: 'offline',
+          activity: 'Last seen yesterday',
+          color: 'linear-gradient(135deg,#1a1228,#261840)',
+          hue: `hsl(${randomHue}, 70%, 50%)`,
+          init: f.displayname[0].toUpperCase()
+        });
+      });
+    }
+
+    return result;
   }
 
-  ngAfterViewChecked(): void {
+  async acceptReq(req: PendingRequest): Promise<void> {
+    const response = await fetch('http://localhost:3000/users/friends/accept', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends/accept'
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: this.dataService.userId(),
+        fromUserId: req.fromUuid
+      })
+    });
+
+    if(response.ok) {
+      this.pendingRequests.set(this.pendingRequests().filter(r => r.id !== req.id));
+      this.showToast(`${req.name} joined your fellowship!`);
+    }
+  }
+
+  async declineReq(req: PendingRequest): Promise<void> {
+    const response = await fetch('http://localhost:3000/users/friends', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends'
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: this.dataService.userId(),
+        friendId: req.fromUuid
+      })
+    });
+
+    if(response.ok) {
+      this.pendingRequests.set(this.pendingRequests().filter(r => r.id !== req.id));
+    }
+  }
+
+  async ngOnInit(): Promise<void> {
+    await this.switchTab('friends');
+  }
+
+  async ngAfterViewChecked(): Promise<void> {
     if (this.shouldScroll && this.messageContainer) {
       const el = this.messageContainer.nativeElement;
       el.scrollTop = el.scrollHeight;
