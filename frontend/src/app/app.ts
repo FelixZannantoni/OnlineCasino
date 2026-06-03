@@ -20,7 +20,8 @@ import { PauseOverlay } from './pause-overlay/pause-overlay';
     SettingsOverlay,
     PauseOverlay,
     QuitOverlay,
-    InformationOverlay
+    InformationOverlay,
+    PauseOverlay
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
