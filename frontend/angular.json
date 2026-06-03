@@ -58,6 +58,10 @@
               "src/material-theme.scss",
               "src/styles.css"
             ],
+            "allowedCommonJsDependencies": [
+              "debug",
+              "xmlhttprequest-ssl"
+            ],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
