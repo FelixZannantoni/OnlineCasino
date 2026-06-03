@@ -8,6 +8,7 @@ import { QuitOverlay } from './quit-overlay/quit-overlay';
 import { InformationOverlay } from './information-overlay/information-overlay';
 
 import { filter } from 'rxjs/operators';
+import { PauseOverlay } from './pause-overlay/pause-overlay';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ import { filter } from 'rxjs/operators';
     Navbar,
     ProfileOverlay,
     SettingsOverlay,
+    PauseOverlay,
     QuitOverlay,
     InformationOverlay
   ],
