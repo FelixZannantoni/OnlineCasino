@@ -71,5 +71,31 @@ export class RoulettePlayer extends Player {
         return bets;
     }
 
-   
+    public userPressedSpin(): void {
+        this.pressedSpin = true;
+    }
+
+    public getPressedSpin(): boolean {
+        return this.pressedSpin;
+    }
+
+    public resetSpin(): void {
+        this.pressedSpin = false;
+    }
+
+    public placeBet(field: rouletteField, amount: number): void {
+        this.makeNewBet(this.getBet() + amount);
+        this.playerBets[field] += amount;
+    }
+
+    public clearBets(): void {
+        this.playerBets = this.initPlayerBets();
+        this.makeNewBet(0);
+    }
+
+    public getPlayerBets(): { field: string, amount: number }[] {
+        return Object.entries(this.playerBets)
+            .filter(([_, amount]) => amount > 0)
+            .map(([field, amount]) => ({ field, amount }));
+    }
 }
