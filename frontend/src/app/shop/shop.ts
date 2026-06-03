@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DecimalPipe } from '@angular/common';
+import { Router } from 'express';
 
 interface ShopItem {
   id: number;
@@ -126,5 +127,10 @@ export class Shop {
       case 'legendary': return '#ffd700';
       default: return '#fff';
     }
+  }
+
+  getFreeMoney(): void {
+    this.userCredits += 1000;
+    // TODO: run an ad before giving money;
   }
 }
