@@ -39,37 +39,37 @@ export enum rouletteField {
     THIRTY_FOUR = "34",
     THIRTY_FIVE = "35",
     THIRTY_SIX = "36",
-    RED = "red",
-    BLACK = "black",
-    EVEN = "even",
-    ODD = "odd",
+    RED = "RED",
+    BLACK = "BLACK",
+    EVEN = "EVEN",
+    ODD = "ODD",
     LOW = "1-18",
     HIGH = "19-36",
-    FIRST_DOZEN = "1st12",
-    SECOND_DOZEN = "2nd12",
-    THIRD_DOZEN = "3rd12",
-    COLUMN_ONE = "col1",
-    COLUMN_TWO = "col2",
-    COLUMN_THREE = "col3"
+    FIRST_DOZEN = "1st Dozen",
+    SECOND_DOZEN = "2nd Dozen",
+    THIRD_DOZEN = "3rd Dozen",
+    COLUMN_ONE = "1st Col",
+    COLUMN_TWO = "2nd Col",
+    COLUMN_THREE = "3rd Col"
 }
 
 export class RoulettePlayer extends Player {
     private pressedSpin: boolean;
-    private playerBets!: Record<rouletteField, number>;
+    private playerBets: Record<rouletteField, number>;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
         this.pressedSpin = false;
-        this.initPlayerBets();
+        this.playerBets = this.initPlayerBets();
     }
 
-    private initPlayerBets(): void {
-        // First, initialize the property as an empty object cast to the Record type
-        this.playerBets = {} as Record<rouletteField, number>;
-        // Then, iterate through all enum values to set each field's initial bet to 0
+    private initPlayerBets(): Record<rouletteField, number> {
+        const bets = {} as Record<rouletteField, number>;
         for (const field of Object.values(rouletteField)) {
-            this.playerBets[field as rouletteField] = 0;
+            bets[field as rouletteField] = 0;
         }
+        return bets;
     }
 
+   
 }
