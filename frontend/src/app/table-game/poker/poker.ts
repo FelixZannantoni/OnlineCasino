@@ -295,6 +295,7 @@ export class Poker implements OnInit {
     });
   }
   private triggerFlipsForNewlyRevealedCards(newState: PokerGameState): void {
+    if (newState.phase === 'PRE_FLOP' || newState.phase === 'WAITING') this.revealedCards.clear();
     newState.board.forEach((card, i) => {
       const key = `board-${i}`;
       if (card.visibility === 'all' && !this.revealedCards.has(key)) {

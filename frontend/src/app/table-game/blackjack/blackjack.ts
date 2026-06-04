@@ -83,6 +83,7 @@ export class Blackjack implements OnInit, OnDestroy {
 
   /** Called before gameState is updated — finds cards that just became visible */
   private triggerFlipsForNewlyRevealedCards(newState: BlackjackGameState): void {
+    if (newState.phase === 'BETTING') this.revealedCards.clear();
     // Dealer cards
     newState.bot.cards.forEach((card, i) => {
       const key = `dealer-${i}`;
