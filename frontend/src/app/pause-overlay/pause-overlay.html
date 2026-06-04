@@ -1,0 +1,34 @@
+<div class="pause-overlay" [class.active]="state.isOpen">
+  <!-- Backdrop -->
+  <div class="overlay-backdrop"></div>
+
+  <!-- Dialog Card -->
+  @if (state.isOpen) {
+    <div class="pause-dialog">
+      <!-- Icon basierend auf Timer -->
+      <div class="icon-wrap">
+        <mat-icon>{{ state.timerSeconds ? 'hourglass_empty' : 'casino' }}</mat-icon>
+      </div>
+
+      <h2>{{ state.title }}</h2>
+      <p>{{ state.message }}</p>
+
+      <!-- Optionaler Countdown -->
+      @if (state.timerSeconds !== undefined && state.timerSeconds !== null) {
+        <div class="timer-display">
+          <span class="timer-value">{{ state.timerSeconds }}</span>
+          <span class="timer-label">Sekunden</span>
+        </div>
+      }
+
+      <!-- Fortschrittsbalken wenn Timer läuft -->
+      @if (state.timerSeconds !== undefined && state.timerSeconds !== null && state.timerSeconds > 0) {
+        <div class="progress-bar">
+          <div class="progress-fill" 
+               [style.width.%]="(state.timerSeconds / 5) * 100">
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
