@@ -57,6 +57,11 @@ app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine)).*/, (req, res) => {
     res.sendFile(path.join(publicPath, "index.html"));
 });
 
+// For the specific game routes, also serve index.html
+app.get(["/poker", "/blackjack", "/roulette", "/slotmachine"], (req, res) => {
+    res.sendFile(path.join(publicPath, "index.html"));
+});
+
 
 const socketUserMap: Map<string, string> = new Map();
 
@@ -105,7 +110,7 @@ io.on("connection", (socket: Socket) => {
 
         const username = user?.username ?? '-';
         const displayname = user?.displayname || user?.username || 'Guest';
-        const balance = user?.balance ?? startBalance;
+        const balance = user?.balance ?? startBalance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
         if (!existingPlayer) {
@@ -299,3 +304,4 @@ DB.createDBConnection();
 pokerService.loadAllPokerGames();
 blackjackService.loadAllBlackjackGames();
 rouletteService.loadAllRouletteGames();
+console.log("DEBUG: Roulette games loaded. Count:", RouletteService.rouletteGames.length);

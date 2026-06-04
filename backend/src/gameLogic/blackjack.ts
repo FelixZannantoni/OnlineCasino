@@ -4,6 +4,7 @@ import { BlackjackPlayer } from "./blackjackPlayer";
 import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { Player } from "./player";
+import { userService } from "../app";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BLACKJACK_BOT_ID: string = "BlackjackBot";
@@ -92,7 +93,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
 
         this.emit("gameState", this.getGameState());
-        this.handOutWin();
+        await this.handOutWin();
         this.currentPlayerId = null;
     }
 
@@ -166,7 +167,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                         resolve();
                     }, 15000); // 15s timeout
 
-                    const handleMove = (detail: { playerId: string }) => {
+                    const handleMove = async (detail: { playerId: string }) => {
                         if (detail && detail.playerId == playerOnMove.getPlayerId()) {
                             if (playerOnMove.getMadeMove()) {
                                 cleanup();
@@ -184,6 +185,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                     const currentBet = playerOnMove.getBet();
                                     try {
                                         playerOnMove.makeIncreasedBet(currentBet * 2);
+                                        await userService.updateUserBalance(playerOnMove.getPlayerId(), playerOnMove.getBalance());
                                         playerOnMove.addCard(this.blackjackDeck.dealCard(this.blackjackDeck.getDeck(), playerOnMove.getPlayerId()));
                                         playerOnMove.checkHandValue();
                                     } catch (e) { }
@@ -232,6 +234,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             if (desired > 0) {
                 try {
                     player.makeNewBet(desired);
+                    await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
                 } catch (e) {
                     // Not enough money for desired bet, player will have to bet manually
                 }
@@ -272,7 +275,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         });
     }
 
-    public handlePlayerMove(playerId: string, action: string, amount?: number) {
+    public async handlePlayerMove(playerId: string, action: string, amount?: number) {
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
 
@@ -285,6 +288,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
             try {
                 player.makeNewBet(amount);
+                await userService.updateUserBalance(playerId, player.getBalance());
                 this.emit("playerBet", { playerId });
                 return { success: true, message: "Bet placed" };
             } catch (e) {
@@ -359,7 +363,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
-    private handOutWin() {
+    private async handOutWin() {
         const botValue = this.blackJackBot.getHandValue();
         const botBusted = botValue > 21;
         const botHasBlackjack = this.blackJackBot.hasBlackJack();
@@ -373,28 +377,33 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             const playerBusted = playerValue > 21;
             const playerHasBlackjack = playerValue === 21 && player.getCards().length === 2;
 
-            if (playerBusted) {
-                continue;
-            }
+            let winAmount = 0;
 
-            if (botHasBlackjack) {
+            if (playerBusted) {
+                // winAmount = 0
+            } else if (botHasBlackjack) {
                 if (playerHasBlackjack) {
                     // Push
-                    player.winMoney(playerBet);
+                    winAmount = playerBet;
                 } else {
                     // Loss
                 }
             } else if (playerHasBlackjack) {
                 // Blackjack pays 3:2
-                player.winMoney(playerBet * 2.5);
+                winAmount = playerBet * 2.5;
             } else if (botBusted || playerValue > botValue) {
                 // Win pays 1:1
-                player.winMoney(playerBet * 2);
+                winAmount = playerBet * 2;
             } else if (playerValue === botValue) {
                 // Push
-                player.winMoney(playerBet);
+                winAmount = playerBet;
             } else {
                 // Loss
+            }
+
+            if (winAmount > 0) {
+                player.winMoney(winAmount);
+                await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
             }
         }
     }

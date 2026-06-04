@@ -146,6 +146,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
     if (!this.isBrowser) return;
 
     if (this.userId) {
+      // Allow time for the socket to connect before joining
       this.socketService.joinGame(this.gameId, this.userId);
     }
 

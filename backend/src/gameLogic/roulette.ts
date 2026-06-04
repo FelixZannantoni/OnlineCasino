@@ -1,5 +1,6 @@
 import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
+import { userService } from "../app";
 
 export enum RoulettePhase {
     WAITING = "WAITING",
@@ -44,6 +45,8 @@ export class Roulette extends Game<RoulettePlayer> {
 
         const activePlayers = this.players.filter(p => p.getBet() > 0);
         if (activePlayers.length === 0) {
+            // Even if no one bet, we might want to transition to FINISHED then back to BETTING
+            // so people joining see a "round" happening. But for now, just return.
             return;
         }
 
@@ -54,7 +57,7 @@ export class Roulette extends Game<RoulettePlayer> {
         // Wait for frontend animation
         await new Promise(resolve => setTimeout(resolve, 5000));
 
-        this.handOutWin(this.lastWinningNumber);
+        await this.handOutWin(this.lastWinningNumber);
         this.currentPhase = RoulettePhase.FINISHED;
         this.emit("gameState", this.getGameState());
     }
@@ -91,7 +94,7 @@ export class Roulette extends Game<RoulettePlayer> {
         });
     }
 
-    public handlePlayerMove(playerId: string, action: string, amount?: number, field?: string) {
+    public async handlePlayerMove(playerId: string, action: string, amount?: number, field?: string) {
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
 
@@ -104,6 +107,7 @@ export class Roulette extends Game<RoulettePlayer> {
             }
             try {
                 player.placeBet(field as rouletteField, amount);
+                await userService.updateUserBalance(playerId, player.getBalance());
                 this.emit("playerBet", { playerId });
                 return { success: true, message: "Bet placed" };
             } catch (e) {
@@ -125,6 +129,7 @@ export class Roulette extends Game<RoulettePlayer> {
                 return { success: false, message: "Cannot clear bets now" };
             }
             player.clearBets();
+            await userService.updateUserBalance(playerId, player.getBalance());
             this.emit("playerBet", { playerId });
             return { success: true, message: "Bets cleared" };
         }
@@ -140,19 +145,21 @@ export class Roulette extends Game<RoulettePlayer> {
         this.lastWinningNumber = null;
     }
 
-    private handOutWin(winningNumber: number) {
+    private async handOutWin(winningNumber: number) {
         const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
         const isRed = redNumbers.includes(winningNumber);
         const isBlack = winningNumber !== 0 && !isRed;
         const isEven = winningNumber !== 0 && winningNumber % 2 === 0;
         const isOdd = winningNumber !== 0 && winningNumber % 2 !== 0;
 
-        this.players.forEach(player => {
+        for (const player of this.players) {
+            let totalWin = 0;
             player.getPlayerBets().forEach(bet => {
                 let multiplier = 0;
                 const field = bet.field;
 
                 if (field === winningNumber.toString()) multiplier = 36;
+                else if (field === "00" && winningNumber === -1) multiplier = 36; // Support 00 if we ever add it to Math.random
                 else if (field === "RED" && isRed) multiplier = 2;
                 else if (field === "BLACK" && isBlack) multiplier = 2;
                 else if (field === "EVEN" && isEven) multiplier = 2;
@@ -167,10 +174,15 @@ export class Roulette extends Game<RoulettePlayer> {
                 else if (field === "3rd Col" && winningNumber !== 0 && winningNumber % 3 === 0) multiplier = 3;
 
                 if (multiplier > 0) {
-                    player.winMoney(bet.amount * multiplier);
+                    totalWin += bet.amount * multiplier;
                 }
             });
-        });
+
+            if (totalWin > 0) {
+                player.winMoney(totalWin);
+                await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
+            }
+        }
     }
 
     public getGameState() {
