@@ -120,6 +120,15 @@ export class Roulette extends Game<RoulettePlayer> {
             return { success: true, message: "Spin request received" };
         }
 
+        if (action === "clear") {
+            if (this.currentPhase !== RoulettePhase.BETTING) {
+                return { success: false, message: "Cannot clear bets now" };
+            }
+            player.clearBets();
+            this.emit("playerBet", { playerId });
+            return { success: true, message: "Bets cleared" };
+        }
+
         return { success: false, message: "Invalid action" };
     }
 

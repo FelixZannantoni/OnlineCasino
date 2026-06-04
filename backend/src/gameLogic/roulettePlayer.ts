@@ -84,7 +84,7 @@ export class RoulettePlayer extends Player {
     }
 
     public placeBet(field: rouletteField, amount: number): void {
-        this.makeNewBet(this.getBet() + amount);
+        this.makeIncreasedBet(this.getBet() + amount);
         this.playerBets[field] += amount;
     }
 
