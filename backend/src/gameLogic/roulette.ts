@@ -67,14 +67,21 @@ export class Roulette extends Game<RoulettePlayer> {
         this.emit("gameState", this.getGameState());
 
         await new Promise<void>((resolve) => {
-            const interval = setInterval(() => {
-                this.remainingTime--;
-                this.emit("gameState", this.getGameState());
-                if (this.remainingTime <= 0) {
-                    cleanup();
-                    resolve();
-                }
-            }, 1000);
+            let interval: NodeJS.Timeout | null = null;
+            let timerStarted = false;
+
+            const startTimer = () => {
+                if (timerStarted) return;
+                timerStarted = true;
+                interval = setInterval(() => {
+                    this.remainingTime--;
+                    this.emit("gameState", this.getGameState());
+                    if (this.remainingTime <= 0) {
+                        cleanup();
+                        resolve();
+                    }
+                }, 1000);
+            };
 
             const handleReady = () => {
                 const allReady = this.players.length > 0 && this.players.every(p => p.getIsReady());
@@ -85,17 +92,23 @@ export class Roulette extends Game<RoulettePlayer> {
             };
 
             const handleBet = () => {
+                startTimer();
                 this.emit("gameState", this.getGameState());
             };
 
             const cleanup = () => {
-                clearInterval(interval);
+                if (interval) clearInterval(interval);
                 this.removeListener("playerBet", handleBet);
                 this.removeListener("playerReady", handleReady);
             };
 
             this.on("playerBet", handleBet);
             this.on("playerReady", handleReady);
+
+            // If a player is already betting (e.g. they joined right as we reset)
+            if (this.players.some(p => p.getBet() > 0)) {
+                startTimer();
+            }
         });
     }
 
