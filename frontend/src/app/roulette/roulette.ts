@@ -64,7 +64,10 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   readonly balance = signal(0);
   readonly selectedChip = signal(1);
   readonly bets = signal<Bet[]>([]);
+  readonly players = signal<any[]>([]);
   readonly spinning = signal(false);
+  readonly isReady = signal(false);
+  readonly remainingTime = signal(0);
   readonly resultLabel = signal('');
   readonly resultClass = signal('');
   readonly recentResults = signal<number[]>([]);
@@ -162,6 +165,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
   private handleGameState(state: any): void {
     console.log('Roulette State Update:', state);
+    this.players.set(state.players);
     const me = state.players.find((p: any) => p.id === this.userId);
     if (me) {
       this.balance.set(me.balance);
@@ -170,7 +174,9 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
         amount: b.amount,
         odds: 0 // Odds are handled by backend
       })));
+      this.isReady.set(me.isReady);
     }
+    this.remainingTime.set(state.remainingTime);
 
     if (state.phase === 'SPINNING' && this.currentPhase !== 'SPINNING' && state.lastWinningNumber !== null) {
       this.animateSpin(state.lastWinningNumber);
@@ -237,7 +243,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   }
 
   placeBet(label: string, odds: number): void {
-    if (this.currentPhase !== 'BETTING' || this.spinning()) return;
+    if (this.currentPhase !== 'BETTING' || this.spinning() || this.isReady()) return;
     const chip = this.selectedChip();
     if (chip > this.balance()) return;
 
@@ -254,15 +260,20 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   }
 
   clearBets(): void {
+    if (this.isReady()) return;
     // Backend doesn't support clear yet
   }
 
   //
-  spin(): void {
+  ready(): void {
     if (this.currentPhase !== 'BETTING' || this.spinning() || !this.bets().length) return;
+
+    // Toggle ready state
+    const newReadyStatus = !this.isReady();
     this.socketService.emitEvent('player_move', {
       gameId: this.gameId,
-      action: 'spin'
+      action: 'ready',
+      amount: newReadyStatus ? 1 : 0 // Using amount as a flag for ready/unready
     });
   }
 
