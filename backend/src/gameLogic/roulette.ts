@@ -13,6 +13,7 @@ export class Roulette extends Game<RoulettePlayer> {
     private isRunning: boolean = false;
     private currentPhase: RoulettePhase = RoulettePhase.WAITING;
     private lastWinningNumber: number | null = null;
+    private remainingTime: number = 0;
 
     constructor(gameId: string) {
         super(gameId);
@@ -45,9 +46,8 @@ export class Roulette extends Game<RoulettePlayer> {
 
         const activePlayers = this.players.filter(p => p.getBet() > 0);
         if (activePlayers.length === 0) {
-            // Even if no one bet, we might want to transition to FINISHED then back to BETTING
-            // so people joining see a "round" happening. But for now, just return.
-            return;
+            // If no one bet, we still "spin" to keep the game alive
+            // but we can skip the wait if we want. For now, let's just spin.
         }
 
         this.currentPhase = RoulettePhase.SPINNING;
@@ -63,34 +63,39 @@ export class Roulette extends Game<RoulettePlayer> {
     }
 
     private async waitForBets() {
+        this.remainingTime = 15;
         this.emit("gameState", this.getGameState());
 
         await new Promise<void>((resolve) => {
-            const betTimeout = setTimeout(() => {
-                cleanup();
-                resolve();
-            }, 20000); // 20 seconds for betting
-
-            const handleBet = () => {
+            const interval = setInterval(() => {
+                this.remainingTime--;
                 this.emit("gameState", this.getGameState());
-            };
+                if (this.remainingTime <= 0) {
+                    cleanup();
+                    resolve();
+                }
+            }, 1000);
 
-            const handleSpin = () => {
-                const anyPressedSpin = this.players.some(p => p.getPressedSpin());
-                if (anyPressedSpin) {
+            const handleReady = () => {
+                const allReady = this.players.length > 0 && this.players.every(p => p.getIsReady());
+                if (allReady) {
                     cleanup();
                     resolve();
                 }
             };
 
+            const handleBet = () => {
+                this.emit("gameState", this.getGameState());
+            };
+
             const cleanup = () => {
-                clearTimeout(betTimeout);
+                clearInterval(interval);
                 this.removeListener("playerBet", handleBet);
-                this.removeListener("playerSpin", handleSpin);
+                this.removeListener("playerReady", handleReady);
             };
 
             this.on("playerBet", handleBet);
-            this.on("playerSpin", handleSpin);
+            this.on("playerReady", handleReady);
         });
     }
 
@@ -101,6 +106,9 @@ export class Roulette extends Game<RoulettePlayer> {
         if (action === "bet") {
             if (this.currentPhase !== RoulettePhase.BETTING) {
                 return { success: false, message: "Not in betting phase" };
+            }
+            if (player.getIsReady()) {
+                return { success: false, message: "Cannot change bets while ready. Unready first." };
             }
             if (amount === undefined || amount <= 0 || !field) {
                 return { success: false, message: "Invalid bet" };
@@ -115,18 +123,24 @@ export class Roulette extends Game<RoulettePlayer> {
             }
         }
 
-        if (action === "spin") {
+        if (action === "ready") {
             if (this.currentPhase !== RoulettePhase.BETTING) {
-                return { success: false, message: "Cannot spin now" };
+                return { success: false, message: "Cannot be ready now" };
             }
-            player.userPressedSpin();
-            this.emit("playerSpin", { playerId });
-            return { success: true, message: "Spin request received" };
+            // If amount is provided, use it as the new ready status, otherwise toggle
+            const newReadyStatus = amount !== undefined ? !!amount : !player.getIsReady();
+            player.setReady(newReadyStatus);
+            this.emit("gameState", this.getGameState());
+            this.emit("playerReady", { playerId });
+            return { success: true, message: `Player ${newReadyStatus ? "ready" : "unready"}` };
         }
 
         if (action === "clear") {
             if (this.currentPhase !== RoulettePhase.BETTING) {
                 return { success: false, message: "Cannot clear bets now" };
+            }
+            if (player.getIsReady()) {
+                return { success: false, message: "Cannot clear bets while ready. Unready first." };
             }
             player.clearBets();
             await userService.updateUserBalance(playerId, player.getBalance());
@@ -140,9 +154,10 @@ export class Roulette extends Game<RoulettePlayer> {
     private resetBets() {
         this.players.forEach(p => {
             p.clearBets();
-            p.resetSpin();
+            p.resetReady();
         });
         this.lastWinningNumber = null;
+        this.remainingTime = 0;
     }
 
     private async handOutWin(winningNumber: number) {
@@ -185,19 +200,25 @@ export class Roulette extends Game<RoulettePlayer> {
         }
     }
 
+    public handlePlayerDisconnect(playerId: string) {
+        this.emit("playerReady", { playerId });
+    }
+
     public getGameState() {
         return {
             gameId: this.getGameId(),
             isRunning: this.isRunning,
             phase: this.currentPhase,
             lastWinningNumber: this.lastWinningNumber,
+            remainingTime: this.remainingTime,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),
                 displayname: p.getDisplayname(),
                 balance: p.getBalance(),
                 bet: p.getBet(),
-                bets: p.getPlayerBets()
+                bets: p.getPlayerBets(),
+                isReady: p.getIsReady()
             }))
         };
     }

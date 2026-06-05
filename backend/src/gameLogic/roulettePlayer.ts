@@ -54,12 +54,12 @@ export enum rouletteField {
 }
 
 export class RoulettePlayer extends Player {
-    private pressedSpin: boolean;
+    private isReady: boolean;
     private playerBets: Record<rouletteField, number>;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
-        this.pressedSpin = false;
+        this.isReady = false;
         this.playerBets = this.initPlayerBets();
     }
 
@@ -71,16 +71,16 @@ export class RoulettePlayer extends Player {
         return bets;
     }
 
-    public userPressedSpin(): void {
-        this.pressedSpin = true;
+    public setReady(ready: boolean): void {
+        this.isReady = ready;
     }
 
-    public getPressedSpin(): boolean {
-        return this.pressedSpin;
+    public getIsReady(): boolean {
+        return this.isReady;
     }
 
-    public resetSpin(): void {
-        this.pressedSpin = false;
+    public resetReady(): void {
+        this.isReady = false;
     }
 
     public placeBet(field: rouletteField, amount: number): void {

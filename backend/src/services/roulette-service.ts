@@ -12,10 +12,10 @@ export class RouletteService {
         return await game.handlePlayerMove(playerId, "bet", amount, field);
     }
 
-    async spin(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
+    async ready(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
-        return await game.handlePlayerMove(playerId, "spin");
+        return await game.handlePlayerMove(playerId, "ready");
     }
 
     async addPlayer(playerId: string, username: string, displayname: string, balance: number, gameId: string): Promise<{success: boolean, message: string}> {

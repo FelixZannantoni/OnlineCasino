@@ -218,8 +218,8 @@ io.on("connection", (socket: Socket) => {
             case "double":
                 actionResult = await blackjackService.double(playerId, gameId);
                 break;
-            case "spin":
-                actionResult = await rouletteService.spin(playerId, gameId);
+            case "ready":
+                actionResult = await rouletteService.ready(playerId, gameId);
                 break;
         }
 

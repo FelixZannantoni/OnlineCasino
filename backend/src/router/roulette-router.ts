@@ -36,17 +36,17 @@ rouletteRouter.put("/bet", async (req: Request, res: Response) => {
     }
 });
 
-rouletteRouter.put("/spin", async (req: Request, res: Response) => {
+rouletteRouter.put("/ready", async (req: Request, res: Response) => {
     const { playerId, gameId } = req.body;
     if (!playerId || !gameId) {
         res.status(StatusCodes.BAD_REQUEST).json({ error: "Missing required fields" });
         return;
     }
 
-    const result = await rouletteService.spin(playerId, gameId);
+    const result = await rouletteService.ready(playerId, gameId);
 
     if (result.success) {
-        res.status(StatusCodes.OK).json({ message: "Spin request received" });
+        res.status(StatusCodes.OK).json({ message: "Ready status updated" });
     } else {
         res.status(StatusCodes.BAD_REQUEST).json({ message: result.message });
     }
