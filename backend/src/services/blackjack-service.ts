@@ -9,25 +9,25 @@ export class BlackjackService {
     async hit(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
-        return game.handlePlayerMove(playerId, "hit");
+        return await game.handlePlayerMove(playerId, "hit");
     }
 
     async stand(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
-        return game.handlePlayerMove(playerId, "stand");
+        return await game.handlePlayerMove(playerId, "stand");
     }
 
     async double(playerId: string, gameId: string): Promise<{success: boolean, message: string}> {
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
-        return game.handlePlayerMove(playerId, "double");
+        return await game.handlePlayerMove(playerId, "double");
     }
 
     async bet(playerId: string, gameId: string, amount: number): Promise<{success: boolean, message: string}> {
         const { game } = this.getGameById(gameId);
         if(!game) return { success: false, message: `Game #${gameId} not found` };
-        return game.handlePlayerMove(playerId, "bet", amount);
+        return await game.handlePlayerMove(playerId, "bet", amount);
     }
 
     async addPlayer(playerId: string, username: string, displayname: string, balance: number, gameId: string): Promise<{success: boolean, message: string}> {

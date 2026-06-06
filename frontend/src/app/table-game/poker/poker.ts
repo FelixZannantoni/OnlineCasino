@@ -39,6 +39,7 @@ type PokerGameState = {
   currentPlayerId: string | null;
   isLoading: boolean;
   turnRemainingSeconds: number | null;
+  gameStartRemainingSeconds: number | null;
 };
 
 @Component({
@@ -60,7 +61,9 @@ export class Poker implements OnInit {
   public gameState = signal<PokerGameState | null>(null);
   protected isProcessing = signal<boolean>(false);
   protected turnRemaining = signal<number | null>(null);
-  private timerInterval: any = null;
+  protected gameStartsIn = signal<number | null>(null);
+  private playerTurnTimer: any = null;
+  private gameStartTimer: any = null;
 
   private readonly gameId = signal<string>('1');
 
@@ -111,15 +114,21 @@ export class Poker implements OnInit {
 
     this.socketService.onEvent('game_state', (state: unknown) => {
       const s = state as PokerGameState;
+      console.log("Received game state update:", s);
       this.gameState.set(s);
       this.isProcessing.set(false);
 
       // Handle Timer
       if (s.turnRemainingSeconds !== null) {
         this.turnRemaining.set(s.turnRemainingSeconds);
-        this.startLocalTimer();
+        this.startLocalTimerForPlayerTurn();
       } else {
-        this.stopLocalTimer();
+        this.stopLocalTimerForPlayerTurn();
+      }
+
+      if(s.gameStartRemainingSeconds != null) {
+        this.gameStartsIn.set(s.gameStartRemainingSeconds);
+        this.startLocalTimerForGameStart();
       }
 
       // Keep table-game bindings in sync with backend state
@@ -138,17 +147,24 @@ export class Poker implements OnInit {
     this.socketService.joinGame(id, userId);
   }
 
-  private startLocalTimer(): void {
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    this.timerInterval = setInterval(() => {
+  private startLocalTimerForPlayerTurn(): void {
+    if (this.playerTurnTimer) clearInterval(this.playerTurnTimer);
+    this.playerTurnTimer = setInterval(() => {
       this.turnRemaining.update(v => v !== null && v > 0 ? v - 1 : 0);
     }, 1000);
   }
 
-  private stopLocalTimer(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
+  private startLocalTimerForGameStart(): void {
+    if (this.gameStartTimer) clearInterval(this.gameStartTimer);
+    this.gameStartTimer = setInterval(() => {
+      this.gameStartsIn.update(v => v != null && v > 0 ? v - 1 : 0);
+    }, 1000);
+  }
+
+  private stopLocalTimerForPlayerTurn(): void {
+    if (this.playerTurnTimer) {
+      clearInterval(this.playerTurnTimer);
+      this.playerTurnTimer = null;
     }
     this.turnRemaining.set(null);
   }

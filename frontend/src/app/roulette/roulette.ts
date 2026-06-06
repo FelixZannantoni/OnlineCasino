@@ -8,8 +8,14 @@ import {
   inject,
   signal,
   computed,
+  Inject,
+  PLATFORM_ID,
+  OnInit,
+  OnDestroy,
 } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { SocketService } from '../services/socket.service';
+import { DataService } from '../services/data-service';
 
 interface Bet {
   label: string;
@@ -44,20 +50,30 @@ interface Payout {
   templateUrl: './roulette.html',
   styleUrl: './roulette.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
-export class Roulette implements AfterViewInit {
+export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('wheelCanvas') private canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private readonly zone = inject(NgZone);
+  private readonly socketService = inject(SocketService);
+  private readonly dataService = inject(DataService);
+  private isBrowser: boolean;
 
   //
-  readonly balance     = signal(5000);
+  readonly balance = signal(0);
   readonly selectedChip = signal(1);
-  readonly bets        = signal<Bet[]>([]);
-  readonly spinning    = signal(false);
+  readonly bets = signal<Bet[]>([]);
+  readonly players = signal<any[]>([]);
+  readonly spinning = signal(false);
+  readonly isReady = signal(false);
+  readonly remainingTime = signal(0);
   readonly resultLabel = signal('');
   readonly resultClass = signal('');
-  readonly recentResults = signal<number[]>([32, 15, 0, 7, 26, 3]);
+  readonly recentResults = signal<number[]>([]);
+  readonly gameId = '3'; // Assuming Roulette game ID is 3
+  private userId: string | null = null;
+  private currentPhase: string = 'WAITING';
 
   //
   readonly totalWagered = computed(() =>
@@ -86,9 +102,9 @@ export class Roulette implements AfterViewInit {
   readonly colLabels = ['3rd Col', '2nd Col', '1st Col'];
 
   readonly chipOptions: ChipOption[] = [
-    { value: 1,   cls: 'ch1'   },
-    { value: 5,   cls: 'ch5'   },
-    { value: 25,  cls: 'ch25'  },
+    { value: 1, cls: 'ch1' },
+    { value: 5, cls: 'ch5' },
+    { value: 25, cls: 'ch25' },
     { value: 100, cls: 'ch100' },
     { value: 500, cls: 'ch500' },
   ];
@@ -100,32 +116,84 @@ export class Roulette implements AfterViewInit {
   ];
 
   readonly evenMoneyBets: EvenMoneyBet[] = [
-    { label: '1-18',  color: 'g', sub: '1–18'  },
-    { label: 'EVEN',  color: 'g'                },
-    { label: 'RED',   color: 'r', pip: '♦'      },
-    { label: 'BLACK', color: 'b', pip: '♠'      },
-    { label: 'ODD',   color: 'g'                },
-    { label: '19-36', color: 'g', sub: '19–36'  },
+    { label: '1-18', color: 'g', sub: '1–18' },
+    { label: 'EVEN', color: 'g' },
+    { label: 'RED', color: 'r', pip: '♦' },
+    { label: 'BLACK', color: 'b', pip: '♠' },
+    { label: 'ODD', color: 'g' },
+    { label: '19-36', color: 'g', sub: '19–36' },
   ];
 
   readonly payouts: Payout[] = [
-    { name: 'Straight Up',    odds: '35:1' },
-    { name: 'Split',          odds: '17:1' },
-    { name: 'Street',         odds: '11:1' },
-    { name: 'Corner',         odds: '8:1'  },
-    { name: 'Dozen / Column', odds: '2:1'  },
-    { name: 'Even Money',     odds: '1:1'  },
+    { name: 'Straight Up', odds: '35:1' },
+    { name: 'Split', odds: '17:1' },
+    { name: 'Street', odds: '11:1' },
+    { name: 'Corner', odds: '8:1' },
+    { name: 'Dozen / Column', odds: '2:1' },
+    { name: 'Even Money', odds: '1:1' },
   ];
 
   //
   private ctx!: CanvasRenderingContext2D;
   private wheelAngle = 0;
   private readonly SIZE = 300;
-  private readonly CX   = 150;
-  private readonly CY   = 150;
+  private readonly CX = 150;
+  private readonly CY = 150;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    this.userId = this.dataService.getUserId();
+  }
+
+  ngOnInit(): void {
+    if (!this.isBrowser) return;
+
+    if (this.userId) {
+      // Allow time for the socket to connect before joining
+      this.socketService.joinGame(this.gameId, this.userId);
+    }
+
+    this.socketService.onEvent('game_state', (data: any) => {
+      this.handleGameState(data);
+    });
+
+    this.socketService.onEvent('error', (data: any) => {
+      console.error('Socket Error:', data);
+      alert(data.message);
+    });
+  }
+
+  private handleGameState(state: any): void {
+    console.log('Roulette State Update:', state);
+    this.players.set(state.players);
+    const me = state.players.find((p: any) => p.id === this.userId);
+    if (me) {
+      this.balance.set(me.balance);
+      this.bets.set(me.bets.map((b: any) => ({
+        label: b.field,
+        amount: b.amount,
+        odds: 0 // Odds are handled by backend
+      })));
+      this.isReady.set(me.isReady);
+    }
+    this.remainingTime.set(state.remainingTime);
+
+    if (state.phase === 'SPINNING' && this.currentPhase !== 'SPINNING' && state.lastWinningNumber !== null) {
+      this.animateSpin(state.lastWinningNumber);
+    }
+
+    if (state.phase === 'FINISHED' && this.currentPhase === 'SPINNING') {
+        // Just ensure spinning signal is false if it wasn't already
+        this.spinning.set(false);
+    }
+
+    this.currentPhase = state.phase;
+  }
 
   //
   ngAfterViewInit(): void {
+    if (!this.isBrowser) return;
+
     this.ctx = this.canvasRef.nativeElement.getContext('2d')!;
     // Defer past the first paint so the canvas is fully laid out in the DOM
     setTimeout(() => {
@@ -134,11 +202,23 @@ export class Roulette implements AfterViewInit {
     }, 0);
   }
 
+  ngOnDestroy(): void {
+    if (this.isBrowser) {
+      this.socketService.offEvent('game_state');
+      this.socketService.offEvent('error');
+      if (this.idleRafId !== null) {
+        cancelAnimationFrame(this.idleRafId);
+      }
+    }
+  }
+
   // Idle loop keeps the canvas redrawn at rest so OnPush / zone cycles
   // never blank it out between spins
   private idleRafId: number | null = null;
 
   private startIdleLoop(): void {
+    if (!this.isBrowser) return;
+
     const loop = () => {
       if (!this.spinning()) {
         this.drawWheel(this.wheelAngle);
@@ -163,38 +243,43 @@ export class Roulette implements AfterViewInit {
   }
 
   placeBet(label: string, odds: number): void {
-    if (this.spinning()) return;
+    if (this.currentPhase !== 'BETTING' || this.spinning() || this.isReady()) return;
     const chip = this.selectedChip();
     if (chip > this.balance()) return;
 
-    this.balance.update(b => b - chip);
-    this.bets.update(current => {
-      const existing = current.find(b => b.label === label);
-      if (existing) {
-        return current.map(b =>
-          b.label === label ? { ...b, amount: b.amount + chip } : b
-        );
-      }
-      return [...current, { label, odds, amount: chip }];
+    this.socketService.emitEvent('player_move', {
+      gameId: this.gameId,
+      action: 'bet',
+      amount: chip,
+      field: label
     });
   }
 
   undoLast(): void {
-    const current = this.bets();
-    if (!current.length) return;
-    const last = current[current.length - 1];
-    this.balance.update(b => b + last.amount);
-    this.bets.update(arr => arr.slice(0, -1));
+    // Backend doesn't support undo yet
   }
 
   clearBets(): void {
-    this.balance.update(b => b + this.totalWagered());
-    this.bets.set([]);
+    if (this.isReady()) return;
+    // Backend doesn't support clear yet
   }
 
   //
-  spin(): void {
-    if (this.spinning() || !this.bets().length) return;
+  ready(): void {
+    if (this.currentPhase !== 'BETTING' || this.spinning() || !this.bets().length) return;
+
+    // Toggle ready state
+    const newReadyStatus = !this.isReady();
+    this.socketService.emitEvent('player_move', {
+      gameId: this.gameId,
+      action: 'ready',
+      amount: newReadyStatus ? 1 : 0 // Using amount as a flag for ready/unready
+    });
+  }
+
+  private animateSpin(result: number): void {
+    if (!this.isBrowser) return;
+    if (this.spinning()) return;
     this.spinning.set(true);
     this.resultLabel.set('');
     this.resultClass.set('');
@@ -207,8 +292,7 @@ export class Roulette implements AfterViewInit {
 
     const N = this.SEQUENCE.length;
     const slice = (Math.PI * 2) / N;
-    const landingIndex = Math.floor(Math.random() * N);
-    const result = this.SEQUENCE[landingIndex];
+    const landingIndex = this.SEQUENCE.indexOf(result);
 
     const pocketAngle = landingIndex * slice;
     const needed =
@@ -216,18 +300,18 @@ export class Roulette implements AfterViewInit {
       (Math.PI * 2);
     const extra = Math.PI * 2 * (6 + Math.random() * 4);
 
-    const startAngle  = this.wheelAngle;
+    const startAngle = this.wheelAngle;
     const currentNorm = ((startAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
     const targetAngle = startAngle + extra + needed - currentNorm;
 
-    const duration  = 4000 + Math.random() * 2000;
+    const duration = 4000 + Math.random() * 1000;
     const startTime = performance.now();
 
     this.zone.runOutsideAngular(() => {
       const animate = (ts: number) => {
-        const t      = Math.min((ts - startTime) / duration, 1);
-        const eased  = 1 - Math.pow(1 - t, 4);
-        const cur    = startAngle + (targetAngle - startAngle) * eased;
+        const t = Math.min((ts - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 4);
+        const cur = startAngle + (targetAngle - startAngle) * eased;
         this.drawWheel(cur);
 
         if (t < 1) {
@@ -244,7 +328,7 @@ export class Roulette implements AfterViewInit {
   private onSpinComplete(result: number): void {
     this.spinning.set(false);
     this.recentResults.update(prev => [result, ...prev.slice(0, 11)]);
-    this.bets.set([]);
+    // Bets are cleared by the backend at start of next round
 
     if (result === 0) {
       this.resultLabel.set('0 — Green');
@@ -273,21 +357,22 @@ export class Roulette implements AfterViewInit {
   //     18  hub
   //
   private drawWheel(angle: number): void {
+    if (!this.isBrowser) return;
     const ctx = this.ctx;
-    const N     = this.SEQUENCE.length;
+    const N = this.SEQUENCE.length;
     const slice = (Math.PI * 2) / N;
 
     // Layer radii
-    const R_RIM         = 148;  // outer mahogany rim
-    const R_BORDER_OUT  = 141;  // gold ring outer
-    const R_BORDER_IN   = 137;  // gold ring inner
-    const R_SEG_OUT     = 136;  // coloured number segments outer
-    const R_SEG_IN      =  94;  // coloured number segments inner
-    const R_TRACK_OUT   =  93;  // ball track outer
-    const R_TRACK_IN    =  83;  // ball track inner
-    const R_BOWL        =  82;  // inner dark bowl
-    const R_CONE        =  50;  // decorative centre cone
-    const R_HUB         =  18;  // hub knob
+    const R_RIM = 148;  // outer mahogany rim
+    const R_BORDER_OUT = 141;  // gold ring outer
+    const R_BORDER_IN = 137;  // gold ring inner
+    const R_SEG_OUT = 136;  // coloured number segments outer
+    const R_SEG_IN = 94;  // coloured number segments inner
+    const R_TRACK_OUT = 93;  // ball track outer
+    const R_TRACK_IN = 83;  // ball track inner
+    const R_BOWL = 82;  // inner dark bowl
+    const R_CONE = 50;  // decorative centre cone
+    const R_HUB = 18;  // hub knob
 
     ctx.clearRect(0, 0, this.SIZE, this.SIZE);
     ctx.save();
@@ -297,9 +382,9 @@ export class Roulette implements AfterViewInit {
     ctx.beginPath();
     ctx.arc(0, 0, R_RIM, 0, Math.PI * 2);
     const woodGrad = ctx.createRadialGradient(0, 0, R_RIM * 0.5, 0, 0, R_RIM);
-    woodGrad.addColorStop(0,   '#5a2a0a');
+    woodGrad.addColorStop(0, '#5a2a0a');
     woodGrad.addColorStop(0.6, '#3a1606');
-    woodGrad.addColorStop(1,   '#1a0b00');
+    woodGrad.addColorStop(1, '#1a0b00');
     ctx.fillStyle = woodGrad;
     ctx.fill();
 
@@ -317,20 +402,20 @@ export class Roulette implements AfterViewInit {
     //
     for (let i = 0; i < N; i++) {
       const start = angle + i * slice - slice / 2;
-      const end   = angle + (i + 1) * slice - slice / 2;
-      const n     = this.SEQUENCE[i];
+      const end = angle + (i + 1) * slice - slice / 2;
+      const n = this.SEQUENCE[i];
 
       // Segment fill (annular wedge)
       ctx.beginPath();
       ctx.arc(0, 0, R_SEG_OUT, start, end);
-      ctx.arc(0, 0, R_SEG_IN,  end, start, true);
+      ctx.arc(0, 0, R_SEG_IN, end, start, true);
       ctx.closePath();
       ctx.fillStyle = n === 0 ? '#1a6b35' : this.REDS.has(n) ? '#8b0000' : '#1a1a1a';
       ctx.fill();
 
       // Gold divider line between segments
       ctx.beginPath();
-      ctx.moveTo(Math.cos(start) * R_SEG_IN,  Math.sin(start) * R_SEG_IN);
+      ctx.moveTo(Math.cos(start) * R_SEG_IN, Math.sin(start) * R_SEG_IN);
       ctx.lineTo(Math.cos(start) * R_SEG_OUT, Math.sin(start) * R_SEG_OUT);
       ctx.strokeStyle = '#c9a84c';
       ctx.lineWidth = 0.8;
@@ -341,7 +426,7 @@ export class Roulette implements AfterViewInit {
     const R_NUM = (R_SEG_OUT + R_SEG_IN) / 2; // mid-point of segment band
     for (let i = 0; i < N; i++) {
       const mid = angle + i * slice;
-      const n   = this.SEQUENCE[i];
+      const n = this.SEQUENCE[i];
 
       ctx.save();
       ctx.rotate(mid);
@@ -378,9 +463,9 @@ export class Roulette implements AfterViewInit {
     ctx.beginPath();
     ctx.arc(0, 0, R_BOWL, 0, Math.PI * 2);
     const bowlGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, R_BOWL);
-    bowlGrad.addColorStop(0,   '#3a1a06');
+    bowlGrad.addColorStop(0, '#3a1a06');
     bowlGrad.addColorStop(0.7, '#1e0e04');
-    bowlGrad.addColorStop(1,   '#0e0702');
+    bowlGrad.addColorStop(1, '#0e0702');
     ctx.fillStyle = bowlGrad;
     ctx.fill();
 
@@ -388,9 +473,9 @@ export class Roulette implements AfterViewInit {
     ctx.beginPath();
     ctx.arc(0, 0, R_CONE, 0, Math.PI * 2);
     const coneGrad = ctx.createRadialGradient(-8, -8, 2, 0, 0, R_CONE);
-    coneGrad.addColorStop(0,   '#6a3a10');
+    coneGrad.addColorStop(0, '#6a3a10');
     coneGrad.addColorStop(0.5, '#3a1a06');
-    coneGrad.addColorStop(1,   '#1a0b00');
+    coneGrad.addColorStop(1, '#1a0b00');
     ctx.fillStyle = coneGrad;
     ctx.fill();
     ctx.strokeStyle = '#c9a84c';
