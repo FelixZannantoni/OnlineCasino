@@ -11,6 +11,14 @@
             </div>
             }
         </div>
+
+        <div class="timer-wrap">
+            <div class="timer-lbl">Time Left</div>
+            <div class="timer-num" [class.low]="remainingTime() <= 5">
+                {{ remainingTime() }}s
+            </div>
+        </div>
+
         <div class="balance-wrap">
             <div class="bal-lbl">Balance</div>
             <div class="bal-num">${{ balance() | number }}</div>
@@ -143,9 +151,24 @@
         <!-- RIGHT: SIDEBAR -->
         <div class="sidebar">
 
-            <button class="spin-btn" [disabled]="spinning() || bets().length === 0" (click)="spin()">
-                {{ spinning() ? 'SPINNING…' : 'SPIN' }}
+            <button class="ready-btn" [class.is-ready]="isReady()" [disabled]="spinning() || bets().length === 0" (click)="ready()">
+                {{ isReady() ? 'READY ✓' : 'READY' }}
             </button>
+
+            <!-- PLAYERS READY STATUS -->
+            <div class="scard">
+                <div class="shead">Players Status</div>
+                <div class="sbody">
+                    @for (p of players(); track p.id) {
+                    <div class="orow" [class.last]="$last">
+                        <span class="on">{{ p.displayname || p.username }}</span>
+                        <span class="ov" [style.color]="p.isReady ? '#22c55e' : '#ef4444'">
+                            {{ p.isReady ? 'READY' : 'BETTING' }}
+                        </span>
+                    </div>
+                    }
+                </div>
+            </div>
 
             <!-- CURRENT BETS -->
             <div class="scard">
