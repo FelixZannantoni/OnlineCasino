@@ -216,8 +216,20 @@
       }
     }
     @if (gameState()?.phase === 'BETTING') {
-      <div style="display:flex; gap:10px; align-items:center; background:rgba(0,0,0,0.5); padding:10px; border-radius:20px;">
-        <input type="number" [(ngModel)]="betAmount" style="width:60px; padding:5px; border-radius:5px; border:none; color: white; background: transparent; text-align: center;">
+      <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.5); padding:10px; border-radius:20px;">
+        <div class="tray">
+          <span class="tray-lbl" id="chip-label">Chip</span>
+          <div role="radiogroup" aria-labelledby="chip-label" style="display:flex;gap:8px">
+            @for (c of chipOptions; track c.value) {
+              <div class="chip-btn" [class]="c.cls" [class.on]="selectedChip() === c.value" role="radio"
+                   tabindex="0" [attr.aria-checked]="selectedChip() === c.value"
+                   [attr.aria-label]="'Select $' + c.value + ' chip'" (click)="selectChip(c.value)"
+                   (keydown.enter)="selectChip(c.value)">
+                ${{ c.value }}
+              </div>
+            }
+          </div>
+        </div>
         <button class="btn-bet" (click)="placeBet()">Place Bet</button>
       </div>
     }

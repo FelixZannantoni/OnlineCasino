@@ -25,6 +25,16 @@ export class Blackjack implements OnInit, OnDestroy {
   private isBrowser: boolean;
   protected turnRemaining = signal<number | null>(null);
   private timerInterval: any = null;
+  // Chip betting UI (copied from roulette)
+  interfaceChipOptions: any; // placeholder to keep typings simple in this file
+  readonly selectedChip = signal(10);
+  readonly chipOptions = [
+    { value: 1, cls: 'ch1' },
+    { value: 5, cls: 'ch5' },
+    { value: 25, cls: 'ch25' },
+    { value: 100, cls: 'ch100' },
+    { value: 500, cls: 'ch500' },
+  ];
 
   protected readonly me = computed(() => {
     const state = this.gameState();
@@ -126,11 +136,16 @@ export class Blackjack implements OnInit, OnDestroy {
   }
 
   placeBet() {
+    const amount = this.selectedChip();
     this.socketService.emitEvent('player_move', {
       gameId: this.gameId,
       action: 'bet',
-      amount: this.betAmount
+      amount
     });
+  }
+
+  selectChip(value: number): void {
+    this.selectedChip.set(value);
   }
 
   get canDouble(): boolean {
