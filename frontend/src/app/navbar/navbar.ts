@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, PLATFORM_ID, Inject } from '@angular/core';
 import { Router } from "@angular/router";
 import { MatIconModule } from '@angular/material/icon';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
@@ -11,6 +12,11 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class Navbar {
   private router = inject(Router);
+  private isBrowser: boolean;
+
+  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   get isInGame(): boolean {
     if (true) { // TODO: replace with real in-game check from backend
@@ -21,18 +27,22 @@ export class Navbar {
   }
 
   navigate(path: string): void {
-  if (this.isInGame) {
-    window.dispatchEvent(new CustomEvent('toggleQuitOverlay', { detail: { redirectTo: path } }));
-  } else {
-    this.router.navigate([path]);
+    if (this.isInGame && this.isBrowser) {
+      window.dispatchEvent(new CustomEvent('toggleQuitOverlay', { detail: { redirectTo: path } }));
+    } else {
+      this.router.navigate([path]);
+    }
   }
-}
 
   toggleProfile(): void {
-    window.dispatchEvent(new CustomEvent('toggleProfileOverlay'));
+    if (this.isBrowser) {
+      window.dispatchEvent(new CustomEvent('toggleProfileOverlay'));
+    }
   }
 
   toggleSettings(): void {
-    window.dispatchEvent(new CustomEvent('toggleSettingsOverlay'));
+    if (this.isBrowser) {
+      window.dispatchEvent(new CustomEvent('toggleSettingsOverlay'));
+    }
   }
 }

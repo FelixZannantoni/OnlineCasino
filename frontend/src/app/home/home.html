@@ -77,10 +77,16 @@
                     <div class="game-card-content">
                         <span class="game-title">Poker Texas Hold'em</span>
                     </div>
-                </div>
-                <button class="game-card">
+
+                <button class="game-card featured" routerLink="/roulette">
+                    <button class="favorite-btn" (click)="toggleFavorite('Roulette', $event)">
+                        <mat-icon>{{ isFavorite('Roulette') ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    </button>
+                    <button class="info-btn" (click)="openInfo('Roulette', $event)" aria-label="Game Info">
+                        <mat-icon>info_outline</mat-icon>
+                    </button>
                     <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
+                        <span class="game-title">Roulette</span>
                     </div>
                 </button>
                 <button class="game-card">
@@ -125,7 +131,7 @@
                         <span class="game-title">Fav game</span>
                     </div>
                 </button>
-            }
+                }
             </div>
         </div>
 

@@ -1,0 +1,14 @@
+services:
+  casino:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_FILE_NAME=resources/casino.db
+      - SAMPLE_USER_FILE_PATH=resources/sample_data/users.csv
+    volumes:
+      - casino-data:/app/resources
+
+volumes:
+  casino-data:

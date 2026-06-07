@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
@@ -31,6 +32,27 @@ app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/slotmachine", slotmachineRouter);
+
+// Redirect root to login page
+app.get("/", (req, res) => {
+    res.redirect("/login");
+})
+
+// Serve Frontend Static Files
+const publicPath = path.resolve(__dirname, "../public");
+console.log(`Serving static files from: ${publicPath}`);
+
+// 1. Serve static files (js, css, icons)
+app.use(express.static(publicPath, {
+    maxAge: '1y',
+    fallthrough: true // If file not found, continue to the catch-all
+}));
+
+// 2. Catch-all for Angular Routing
+// Using a RegExp object directly bypasses path-to-regexp string parsing
+app.get(/^(?!\/(users|poker|blackjack|slotmachine)).*/, (req, res) => {
+    res.sendFile(path.join(publicPath, "index.html"));
+});
 
 
 const socketUserMap: Map<string, string> = new Map();
