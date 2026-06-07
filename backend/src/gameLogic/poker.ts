@@ -29,8 +29,8 @@ export class Poker extends CardGame<PokerPlayer> {
     private lastWinners: { id: string, handName: string }[] = [];
 
     private isLoading: boolean = false;
-    private turnTimer: NodeJS.Timeout | null = null;
-    private turnEndTime: number | null = null;
+    protected turnTimer: NodeJS.Timeout | null = null;  //zu protected, wegen plötzlichem error
+    protected turnEndTime: number | null = null;    //zu protected, wegen plötzlichem error
     private readonly TURN_TIMEOUT_MS: number = 10000; // 10 seconds for Poker
 
     private gameStartTimer: NodeJS.Timeout | null = null;
@@ -63,21 +63,6 @@ export class Poker extends CardGame<PokerPlayer> {
         } catch (e) {
             return { success: false, message: "Not enough money to tip" };
         }
-    }
-
-    public startGameStartTimer() {
-        if(this.gameStartTimer) {
-            // reset timer if it's already running (e.g. a new player joined)
-            clearTimeout(this.gameStartTimer);
-        }
-
-        console.log(`Starting game start timer for game ${this.getGameId()}!`);
-        this.gameStartEndTime = Date.now() + this.GAME_START_DELAY_MS;
-        this.gameStartTimer = setTimeout(() => {
-            if (!this.isStarted) {
-                this.startGame();
-            }
-        }, this.GAME_START_DELAY_MS);
     }
 
     public startGameStartTimer() {
