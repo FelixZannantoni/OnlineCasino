@@ -144,7 +144,7 @@ export class Poker implements OnInit {
         }
       }
 
-      // PAUSE OVERLAY LOGIC
+      // Pause Overlay Logic: only show overlay at round end (winning hand)
       this.handlePauseOverlayLogic(s);
     });
 
@@ -152,50 +152,30 @@ export class Poker implements OnInit {
   }
 
   private handlePauseOverlayLogic(s: PokerGameState): void {
-    // 1. Warten auf Gegner
-    if (s.turnRemainingSeconds !== null && s.turnRemainingSeconds > 0 && s.currentPlayerId !== this.dataService.userId()) {
-      const currentPlayer = s.players.find(p => p.id === s.currentPlayerId);
+    // Show overlay only when server marks the game as loading and provides lastWinners
+    // (this indicates a round has finished and winners are available).
+    if (s.isLoading && (s as any).lastWinners && (s as any).lastWinners.length > 0) {
+      const lastWinners = (s as any).lastWinners as { id: string, handName: string }[];
+      const winnerInfo = lastWinners[0]; // show primary winner (if split pot, first entry)
+      const winnerPlayer = s.players.find(p => p.id === winnerInfo.id) || null;
+
       window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
         detail: {
-          title: 'Warte auf Spieler...',
-          message: `${currentPlayer?.displayname || 'Gegner'} denkt nach`,
-          timerSeconds: s.turnRemainingSeconds
+          title: 'Gewinner!',
+          message: `${winnerPlayer?.displayname || 'Spieler'} gewinnt mit ${winnerInfo.handName || winnerPlayer?.handName || 'Gewinnende Hand'}`,
+          timerSeconds: 5,
+          boardCards: s.board,
+          winnerCards: winnerPlayer?.cards || [],
+          handName: winnerInfo.handName || winnerPlayer?.handName
         }
       }));
       return;
-    } 
-    
-    // 2. Winning Hand anzeigen (Showdown Phase)
-    // Wir leiten die Gewinner aus den Spielern ab, die nicht gefoldet haben 
-    // und deren handValue dem Maximum entspricht.
-    if (s.phase === 'showdown' && !s.isLoading) {
-      const activePlayers = s.players.filter(p => !p.folded);
-      if (activePlayers.length > 0) {
-        const maxHandValue = Math.max(...activePlayers.map(p => p.handValue || 0));
-        const winners = activePlayers.filter(p => (p.handValue || 0) === maxHandValue);
-        
-        if (winners.length > 0) {
-          const winnerNames = winners.map(w => w.displayname || 'Spieler').join(', ');
-          const winningHandName = winners[0].handName || 'Gewinnende Hand';
-          
-          window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
-            detail: {
-              title: '🏆 Gewinner!',
-              message: `${winnerNames} gewinnt mit ${winningHandName}`,
-              timerSeconds: 5
-            }
-          }));
-          return;
-        }
-      }
-    } 
-    
-    // 3. Overlay schließen wenn keine Pause nötig ist
-    else if (!s.isLoading && s.turnRemainingSeconds === null && s.phase !== 'showdown') {
-      window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
-        detail: { isOpen: false, title: '', message: '' }
-      }));
     }
+
+    // Otherwise close overlay
+    window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
+      detail: { isOpen: false, title: '', message: '' }
+    }));
   }
 
   private startLocalTimerForPlayerTurn(): void {
