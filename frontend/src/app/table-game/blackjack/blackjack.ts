@@ -6,12 +6,11 @@ import { DataService } from '../../services/data-service';
 import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.models';
 import { getCardRank } from '../../services/card-utils';
 import { FormsModule } from '@angular/forms';
-import { PlayerSlot } from '../player-slot/player-slot';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, FormsModule, PlayerSlot],
+  imports: [CommonModule, TableGameComponent, FormsModule],
   templateUrl: './blackjack.html',
   styleUrl: './blackjack.css',
 })

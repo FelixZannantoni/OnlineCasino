@@ -15,7 +15,7 @@
           @for (card of state.board; track $index) {
             <div class="card-flip-wrapper" [class.flipping]="isFlipping('board-' + $index)">
               @if (card.visibility === 'all') {
-                <div class="card" [class.card-hearts]="card.color === \'HEARTS\'" [class.card-diamonds]="card.color === \'DIAMONDS\'" [class.card-spades]="card.color === \'SPADES\'" [class.card-clubs]="card.color === \'CLUBS\'" style="width: 84px; height: 117px;">
+                <div class="card" [class.card-hearts]="card.color === 'HEARTS'" [class.card-diamonds]="card.color === 'DIAMONDS'" [class.card-spades]="card.color === 'SPADES'" [class.card-clubs]="card.color === 'CLUBS'" style="width: 84px; height: 117px;">
                   <div class="card-top"><span class="card-rank">{{ getCardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
                   <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
                   <div class="card-bottom"><span class="card-rank">{{ getCardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
@@ -43,7 +43,7 @@
         }
         @for (card of player.cards; track $index) {
           <div class="card-flip-wrapper" [class.flipping]="isFlipping('player-' + player.id + '-' + $index)">
-            <div class="card" [class.card-hearts]="card.color === \'HEARTS\'" [class.card-diamonds]="card.color === \'DIAMONDS\'" [class.card-spades]="card.color === \'SPADES\'" [class.card-clubs]="card.color === \'CLUBS\'"
+            <div class="card" [class.card-hearts]="card.color === 'HEARTS'" [class.card-diamonds]="card.color === 'DIAMONDS'" [class.card-spades]="card.color === 'SPADES'" [class.card-clubs]="card.color === 'CLUBS'"
                  [style.transform]="'rotate(' + ($index === 0 ? -15 : 15) + 'deg)'"
                  style="width: 84px; height: 117px;">
               <div class="card-top"><span class="card-rank">{{ getCardRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
