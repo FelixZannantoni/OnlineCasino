@@ -6,22 +6,35 @@ import { DataService } from '../../services/data-service';
 import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.models';
 import { getCardRank } from '../../services/card-utils';
 import { FormsModule } from '@angular/forms';
+import { PlayerSlot } from '../player-slot/player-slot';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, FormsModule],
+  imports: [CommonModule, TableGameComponent, FormsModule, PlayerSlot],
   templateUrl: './blackjack.html',
   styleUrl: './blackjack.css',
 })
 export class Blackjack implements OnInit, OnDestroy {
   gameState = signal<BlackjackGameState | null>(null);
   userId: string | null = null;
-  gameId: string = '2';
+  gameId: string = '2'; // Default
   betAmount: number = 10;
   balance: number = 1000;
   pot: number = 0;
   private isBrowser: boolean;
+  protected turnRemaining = signal<number | null>(null);
+  private timerInterval: any = null;
+  // Chip betting UI (copied from roulette)
+  interfaceChipOptions: any; // placeholder to keep typings simple in this file
+  readonly selectedChip = signal(10);
+  readonly chipOptions = [
+    { value: 1, cls: 'ch1' },
+    { value: 5, cls: 'ch5' },
+    { value: 25, cls: 'ch25' },
+    { value: 100, cls: 'ch100' },
+    { value: 500, cls: 'ch500' },
+  ];
 
   // Keys of cards currently playing their flip animation
   flippingCards = new Set<string>();
@@ -47,6 +60,9 @@ export class Blackjack implements OnInit, OnDestroy {
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.userId = this.dataService.getUserId();
+    if (this.userId) {
+      this.gameId = `bj-${this.userId}`;
+    }
   }
 
   ngOnInit() {
@@ -62,6 +78,14 @@ export class Blackjack implements OnInit, OnDestroy {
       this.triggerFlipsForNewlyRevealedCards(state);
       this.gameState.set(state);
 
+      // Handle Timer
+      if (state.turnRemainingSeconds !== null) {
+        this.turnRemaining.set(state.turnRemainingSeconds);
+        this.startLocalTimer();
+      } else {
+        this.stopLocalTimer();
+      }
+
       const me = state.players.find(p => p.id === this.userId);
       if (me) {
         if (typeof me.balance === 'number') this.balance = me.balance;
@@ -75,8 +99,23 @@ export class Blackjack implements OnInit, OnDestroy {
     });
   }
 
+  private startLocalTimer(): void {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timerInterval = setInterval(() => {
+      this.turnRemaining.update(v => v !== null && v > 0 ? v - 1 : 0);
+    }, 1000);
+  }
+
+  private stopLocalTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+    this.turnRemaining.set(null);
+  }
+
   ngOnDestroy() {
-    if (!this.isBrowser) return;
+    this.stopLocalTimer();
     this.socketService.offEvent('game_state');
     this.socketService.offEvent('error');
   }
@@ -128,7 +167,16 @@ export class Blackjack implements OnInit, OnDestroy {
   }
 
   placeBet() {
-    this.socketService.emitEvent('player_move', { gameId: this.gameId, action: 'bet', amount: this.betAmount });
+    const amount = this.selectedChip();
+    this.socketService.emitEvent('player_move', {
+      gameId: this.gameId,
+      action: 'bet',
+      amount
+    });
+  }
+
+  selectChip(value: number): void {
+    this.selectedChip.set(value);
   }
 
   get canDouble(): boolean {

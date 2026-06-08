@@ -5,7 +5,7 @@ import { PokerDeck } from "./pokerDeck";
 import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
-import { pokerService, userService } from "../app";
+import { userService } from "../app";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -29,8 +29,8 @@ export class Poker extends CardGame<PokerPlayer> {
     private lastWinners: { id: string, handName: string }[] = [];
 
     private isLoading: boolean = false;
-    private turnTimer: NodeJS.Timeout | null = null;
-    private turnEndTime: number | null = null;
+    protected turnTimer: NodeJS.Timeout | null = null;  //zu protected, wegen plötzlichem error
+    protected turnEndTime: number | null = null;    //zu protected, wegen plötzlichem error
     private readonly TURN_TIMEOUT_MS: number = 10000; // 10 seconds for Poker
 
     private gameStartTimer: NodeJS.Timeout | null = null;
@@ -40,6 +40,7 @@ export class Poker extends CardGame<PokerPlayer> {
     constructor(gameId: string) {
         super(gameId);
         this.pokerDeck = new PokerDeck();
+        this.defaultTurnTimeoutMs = 10000; // Poker uses 10s
     }
 
     public handlePlayerDisconnect(playerId: string) {
@@ -79,29 +80,22 @@ export class Poker extends CardGame<PokerPlayer> {
         }, this.GAME_START_DELAY_MS);
     }
 
-    private startTurnTimer() {
+    protected startTurnTimer() {
         this.stopTurnTimer();
         const currentPlayer = this.players[this.currentPlayerIndex];
         if (!currentPlayer) return;
 
-        this.turnEndTime = Date.now() + this.TURN_TIMEOUT_MS;
-        console.log(`Starting turn timer for player ${currentPlayer.getPlayerId()} (Ends at: ${new Date(this.turnEndTime).toLocaleTimeString()})`);
-
-        this.turnTimer = setTimeout(() => {
+        this.startTurnTimerInherited(this.defaultTurnTimeoutMs, () => {
             if (currentPlayer.getBet() == this.currentBet) {
                 this.handlePlayerMove(currentPlayer.getPlayerId(), "check");
             } else {
                 this.handlePlayerMove(currentPlayer.getPlayerId(), "fold");
             }
-        }, this.TURN_TIMEOUT_MS);
+        });
     }
 
-    private stopTurnTimer() {
-        if (this.turnTimer) {
-            clearTimeout(this.turnTimer);
-            this.turnTimer = null;
-        }
-        this.turnEndTime = null;
+    public startTurnTimerInherited(timeoutMs: number, onTimeout: () => void) {
+        super.startTurnTimer(timeoutMs, onTimeout);
     }
 
     public startGame() {

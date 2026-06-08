@@ -7,6 +7,7 @@ export class BlackjackPlayer extends CardGamePlayer {
     private pressedStand: boolean;
     private pressedDouble: boolean;
     private handValue: number;
+    private busted: boolean;
 
     constructor(playerId: string, username: string, displayname: string, balance: number) {
         super(playerId, username, displayname, balance);
@@ -14,6 +15,7 @@ export class BlackjackPlayer extends CardGamePlayer {
         this.pressedStand = false;
         this.pressedDouble = false;
         this.handValue = 0;
+        this.busted = false;
     }
 
     public getHandValue(): number {
@@ -31,6 +33,10 @@ export class BlackjackPlayer extends CardGamePlayer {
 
     public getPressedDouble(): boolean {
         return this.pressedDouble;
+    }
+
+    public isBusted(): boolean {
+        return this.busted;
     }
 
     public userPressedHit() {
@@ -61,6 +67,14 @@ export class BlackjackPlayer extends CardGamePlayer {
         this.pressedStand = false;
         this.pressedDouble = false;
         this.madeMove = false;
+    }
+
+    public userBusted(): void {
+        this.busted = true;
+    }
+
+    public resetBust(): void {
+        this.busted = false;
     }
 
     public checkHandValue() {
