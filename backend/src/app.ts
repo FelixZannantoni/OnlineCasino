@@ -13,6 +13,7 @@ import { rouletteRouter } from "./router/roulette-router";
 import { PokerService } from "./services/poker-service";
 import { slotmachineRouter } from "./router/slotmachine-router";
 import { Poker } from "./gameLogic/poker";
+import { Roulette } from "./gameLogic/roulette";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 import { RouletteService } from "./services/roulette-service";
@@ -82,7 +83,6 @@ io.on("connection", (socket: Socket) => {
         console.log(`User ${userId} joined game: ${gameId}`);
 
         const user = await userService.getUserById(userId);
-        const startBalance: number = 1000;
 
         let game: any = PokerService.pokerGames.find(
             (g) => g.getGameId().toString() === gameId.toString()
@@ -90,10 +90,20 @@ io.on("connection", (socket: Socket) => {
         let service: any = pokerService;
 
         if (!game) {
-            // Check if it's a blackjack game
-            const gameName = stakes ? `Blackjack ${stakes}` : undefined;
+            const gameName = stakes ? `Blackjack ${stakes}` : "Blackjack";
             game = blackjackService.getOrCreateGame(gameId, gameName);
             service = blackjackService;
+        }
+
+        if (!game) {
+            game = PokerService.pokerGames.find((g) => g.getGameId().toString() === gameId.toString());
+            if (!game && stakes) {
+                const gameName = stakes ? `Poker ${stakes}` : "Poker";
+                const newPoker = new Poker(gameId, gameName);
+                PokerService.pokerGames.push(newPoker);
+                game = newPoker;
+            }
+            service = pokerService;
         }
 
         if (!game) {
@@ -101,9 +111,10 @@ io.on("connection", (socket: Socket) => {
                 (g) => g.getGameId().toString() === gameId.toString()
             );
             if (!game && stakes) {
-                // If roulette game doesn't exist and we have stakes, maybe create it?
-                // For now roulette service doesn't have getOrCreateGame like blackjack
-                // Let's just use existing logic or add it if needed.
+                const gameName = stakes ? `Roulette ${stakes}` : "Roulette";
+                const newRoulette = new Roulette(gameId, gameName);
+                RouletteService.rouletteGames.push(newRoulette);
+                game = newRoulette;
             }
             service = rouletteService;
         }
@@ -112,10 +123,12 @@ io.on("connection", (socket: Socket) => {
             socket.emit("error", { message: `Game ${gameId} not found` });
             return;
         }
-
-        const username = user?.username ?? '-';
+        if(user == null) {
+            //TODO
+        }
+        const username = user!.username ?? '-';
         const displayname = user?.displayname || user?.username || 'Guest';
-        const balance = user?.balance ?? startBalance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
+        const balance = user!.balance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
         if (!existingPlayer) {
