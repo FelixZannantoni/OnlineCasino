@@ -54,15 +54,15 @@ export class Poker implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly route = inject(ActivatedRoute);
   private readonly socketService = inject(SocketService);
-  protected readonly dataService = inject(DataService);
+  private readonly dataService = inject(DataService);
 
   balance = 1000;
   pot = 0;
 
-  public gameState = signal<PokerGameState | null>(null);
-  protected isProcessing = signal<boolean>(false);
-  protected turnRemaining = signal<number | null>(null);
-  protected gameStartsIn = signal<number | null>(null);
+  gameState = signal<PokerGameState | null>(null);
+  isProcessing = signal<boolean>(false);
+  turnRemaining = signal<number | null>(null);
+  gameStartsIn = signal<number | null>(null);
   private playerTurnTimer: any = null;
   private gameStartTimer: any = null;
 
@@ -71,39 +71,39 @@ export class Poker implements OnInit {
 
   private readonly gameId = signal<string>('1');
 
-  protected readonly getCardRank = getCardRank;
+  getCardRank = getCardRank;
 
   // Local state for the betting UI
-  protected selectedBetAmount = signal<number>(20);
-  protected showBetSlider = signal<boolean>(false);
+  selectedBetAmount = signal<number>(20);
+  showBetSlider = signal<boolean>(false);
 
-  protected readonly minBet = computed(() => {
+  minBet = computed(() => {
     const state = this.gameState();
     if (!state) return 10;
     // Standard raise is usually at least currentBet + bigBlind (10)
     return Math.max(10, state.currentBet + 10);
   });
 
-  protected readonly maxBet = computed(() => {
+  maxBet = computed(() => {
     const me = this.myPlayer();
     if (!me) return 1000;
     return me.balance;
   });
 
-  protected readonly myPlayer = computed(() => {
+  myPlayer = computed(() => {
     const state = this.gameState();
     if (!state) return null;
     return state.players.find(p => p.id === this.dataService.userId()) || null;
   });
 
-  protected readonly opponents = computed(() => {
+  opponents = computed(() => {
     const state = this.gameState();
     if (!state) return [];
     // Alle Spieler, die NICHT ich sind
     return state.players.filter(p => p.id !== this.dataService.userId());
   });
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const id = this.route.snapshot.paramMap.get('id') ?? '1';
@@ -135,7 +135,7 @@ export class Poker implements OnInit {
 
       // Keep table-game bindings in sync
       if (typeof s?.pot === 'number') this.pot = s.pot;
-      
+
       const me = s.players.find((p) => p.id === userId);
       if (me) {
         if (typeof me.balance === 'number') this.balance = me.balance;
@@ -208,7 +208,7 @@ export class Poker implements OnInit {
     return state.players.find((p) => p.id === meId) ?? null;
   }
 
-  protected isMyTurn = computed(() => {
+  isMyTurn = computed(() => {
     const state = this.gameState();
     if (!state) return false;
     return state.currentPlayerId === this.dataService.userId();
