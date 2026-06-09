@@ -27,7 +27,7 @@ export class Blackjack implements OnInit, OnDestroy {
   // Chip betting UI (copied from roulette)
   interfaceChipOptions: any; // placeholder to keep typings simple in this file
   readonly selectedChip = signal(10);
-  readonly chipOptions = [
+  readonly chipOptions = [//TODO get values from backend
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },

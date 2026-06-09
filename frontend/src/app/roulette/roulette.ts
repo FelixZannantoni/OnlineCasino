@@ -101,7 +101,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
   readonly colLabels = ['3rd Col', '2nd Col', '1st Col'];
 
-  readonly chipOptions: ChipOption[] = [
+  readonly chipOptions: ChipOption[] = [//TODO get values form Backend
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },
