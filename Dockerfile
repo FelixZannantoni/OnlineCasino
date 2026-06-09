@@ -23,11 +23,19 @@ WORKDIR /app
 COPY --from=backend-build /app ./
 
 # Improved Frontend Asset Management:
-# 1. Copy the entire dist folder to public
 COPY --from=frontend-build /frontend/dist/frontend ./public
-# 2. If 'browser' folder exists (typical in SSR), move its contents up and clean up
+
+# Fix für fehlende index.html bei Angular SSR/Prerendering
 RUN if [ -d "./public/browser" ]; then \
       cp -r ./public/browser/* ./public/ && \
+      # Falls keine index.html im Root ist, nimm die index.csr.html oder die aus dem login-Ordner
+      if [ ! -f "./public/index.html" ]; then \
+        if [ -f "./public/index.csr.html" ]; then \
+          cp ./public/index.csr.html ./public/index.html; \
+        elif [ -f "./public/login/index.html" ]; then \
+          cp ./public/login/index.html ./public/index.html; \
+        fi \
+      fi && \
       rm -rf ./public/browser ./public/server; \
     fi
 
