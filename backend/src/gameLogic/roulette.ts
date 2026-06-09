@@ -1,7 +1,7 @@
 import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
 import { userService } from "../app";
-import { DEFAULT_CHIPS } from "../config";
+import { DEFAULT_CHIPS, getChipsForGame } from "../config";
 
 export enum RoulettePhase {
     WAITING = "WAITING",
@@ -15,9 +15,15 @@ export class Roulette extends Game<RoulettePlayer> {
     private currentPhase: RoulettePhase = RoulettePhase.WAITING;
     private lastWinningNumber: number | null = null;
     private remainingTime: number = 0;
+    private chipOptions: any[] = DEFAULT_CHIPS;
 
-    constructor(gameId: string) {
-        super(gameId);
+    constructor(gameId: string, gameName: string = "") {
+        super(gameId, gameName);
+        this.chipOptions = getChipsForGame(this.getGameName());
+    }
+
+    public setChipOptions(options: any[]) {
+        this.chipOptions = options;
     }
 
     public async startGame() {
@@ -225,7 +231,7 @@ export class Roulette extends Game<RoulettePlayer> {
             phase: this.currentPhase,
             lastWinningNumber: this.lastWinningNumber,
             remainingTime: this.remainingTime,
-            chipOptions: DEFAULT_CHIPS,
+            chipOptions: this.chipOptions,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),

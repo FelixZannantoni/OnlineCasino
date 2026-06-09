@@ -5,7 +5,7 @@ import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { Player } from "./player";
 import { userService } from "../app";
-import { DEFAULT_CHIPS } from "../config";
+import { DEFAULT_CHIPS, getChipsForGame } from "../config";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BLACKJACK_BOT_ID: string = "BlackjackBot";
@@ -24,12 +24,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     private isRunning: boolean = false;
     private currentPhase: BlackjackPhase = BlackjackPhase.WAITING;
     private currentPlayerId: string | null = null;
+    private chipOptions: any[] = DEFAULT_CHIPS;
 
-    constructor(gameId: string) {
-        super(gameId);
+    constructor(gameId: string, gameName: string = "") {
+        super(gameId, gameName);
         this.blackjackDeck = new BlackjackDeck();
         this.blackJackBot = new BlackjackBot();
         this.defaultTurnTimeoutMs = 10000;
+        this.chipOptions = getChipsForGame(this.getGameName());
+    }
+
+    public setChipOptions(options: any[]) {
+        this.chipOptions = options;
     }
 
     public async startGame() {
@@ -332,7 +338,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             currentPlayerId: this.currentPlayerId,
             turnEndsAt: this.turnEndTime,
             turnRemainingSeconds: this.getTurnRemainingSeconds(),
-            chipOptions: DEFAULT_CHIPS,
+            chipOptions: this.chipOptions,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),

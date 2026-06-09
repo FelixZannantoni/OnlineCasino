@@ -45,6 +45,7 @@ export class RouletteService {
             
             type GameRow = {
                 gameId: number;
+                name: string;
                 type: string;
             };
 
@@ -55,12 +56,12 @@ export class RouletteService {
 
             if (result.length === 0) {
                 console.log("DEBUG: No Roulette games found in DB, manually creating one.");
-                const roulette = new Roulette("3");
+                const roulette = new Roulette("3", "Roulette Table 1");
                 RouletteService.rouletteGames.push(roulette);
             } else {
                 result.forEach(gameData => {
                     console.log("DEBUG: Initializing Roulette game with ID:", gameData.gameId);
-                    const roulette = new Roulette(gameData.gameId.toString()); console.log("DEBUG: Created Roulette game instance with ID:", gameData.gameId.toString());
+                    const roulette = new Roulette(gameData.gameId.toString(), gameData.name); console.log("DEBUG: Created Roulette game instance with ID:", gameData.gameId.toString());
                     RouletteService.rouletteGames.push(roulette);
                 });
             }

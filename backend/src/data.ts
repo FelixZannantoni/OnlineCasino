@@ -122,6 +122,18 @@ export class DB {
                 type: "ROULETTE"
             });
 
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 4,
+                name: "Blackjack High",
+                type: "BLACKJACK"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 5,
+                name: "Roulette Middle",
+                type: "ROULETTE"
+            });
+
         } catch(err) {
             console.error("Error inserting sample data:", err);
         }

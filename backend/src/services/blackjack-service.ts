@@ -55,6 +55,7 @@ export class BlackjackService {
 
             type GameRow = {
                 gameId: string;
+                name: string;
                 type: string;
             };
 
@@ -62,7 +63,7 @@ export class BlackjackService {
                 .all(type);
 
             result.forEach(gameData => {
-                const blackjack = new Blackjack(gameData.gameId);
+                const blackjack = new Blackjack(gameData.gameId, gameData.name);
                 BlackjackService.blackjackGames.push(blackjack);
             });
 
@@ -73,13 +74,13 @@ export class BlackjackService {
         }
     }
 
-    getOrCreateGame(gameId: string): Blackjack {
+    getOrCreateGame(gameId: string, gameName?: string): Blackjack {
         const gameResult = this.getGameById(gameId);
         if (gameResult.game) {
             return gameResult.game;
         }
 
-        const newGame = new Blackjack(gameId);
+        const newGame = new Blackjack(gameId, gameName ?? `Blackjack ${gameId}`);
         BlackjackService.blackjackGames.push(newGame);
         return newGame;
     }

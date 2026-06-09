@@ -31,10 +31,11 @@ export const DEFAULT_CHIPS = LOW_CHIPS;
 
 export function getChipsForGame(gameName: string): ChipOption[] {
     const name = gameName.toLowerCase();
-    if (name.includes('vip')) {
+    if (name.includes('high')) {
         return HIGH_CHIPS;
-    } else if (name.includes('high stakes')) {
+    } else if (name.includes('middle')) {
         return MIDDLE_CHIPS;
     }
     return LOW_CHIPS;
 }
+

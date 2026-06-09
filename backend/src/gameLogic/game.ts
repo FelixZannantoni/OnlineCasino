@@ -4,15 +4,25 @@ import { Player } from "./player";
 export class Game<T extends Player = Player> extends EventEmitter {
     protected players: T[];
     private gameId: string;
+    private gameName: string;
 
-    constructor(gameId: string) {
+    constructor(gameId: string, gameName: string = "") {
         super();
         this.players = [];
         this.gameId = gameId;
+        this.gameName = gameName || gameId;
     }
 
     public getGameId() {
         return this.gameId;
+    }
+
+    public getGameName() {
+        return this.gameName;
+    }
+
+    public setGameName(name: string) {
+        this.gameName = name;
     }
 
     public addPlayer(player: T): void {
