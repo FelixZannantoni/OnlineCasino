@@ -1,6 +1,7 @@
 import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
 import { userService } from "../app";
+import { DEFAULT_CHIPS } from "../config";
 
 export enum RoulettePhase {
     WAITING = "WAITING",
@@ -224,6 +225,7 @@ export class Roulette extends Game<RoulettePlayer> {
             phase: this.currentPhase,
             lastWinningNumber: this.lastWinningNumber,
             remainingTime: this.remainingTime,
+            chipOptions: DEFAULT_CHIPS,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),

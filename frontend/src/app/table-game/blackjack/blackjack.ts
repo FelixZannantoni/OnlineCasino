@@ -27,13 +27,13 @@ export class Blackjack implements OnInit, OnDestroy {
   // Chip betting UI (copied from roulette)
   interfaceChipOptions: any; // placeholder to keep typings simple in this file
   readonly selectedChip = signal(10);
-  readonly chipOptions = [//TODO get values from backend
+  readonly chipOptions = signal<any[]>([
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },
     { value: 100, cls: 'ch100' },
     { value: 500, cls: 'ch500' },
-  ];
+  ]);
 
   // Keys of cards currently playing their flip animation
   flippingCards = new Set<string>();
@@ -74,6 +74,9 @@ export class Blackjack implements OnInit, OnDestroy {
     this.socketService.onEvent('game_state', (data: any) => {
       console.log('Blackjack State Update:', data);
       const state = data as BlackjackGameState;
+      if (state.chipOptions) {
+        this.chipOptions.set(state.chipOptions);
+      }
       this.triggerFlipsForNewlyRevealedCards(state);
       this.gameState.set(state);
 

@@ -5,6 +5,7 @@ import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { Player } from "./player";
 import { userService } from "../app";
+import { DEFAULT_CHIPS } from "../config";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BLACKJACK_BOT_ID: string = "BlackjackBot";
@@ -331,6 +332,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             currentPlayerId: this.currentPlayerId,
             turnEndsAt: this.turnEndTime,
             turnRemainingSeconds: this.getTurnRemainingSeconds(),
+            chipOptions: DEFAULT_CHIPS,
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),

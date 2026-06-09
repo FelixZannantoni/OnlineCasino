@@ -24,6 +24,7 @@ export interface BlackjackGameState {
     currentPlayerId: string | null;
     turnEndsAt: number | null;
     turnRemainingSeconds: number | null;
+    chipOptions?: { value: number; cls: string }[];
     players: BlackjackPlayer[];
     bot: {
         id: string;

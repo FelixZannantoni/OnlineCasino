@@ -132,7 +132,7 @@
             <div class="tray">
                 <span class="tray-lbl" id="chip-label">Chip</span>
                 <div role="radiogroup" aria-labelledby="chip-label" style="display:flex;gap:8px">
-                    @for (c of chipOptions; track c.value) {
+                    @for (c of chipOptions(); track c.value) {
                     <div class="chip-btn" [class]="c.cls" [class.on]="selectedChip() === c.value" role="radio"
                         tabindex="0" [attr.aria-checked]="selectedChip() === c.value"
                         [attr.aria-label]="'Select $' + c.value + ' chip'" (click)="selectChip(c.value)"

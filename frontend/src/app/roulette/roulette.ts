@@ -101,13 +101,13 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
   readonly colLabels = ['3rd Col', '2nd Col', '1st Col'];
 
-  readonly chipOptions: ChipOption[] = [//TODO get values form Backend
+  readonly chipOptions = signal<ChipOption[]>([
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },
     { value: 100, cls: 'ch100' },
     { value: 500, cls: 'ch500' },
-  ];
+  ]);
 
   readonly dozens: DozenBet[] = [
     { label: '1st Dozen' },
@@ -165,6 +165,9 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
   private handleGameState(state: any): void {
     console.log('Roulette State Update:', state);
+    if (state.chipOptions) {
+      this.chipOptions.set(state.chipOptions);
+    }
     this.players.set(state.players);
     const me = state.players.find((p: any) => p.id === this.userId);
     if (me) {
