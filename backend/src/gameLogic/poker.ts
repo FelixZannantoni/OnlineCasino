@@ -37,10 +37,19 @@ export class Poker extends CardGame<PokerPlayer> {
     private gameStartEndTime: number | null = null;
     private readonly GAME_START_DELAY_MS: number = 10000; // 10 seconds delay before starting the game, so enough players can join
 
-    constructor(gameId: string) {
-        super(gameId);
+    constructor(gameId: string, gameName: string = "") {
+        super(gameId, gameName);
         this.pokerDeck = new PokerDeck();
-        this.defaultTurnTimeoutMs = 10000; // Poker uses 10s
+        this.defaultTurnTimeoutMs = 10000;
+
+        const name = this.getGameName().toLowerCase();
+        if (name.includes('high')) {
+            this.defaultBet = 100;
+        } else if (name.includes('middle')) {
+            this.defaultBet = 50;
+        } else {
+            this.defaultBet = 10;
+        }
     }
 
     public handlePlayerDisconnect(playerId: string) {
