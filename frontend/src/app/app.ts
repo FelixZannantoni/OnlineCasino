@@ -20,8 +20,7 @@ import { PauseOverlay } from './pause-overlay/pause-overlay';
     SettingsOverlay,
     PauseOverlay,
     QuitOverlay,
-    InformationOverlay,
-    PauseOverlay
+    InformationOverlay
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -32,7 +31,7 @@ export class App {
 
   constructor(private router: Router) {
     this.showLogin = this.shouldShowLogin(this.router.url);
-    
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
