@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, signal, computed, Inject, PLATFORM_ID } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TableGameComponent } from '../table-game';
 import { SocketService } from '../../services/socket.service';
@@ -55,6 +56,7 @@ export class Blackjack implements OnInit, OnDestroy {
   constructor(
     private socketService: SocketService,
     private dataService: DataService,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -67,8 +69,10 @@ export class Blackjack implements OnInit, OnDestroy {
   ngOnInit() {
     if (!this.isBrowser) return;
 
+    const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;
+
     if (this.userId) {
-      this.socketService.joinGame(this.gameId, this.userId);
+      this.socketService.joinGame(this.gameId, this.userId, stakes);
     }
 
     this.socketService.onEvent('game_state', (data: any) => {

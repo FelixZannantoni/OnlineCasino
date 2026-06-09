@@ -14,6 +14,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../services/socket.service';
 import { DataService } from '../services/data-service';
 
@@ -58,6 +59,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   private readonly zone = inject(NgZone);
   private readonly socketService = inject(SocketService);
   private readonly dataService = inject(DataService);
+  private readonly route = inject(ActivatedRoute);
   private isBrowser: boolean;
 
   //
@@ -148,9 +150,11 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
+    const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;
+
     if (this.userId) {
       // Allow time for the socket to connect before joining
-      this.socketService.joinGame(this.gameId, this.userId);
+      this.socketService.joinGame(this.gameId, this.userId, stakes);
     }
 
     this.socketService.onEvent('game_state', (data: any) => {
