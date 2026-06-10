@@ -27,7 +27,7 @@ export class RoundService {
             }
         }
 
-        const result = connection.prepare(`INSERT INTO game_rounds (gameId, startTime, status) VALUES (?, ?, 'OPEN')`).run(numericGameId);
+        const result = connection.prepare(`INSERT INTO game_rounds (gameId, startTime, status) VALUES (?, ?, 'OPEN')`).run(numericGameId, (new Date()).toISOString());
 
         return result.lastInsertRowid as number;
     }
