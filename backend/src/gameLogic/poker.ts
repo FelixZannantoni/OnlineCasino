@@ -75,7 +75,7 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     public startGameStartTimer() {
-        if(this.gameStartTimer) {
+        if (this.gameStartTimer) {
             // reset timer if it's already running (e.g. a new player joined)
             clearTimeout(this.gameStartTimer);
         }
@@ -116,7 +116,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.startNewHand(true);
     }
 
-    private startNewHand(isFirstHand: boolean = false) {
+    private async startNewHand(isFirstHand: boolean = false) {
         if (this.players.length < 2) {
             this.isStarted = false;
             this.stopTurnTimer();
@@ -124,6 +124,14 @@ export class Poker extends CardGame<PokerPlayer> {
             this.players.forEach(p => p.setDealerChip(false));
             return;
         }
+
+        // End previous round if any
+        if (this.currentRoundId !== -1) {
+            await roundService.endRound(this.currentRoundId);
+        }
+
+        // Start new round in DB
+        this.currentRoundId = await roundService.startRound(this.getGameId());
 
         this.isLoading = false;
         this.lastWinners = [];
@@ -140,6 +148,13 @@ export class Poker extends CardGame<PokerPlayer> {
         this.resetPlayers();
         this.handCardsOut();
         this.setInitialBlinds();
+
+        // Record initial blinds as bets
+        for (const player of this.players) {
+            if (player.getBet() > 0) {
+                await roundService.recordPlayerBet(this.currentRoundId, player.getPlayerId(), player.getBet());
+            }
+        }
 
         // Im Pre-Flop beginnt der Spieler nach dem Big Blind
         const dealerIdx = CardGamePlayer.playerWithDealerChip(this.players);
@@ -260,7 +275,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.emit("gameState", this.getGameState());
     }
 
-    private handleShowdown() {
+    private async handleShowdown() {
         this.stopTurnTimer();
 
         // Reveal cards of all players who didn't fold
@@ -302,6 +317,13 @@ export class Poker extends CardGame<PokerPlayer> {
             handName: this.getHandName(w.getCardCombinationValue())
         }));
 
+        // Record profit for all players
+        for (const player of this.players) {
+            const isWinner = winners.some(w => w.getPlayerId() === player.getPlayerId());
+            const profit = isWinner ? winAmount - player.getBet() : -player.getBet();
+            await roundService.updatePlayerProfit(this.currentRoundId, player.getPlayerId(), profit);
+        }
+
         this.isLoading = true;
         this.emit("gameState", this.getGameState());
 
@@ -340,11 +362,13 @@ export class Poker extends CardGame<PokerPlayer> {
                     try {
                         player.makeIncreasedBet(this.currentBet);
                         this.pot += diff;
+                        await roundService.recordPlayerBet(this.currentRoundId, playerId, diff);
                     } catch (e) {
                         // All-in call
                         const remaining = player.getBalance();
                         player.makeIncreasedBet(player.getBet() + remaining);
                         this.pot += remaining;
+                        await roundService.recordPlayerBet(this.currentRoundId, playerId, remaining);
                     }
                 }
                 break;
@@ -365,6 +389,7 @@ export class Poker extends CardGame<PokerPlayer> {
                     this.currentBet = totalNewBet;
                     this.pot += additionalContribution;
                     this.hasActedThisRound.clear();
+                    await roundService.recordPlayerBet(this.currentRoundId, playerId, additionalContribution);
                 } catch (e) {
                     this.startTurnTimer();
                     return { success: false, message: "Not enough money" };
@@ -387,6 +412,13 @@ export class Poker extends CardGame<PokerPlayer> {
                 id: winner.getPlayerId(),
                 handName: "Last player standing"
             }];
+
+            // Update profit for only player left
+            for (const p of this.players) {
+                const profit = p.getPlayerId() === winner.getPlayerId() ? this.pot - p.getBet() : -p.getBet();
+                await roundService.updatePlayerProfit(this.currentRoundId, p.getPlayerId(), profit);
+            }
+
             this.isLoading = true;
             this.emit("gameState", this.getGameState());
             setTimeout(() => this.startNewHand(), 3000);
@@ -427,7 +459,6 @@ export class Poker extends CardGame<PokerPlayer> {
 
         return allActed && allMatched;
     }
-
     public getGameState() {
         const now = Date.now();
         const turnRemainingSeconds = this.turnEndTime ? Math.max(0, Math.round((this.turnEndTime - now) / 1000)) : null;
@@ -435,6 +466,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
         return {
             gameId: this.getGameId(),
+            roundId: this.currentRoundId,
             phase: this.phase,
             pot: this.pot,
             currentBet: this.currentBet,

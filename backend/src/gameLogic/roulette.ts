@@ -48,6 +48,14 @@ export class Roulette extends Game<RoulettePlayer> {
 
     private async playRound() {
         this.resetBets();
+
+        // End previous round if any
+        if (this.currentRoundId !== -1) {
+            await roundService.endRound(this.currentRoundId);
+        }
+        // Start new round in DB
+        this.currentRoundId = await roundService.startRound(this.getGameId());
+
         this.currentPhase = RoulettePhase.BETTING;
         await this.waitForBets();
 
@@ -136,6 +144,7 @@ export class Roulette extends Game<RoulettePlayer> {
             try {
                 player.placeBet(field as rouletteField, amount);
                 await userService.updateUserBalance(playerId, player.getBalance());
+                await roundService.recordPlayerBet(this.currentRoundId, playerId, amount);
                 this.emit("playerBet", { playerId });
                 return { success: true, message: "Bet placed" };
             } catch (e) {
@@ -217,6 +226,10 @@ export class Roulette extends Game<RoulettePlayer> {
                 player.winMoney(totalWin);
                 await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
             }
+
+            // Record profit
+            const profit = totalWin - player.getBet();
+            await roundService.updatePlayerProfit(this.currentRoundId, player.getPlayerId(), profit);
         }
     }
 
@@ -227,6 +240,7 @@ export class Roulette extends Game<RoulettePlayer> {
     public getGameState() {
         return {
             gameId: this.getGameId(),
+            roundId: this.currentRoundId,
             isRunning: this.isRunning,
             phase: this.currentPhase,
             lastWinningNumber: this.lastWinningNumber,
