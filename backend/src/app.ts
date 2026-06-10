@@ -17,6 +17,7 @@ import { Roulette } from "./gameLogic/roulette";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 import { RouletteService } from "./services/roulette-service";
+import { RoundService } from "./services/round-service";
 
 const PORT = process.env.PORT || 3000;
 
@@ -70,7 +71,8 @@ const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
 const rouletteService: RouletteService = new RouletteService();
 const userService: UserService = new UserService();
-export { pokerService, blackjackService, rouletteService, userService };
+const roundService: RoundService = new RoundService();
+export { pokerService, blackjackService, rouletteService, userService, roundService };
 
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);

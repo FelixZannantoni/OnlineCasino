@@ -4,7 +4,7 @@ import { BlackjackPlayer } from "./blackjackPlayer";
 import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { Player } from "./player";
-import { userService } from "../app";
+import { userService, roundService } from "../app";
 import { DEFAULT_CHIPS, getChipsForGame } from "../config";
 
 export const PLAYER_CARDS_NUMBER: number = 2;

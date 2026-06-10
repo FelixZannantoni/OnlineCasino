@@ -1,6 +1,6 @@
 import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
-import { userService } from "../app";
+import { userService, roundService } from "../app";
 import { DEFAULT_CHIPS, getChipsForGame } from "../config";
 
 export enum RoulettePhase {
