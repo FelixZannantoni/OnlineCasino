@@ -6,6 +6,7 @@ import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
 import { userService } from "../app";
+import { getGameMode, getPokerDefaultBet, getPokerTipAmount, GameMode } from "../config";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -21,6 +22,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private defaultBet: number = 10;
     private currentBet: number = 0;
     private pot: number = 0;
+    private mode: GameMode;
 
     private phase: GamePhase = 'pre-flop';
     private currentPlayerIndex: number = 0;
@@ -42,14 +44,8 @@ export class Poker extends CardGame<PokerPlayer> {
         this.pokerDeck = new PokerDeck();
         this.defaultTurnTimeoutMs = 10000;
 
-        const name = this.getGameName().toLowerCase();
-        if (name.includes('high')) {
-            this.defaultBet = 100;
-        } else if (name.includes('middle')) {
-            this.defaultBet = 50;
-        } else {
-            this.defaultBet = 10;
-        }
+        this.mode = getGameMode(this.getGameName());
+        this.defaultBet = getPokerDefaultBet(this.mode);
     }
 
     public handlePlayerDisconnect(playerId: string) {
@@ -65,7 +61,8 @@ export class Poker extends CardGame<PokerPlayer> {
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
         try {
-            player.makeTip(10);
+            const tipAmount = getPokerTipAmount(this.mode);
+            player.makeTip(tipAmount);
             await userService.updateUserBalance(playerId, player.getBalance());
             this.emit("gameState", this.getGameState());
             return { success: true, message: "Dealer: Thank you for the tip!" };
