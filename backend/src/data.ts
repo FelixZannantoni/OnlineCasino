@@ -41,7 +41,6 @@ export class DB {
             CREATE TABLE IF NOT EXISTS users (
                 uuid text PRIMARY KEY,
                 userName text UNIQUE,
-                socialId text UNIQUE,
                 passwordHash text,
                 email text,
                 balance real not null default 1000,
@@ -157,8 +156,8 @@ export class DB {
                 const isFromGithub: number = 0;
                 const lastOnline: string = new Date().toISOString();
 
-                await connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount, isFromGithub,
-                    lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
+                await connection.prepare(`INSERT INTO users (uuid, userName, passwordHash, email, displayName, streakCount, isFromGithub,
+                    lastOnline) VALUES (:uuid, :username, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
                 `).run({
                     uuid: uuid,
                     username: username,
