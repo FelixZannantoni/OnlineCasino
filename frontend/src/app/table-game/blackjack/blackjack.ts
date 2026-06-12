@@ -20,6 +20,7 @@ export class Blackjack implements OnInit, OnDestroy {
   gameState = signal<BlackjackGameState | null>(null);
   userId: string | null = null;
   gameId: string = '2'; // Default
+  gameName: string = 'Blackjack';
   betAmount: number = 10;
   balance: number = 1000;
   pot: number = 0;
@@ -55,30 +56,35 @@ export class Blackjack implements OnInit, OnDestroy {
   });
 
   constructor(
-    private socketService: SocketService,
-    private dataService: DataService,
-    private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) private platformId: Object
+  private socketService: SocketService,
+  private dataService: DataService,
+  private route: ActivatedRoute,
+  @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-    this.userId = this.dataService.getUserId();
-    const modeParam = this.route.snapshot.queryParamMap.get('mode');
-    const modeConfig = getModeConfigByMode(modeParam);
-    this.gameId = modeConfig.blackjackId;
+  this.isBrowser = isPlatformBrowser(this.platformId);
+  this.userId = this.dataService.getUserId();
+  const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
+  const modeConfig = getModeConfigByMode(modeParam);
+  this.gameId = modeConfig.blackjackId; // e.g., 'blackjack-low'
+
+  // Use a unique ID for the game room, but pass the name for mode detection
+  this.gameName = `Blackjack ${modeParam}`; 
   }
 
   ngOnInit() {
-    if (!this.isBrowser) return;
+  if (!this.isBrowser) return;
 
-    const modeParam = this.route.snapshot.queryParamMap.get('mode');
-    const { minBet, maxBet } = getBetLimits(modeParam);
-    this.betAmount = minBet;
-    this.chipOptions.set(getChipOptions(minBet, maxBet));
-    const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;
+  const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
+  const { minBet, maxBet } = getBetLimits(modeParam);
+  this.betAmount = minBet;
+  this.chipOptions.set(getChipOptions(minBet, maxBet));
+  const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;
 
-    if (this.userId) {
-      this.socketService.joinGame(this.gameId, this.userId, stakes);
-    }
+  if (this.userId) {
+    // Pass both ID and a descriptive name
+    this.socketService.joinGame(this.gameId, this.userId, stakes, `Blackjack ${modeParam}`);
+  }
+  // ...
 
     this.socketService.onEvent('game_state', (data: any) => {
       console.log('Blackjack State Update:', data);

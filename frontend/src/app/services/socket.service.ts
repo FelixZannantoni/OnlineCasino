@@ -30,16 +30,16 @@ export class SocketService {
     }
   }
 
-  joinGame(gameId: string, userId: string, stakes?: string) {
+  joinGame(gameId: string, userId: string, stakes?: string, gameName?: string) {
     if (!this.isBrowser || !this.socket) return;
 
     if (this.socket.connected) {
-      this.socket.emit('join_game', gameId, userId, stakes);
+      this.socket.emit('join_game', gameId, userId, stakes, gameName);
       return;
     }
 
     this.socket.once('connect', () => {
-      this.socket?.emit('join_game', gameId, userId, stakes);
+      this.socket?.emit('join_game', gameId, userId, stakes, gameName);
     });
   }
 

@@ -75,6 +75,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   readonly resultClass = signal('');
   readonly recentResults = signal<number[]>([]);
   gameId = '3'; // Default
+  gameName: string = 'Roulette';
   private userId: string | null = null;
   private currentPhase: string = 'WAITING';
 
@@ -151,9 +152,10 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
     const modeConfig = getModeConfigByMode(modeParam);
     this.gameId = modeConfig.rouletteId;
+    this.gameName = `Roulette ${modeParam}`;
 
     const { minBet, maxBet } = getBetLimits(modeParam);
     this.chipOptions.set(getChipOptions(minBet, maxBet) as ChipOption[]);
@@ -161,7 +163,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.userId) {
       // Allow time for the socket to connect before joining
-      this.socketService.joinGame(this.gameId, this.userId, stakes);
+      this.socketService.joinGame(this.gameId, this.userId, stakes, this.gameName);
     }
 
     this.socketService.onEvent('game_state', (data: any) => {

@@ -75,8 +75,8 @@ export { pokerService, blackjackService, rouletteService, userService };
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    socket.on("join_game", async (gameId: string, userId: string, stakes?: string) => {
-        console.log("join_game received:", gameId, userId, "stakes:", stakes);
+    socket.on("join_game", async (gameId: string, userId: string, stakes?: string, gameName?: string) => {
+        console.log("join_game received:", gameId, userId, "stakes:", stakes, "name:", gameName);
         socketUserMap.set(socket.id, userId);
 
         socket.join(gameId);
@@ -90,16 +90,16 @@ io.on("connection", (socket: Socket) => {
         let service: any = pokerService;
 
         if (!game) {
-            const gameName = stakes ? `Blackjack ${stakes}` : "Blackjack";
-            game = blackjackService.getOrCreateGame(gameId, gameName);
+            const name = gameName || (stakes ? `Blackjack ${stakes}` : "Blackjack");
+            game = blackjackService.getOrCreateGame(gameId, name);
             service = blackjackService;
         }
 
         if (!game) {
             game = PokerService.pokerGames.find((g) => g.getGameId().toString() === gameId.toString());
             if (!game && stakes) {
-                const gameName = stakes ? `Poker ${stakes}` : "Poker";
-                const newPoker = new Poker(gameId, gameName);
+                const name = gameName || (stakes ? `Poker ${stakes}` : "Poker");
+                const newPoker = new Poker(gameId, name);
                 PokerService.pokerGames.push(newPoker);
                 game = newPoker;
             }
@@ -111,8 +111,8 @@ io.on("connection", (socket: Socket) => {
                 (g) => g.getGameId().toString() === gameId.toString()
             );
             if (!game && stakes) {
-                const gameName = stakes ? `Roulette ${stakes}` : "Roulette";
-                const newRoulette = new Roulette(gameId, gameName);
+                const name = gameName || (stakes ? `Roulette ${stakes}` : "Roulette");
+                const newRoulette = new Roulette(gameId, name);
                 RouletteService.rouletteGames.push(newRoulette);
                 game = newRoulette;
             }

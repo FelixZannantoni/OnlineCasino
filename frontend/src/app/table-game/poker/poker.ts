@@ -71,6 +71,7 @@ export class Poker implements OnInit {
   private revealedCards = new Set<string>();
 
   private readonly gameId = signal<string>('1');
+  gameName: string = 'Poker';
 
   protected readonly getCardRank = getCardRank;
 
@@ -112,10 +113,11 @@ export class Poker implements OnInit {
     ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
     const modeConfig = getModeConfigByMode(modeParam);
     const id = modeConfig.pokerId;
     this.gameId.set(id);
+    this.gameName = `Poker ${modeParam}`;
     const userId = this.dataService.userId();
 
     if (!userId) {
@@ -156,11 +158,10 @@ export class Poker implements OnInit {
       this.handlePauseOverlayLogic(s);
     });
 
-    const modeParam = this.route.snapshot.queryParamMap.get('mode');
     this.modeLimits.set(getBetLimits(modeParam));
     this.selectedBetAmount.set(this.modeLimits().minBet);
 
-    this.socketService.joinGame(id, userId);
+    this.socketService.joinGame(id, userId, undefined, this.gameName);
   }
 
   private handlePauseOverlayLogic(s: PokerGameState): void {

@@ -34,9 +34,9 @@ export const MODE_CONFIG: ModeConfig[] = [
     minBetValue: 10,
     maxBetValue: 500,
     color: '#4caf50',
-    blackjackId: '2',
-    pokerId: '1',
-    rouletteId: '3',
+    blackjackId: 'blackjack-low',
+    pokerId: 'poker-low',
+    rouletteId: 'roulette-low',
   },
   {
     key: 'Middle',
@@ -49,9 +49,9 @@ export const MODE_CONFIG: ModeConfig[] = [
     minBetValue: 100,
     maxBetValue: 2500,
     color: '#ff9800',
-    blackjackId: '8',
-    pokerId: '6',
-    rouletteId: '5',
+    blackjackId: 'blackjack-middle',
+    pokerId: 'poker-middle',
+    rouletteId: 'roulette-middle',
   },
   {
     key: 'High',
@@ -64,9 +64,9 @@ export const MODE_CONFIG: ModeConfig[] = [
     minBetValue: 500,
     maxBetValue: 10000,
     color: '#f44336',
-    blackjackId: '4',
-    pokerId: '7',
-    rouletteId: '9',
+    blackjackId: 'blackjack-high',
+    pokerId: 'poker-high',
+    rouletteId: 'roulette-high',
   },
 ];
 
