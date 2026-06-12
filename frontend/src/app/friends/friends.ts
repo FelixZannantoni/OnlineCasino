@@ -250,7 +250,7 @@ export class Friends implements AfterViewChecked, OnInit {
     });
 
     if (response.ok) {
-      const friends: {uuid: string, username: string, displayname: string}[] = (await response.json()).friends;
+      const friends: {uuid: string, username: string, displayname: string, status: string}[] = (await response.json()).friends;
 
       friends.forEach(f => {
         console.log(f);
@@ -258,8 +258,8 @@ export class Friends implements AfterViewChecked, OnInit {
         result.push({
           uuid: f.uuid,
           name: f.displayname,
-          status: 'offline',
-          activity: 'Last seen yesterday',
+          status: f.status != 'offline' ? 'online' : 'offline',
+          activity: f.status,
           color: 'linear-gradient(135deg,#1a1228,#261840)',
           hue: `hsl(${randomHue}, 70%, 50%)`,
           init: f.displayname[0].toUpperCase()

@@ -39,11 +39,13 @@ app.use("/chats", chatRouter);
 
 const socketUserMap: Map<string, string> = new Map();
 
+const onlineUsers: Map<string, string> = new Map(); // <userId, status>
+
 const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
 const userService: UserService = new UserService();
 const chatService: ChatService = new ChatService();
-export { pokerService, blackjackService, userService, chatService };
+export { pokerService, blackjackService, userService, chatService, onlineUsers };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
@@ -63,6 +65,7 @@ io.on("connection", (socket: Socket) => {
 
     socket.on('register', (userId: string | number) => {
         socketUserMap.set(socket.id, normalizeUserId(userId));
+        onlineUsers.set(normalizeUserId(userId), "online");
     })
 
     socket.on("join_game", async (gameId: string, userId: string) => {
@@ -105,6 +108,7 @@ io.on("connection", (socket: Socket) => {
                     0,
                     gameId
                 );
+                onlineUsers.set(normalizeUserId(userId), "Playing Poker");
             } else {
                 await blackjackService.addPlayer(
                     userId,
@@ -113,6 +117,7 @@ io.on("connection", (socket: Socket) => {
                     user?.balance ?? startBalance,
                     gameId
                 );
+                onlineUsers.set(normalizeUserId(userId), "Playing Blackjack");
             }
         }
 
@@ -186,6 +191,11 @@ io.on("connection", (socket: Socket) => {
 
     socket.on("disconnect", () => {
         console.log(`User disconnected: ${socket.id}`);
+        const userId = socketUserMap.get(socket.id);
+        if (userId) {
+            onlineUsers.delete(userId);
+        }
+
         socketUserMap.delete(socket.id);
     });
 });

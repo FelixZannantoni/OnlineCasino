@@ -21,7 +21,8 @@ export type Card = {
 export type UserDisplay = {
     uuid: string,
     username: string,
-    displayname: string
+    displayname: string,
+    status: string
 }
 
 export type FriendshipRequest = {

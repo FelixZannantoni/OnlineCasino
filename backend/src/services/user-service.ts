@@ -2,6 +2,7 @@ import { Database } from "better-sqlite3";
 import { DB } from "../data";
 import { FriendshipRequest, User, UserDisplay } from "../model";
 import { hashPassword, normalizeUserId, verifyPassword } from "../utils";
+import { onlineUsers } from "../app";
 
 export class UserService {
     // TODO
@@ -208,7 +209,8 @@ export class UserService {
             return result.map(u => ({
                 uuid: u.uuid,
                 displayname: u.displayName,
-                username: u.userName
+                username: u.userName,
+                status: onlineUsers.get(u.uuid) || "offline"
             }));
         } catch (error) {
             console.error(`Something happened while trying to retrieve friends for user with id: ${userId}: ${error}`);
