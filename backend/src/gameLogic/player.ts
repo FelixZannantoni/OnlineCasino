@@ -33,6 +33,10 @@ export class Player {
         return this.balance;
     }
 
+    public setBalance(balance: number): void {
+        this.balance = balance;
+    }
+
 
     public getBet(): number {
         return this.bet;
@@ -79,8 +83,8 @@ export class Player {
         userService.updateUserBalance(this.playerId, this.balance);
     }
 
-    public async winMoney(win: number) {
-        this.balance += win;
+    public async winMoney(win: number, cap: number = Infinity) {
+        this.balance = Math.min(this.balance + win, cap);
 
         // dont await this, because we dont want to wait for the database to update, we can do it in the background
         userService.updateUserBalance(this.playerId, this.balance);

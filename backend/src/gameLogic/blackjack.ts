@@ -5,7 +5,7 @@ import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { Player } from "./player";
 import { userService } from "../app";
-import { DEFAULT_CHIPS, getChipsForGame } from "../config";
+import { DEFAULT_CHIPS, getChipsForGame, getBalanceLimits, getGameMode } from "../config";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
 export const BLACKJACK_BOT_ID: string = "BlackjackBot";
@@ -32,6 +32,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.blackJackBot = new BlackjackBot();
         this.defaultTurnTimeoutMs = 10000;
         this.chipOptions = getChipsForGame(this.getGameName());
+        this.gameBalance = getBalanceLimits(getGameMode(this.getGameName())).max;
     }
 
     public setChipOptions(options: any[]) {
@@ -333,6 +334,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         return {
             gameId: this.getGameId(),
+            gameBalance: this.gameBalance,
             isRunning: this.isRunning,
             phase: this.currentPhase,
             currentPlayerId: this.currentPlayerId,
@@ -405,8 +407,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
 
             if (winAmount > 0) {
-                player.winMoney(winAmount);
-                await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
+                await player.winMoney(winAmount, this.gameBalance);
             }
         }
     }

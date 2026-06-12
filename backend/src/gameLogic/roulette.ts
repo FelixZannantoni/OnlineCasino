@@ -1,7 +1,7 @@
 import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
 import { userService } from "../app";
-import { DEFAULT_CHIPS, getChipsForGame } from "../config";
+import { DEFAULT_CHIPS, getChipsForGame, getBalanceLimits, getGameMode } from "../config";
 
 export enum RoulettePhase {
     WAITING = "WAITING",
@@ -20,6 +20,7 @@ export class Roulette extends Game<RoulettePlayer> {
     constructor(gameId: string, gameName: string = "") {
         super(gameId, gameName);
         this.chipOptions = getChipsForGame(this.getGameName());
+        this.gameBalance = getBalanceLimits(getGameMode(this.getGameName())).max;
     }
 
     public setChipOptions(options: any[]) {
@@ -214,8 +215,7 @@ export class Roulette extends Game<RoulettePlayer> {
             });
 
             if (totalWin > 0) {
-                player.winMoney(totalWin);
-                await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
+                await player.winMoney(totalWin, this.gameBalance);
             }
         }
     }
@@ -227,6 +227,7 @@ export class Roulette extends Game<RoulettePlayer> {
     public getGameState() {
         return {
             gameId: this.getGameId(),
+            gameBalance: this.gameBalance,
             isRunning: this.isRunning,
             phase: this.currentPhase,
             lastWinningNumber: this.lastWinningNumber,

@@ -6,7 +6,7 @@ import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
 import { userService } from "../app";
-import { getGameMode, getPokerDefaultBet, getPokerTipAmount, GameMode } from "../config";
+import { getGameMode, getPokerDefaultBet, getPokerTipAmount, GameMode, getBalanceLimits } from "../config";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -46,6 +46,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
         this.mode = getGameMode(this.getGameName());
         this.defaultBet = getPokerDefaultBet(this.mode);
+        this.gameBalance = getBalanceLimits(this.mode).max;
     }
 
     public handlePlayerDisconnect(playerId: string) {
@@ -257,7 +258,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.emit("gameState", this.getGameState());
     }
 
-    private handleShowdown() {
+    private async handleShowdown() {
         this.stopTurnTimer();
 
         // Reveal cards of all players who didn't fold
@@ -292,7 +293,9 @@ export class Poker extends CardGame<PokerPlayer> {
         });
 
         const winAmount = this.pot / winners.length;
-        winners.forEach(w => w.winMoney(winAmount));
+        for (const w of winners) {
+            await w.winMoney(winAmount, this.gameBalance);
+        }
 
         this.lastWinners = winners.map(w => ({
             id: w.getPlayerId(),
@@ -379,7 +382,7 @@ export class Poker extends CardGame<PokerPlayer> {
         const activePlayers = this.players.filter(p => !p.getPressedFold());
         if (activePlayers.length === 1) {
             const winner = activePlayers[0];
-            winner.winMoney(this.pot);
+            await winner.winMoney(this.pot, this.gameBalance);
             this.lastWinners = [{
                 id: winner.getPlayerId(),
                 handName: "Last player standing"
@@ -432,6 +435,7 @@ export class Poker extends CardGame<PokerPlayer> {
 
         return {
             gameId: this.getGameId(),
+            gameBalance: this.gameBalance,
             phase: this.phase,
             pot: this.pot,
             currentBet: this.currentBet,
