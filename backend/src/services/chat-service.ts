@@ -1,6 +1,7 @@
 import { Database } from "better-sqlite3";
 import { ChatMessage } from "../model";
 import { DB } from "../data";
+import { normalizeUserId } from "../utils";
 
 export class ChatService {
     /**
@@ -8,13 +9,15 @@ export class ChatService {
      * @param uuid of the user to retrieve the chats for
      * @returns an array of chat messages or an ampty array, if an error ocurrs
      */
-    async getChatMessagesForUser(uuid: string): Promise<ChatMessage[]> {
+    async getChatMessagesForUser(uuid: string | number): Promise<ChatMessage[]> {
         try {
             const connection: Database = await DB.createDBConnection();
 
+            const normalizedUserId: string = normalizeUserId(uuid);
+
             const result = connection.prepare<{ uuid: string }, ChatMessage>(`SELECT * FROM chat_messages WHERE senderId = :uuid OR receiverId = :uuid`)
                                 .all({
-                                    uuid
+                                    uuid: normalizedUserId
                                 });
             return result;
         } catch (error) {
@@ -30,14 +33,17 @@ export class ChatService {
      * @param content 
      * @returns true if successful, false if not
      */
-    async sendMessage(senderId: string, receiverId: string, content: string): Promise<boolean> {
+    async sendMessage(senderId: string | number, receiverId: string | number, content: string): Promise<boolean> {
         try {
             const connection: Database = await DB.createDBConnection();
 
+            const normalizedSenderId: string = normalizeUserId(senderId);
+            const normalizedReceiverId: string = normalizeUserId(receiverId);
+
             const resultRowsAffected = connection.prepare<{ senderId: string, receiverId: string, content: string, timestampIso: string }>(`INSERT INTO chat_messages (senderId, receiverId, content, timestamp) VALUES
                                 (:senderId, :receiverId, :content, :timestampIso)`).run({
-                                    senderId,
-                                    receiverId,
+                                    senderId: normalizedSenderId,
+                                    receiverId: normalizedReceiverId,
                                     content,
                                     timestampIso: (new Date()).toISOString()
                                 }).changes;

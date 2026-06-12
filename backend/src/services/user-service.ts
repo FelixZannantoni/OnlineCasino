@@ -1,7 +1,7 @@
 import { Database } from "better-sqlite3";
 import { DB } from "../data";
 import { FriendshipRequest, User, UserDisplay } from "../model";
-import { hashPassword, verifyPassword } from "../utils";
+import { hashPassword, normalizeUserId, verifyPassword } from "../utils";
 
 export class UserService {
     // TODO
@@ -64,37 +64,85 @@ export class UserService {
      * @param name github name of the user
      * @returns true if login (or registration) was successful, false otherwise
      */
-    async githubLogin(githubId: number, username: string, displayName: string): Promise<boolean> {
+    async githubLogin(githubId: string | number, username: string, displayName: string): Promise<{ success: boolean, uuid: string }> {
+        const normalizedGithubId = normalizeUserId(githubId);
+
         // check for invalid params
-        if(!githubId || !username || !displayName) {
+        if(!normalizedGithubId || !username || !displayName) {
             console.error(`Invalid parameters for github login: githubId: ${githubId}, username: ${username}, displayName: ${displayName}`);
-            return false;
+            return {
+                success: false,
+                uuid: ""
+            };
         }
 
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare<{  }>("SELECT * FROM users WHERE uuid = :githubId AND isFromGithub = 1").all({ githubId: githubId });
+            const existingUser = connection.prepare<{}, User>("SELECT * FROM users WHERE uuid = ? AND isFromGithub = 1").get(normalizedGithubId);
 
-            if (result.length > 0) {
-                // await connection.close();
-                return true;
+            const safeUsername = this.getAvailableGithubUsername(connection, username, normalizedGithubId);
+
+            if (existingUser) {
+                if (existingUser.userName !== safeUsername || existingUser.displayName !== displayName) {
+                    connection.prepare<{ userId: string, username: string, displayName: string }>(
+                        "UPDATE users SET userName = :username, displayName = :displayName WHERE uuid = :userId"
+                    ).run({ userId: normalizedGithubId, username: safeUsername, displayName });
+                }
+
+                return {
+                    success: true,
+                    uuid: normalizedGithubId
+                };
             }
 
             // If user doesn't exist, create a new one
-            const newUserResult = connection.prepare<{ githubId: number, username: string, displayName: string }>("INSERT INTO users (uuid, userName, displayName, isFromGithub) VALUES (:githubId, :username, :displayName, 1)").run({
-                githubId: githubId,
-                username: username,
+            const newUserResult = connection.prepare<{ githubId: string, username: string, displayName: string }>(
+                "INSERT INTO users (uuid, userName, displayName, isFromGithub) VALUES (:githubId, :username, :displayName, 1)"
+            ).run({
+                githubId: normalizedGithubId,
+                username: safeUsername,
                 displayName: displayName
             });
 
             // await connection.close();
 
-            return newUserResult.changes === 1;
+            if (newUserResult.changes === 1) {
+                return {
+                    success: true,
+                    uuid: normalizedGithubId
+                };
+            } else {
+                return {
+                    success: false,
+                    uuid: ""
+                };
+            }
 
         } catch(err) {
             console.error(`Something happened while trying to login via github (user-service): ${err}`);
-            return false;
+            return {
+                success: false,
+                uuid: ""
+            };
+        }
+    }
+
+    private getAvailableGithubUsername(connection: Database, desiredUsername: string, githubId: string): string {
+        let candidate = desiredUsername;
+        let suffix = 0;
+
+        while (true) {
+            const row = connection.prepare<{ userName: string }, { uuid: string }>(
+                "SELECT uuid FROM users WHERE userName = :userName"
+            ).get({ userName: candidate });
+
+            if (!row || row.uuid === githubId) {
+                return candidate;
+            }
+
+            suffix += 1;
+            candidate = `${desiredUsername}_${suffix}`;
         }
     }
 
@@ -103,12 +151,16 @@ export class UserService {
      * @param userId 
      * @returns an user object if found, null otherwise
      */
-    async getUserById(userId: string): Promise<User | null> {
+    async getUserById(userId: string | number): Promise<User | null> {
         try {
             const connection: Database = await DB.createDBConnection();
 
+            const normalizedUserId: string = normalizeUserId(userId);
+
+            if (!normalizedUserId) return null;
+
             const result = connection.prepare<{ userId: string }, User>(`SELECT * FROM users WHERE uuid = :userId`)
-            .get({ userId: userId});
+            .get({ userId: normalizedUserId});
             return result ?? null;
         } catch (error) {
             console.error(`Something happened while trying to get user by id: ${error}`);
@@ -116,12 +168,19 @@ export class UserService {
         }
     }
 
-    async updateUserBalance(userId: string, newBalance: number): Promise<boolean> {
+    async updateUserBalance(userId: string | number, newBalance: number): Promise<boolean> {
         try {
             const connection: Database = await DB.createDBConnection();
 
+            const normalizedUserId: string = normalizeUserId(userId);
+
+            if (!normalizedUserId) {
+                console.error(`Invalid userId for updateUserBalance: ${userId}`);
+                return false;
+            }
+
             const result = connection.prepare<{userId: string, newBalance: number}>("UPDATE users SET balance = :newBalance WHERE uuid = :userId").run({
-                userId,
+                userId: normalizedUserId,
                 newBalance
             });
 
@@ -133,11 +192,18 @@ export class UserService {
         }
     }
 
-    async getFriendsForUser(userId: string): Promise<UserDisplay[]> {
+    async getFriendsForUser(userId: string | number): Promise<UserDisplay[]> {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const result: User[] = connection.prepare<{ userId: string }, User>(`SELECT u.* FROM users u JOIN friendship_requests fr ON (u.uuid = fr.senderId OR u.uuid = fr.receiverId) WHERE (fr.senderId = :userId OR fr.receiverId = :userId) AND fr.accepted = 1 AND u.uuid != :userId`).all({ userId: userId });
+            const normalizedUserId: string = normalizeUserId(userId);
+
+            if (!normalizedUserId) {
+                console.error(`Invalid userId for getFriendsForUser: ${userId}`);
+                return [];
+            }
+
+            const result: User[] = connection.prepare<{ userId: string }, User>(`SELECT u.* FROM users u JOIN friendship_requests fr ON (u.uuid = fr.senderId OR u.uuid = fr.receiverId) WHERE (fr.senderId = :userId OR fr.receiverId = :userId) AND fr.accepted = 1 AND u.uuid != :userId`).all({ userId: normalizedUserId });
 
             return result.map(u => ({
                 uuid: u.uuid,
@@ -150,9 +216,18 @@ export class UserService {
         }
     }
 
-    async addFriend(userId: string, toUsername: string): Promise<{success: boolean, message: string}> {
+    async addFriend(userId: string | number, toUsername: string): Promise<{success: boolean, message: string}> {
         try {
             const connection: Database = await DB.createDBConnection();
+
+            const normalizedUserId: string = normalizeUserId(userId);
+
+            if (!normalizedUserId) {
+                return {
+                    success: false,
+                    message: `Invalid userId!`
+                };
+            }
 
             const receiver = connection.prepare<{ username: string }, { uuid: string }>(`SELECT uuid FROM users WHERE userName = :username`).get({ username: toUsername });
             if (!receiver || receiver.uuid === userId) {
@@ -163,7 +238,7 @@ export class UserService {
             }
 
             // dont allow a request, if there is already an accepted friendship or a pending request between the two users
-            const existingRequest = connection.prepare<{ userId: string, receiverId: string }>(`SELECT * FROM friendship_requests WHERE (senderId = :userId AND receiverId = :receiverId) OR (senderId = :receiverId AND receiverId = :userId)`).get({ userId, receiverId: receiver.uuid});
+            const existingRequest = connection.prepare<{ userId: string, receiverId: string }>(`SELECT * FROM friendship_requests WHERE (senderId = :userId AND receiverId = :receiverId) OR (senderId = :receiverId AND receiverId = :userId)`).get({ userId: normalizedUserId, receiverId: receiver.uuid});
             if (existingRequest) {
                 return {
                     success: false,
@@ -172,7 +247,7 @@ export class UserService {
             }
 
             const result = connection.prepare<{ senderId: string, receiverId: string }>(`INSERT INTO friendship_requests (senderId, receiverId, accepted) VALUES (:senderId, :receiverId, 0)`).run({
-                senderId: userId,
+                senderId: normalizedUserId,
                 receiverId: receiver.uuid
             }); 
 
@@ -197,11 +272,14 @@ export class UserService {
         }
     }
 
-    async acceptFriendRequest(senderId: string, receiverId: string): Promise<boolean> {
+    async acceptFriendRequest(senderId: string | number, receiverId: string | number): Promise<boolean> {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare<{ senderId: string, receiverId: string }>(`UPDATE friendship_requests SET accepted = 1 WHERE senderId = :senderId AND receiverId = :receiverId`).run({ senderId, receiverId });
+            const normalizedSenderId: string = normalizeUserId(senderId);
+            const normalizedReceiverId: string = normalizeUserId(receiverId);
+
+            const result = connection.prepare<{ senderId: string, receiverId: string }>(`UPDATE friendship_requests SET accepted = 1 WHERE senderId = :senderId AND receiverId = :receiverId`).run({ senderId: normalizedSenderId, receiverId: normalizedReceiverId });
 
             return true;
         } catch (error) {
@@ -210,12 +288,14 @@ export class UserService {
         }
     }
 
-    async removeFriend(userId: string, friendId: string): Promise<boolean> {
+    async removeFriend(userId: string | number, friendId: string | number): Promise<boolean> {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const affectedRows: number = connection.prepare<{ userId: string, friendId: string }>(`DELETE FROM friendship_requests WHERE (senderId = :userId AND receiverId = :friendId) OR (senderId = :friendId AND receiverId = :userId)`).run({ userId, friendId }).changes;
-            console.log(affectedRows);
+            const normalizedUserId: string = normalizeUserId(userId);
+            const normalizedFriendId: string = normalizeUserId(friendId);
+
+            const affectedRows: number = connection.prepare<{ userId: string, friendId: string }>(`DELETE FROM friendship_requests WHERE (senderId = :userId AND receiverId = :friendId) OR (senderId = :friendId AND receiverId = :userId)`).run({ userId: normalizedUserId, friendId: normalizedFriendId }).changes;
 
             return affectedRows > 0;
         } catch (error) {
@@ -224,12 +304,14 @@ export class UserService {
         }
     }
 
-    async getPendingFriendshipRequests(userId: string): Promise<FriendshipRequest[]> {
+    async getPendingFriendshipRequests(userId: string | number): Promise<FriendshipRequest[]> {
         try {
             const connection: Database = await DB.createDBConnection();
 
+            const normalizedUserId: string = normalizeUserId(userId);
+
             // select all pending friendship requests for the user, including the username of the sender and of the receiver
-            const result = connection.prepare<{ userId: string }, FriendshipRequest>(`SELECT fr.*, u1.displayName AS senderName, u2.displayName AS receiverName FROM friendship_requests fr JOIN users u1 ON fr.senderId = u1.uuid JOIN users u2 ON fr.receiverId = u2.uuid WHERE fr.accepted = 0 AND (fr.senderId = :userId OR fr.receiverId = :userId)`).all({ userId });
+            const result = connection.prepare<{ userId: string }, FriendshipRequest>(`SELECT fr.*, u1.displayName AS senderName, u2.displayName AS receiverName FROM friendship_requests fr JOIN users u1 ON fr.senderId = u1.uuid JOIN users u2 ON fr.receiverId = u2.uuid WHERE fr.accepted = 0 AND (fr.senderId = :userId OR fr.receiverId = :userId)`).all({ userId: normalizedUserId });
        
             return result;
         } catch (error) {

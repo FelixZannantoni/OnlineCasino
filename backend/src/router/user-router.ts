@@ -58,10 +58,10 @@ userRouter.post("/login/github", async (req: Request, res: Response) => {
     const userData = await userRes.json();
     
   
-    const success: boolean = await service.githubLogin(userData.id, userData.login, userData.name);
+    const result = await service.githubLogin(userData.id, userData.login, userData.name);
   
-    if(success) {
-        return res.status(StatusCodes.OK).json({ userId: userData.id, message: "GitHub login successful!" });
+    if(result.success) {
+        return res.status(StatusCodes.OK).json({ userId: result.uuid, message: "GitHub login successful!" });
     } else {
         return res.status(StatusCodes.UNAUTHORIZED).json({ message: "GitHub login failed!" });
     }

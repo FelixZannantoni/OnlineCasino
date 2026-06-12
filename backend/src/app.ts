@@ -15,6 +15,7 @@ import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 import { ChatService } from "./services/chat-service";
 import { chatRouter } from "./router/chat-router";
+import { normalizeUserId } from "./utils";
 
 const PORT = process.env.PORT || 3000;
 
@@ -60,13 +61,13 @@ export function onMessageSentToUser(receiverId: string) {
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    socket.on('register', (userId: string) => {
-        socketUserMap.set(socket.id, userId);
+    socket.on('register', (userId: string | number) => {
+        socketUserMap.set(socket.id, normalizeUserId(userId));
     })
 
     socket.on("join_game", async (gameId: string, userId: string) => {
         console.log("join_game received:", gameId, userId);
-        socketUserMap.set(socket.id, userId);
+        socketUserMap.set(socket.id, normalizeUserId(userId));
 
         socket.join(gameId);
         console.log(`User ${userId} joined game: ${gameId}`);
