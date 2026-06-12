@@ -13,6 +13,8 @@ import { slotmachineRouter } from "./router/slotmachine-router";
 import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
+import { ChatService } from "./services/chat-service";
+import { chatRouter } from "./router/chat-router";
 
 const PORT = process.env.PORT || 3000;
 
@@ -31,6 +33,7 @@ app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/slotmachine", slotmachineRouter);
+app.use("/chats", chatRouter);
 
 
 const socketUserMap: Map<string, string> = new Map();
@@ -38,11 +41,28 @@ const socketUserMap: Map<string, string> = new Map();
 const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
 const userService: UserService = new UserService();
-export { pokerService, blackjackService, userService };
+const chatService: ChatService = new ChatService();
+export { pokerService, blackjackService, userService, chatService };
+
+export function onMessageSentToUser(receiverId: string) {
+    // Find the socket ID for the receiver
+    // socket id map is Map<socketId, userId>, so we need to find the socketId for the receiverId
+    console.log(`Attempting to notify user ${receiverId} of new message`);
+    const receiverSocketId = socketUserMap.entries().find(([socketId, userId]) => userId === receiverId)?.[0];
+
+    if (receiverSocketId) {
+        io.to(receiverSocketId).emit("new_message");
+        console.log(`Notified user ${receiverId} of new message via socket ${receiverSocketId}`);
+    }
+}
 
 // Socket.io connection handling
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
+
+    socket.on('register', (userId: string) => {
+        socketUserMap.set(socket.id, userId);
+    })
 
     socket.on("join_game", async (gameId: string, userId: string) => {
         console.log("join_game received:", gameId, userId);
@@ -77,8 +97,8 @@ io.on("connection", (socket: Socket) => {
             if (service === pokerService) {
                 await pokerService.addPlayer(
                     userId,
-                    user?.username ?? '-',
-                    user?.displayname ?? 'Guest',
+                    user?.userName ?? '-',
+                    user?.displayName ?? 'Guest',
                     user?.balance ?? startBalance,
                     false,
                     0,
@@ -87,8 +107,8 @@ io.on("connection", (socket: Socket) => {
             } else {
                 await blackjackService.addPlayer(
                     userId,
-                    user?.username ?? '-',
-                    user?.displayname ?? 'Guest',
+                    user?.userName ?? '-',
+                    user?.displayName ?? 'Guest',
                     user?.balance ?? startBalance,
                     gameId
                 );

@@ -1,6 +1,7 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal, inject, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../services/data-service';
+import { SocketService } from '../services/socket.service';
 
 interface Friend {
   uuid: string;
@@ -14,6 +15,7 @@ interface Friend {
 
 interface Message {
   mine: boolean;
+  otherId: string;
   text: string;
   time: string;
 }
@@ -51,6 +53,8 @@ export class Friends implements AfterViewChecked, OnInit {
   private shouldScroll = false;
 
   private dataService: DataService = inject(DataService);
+  private socketService: SocketService = inject(SocketService);
+  private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   sections = [
     { label: 'Online', status: 'online' },
@@ -89,6 +93,15 @@ export class Friends implements AfterViewChecked, OnInit {
     await this.friends.set(await this.loadFriends());
     this.filteredFriends.set([...this.friends()]);
 
+    // clear convos
+    this.convos = {};
+    const messages = await this.loadMessages();
+    messages.forEach(m => {
+      const otherId = m.otherId;
+      if (!this.convos[otherId]) this.convos[otherId] = [];
+      this.convos[otherId].push(m);
+    });
+
     this.closeChat();
   }
 
@@ -102,12 +115,27 @@ export class Friends implements AfterViewChecked, OnInit {
     this.activeFriend = null;
   }
 
-  sendMsg(): void {
-    const txt = this.messageInput.trim();
-    if (!txt || !this.activeFriend) return;
-    this.convos[this.activeFriend.uuid].push({ mine: true, text: txt, time: this.nowTime() });
-    this.messageInput = '';
-    this.shouldScroll = true;
+  async sendMsg(): Promise<void> {
+    if (!this.messageInput.trim() || !this.activeFriend) return;
+
+    const response = await fetch('http://localhost:3000/chats', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: this.dataService.userId(),
+        receiverId: this.activeFriend?.uuid,
+        content: this.messageInput.trim()
+      })
+    });
+
+    if(response.ok) {
+      this.convos[this.activeFriend.uuid].push({ mine: true, text: this.messageInput.trim(), time: this.nowTime(), otherId: this.activeFriend.uuid });
+      this.messageInput = '';
+      this.shouldScroll = true;
+      this.cdr.markForCheck();
+    }
   }
 
   sendInvite(): void {
@@ -242,6 +270,33 @@ export class Friends implements AfterViewChecked, OnInit {
     return result;
   }
 
+  async loadMessages(): Promise<Message[]> {
+    const result: Message[] = [];
+
+    const response = await fetch(`http://localhost:3000/chats?userId=${this.dataService.userId()}`, { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/chats?userId=xxx'
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if(response.ok) {
+      const messages: { senderId: string, receiverId: string, content: string, timestamp: string }[] = (await response.json()).messages;
+
+      messages.forEach(m => {
+        const isMine = m.senderId === this.dataService.userId();
+        result.push({
+          mine: isMine,
+          text: m.content,
+          time: m.timestamp,
+          otherId: isMine ? m.receiverId : m.senderId
+        });
+      });
+    }
+
+    return result;
+  }
+
   async acceptReq(req: PendingRequest): Promise<void> {
     const response = await fetch('http://localhost:3000/users/friends/accept', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends/accept'
       method: 'PUT',
@@ -278,6 +333,20 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.socketService.register(this.dataService.userId());
+
+    this.socketService.onNewMessage(async () => {
+      const messages = await this.loadMessages();
+      this.convos = {};
+
+      messages.forEach(m => {
+        const otherId = m.otherId;
+        if (!this.convos[otherId]) this.convos[otherId] = [];
+        this.convos[otherId].push(m);
+      });
+      this.cdr.markForCheck();
+    });
+
     await this.switchTab('friends');
   }
 

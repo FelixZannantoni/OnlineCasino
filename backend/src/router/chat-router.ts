@@ -27,6 +27,8 @@ chatRouter.post("/", async (req: Request, res: Response) => {
     const result = await chatService.sendMessage(userId, receiverId, content);
 
     if (result) {
+        onMessageSentToUser(receiverId);
+
         return res.status(StatusCodes.CREATED).json({ message: 'Message sent!' });
     } else {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something happened, try again later!' });

@@ -44,4 +44,12 @@ export class SocketService {
   emitEvent(eventName: string, data: unknown) {
     this.socket.emit(eventName, data);
   }
+
+  register(userId: string) {
+    this.socket.emit('register', userId);
+  }
+
+  onNewMessage(callback: () => void) {
+    this.socket.on('new_message', callback);
+  }
 }
