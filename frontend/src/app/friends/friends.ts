@@ -288,7 +288,7 @@ export class Friends implements AfterViewChecked, OnInit {
         result.push({
           mine: isMine,
           text: m.content,
-          time: m.timestamp,
+          time: new Date(m.timestamp).toLocaleDateString('de-AT', { hour: '2-digit', minute: '2-digit' }),
           otherId: isMine ? m.receiverId : m.senderId
         });
       });
