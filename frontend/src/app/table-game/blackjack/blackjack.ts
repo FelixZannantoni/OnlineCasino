@@ -28,7 +28,7 @@ export class Blackjack implements OnInit, OnDestroy {
   // Chip betting UI (copied from roulette)
   interfaceChipOptions: any; // placeholder to keep typings simple in this file
   readonly selectedChip = signal(10);
-  readonly chipOptions = signal<any[]>([
+  readonly chipOptions = signal<any[]>([ //TODO: Add max and min bet from game-moder-overlay
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },

@@ -65,7 +65,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   //
   readonly balance = signal(0);
   readonly selectedChip = signal(1);
-  readonly bets = signal<Bet[]>([]);
+  readonly bets = signal<Bet[]>([]); //TODO: Add max and min bet from game-moder-overlay
   readonly players = signal<any[]>([]);
   readonly spinning = signal(false);
   readonly isReady = signal(false);
@@ -190,8 +190,8 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (state.phase === 'FINISHED' && this.currentPhase === 'SPINNING') {
-        // Just ensure spinning signal is false if it wasn't already
-        this.spinning.set(false);
+      // Just ensure spinning signal is false if it wasn't already
+      this.spinning.set(false);
     }
 
     this.currentPhase = state.phase;

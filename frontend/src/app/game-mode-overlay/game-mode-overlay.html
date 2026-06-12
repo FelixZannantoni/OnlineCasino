@@ -14,8 +14,8 @@
                 <mat-icon>casino</mat-icon>
             </div>
             <div class="header-text">
-                <h2 class="mode-title">Wähle deinen Spielmodus</h2>
-                <p class="mode-subtitle">Low, Middle oder High – passend zu deinem Skill</p>
+                <h2 class="mode-title">Choose your Gamemode</h2>
+                <p class="mode-subtitle">Low, Middle or High – prove your skill</p>
             </div>
         </div>
 
@@ -23,13 +23,8 @@
         <div class="mode-body">
             <div class="mode-grid">
                 @for (mode of modes; track mode.key) {
-                <button
-                    class="mode-card"
-                    [class.selected]="selectedMode === mode.key"
-                    [style.--mode-color]="mode.color"
-                    (click)="chooseMode(mode.key)"
-                    [attr.aria-pressed]="selectedMode === mode.key"
-                >
+                <button class="mode-card" [class.selected]="selectedMode === mode.key" [style.--mode-color]="mode.color"
+                    (click)="chooseMode(mode.key)" [attr.aria-pressed]="selectedMode === mode.key">
                     <span class="mode-icon-wrap">
                         <mat-icon>{{ mode.icon }}</mat-icon>
                     </span>
@@ -60,16 +55,12 @@
         <div class="mode-footer">
             <button class="cancel-btn" (click)="close()">
                 <mat-icon>close</mat-icon>
-                Abbrechen
+                Cancel
             </button>
-            <button
-                class="confirm-btn"
-                [class.ready]="selectedMode !== null"
-                [disabled]="selectedMode === null"
-                (click)="confirmMode()"
-            >
+            <button class="confirm-btn" [class.ready]="selectedMode !== null" [disabled]="selectedMode === null"
+                (click)="confirmMode()">
                 <mat-icon>play_arrow</mat-icon>
-                {{ selectedMode ? 'Spielen (' + selectedMode + ')' : 'Modus wählen' }}
+                {{ selectedMode ? 'Play (' + selectedMode + ')' : 'Choose a mode' }}
             </button>
         </div>
     </div>

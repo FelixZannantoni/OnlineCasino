@@ -187,7 +187,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly STRIP_LEN = 30;
   private readonly SYM_H = 120;
-  private readonly BET_STEPS = [10, 25, 50, 100, 250, 500];
+  private readonly BET_STEPS = [10, 25, 50, 100, 250, 500]; //TODO: Add max and min bet from game-moder-overlay
 
   private strips: HTMLElement[] = [];
   private autoSpinTimer: any = null;

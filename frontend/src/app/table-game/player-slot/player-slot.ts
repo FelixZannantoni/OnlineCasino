@@ -10,7 +10,7 @@ import {getCardRank} from '../../services/card-utils';
 export class PlayerSlot {
   displayName = input.required<string>();
   balance = input.required<number>();
-  bet = input<number>(0);
+  bet = input<number>(0); //TODO: Add max and min bet from game-moder-overlay
   isDealer = input<boolean>(false);
   isCurrent = input<boolean>(false);
   isMe = input<boolean>(false);
