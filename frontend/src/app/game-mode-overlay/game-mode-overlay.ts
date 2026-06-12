@@ -17,6 +17,9 @@ export interface ModeConfig {
   minBetValue: number;
   maxBetValue: number;
   color: string;
+  blackjackId: string;
+  pokerId: string;
+  rouletteId: string;
 }
 
 export const MODE_CONFIG: ModeConfig[] = [
@@ -31,6 +34,9 @@ export const MODE_CONFIG: ModeConfig[] = [
     minBetValue: 10,
     maxBetValue: 500,
     color: '#4caf50',
+    blackjackId: '2',
+    pokerId: '1',
+    rouletteId: '3',
   },
   {
     key: 'Middle',
@@ -43,6 +49,9 @@ export const MODE_CONFIG: ModeConfig[] = [
     minBetValue: 100,
     maxBetValue: 2500,
     color: '#ff9800',
+    blackjackId: '8',
+    pokerId: '6',
+    rouletteId: '5',
   },
   {
     key: 'High',
@@ -55,6 +64,9 @@ export const MODE_CONFIG: ModeConfig[] = [
     minBetValue: 500,
     maxBetValue: 10000,
     color: '#f44336',
+    blackjackId: '4',
+    pokerId: '7',
+    rouletteId: '9',
   },
 ];
 
@@ -64,6 +76,12 @@ export function getBetLimits(modeParam: string | null): { minBet: number; maxBet
   const cfg =
     MODE_CONFIG.find(m => m.key.toLowerCase() === key) ?? MODE_CONFIG[0];
   return { minBet: cfg.minBetValue, maxBet: cfg.maxBetValue };
+}
+
+/** Get the ModeConfig for a given mode string */
+export function getModeConfigByMode(modeParam: string | null): ModeConfig {
+    const key = (modeParam ?? '').toLowerCase();
+    return MODE_CONFIG.find(m => m.key.toLowerCase() === key) ?? MODE_CONFIG[0];
 }
 
 /** Chip denominations filtered to fit inside [minBet, maxBet]. */

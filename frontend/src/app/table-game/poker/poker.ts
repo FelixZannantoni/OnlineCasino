@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID, signal, computed, inject, OnInit } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { getBetLimits } from '../../game-mode-overlay/game-mode-overlay';
+import { getBetLimits, getModeConfigByMode } from '../../game-mode-overlay/game-mode-overlay';
 import { TableGameComponent } from '../table-game';
 import { MatIconModule } from '@angular/material/icon';
 import { SocketService } from '../../services/socket.service';
@@ -112,7 +112,9 @@ export class Poker implements OnInit {
     ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const id = this.route.snapshot.paramMap.get('id') ?? '1';
+    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    const modeConfig = getModeConfigByMode(modeParam);
+    const id = modeConfig.pokerId;
     this.gameId.set(id);
     const userId = this.dataService.userId();
 

@@ -16,7 +16,7 @@ import {
 import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../services/socket.service';
-import { getBetLimits, getChipOptions } from '../game-mode-overlay/game-mode-overlay';
+import { getBetLimits, getChipOptions, getModeConfigByMode } from '../game-mode-overlay/game-mode-overlay';
 import { DataService } from '../services/data-service';
 
 interface Bet {
@@ -74,7 +74,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   readonly resultLabel = signal('');
   readonly resultClass = signal('');
   readonly recentResults = signal<number[]>([]);
-  readonly gameId = '3'; // Assuming Roulette game ID is 3
+  gameId = '3'; // Default
   private userId: string | null = null;
   private currentPhase: string = 'WAITING';
 
@@ -152,6 +152,9 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
     if (!this.isBrowser) return;
 
     const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    const modeConfig = getModeConfigByMode(modeParam);
+    this.gameId = modeConfig.rouletteId;
+
     const { minBet, maxBet } = getBetLimits(modeParam);
     this.chipOptions.set(getChipOptions(minBet, maxBet) as ChipOption[]);
     const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;

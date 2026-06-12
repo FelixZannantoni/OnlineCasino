@@ -6,7 +6,7 @@ import { SocketService } from '../../services/socket.service';
 import { DataService } from '../../services/data-service';
 import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.models';
 import { getCardRank } from '../../services/card-utils';
-import { getBetLimits, getChipOptions } from '../../game-mode-overlay/game-mode-overlay';
+import { getBetLimits, getChipOptions, getModeConfigByMode } from '../../game-mode-overlay/game-mode-overlay';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -62,9 +62,9 @@ export class Blackjack implements OnInit, OnDestroy {
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.userId = this.dataService.getUserId();
-    if (this.userId) {
-      this.gameId = `bj-${this.userId}`;
-    }
+    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    const modeConfig = getModeConfigByMode(modeParam);
+    this.gameId = modeConfig.blackjackId;
   }
 
   ngOnInit() {
