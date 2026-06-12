@@ -99,6 +99,15 @@ export class DB {
                 FOREIGN KEY (receiverId) REFERENCES users(uuid)
             )
             `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS chat_messages (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                senderId text,
+                receiverId text,
+                content text,
+                timestamp text -- Timestamp in ISO format
+            )
+            `).run();
 
 
         await this.insertUserSampleData(connection);

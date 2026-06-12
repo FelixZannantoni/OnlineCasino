@@ -31,3 +31,10 @@ export type FriendshipRequest = {
     receiverName: string,
     accepted: boolean
 }
+
+export type ChatMessage = {
+    senderId: string,
+    receiverId: string,
+    content: string,
+    timestamp: Date
+}
