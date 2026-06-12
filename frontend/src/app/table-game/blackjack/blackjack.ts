@@ -6,6 +6,7 @@ import { SocketService } from '../../services/socket.service';
 import { DataService } from '../../services/data-service';
 import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.models';
 import { getCardRank } from '../../services/card-utils';
+import { getBetLimits, getChipOptions } from '../../game-mode-overlay/game-mode-overlay';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -28,7 +29,7 @@ export class Blackjack implements OnInit, OnDestroy {
   // Chip betting UI (copied from roulette)
   interfaceChipOptions: any; // placeholder to keep typings simple in this file
   readonly selectedChip = signal(10);
-  readonly chipOptions = signal<any[]>([ //TODO: Add max and min bet from game-moder-overlay
+  readonly chipOptions = signal<any[]>([
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },
@@ -69,6 +70,10 @@ export class Blackjack implements OnInit, OnDestroy {
   ngOnInit() {
     if (!this.isBrowser) return;
 
+    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    const { minBet, maxBet } = getBetLimits(modeParam);
+    this.betAmount = minBet;
+    this.chipOptions.set(getChipOptions(minBet, maxBet));
     const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;
 
     if (this.userId) {

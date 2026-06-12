@@ -1,6 +1,7 @@
 import { Component, Inject, PLATFORM_ID, signal, computed, inject, OnInit } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { getBetLimits } from '../../game-mode-overlay/game-mode-overlay';
 import { TableGameComponent } from '../table-game';
 import { MatIconModule } from '@angular/material/icon';
 import { SocketService } from '../../services/socket.service';
@@ -77,17 +78,22 @@ export class Poker implements OnInit {
   protected selectedBetAmount = signal<number>(20);
   protected showBetSlider = signal<boolean>(false);
 
+  protected readonly modeLimits = signal<{ minBet: number; maxBet: number }>({ minBet: 10, maxBet: 10000 });
+
   protected readonly minBet = computed(() => {
     const state = this.gameState();
-    if (!state) return 10;
-    // Standard raise is usually at least currentBet + bigBlind (10)
-    return Math.max(10, state.currentBet + 10);
+    const modeMin = this.modeLimits().minBet;
+    if (!state) return modeMin;
+    // Must be at least the mode minimum AND a valid raise over current bet
+    return Math.max(modeMin, state.currentBet + modeMin);
   });
 
   protected readonly maxBet = computed(() => {
     const me = this.myPlayer();
-    if (!me) return 1000;
-    return me.balance;
+    const modeMax = this.modeLimits().maxBet;
+    if (!me) return modeMax;
+    // Cap at both player balance and mode maximum
+    return Math.min(me.balance, modeMax);
   });
 
   protected readonly myPlayer = computed(() => {
@@ -147,6 +153,10 @@ export class Poker implements OnInit {
       // Pause Overlay Logic: only show overlay at round end (winning hand)
       this.handlePauseOverlayLogic(s);
     });
+
+    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    this.modeLimits.set(getBetLimits(modeParam));
+    this.selectedBetAmount.set(this.modeLimits().minBet);
 
     this.socketService.joinGame(id, userId);
   }

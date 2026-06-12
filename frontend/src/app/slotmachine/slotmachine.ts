@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, OnDestroy, ChangeDetectorRef, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
+import { getBetLimits, getBetSteps } from '../game-mode-overlay/game-mode-overlay';
 import { SlotmachineService } from './slotmachine.service';
 import { Subscription, fromEvent } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
@@ -187,7 +188,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly STRIP_LEN = 30;
   private readonly SYM_H = 120;
-  private readonly BET_STEPS = [10, 25, 50, 100, 250, 500]; //TODO: Add max and min bet from game-moder-overlay
+  private betSteps = [10, 25, 50, 100, 250, 500];
 
   private strips: HTMLElement[] = [];
   private autoSpinTimer: any = null;
@@ -195,6 +196,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private sanitizer: DomSanitizer,
+    private route: ActivatedRoute,
     private smService: SlotmachineService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
@@ -210,6 +212,11 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
+
+    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    const { minBet, maxBet } = getBetLimits(modeParam);
+    this.betSteps = getBetSteps(minBet, maxBet);
+    this.bet = this.betSteps[0];
 
     this.keydownSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
       .subscribe((event) => {
@@ -316,17 +323,17 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
   }
 
   increaseBet(): void {
-    const i = this.BET_STEPS.indexOf(this.bet);
-    if (i < this.BET_STEPS.length - 1) this.bet = this.BET_STEPS[i + 1];
+    const i = this.betSteps.indexOf(this.bet);
+    if (i < this.betSteps.length - 1) this.bet = this.betSteps[i + 1];
   }
 
   decreaseBet(): void {
-    const i = this.BET_STEPS.indexOf(this.bet);
-    if (i > 0) this.bet = this.BET_STEPS[i - 1];
+    const i = this.betSteps.indexOf(this.bet);
+    if (i > 0) this.bet = this.betSteps[i - 1];
   }
 
   setMaxBet(): void {
-    this.bet = this.BET_STEPS[this.BET_STEPS.length - 1];
+    this.bet = this.betSteps[this.betSteps.length - 1];
   }
 
   resetCredits(): void {
