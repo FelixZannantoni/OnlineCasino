@@ -106,19 +106,19 @@ export class DB {
 
             await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 1,
-                name: "Test Game",
+                name: "Poker Low",
                 type: "POKER"
             });
 
             await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 2,
-                name: "Blackjack Table 1",
+                name: "Blackjack Low",
                 type: "BLACKJACK"
             });
 
             await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 3,
-                name: "Roulette Table 1",
+                name: "Roulette Low",
                 type: "ROULETTE"
             });
 
@@ -131,6 +131,30 @@ export class DB {
             await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 5,
                 name: "Roulette Middle",
+                type: "ROULETTE"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 6,
+                name: "Poker Middle",
+                type: "POKER"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 7,
+                name: "Poker High",
+                type: "POKER"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 8,
+                name: "Blackjack Middle",
+                type: "BLACKJACK"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 9,
+                name: "Roulette High",
                 type: "ROULETTE"
             });
 
