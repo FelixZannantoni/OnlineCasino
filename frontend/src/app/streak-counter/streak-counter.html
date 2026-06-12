@@ -1,1 +1,20 @@
-<p>streak-counter works!</p>
+<div class="streak-wrapper" [attr.aria-label]="streak() + ' day streak'">
+  <div class="flame-container" aria-hidden="true">
+    <svg class="flame-svg" viewBox="0 0 40 72" xmlns="http://www.w3.org/2000/svg">
+      <!-- Red outer flame -->
+      <path class="flame-red" d="M20,70 C6,60 2,48 6,36 C8,28 12,22 10,12 C16,18 18,24 16,32 C22,24 24,14 20,2 C28,12 34,24 32,38 C36,32 36,24 34,18 C40,28 42,42 34,54 C38,50 40,44 38,38 C44,50 38,66 20,70 Z"/>
+      <!-- Orange mid flame -->
+      <path class="flame-orng" d="M20,68 C9,58 7,46 11,36 C13,28 16,24 14,16 C19,22 20,28 18,36 C23,28 24,18 21,8 C27,16 31,26 29,38 C32,32 33,26 31,20 C36,30 37,42 30,52 C33,48 34,42 32,37 C37,48 33,63 20,68 Z"/>
+      <!-- Gold inner flame -->
+      <path class="flame-ylw" d="M20,65 C12,56 11,46 15,38 C17,32 19,28 17,20 C21,26 22,32 20,39 C24,32 25,24 22,15 C27,22 29,32 27,42 C30,37 30,30 28,25 C32,34 32,46 26,55 C28,51 29,46 27,41 C31,50 28,61 20,65 Z"/>
+      <!-- White hot core -->
+      <path class="flame-wht" d="M20,62 C15,54 14,46 18,40 C19,36 21,33 19,27 C22,32 23,37 21,43 C24,37 25,30 23,23 C26,29 27,38 25,46 C27,42 27,37 26,33 C29,40 28,51 20,62 Z"/>
+    </svg>
+  </div>
+
+  <div class="streak-pill" aria-hidden="true">
+    <span class="streak-number">{{ streak() }}</span>
+  </div>
+
+  <span class="streak-label">Day Streak</span>
+</div>
