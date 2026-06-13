@@ -39,12 +39,12 @@ export class Roulette extends Game<RoulettePlayer> {
 
             await this.playRound();
             this.currentPhase = RoulettePhase.FINISHED;
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
         this.isRunning = false;
         this.currentPhase = RoulettePhase.WAITING;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private async playRound() {
@@ -60,19 +60,19 @@ export class Roulette extends Game<RoulettePlayer> {
 
         this.currentPhase = RoulettePhase.SPINNING;
         this.lastWinningNumber = Math.floor(Math.random() * 37);
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         // Wait for frontend animation
         await new Promise(resolve => setTimeout(resolve, 5000));
 
         await this.handOutWin(this.lastWinningNumber);
         this.currentPhase = RoulettePhase.FINISHED;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private async waitForBets() {
         this.remainingTime = 15;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         await new Promise<void>((resolve) => {
             let interval: NodeJS.Timeout | null = null;
@@ -83,7 +83,7 @@ export class Roulette extends Game<RoulettePlayer> {
                 timerStarted = true;
                 interval = setInterval(() => {
                     this.remainingTime--;
-                    this.emit("gameState", this.getGameState());
+                    this.emit("game_state", this.getGameState());
                     if (this.remainingTime <= 0) {
                         cleanup();
                         resolve();
@@ -101,7 +101,7 @@ export class Roulette extends Game<RoulettePlayer> {
 
             const handleBet = () => {
                 startTimer();
-                this.emit("gameState", this.getGameState());
+                this.emit("game_state", this.getGameState());
             };
 
             const cleanup = () => {
@@ -151,7 +151,7 @@ export class Roulette extends Game<RoulettePlayer> {
             // If amount is provided, use it as the new ready status, otherwise toggle
             const newReadyStatus = amount !== undefined ? !!amount : !player.getIsReady();
             player.setReady(newReadyStatus);
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             this.emit("playerReady", { playerId });
             return { success: true, message: `Player ${newReadyStatus ? "ready" : "unready"}` };
         }
