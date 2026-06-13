@@ -168,8 +168,8 @@ io.on("connection", (socket: Socket) => {
             io.to(gameId).emit("game_state", game.getGameState());
         }
 
-        if (game.listenerCount("gameState") === 0) {
-            game.on("gameState", (state: any) => {
+        if (game.listenerCount("game_state") === 0) {
+            game.on("game_state", (state: any) => {
                 io.to(gameId).emit("game_state", state);
             });
         }

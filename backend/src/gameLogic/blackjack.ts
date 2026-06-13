@@ -58,13 +58,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             await this.playRound();
             this.updateDealerChip();
             this.currentPhase = BlackjackPhase.FINISHED;
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             // Wait a bit before next round
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
         this.isRunning = false;
         this.currentPhase = BlackjackPhase.WAITING;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     public stopGame() {
@@ -87,7 +87,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.currentPhase = BlackjackPhase.PLAYING;
         this.handCardsOut();
         this.checkHandsValue();
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         if (!this.blackJackBot.hasBlackJack()) {
             await this.makeMove();
@@ -104,7 +104,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             this.blackJackBot.revealCards(); // Just reveal the hidden card
         }
 
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
         await this.handOutWin();
         this.currentPlayerId = null;
     }
@@ -146,7 +146,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         if (index !== -1) {
             this.players.splice(index, 1);
             this.emit("playerLeft", { playerId });
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
         }
     }
 
@@ -164,7 +164,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             this.currentPlayerId = playerOnMove.getPlayerId();
             let turnOver = false;
             while (!turnOver && playerOnMove.getHandValue() < 21) {
-                this.emit("gameState", this.getGameState());
+                this.emit("game_state", this.getGameState());
                 await new Promise<void>((resolve) => {
                     this.startTurnTimer(this.defaultTurnTimeoutMs, () => {
                         turnOver = true;
@@ -201,7 +201,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                     turnOver = true;
                                 }
                                 playerOnMove.resetMadeMove();
-                                this.emit("gameState", this.getGameState());
+                                this.emit("game_state", this.getGameState());
                                 cleanup();
                                 resolve();
                             }
@@ -245,7 +245,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
         }
 
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         // Wait for all players to place a bet or timeout
         await new Promise<void>((resolve) => {
@@ -259,7 +259,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                     this.stopTurnTimer();
                     resolve();
                 }
-                this.emit("gameState", this.getGameState());
+                this.emit("game_state", this.getGameState());
             };
 
             const handleLeft = () => {
