@@ -162,8 +162,9 @@ export class Poker implements OnInit {
       window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
         detail: {
           title: 'Gewinner!',
-          message: `${winnerPlayer?.displayname || 'Spieler'} gewinnt mit ${winnerInfo.handName || winnerPlayer?.handName || 'Gewinnende Hand'}`,
+          message: `${winnerPlayer?.displayname || 'Player'} wins with ${winnerInfo.handName || winnerPlayer?.handName || 'Winenr Hand'}`,
           timerSeconds: 5,
+          variant: 'winner',
           boardCards: s.board,
           winnerCards: winnerPlayer?.cards || [],
           handName: winnerInfo.handName || winnerPlayer?.handName
@@ -174,7 +175,7 @@ export class Poker implements OnInit {
 
     // Otherwise close overlay
     window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
-      detail: { isOpen: false, title: '', message: '' }
+      detail: { isOpen: false, title: '', message: '', variant: 'default' }
     }));
   }
 

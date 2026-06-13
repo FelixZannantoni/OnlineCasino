@@ -67,7 +67,8 @@
     <!-- OBEN LINKS: Gegner 1 -->
     <div class="grid-cell top-left">
       @if (opponents()[0]; as opponent) {
-      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId" [class.folded]="opponent.folded">
+        @if (opponent.folded) { <div class="folded-badge" aria-label="Folded">FOLDED</div> }
         @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
         <div class="player-avatar">
           <img src="assets/default-avatar.png" alt="Opponent" />
@@ -87,7 +88,8 @@
     <!-- OBEN MITTE: Gegner 2 -->
     <div class="grid-cell top-center">
       @if (opponents()[1]; as opponent) {
-      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId" [class.folded]="opponent.folded">
+        @if (opponent.folded) { <div class="folded-badge" aria-label="Folded">FOLDED</div> }
         @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
         <div class="player-avatar">
           <img src="assets/default-avatar.png" alt="Opponent" />
@@ -107,7 +109,8 @@
     <!-- OBEN RECHTS: Gegner 3 -->
     <div class="grid-cell top-right">
       @if (opponents()[2]; as opponent) {
-      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId" [class.folded]="opponent.folded">
+        @if (opponent.folded) { <div class="folded-badge" aria-label="Folded">FOLDED</div> }
         @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
         <div class="player-avatar">
           <img src="assets/default-avatar.png" alt="Opponent" />
@@ -154,7 +157,8 @@
     <!-- UNTEN RECHTS: Gegner 4 -->
     <div class="grid-cell bottom-right">
       @if (opponents()[3]; as opponent) {
-      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId">
+      <div class="player-display" [class.active]="opponent.id === gameState()?.currentPlayerId" [class.folded]="opponent.folded">
+        @if (opponent.folded) { <div class="folded-badge" aria-label="Folded">FOLDED</div> }
         @if (opponent.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
         <div class="player-avatar">
           <img src="assets/default-avatar.png" alt="Opponent" />
