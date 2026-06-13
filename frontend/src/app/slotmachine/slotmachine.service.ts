@@ -17,14 +17,13 @@ export class SlotmachineService {
 
   constructor(private http: HttpClient) {}
 
-  async createGame(playerId: string, username: string, displayname: string, balance: number): Promise<string> {
-    const res = await firstValueFrom(this.http.post<{ gameId: string }>(`${this.apiUrl}/create`, {
+  async createGame(playerId: string, username: string, displayname: string): Promise<{ gameId: string; balance: number }> {
+    const res = await firstValueFrom(this.http.post<{ gameId: string; balance: number }>(`${this.apiUrl}/create`, {
       playerId,
       username,
-      displayname,
-      balance
+      displayname
     }));
-    return res.gameId;
+    return res;
   }
 
   async spin(gameId: string, bet: number): Promise<SpinResult> {

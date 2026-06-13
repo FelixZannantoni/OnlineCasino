@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { getBetLimits, getBetSteps } from '../game-mode-overlay/game-mode-overlay';
 import { SlotmachineService } from './slotmachine.service';
+import { DataService } from '../services/data-service';
 import { Subscription, fromEvent } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -147,7 +148,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChildren('strip') stripRefs!: QueryList<ElementRef<HTMLElement>>;
 
-  credits = 1000;
+  credits = 0;
   bet = 10;
   spins = 0;
   isWin = false;
@@ -198,6 +199,7 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
     private smService: SlotmachineService,
+    private dataService: DataService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -233,7 +235,25 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
     this.strips.forEach(el => this.buildStrip(el));
 
     try {
-      this.gameId = await this.smService.createGame("user-1", "testuser", "Test User", this.credits);
+      const userId = this.dataService.getUserId();
+      if (!userId) {
+        throw new Error("User not logged in");
+      }
+
+      // Fetch user info from backend to get username and displayname
+      const userRes = await fetch(`/users/${userId}`);
+      if (!userRes.ok) {
+        throw new Error("Failed to fetch user info");
+      }
+      
+      const userInfo = await userRes.json();
+      const { username, displayname } = userInfo;
+
+      // Create game with correct balance from backend
+      const result = await this.smService.createGame(userId, username, displayname);
+      this.gameId = result.gameId;
+      this.credits = result.balance;
+      
       this.initializing = false;
       this.cdr.detectChanges();
     } catch (e) {
@@ -337,13 +357,9 @@ export class Slotmachine implements OnInit, AfterViewInit, OnDestroy {
   }
 
   resetCredits(): void {
-    this.stopAutoSpin();
-    this.clearWinningSymbolHighlights();
-    this.credits = 1000;
-    this.spins = 0;
-    this.isWin = false;
-    this.winAmount = 0;
-    this.winningLineIndices = [];
+    // Reset functionality disabled - balance is managed by backend
+    console.warn("Reset is disabled. Your balance is managed by the backend.");
+    alert("Balance reset is not available. Your balance is managed by the backend.");
   }
 
   getWinLinePath(lineIdx: number): string {
