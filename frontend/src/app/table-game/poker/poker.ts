@@ -27,7 +27,7 @@ type PokerPlayerState = {
   cards: PokerBoardCard[];
   isDealer: boolean;
   handName: string;
-  handValue: number;
+  handValue?: number;
 };
 
 type PokerGameState = {
@@ -152,22 +152,20 @@ export class Poker implements OnInit {
   }
 
   private handlePauseOverlayLogic(s: PokerGameState): void {
-    // Show overlay only when server marks the game as loading and provides lastWinners
-    // (this indicates a round has finished and winners are available).
-    if (s.isLoading && (s as any).lastWinners && (s as any).lastWinners.length > 0) {
-      const lastWinners = (s as any).lastWinners as { id: string, handName: string }[];
-      const winnerInfo = lastWinners[0]; // show primary winner (if split pot, first entry)
-      const winnerPlayer = s.players.find(p => p.id === winnerInfo.id) || null;
+    const activePlayers = s.players.filter(p => !p.folded);
+    const maxHandValue = Math.max(...activePlayers.map(p => p.handValue || 0));
+    const winners = activePlayers.filter(p => (p.handValue || 0) === maxHandValue);
+
+    if (s.isLoading && winners.length > 0 && maxHandValue > 0) {
+      const winnerNames = winners.map(w => w.displayname || 'Player').join(', ');
+      const winningHandName = winners[0].handName || 'Winning Hand';
 
       window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
         detail: {
-          title: 'Gewinner!',
-          message: `${winnerPlayer?.displayname || 'Player'} wins with ${winnerInfo.handName || winnerPlayer?.handName || 'Winenr Hand'}`,
+          title: 'Winner!',
+          message: `${winnerNames} wins with ${winningHandName}`,
           timerSeconds: 5,
-          variant: 'winner',
-          boardCards: s.board,
-          winnerCards: winnerPlayer?.cards || [],
-          handName: winnerInfo.handName || winnerPlayer?.handName
+          variant: 'winner'
         }
       }));
       return;
