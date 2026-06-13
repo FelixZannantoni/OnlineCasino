@@ -65,7 +65,7 @@ export class Poker extends CardGame<PokerPlayer> {
             const tipAmount = getPokerTipAmount(this.mode);
             player.makeTip(tipAmount);
             await userService.updateUserBalance(playerId, player.getBalance());
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             return { success: true, message: "Dealer: Thank you for the tip!" };
         } catch (e) {
             return { success: false, message: "Not enough money to tip" };
@@ -150,7 +150,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.startTurnTimer();
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private resetPlayers() {
@@ -225,7 +225,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.checkPlayersHands();
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private reveal(count: number) {
@@ -255,7 +255,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.moveToNextActivePlayer(); // Moves to the first active player after dealer
 
         this.startTurnTimer();
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private async handleShowdown() {
@@ -303,7 +303,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }));
 
         this.isLoading = true;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         setTimeout(() => {
             this.startNewHand();
@@ -388,7 +388,7 @@ export class Poker extends CardGame<PokerPlayer> {
                 handName: "Last player standing"
             }];
             this.isLoading = true;
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             setTimeout(() => this.startNewHand(), 3000);
             return { success: true, message: "Only one player left" };
         }
@@ -400,7 +400,7 @@ export class Poker extends CardGame<PokerPlayer> {
             this.startTurnTimer();
         }
 
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
         return { success: success, message: message };
     }
 
