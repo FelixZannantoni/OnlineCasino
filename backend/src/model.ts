@@ -7,6 +7,7 @@ export type User = {
     email: string,
     balance: number,
     streakCount: number,
+    lastStreakIncrement: string,
     passwordHash: string
 }
 
@@ -16,4 +17,12 @@ export type Card = {
     color: CardColor,
     owner: string,
     visibility: CardVisibility
+}
+
+export type LeaderboardEntry = {
+    rank: number,
+    userName: string,
+    balance: number,
+    streak: number,
+    avatar: string
 }
