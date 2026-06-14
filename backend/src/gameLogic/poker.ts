@@ -73,6 +73,8 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     public startGameStartTimer() {
+        if (this.isStarted) return;
+        
         if(this.gameStartTimer) {
             // reset timer if it's already running (e.g. a new player joined)
             clearTimeout(this.gameStartTimer);
@@ -81,8 +83,11 @@ export class Poker extends CardGame<PokerPlayer> {
         console.log(`Starting game start timer for game ${this.getGameId()}! Players: ${this.players.length}`);
         this.gameStartEndTime = Date.now() + this.GAME_START_DELAY_MS;
         this.gameStartTimer = setTimeout(() => {
-            if (!this.isStarted) {
+            if (!this.isStarted && this.players.length >= 2) {
+                console.log(`Timer triggered: Starting game ${this.getGameId()}!`);
                 this.startGame();
+            } else {
+                console.log(`Timer triggered: Not enough players to start game ${this.getGameId()} (Players: ${this.players.length})`);
             }
         }, this.GAME_START_DELAY_MS);
     }
