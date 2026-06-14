@@ -1,3 +1,5 @@
+import { statsService } from "../app";
+
 export class Player {
     private playerId: string;
     private username: string;
@@ -73,6 +75,7 @@ export class Player {
 
     public winMoney(win: number) {
         this.balance += win;
+        statsService.onPlayerWin(this.playerId);
     }
 
     public makeTip(amount: number): void {

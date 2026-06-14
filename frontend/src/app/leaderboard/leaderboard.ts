@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, OnInit } from '@angular/core';
 import { StreakCounter } from '../streak-counter/streak-counter';
 
 export interface LeaderboardEntry {
@@ -17,7 +17,7 @@ export interface LeaderboardEntry {
   styleUrl: './leaderboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Leaderboard {
+export class Leaderboard implements OnInit {
   readonly activeFilter = signal<'weekly' | 'monthly' | 'alltime'>('weekly');
 
   readonly players = signal<LeaderboardEntry[]>([
@@ -39,5 +39,29 @@ export class Leaderboard {
 
   formatScore(n: number): string {
     return n.toLocaleString('en-US');
+  }
+
+  async ngOnInit(): Promise<void> {
+    console.log('INIT');
+    await this.loadLeaderboard();
+  }
+
+  async loadLeaderboard(): Promise<void> {
+    const response = await fetch(`/stats/leaderboard`);
+    const data: {
+      rank: number,
+      userName: string,
+      balance: number,
+      streak: number,
+      avatar: string}[] = await response.json();
+
+      console.log(data);
+    this.players.set(data.map(e => ({
+      rank: e.rank,
+      username: e.userName,
+      avatar: e.avatar,
+      score: e.balance,
+      streak: e.streak
+    })));
   }
 }
