@@ -47,6 +47,7 @@ export class DB {
                 balance real not null default 1000,
                 displayName text,
                 streakCount integer,
+                lastStreakIncrement text, -- Timestamp in ISO format
                 isFromGithub integer, 
                 lastOnline text -- Timestamp in ISO format
             )

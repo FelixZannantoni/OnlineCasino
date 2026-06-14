@@ -17,6 +17,8 @@ import { Roulette } from "./gameLogic/roulette";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 import { RouletteService } from "./services/roulette-service";
+import { StatsService } from "./services/stats-service";
+import { statsRouter } from "./router/stats-router";
 
 const PORT = process.env.PORT || 3000;
 
@@ -36,6 +38,7 @@ app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/roulette", rouletteRouter);
 app.use("/slotmachine", slotmachineRouter);
+app.use("/stats", statsRouter);
 
 // Redirect root to login page
 app.get("/", (req, res) => {
@@ -70,7 +73,9 @@ const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
 const rouletteService: RouletteService = new RouletteService();
 const userService: UserService = new UserService();
-export { pokerService, blackjackService, rouletteService, userService };
+const statsService: StatsService = new StatsService();
+
+export { pokerService, blackjackService, rouletteService, userService, statsService };
 
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);

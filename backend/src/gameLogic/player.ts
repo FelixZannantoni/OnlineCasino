@@ -1,4 +1,5 @@
 import { userService } from "../app";
+import { statsService } from "../app";
 
 export class Player {
     private playerId: string;
@@ -88,6 +89,8 @@ export class Player {
 
         // dont await this, because we dont want to wait for the database to update, we can do it in the background
         userService.updateUserBalance(this.playerId, this.balance);
+      
+        statsService.onPlayerWin(this.playerId);
     }
 
     public makeTip(amount: number): void {
