@@ -9,11 +9,14 @@ import { DB } from "./data";
 import { userRouter } from "./router/user-router";
 import { pokerRouter } from "./router/poker-router";
 import { blackjackRouter } from "./router/blackjack-router";
+import { rouletteRouter } from "./router/roulette-router";
 import { PokerService } from "./services/poker-service";
 import { slotmachineRouter } from "./router/slotmachine-router";
 import { Poker } from "./gameLogic/poker";
+import { Roulette } from "./gameLogic/roulette";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
+import { RouletteService } from "./services/roulette-service";
 import { StatsService } from "./services/stats-service";
 import { statsRouter } from "./router/stats-router";
 
@@ -33,6 +36,7 @@ app.use(express.json());
 app.use("/users", userRouter);
 app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
+app.use("/roulette", rouletteRouter);
 app.use("/slotmachine", slotmachineRouter);
 app.use("/stats", statsRouter);
 
@@ -53,7 +57,12 @@ app.use(express.static(publicPath, {
 
 // 2. Catch-all for Angular Routing
 // Using a RegExp object directly bypasses path-to-regexp string parsing
-app.get(/^(?!\/(users|poker|blackjack|slotmachine)).*/, (req, res) => {
+app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine)).*/, (req, res) => {
+    res.sendFile(path.join(publicPath, "index.html"));
+});
+
+// For the specific game routes, also serve index.html
+app.get(["/poker", "/blackjack", "/roulette", "/slotmachine"], (req, res) => {
     res.sendFile(path.join(publicPath, "index.html"));
 });
 
@@ -62,22 +71,23 @@ const socketUserMap: Map<string, string> = new Map();
 
 const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
+const rouletteService: RouletteService = new RouletteService();
 const userService: UserService = new UserService();
 const statsService: StatsService = new StatsService();
-export { pokerService, blackjackService, userService, statsService };
+
+export { pokerService, blackjackService, rouletteService, userService, statsService };
 
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    socket.on("join_game", async (gameId: string, userId: string) => {
-        console.log("join_game received:", gameId, userId);
+    socket.on("join_game", async (gameId: string, userId: string, stakes?: string, gameName?: string) => {
+        console.log("join_game received:", gameId, userId, "stakes:", stakes, "name:", gameName);
         socketUserMap.set(socket.id, userId);
 
         socket.join(gameId);
         console.log(`User ${userId} joined game: ${gameId}`);
 
         const user = await userService.getUserById(userId);
-        const startBalance: number = 1000;
 
         let game: any = PokerService.pokerGames.find(
             (g) => g.getGameId().toString() === gameId.toString()
@@ -85,20 +95,45 @@ io.on("connection", (socket: Socket) => {
         let service: any = pokerService;
 
         if (!game) {
-            game = BlackjackService.blackjackGames.find(
+            const name = gameName || (stakes ? `Blackjack ${stakes}` : "Blackjack");
+            game = blackjackService.getOrCreateGame(gameId, name);
+            service = blackjackService;
+        }
+
+        if (!game) {
+            game = PokerService.pokerGames.find((g) => g.getGameId().toString() === gameId.toString());
+            if (!game && stakes) {
+                const name = gameName || (stakes ? `Poker ${stakes}` : "Poker");
+                const newPoker = new Poker(gameId, name);
+                PokerService.pokerGames.push(newPoker);
+                game = newPoker;
+            }
+            service = pokerService;
+        }
+
+        if (!game) {
+            game = RouletteService.rouletteGames.find(
                 (g) => g.getGameId().toString() === gameId.toString()
             );
-            service = blackjackService;
+            if (!game && stakes) {
+                const name = gameName || (stakes ? `Roulette ${stakes}` : "Roulette");
+                const newRoulette = new Roulette(gameId, name);
+                RouletteService.rouletteGames.push(newRoulette);
+                game = newRoulette;
+            }
+            service = rouletteService;
         }
 
         if (!game) {
             socket.emit("error", { message: `Game ${gameId} not found` });
             return;
         }
-
-        const username = user?.username ?? '-';
+        if(user == null) {
+            //TODO
+        }
+        const username = user!.username ?? '-';
         const displayname = user?.displayname || user?.username || 'Guest';
-        const balance = user?.balance ?? startBalance;
+        const balance = user!.balance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
         if (!existingPlayer) {
@@ -112,8 +147,16 @@ io.on("connection", (socket: Socket) => {
                     0,
                     gameId
                 );
-            } else {
+            } else if (service === blackjackService) {
                 await blackjackService.addPlayer(
+                    userId,
+                    username,
+                    displayname,
+                    balance,
+                    gameId
+                );
+            } else if (service === rouletteService) {
+                await rouletteService.addPlayer(
                     userId,
                     username,
                     displayname,
@@ -130,8 +173,8 @@ io.on("connection", (socket: Socket) => {
             io.to(gameId).emit("game_state", game.getGameState());
         }
 
-        if (game.listenerCount("gameState") === 0) {
-            game.on("gameState", (state: any) => {
+        if (game.listenerCount("game_state") === 0) {
+            game.on("game_state", (state: any) => {
                 io.to(gameId).emit("game_state", state);
             });
         }
@@ -142,14 +185,16 @@ io.on("connection", (socket: Socket) => {
             game.startGameStartTimer();
         } else if (service === blackjackService && playerCount >= 1) {
             game.startGame();
+        } else if (service === rouletteService && playerCount >= 1) {
+            game.startGame();
         }
         socket.emit("game_state", game.getGameState());
         // send game state to everyone in the room when a new player joins
         socket.to(gameId).emit("game_state", game.getGameState());
     });
 
-    socket.on("player_move", async (data: { gameId: string; action: string; amount?: number }) => {
-        const { gameId, action, amount } = data;
+    socket.on("player_move", async (data: { gameId: string; action: string; amount?: number; field?: string }) => {
+        const { gameId, action, amount, field } = data;
         const playerId = socketUserMap.get(socket.id);
 
         if (!playerId) {
@@ -157,7 +202,7 @@ io.on("connection", (socket: Socket) => {
             return;
         }
 
-        console.log(`Player ${playerId} performed action: ${action} in game: ${gameId} with amount: ${amount}`);
+        console.log(`Player ${playerId} performed action: ${action} in game: ${gameId} with amount: ${amount} on field: ${field}`);
 
         let actionResult = { success: false, message: "Invalid action" };
 
@@ -173,10 +218,13 @@ io.on("connection", (socket: Socket) => {
                 break;
             case "bet":
                 if (amount !== undefined) {
-                    // Try poker first, then blackjack
+                    // Try poker first, then blackjack, then roulette
                     actionResult = await pokerService.bet(playerId, gameId, amount);
                     if (!actionResult.success) {
                         actionResult = await blackjackService.bet(playerId, gameId, amount);
+                    }
+                    if (!actionResult.success && field) {
+                        actionResult = await rouletteService.bet(playerId, gameId, amount, field);
                     }
                 }
                 break;
@@ -192,6 +240,9 @@ io.on("connection", (socket: Socket) => {
                 break;
             case "double":
                 actionResult = await blackjackService.double(playerId, gameId);
+                break;
+            case "ready":
+                actionResult = await rouletteService.ready(playerId, gameId);
                 break;
         }
 
@@ -209,6 +260,9 @@ io.on("connection", (socket: Socket) => {
         let { game } = pokerService.getGameById(gameId);
         if (!game) {
             game = blackjackService.getGameById(gameId).game as any;
+        }
+        if (!game) {
+            game = rouletteService.getGameById(gameId).game as any;
         }
 
         if (game) {
@@ -248,11 +302,16 @@ io.on("connection", (socket: Socket) => {
                     (game as any).handlePlayerDisconnect(userId);
                 }
             });
+            RouletteService.rouletteGames.forEach(game => {
+                if (typeof (game as any).handlePlayerDisconnect === 'function') {
+                    (game as any).handlePlayerDisconnect(userId);
+                }
+            });
         }
 
         if (userId) {
             // Find games the user might be in and remove them
-            [...PokerService.pokerGames, ...BlackjackService.blackjackGames].forEach(game => {
+            [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
                 if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
                     game.removePlayer(userId);
                 }
@@ -267,3 +326,5 @@ httpServer.listen(PORT, () => console.log(`Server running on: http://localhost:$
 DB.createDBConnection();
 pokerService.loadAllPokerGames();
 blackjackService.loadAllBlackjackGames();
+rouletteService.loadAllRouletteGames();
+console.log("DEBUG: Roulette games loaded. Count:", RouletteService.rouletteGames.length);

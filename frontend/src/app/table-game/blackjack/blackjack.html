@@ -1,20 +1,21 @@
 <app-table-game game="blackjack" [balance]="balance" [pot]="pot">
   <div game-content>
 
-    <!-- 1. DEALER KARTEN (Oben Mitte, wie Board-Cards aber höher) -->
-    <!-- Wir nutzen absolute Positionierung relativ zum [game-content] Container -->
+    <!-- 1. DEALER CARDS -->
     <div class="dealer-area">
       @if (gameState(); as state) {
         @for (card of state.bot.cards; track $index) {
-          @if (card.visibility === 'all') {
-            <div class="card" [class]="'card-' + card.color.toLowerCase()" style="width: 70px; height: 98px;">
-              <div class="card-top"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
-              <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
-              <div class="card-bottom"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
-            </div>
-          } @else {
-            <div class="card card-back" style="width: 70px; height: 98px;"></div>
-          }
+          <div class="card-flip-wrapper" [class.flipping]="isFlipping('dealer-' + $index)">
+            @if (card.visibility === 'all') {
+              <div class="card" [class.card-hearts]="card.color === 'HEARTS'" [class.card-diamonds]="card.color === 'DIAMONDS'" [class.card-spades]="card.color === 'SPADES'" [class.card-clubs]="card.color === 'CLUBS'" style="width: 70px; height: 98px;">
+                <div class="card-top"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+                <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
+                <div class="card-bottom"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+              </div>
+            } @else {
+              <div class="card card-back" style="width: 70px; height: 98px;"></div>
+            }
+          </div>
         }
         @if (state.bot.handValue > 0 && gameState()?.phase !== 'PLAYING') {
           <div class="dealer-value-badge">{{ state.bot.handValue }}</div>
@@ -22,8 +23,7 @@
       }
     </div>
 
-    <!-- 2. GEGNER (Grid Layout wie bei Poker) -->
-    <!-- Oben Links -->
+    <!-- 2. OPPONENTS -->
     <div class="grid-cell top-left">
       @if (opponents()[0]; as opp) {
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
@@ -33,10 +33,14 @@
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
-            <div class="player-name">{{ opp.displayname || (opp.id | slice:0:8) + '...' }}</div>
+            <div class="player-name">
+            {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
+            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
-          <!-- Mini-Karten unter Avatar -->
           <div class="mini-hand">
             @for (card of opp.cards; track $index) {
               @if (card.visibility === 'all') {
@@ -47,15 +51,12 @@
                 <div class="mini-card card-back"></div>
               }
             }
-            @if (opp.handValue > 0) {
-              <div class="mini-value">{{ opp.handValue }}</div>
-            }
+            @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
           </div>
         </div>
       }
     </div>
 
-    <!-- Oben Mitte -->
     <div class="grid-cell top-center">
       @if (opponents()[1]; as opp) {
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
@@ -65,7 +66,12 @@
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
-            <div class="player-name">{{ opp.displayname || (opp.id | slice:0:8) + '...' }}</div>
+            <div class="player-name">
+            {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
+            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
           <div class="mini-hand">
@@ -84,7 +90,6 @@
       }
     </div>
 
-    <!-- Oben Rechts -->
     <div class="grid-cell top-right">
       @if (opponents()[2]; as opp) {
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
@@ -94,7 +99,12 @@
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
-            <div class="player-name">{{ opp.displayname || (opp.id | slice:0:8) + '...' }}</div>
+            <div class="player-name">
+            {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
+            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
           <div class="mini-hand">
@@ -113,7 +123,6 @@
       }
     </div>
 
-    <!-- Unten Rechts -->
     <div class="grid-cell bottom-right">
       @if (opponents()[3]; as opp) {
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
@@ -123,7 +132,12 @@
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
-            <div class="player-name">{{ opp.displayname || (opp.id | slice:0:8) + '...' }}</div>
+            <div class="player-name">
+            {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
+            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+              <span class="turn-timer">({{ turnRemaining() }}s)</span>
+            }
+          </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
           <div class="mini-hand">
@@ -142,7 +156,7 @@
       }
     </div>
 
-    <!-- 3. ICH (Unten Links/Mitte) -->
+    <!-- 3. ME -->
     <div class="grid-cell bottom-left">
       @if (me(); as player) {
         <div class="player-display" [class.active]="player.id === gameState()?.currentPlayerId">
@@ -152,25 +166,30 @@
             @if (player.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
-            <div class="player-name">You ({{ player.displayname || (player.id | slice:0:8) + '...' }})</div>
+            <div class="player-name">
+              You ({{ player.displayname || (player.id | slice:0:8) + '...' }})
+              @if (player.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
+                <span class="turn-timer">({{ turnRemaining() }}s)</span>
+              }
+            </div>
             <div class="player-bet">Bet: {{ player.bet }}</div>
           </div>
-          <!-- Bei mir keine Mini-Karten, da ich die großen unten habe -->
         </div>
       }
     </div>
 
-    <!-- 4. EIGENE KARTEN (Zentriert unten, wie bei Poker .player-cards) -->
+    <!-- 4. MY CARDS -->
     <div class="player-cards">
       @if (me(); as player) {
         @for (card of player.cards; track $index) {
-          <div class="card"
-               [class]="'card-' + card.color.toLowerCase()"
-               [style.transform]="'rotate(' + ($index === 0 ? -15 : 15) + 'deg)'"
-               style="width: 84px; height: 117px;">
-            <div class="card-top"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
-            <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
-            <div class="card-bottom"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+          <div class="card-flip-wrapper" [class.flipping]="isFlipping('player-' + player.id + '-' + $index)">
+            <div class="card" [class.card-hearts]="card.color === 'HEARTS'" [class.card-diamonds]="card.color === 'DIAMONDS'" [class.card-spades]="card.color === 'SPADES'" [class.card-clubs]="card.color === 'CLUBS'"
+                 [style.transform]="'rotate(' + ($index === 0 ? -15 : 15) + 'deg)'"
+                 style="width: 84px; height: 117px;">
+              <div class="card-top"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+              <div class="card-center" [class]="'card-center suit-' + card.color.toLowerCase()"></div>
+              <div class="card-bottom"><span class="card-rank">{{ getRank(card.name) }}</span><span [class]="'card-suit suit-' + card.color.toLowerCase()"></span></div>
+            </div>
           </div>
         }
         @if (player.handValue > 0) {
@@ -191,8 +210,20 @@
       }
     }
     @if (gameState()?.phase === 'BETTING') {
-      <div style="display:flex; gap:10px; align-items:center; background:rgba(0,0,0,0.5); padding:10px; border-radius:20px;">
-        <input type="number" [(ngModel)]="betAmount" style="width:60px; padding:5px; border-radius:5px; border:none; color: white; background: transparent; text-align: center;">
+      <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.5); padding:10px; border-radius:20px;">
+        <div class="tray">
+          <span class="tray-lbl" id="chip-label">Chip</span>
+          <div role="radiogroup" aria-labelledby="chip-label" style="display:flex;gap:8px">
+            @for (c of chipOptions(); track c.value) {
+              <div class="chip-btn" [class]="c.cls" [class.on]="selectedChip() === c.value" role="radio"
+                   tabindex="0" [attr.aria-checked]="selectedChip() === c.value"
+                   [attr.aria-label]="'Select $' + c.value + ' chip'" (click)="selectChip(c.value)"
+                   (keydown.enter)="selectChip(c.value)">
+                ${{ c.value }}
+              </div>
+            }
+          </div>
+        </div>
         <button class="btn-bet" (click)="placeBet()">Place Bet</button>
       </div>
     }

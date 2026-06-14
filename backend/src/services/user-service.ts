@@ -71,9 +71,24 @@ export class UserService {
      * @param name github name of the user
      * @returns true if login (or registration) was successful, false otherwise
      */
-    async githubLogin(githubId: number, username: string, displayName: string): Promise<boolean> {
+    private normalizeUserId(userId: string | number): string {
+        if (typeof userId === "number") {
+            if (!Number.isFinite(userId)) return "";
+            return String(Math.trunc(userId));
+        }
+
+        if (typeof userId === "string") {
+            return userId.replace(/\.0+$/, "");
+        }
+
+        return "";
+    }
+
+    async githubLogin(githubId: string | number, username: string, displayName: string): Promise<boolean> {
+        const normalizedGithubId = this.normalizeUserId(githubId);
+
         // check for invalid params
-        if(!githubId || !username || !displayName) {
+        if (!normalizedGithubId || !username || !displayName) {
             console.error(`Invalid parameters for github login: githubId: ${githubId}, username: ${username}, displayName: ${displayName}`);
             return false;
         }
@@ -81,7 +96,7 @@ export class UserService {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare("SELECT * FROM users WHERE uuid = ? AND isFromGithub = 1").all(githubId.toString());
+            const result = connection.prepare("SELECT * FROM users WHERE uuid = ? AND isFromGithub = 1").all(normalizedGithubId);
 
             if (result.length > 0) {
                 // await connection.close();
@@ -90,7 +105,7 @@ export class UserService {
 
             // If user doesn't exist, create a new one
             const newUserResult = connection.prepare("INSERT INTO users (uuid, userName, displayName, isFromGithub) VALUES (?, ?, ?, 1)").run(
-                githubId.toString(),
+                normalizedGithubId,
                 username,
                 displayName
             );
@@ -99,7 +114,7 @@ export class UserService {
 
             return newUserResult.changes === 1;
 
-        } catch(err) {
+        } catch (err) {
             console.error(`Something happened while trying to login via github (user-service): ${err}`);
             return false;
         }
@@ -110,12 +125,15 @@ export class UserService {
      * @param userId 
      * @returns an user object if found, null otherwise
      */
-    async getUserById(userId: string): Promise<User | null> {
+    async getUserById(userId: string | number): Promise<User | null> {
         try {
             const connection: Database = await DB.createDBConnection();
+            const normalizedUserId = this.normalizeUserId(userId);
+
+            if (!normalizedUserId) return null;
 
             // First try by uuid
-            let row: any = connection.prepare(`SELECT * FROM users WHERE uuid = ?`).get(userId);
+            let row: any = connection.prepare(`SELECT * FROM users WHERE uuid = ?`).get(normalizedUserId);
             
             // If not found, try by userName (just in case frontend sends username)
             if (!row) {
@@ -140,12 +158,18 @@ export class UserService {
         }
     }
 
-    async updateUserBalance(userId: string, newBalance: number): Promise<boolean> {
+    async updateUserBalance(userId: string | number, newBalance: number): Promise<boolean> {
         try {
             const connection: Database = await DB.createDBConnection();
+            const normalizedUserId = this.normalizeUserId(userId);
+
+            if (!normalizedUserId) {
+                console.error(`Invalid userId for updateUserBalance: ${userId}`);
+                return false;
+            }
 
             const result = connection.prepare<{userId: string, newBalance: number}>("UPDATE users SET balance = :newBalance WHERE uuid = :userId").run({
-                userId,
+                userId: normalizedUserId,
                 newBalance
             });
 

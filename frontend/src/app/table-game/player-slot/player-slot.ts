@@ -11,6 +11,8 @@ export class PlayerSlot {
   displayName = input.required<string>();
   balance = input.required<number>();
   bet = input<number>(0);
+  minBet = input<number>(0);
+  maxBet = input<number>(0);
   isDealer = input<boolean>(false);
   isCurrent = input<boolean>(false);
   isMe = input<boolean>(false);

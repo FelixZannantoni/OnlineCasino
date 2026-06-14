@@ -4,15 +4,34 @@ import { Player } from "./player";
 export class Game<T extends Player = Player> extends EventEmitter {
     protected players: T[];
     private gameId: string;
+    private gameName: string;
+    protected gameBalance: number = Infinity;
 
-    constructor(gameId: string) {
+    constructor(gameId: string, gameName: string = "") {
         super();
         this.players = [];
         this.gameId = gameId;
+        this.gameName = gameName || gameId;
     }
 
     public getGameId() {
         return this.gameId;
+    }
+
+    public getGameName() {
+        return this.gameName;
+    }
+
+    public setGameName(name: string) {
+        this.gameName = name;
+    }
+
+    public getGameBalance() {
+        return this.gameBalance;
+    }
+
+    public setGameBalance(balance: number) {
+        this.gameBalance = balance;
     }
 
     public addPlayer(player: T): void {
@@ -20,6 +39,9 @@ export class Game<T extends Player = Player> extends EventEmitter {
             throw new Error("Player with this id is already in the game");
         }
         else {
+            if (player.getBalance() > this.gameBalance) {
+                player.setBalance(this.gameBalance);
+            }
             this.players.push(player);
         }
     }

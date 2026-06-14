@@ -79,3 +79,21 @@ userRouter.post("/register", async (req: Request, res: Response) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Registering user failed!" });
     }
 });
+
+userRouter.get("/:userId", async (req: Request, res: Response) => {
+    const userId: string = req.params.userId;
+    const service: UserService = new UserService();
+
+    const user = await service.getUserById(userId);
+
+    if(user) {
+        res.status(StatusCodes.OK).json({ 
+            userId: user.uuid,
+            username: user.username, 
+            displayname: user.displayname,
+            balance: user.balance
+        });
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ message: "User not found!" });
+    }
+});

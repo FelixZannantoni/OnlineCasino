@@ -1,12 +1,12 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, MatIconModule, CommonModule],
+  imports: [RouterOutlet, MatIconModule, CommonModule],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -17,15 +17,15 @@ export class Home {
   favorites: { [key: string]: boolean } = {
     'Blackjack': false,
     'PokerTexas': false,
-    'Slotmachine': false
+    'Slotmachine': false,
+    'Roulette': false,
   };
 
-  // Map favorite keys to display names and routes
   favoriteGameIds = [
-    { key: 'Roulette', title: 'Roulette', route: '/roulette' },
-    { key: 'Blackjack', title: 'Blackjack', route: '/blackjack' },
-    { key: 'PokerTexas', title: "Poker Texas Hold'em", route: '/poker' },
-    { key: 'Slotmachine', title: 'Slotmachine', route: '/slotmachine' }
+    { key: 'Roulette',    title: 'Roulette',             route: '/roulette'    },
+    { key: 'Blackjack',   title: 'Blackjack',            route: '/blackjack'   },
+    { key: 'PokerTexas',  title: "Poker Texas Hold'em",  route: '/poker'       },
+    { key: 'Slotmachine', title: 'Slotmachine',          route: '/slotmachine' },
   ];
 
   constructor() {
@@ -39,15 +39,11 @@ export class Home {
 
   toggleFavorite(game: string, event: Event): void {
     event.stopPropagation();
-    if (this.favorites[game] !== undefined) {
-      this.favorites[game] = !this.favorites[game];
-    } else {
-      this.favorites[game] = true;
-    }
+    this.favorites[game] = !this.favorites[game];
   }
 
   isFavorite(game: string): boolean {
-    return this.favorites[game] || false;
+    return this.favorites[game] ?? false;
   }
 
   get favoriteGames() {
@@ -57,8 +53,11 @@ export class Home {
   openInfo(gameKey: string, event: Event): void {
     event.stopPropagation();
     if (!this.isBrowser) return;
-    window.dispatchEvent(new CustomEvent('toggleInfoOverlay', {
-      detail: { gameKey }
-    }));
+    window.dispatchEvent(new CustomEvent('toggleInfoOverlay', { detail: { gameKey } }));
+  }
+
+  onGameClick(gameKey: string): void {
+    if (!this.isBrowser) return;
+    window.dispatchEvent(new CustomEvent('toggleGameModeOverlay', { detail: { gameKey } }));
   }
 }

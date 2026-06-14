@@ -25,6 +25,7 @@ export interface PokerPlayer {
 
 export interface PokerGameState {
     gameId: string;
+    gameBalance: number;
     players: PokerPlayer[];
     boardCards: Card[];
     pot: number;

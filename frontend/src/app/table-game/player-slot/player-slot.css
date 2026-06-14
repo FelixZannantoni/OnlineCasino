@@ -100,3 +100,10 @@
   font-weight: bold;
   white-space: nowrap;
 }
+
+.player-limits {
+  font-size: 0.7rem;
+  color: rgba(255, 215, 0, 0.5);
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
