@@ -78,7 +78,7 @@ export class Poker extends CardGame<PokerPlayer> {
             clearTimeout(this.gameStartTimer);
         }
 
-        console.log(`Starting game start timer for game ${this.getGameId()}!`);
+        console.log(`Starting game start timer for game ${this.getGameId()}! Players: ${this.players.length}`);
         this.gameStartEndTime = Date.now() + this.GAME_START_DELAY_MS;
         this.gameStartTimer = setTimeout(() => {
             if (!this.isStarted) {
