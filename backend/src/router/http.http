@@ -11,7 +11,7 @@ Content-Type: application/json
   "playerId": "1",
   "username": "TestUser",
   "displayname": "TestUser",
-  "balance": 1000,
+  "balance": 10000000,
   "hasDealerChip": false,
   "bet": 0,
   "gameId": "1"

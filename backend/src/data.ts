@@ -44,7 +44,7 @@ export class DB {
                 socialId text UNIQUE,
                 passwordHash text,
                 email text,
-                balance real not null default 1000,
+                balance real not null default 10000000,
                 displayName text,
                 streakCount integer,
                 lastStreakIncrement text, -- Timestamp in ISO format
