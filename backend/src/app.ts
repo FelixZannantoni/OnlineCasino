@@ -80,11 +80,11 @@ const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
 const rouletteService: RouletteService = new RouletteService();
 const userService: UserService = new UserService();
-
+const roundService: RoundService = new RoundService();
 const statsService: StatsService = new StatsService();
 
 const chatService: ChatService = new ChatService();
-export { pokerService, blackjackService, rouletteService, userService, chatService, onlineUsers, statsService };
+export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver

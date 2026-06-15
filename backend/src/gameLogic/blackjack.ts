@@ -5,8 +5,6 @@ import { CardGame } from "./cardGame";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { Player } from "./player";
 import { userService, roundService } from "../app";
-import { DEFAULT_CHIPS, getChipsForGame } from "../config";
-import { userService } from "../app";
 import { DEFAULT_CHIPS, getChipsForGame, getBalanceLimits, getGameMode } from "../config";
 
 export const PLAYER_CARDS_NUMBER: number = 2;
