@@ -16,6 +16,9 @@ import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 import { RouletteService } from "./services/roulette-service";
+import { ChatService } from "./services/chat-service";
+import { chatRouter } from "./router/chat-router";
+import { normalizeUserId } from "./utils";
 
 const PORT = process.env.PORT || 3000;
 
@@ -35,6 +38,7 @@ app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/roulette", rouletteRouter);
 app.use("/slotmachine", slotmachineRouter);
+app.use("/chats", chatRouter);
 
 // Redirect root to login page
 app.get("/", (req, res) => {
@@ -65,18 +69,39 @@ app.get(["/poker", "/blackjack", "/roulette", "/slotmachine"], (req, res) => {
 
 const socketUserMap: Map<string, string> = new Map();
 
+const onlineUsers: Map<string, string> = new Map(); // <userId, status>
+
 const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
 const rouletteService: RouletteService = new RouletteService();
 const userService: UserService = new UserService();
-export { pokerService, blackjackService, rouletteService, userService };
+
+const chatService: ChatService = new ChatService();
+export { pokerService, blackjackService, rouletteService, userService, chatService, onlineUsers };
+
+export function onMessageSentToUser(receiverId: string) {
+    // Find the socket ID for the receiver
+    // socket id map is Map<socketId, userId>, so we need to find the socketId for the receiverId
+    console.log(`Attempting to notify user ${receiverId} of new message`);
+    const receiverSocketId = socketUserMap.entries().find(([socketId, userId]) => userId === receiverId)?.[0];
+
+    if (receiverSocketId) {
+        io.to(receiverSocketId).emit("new_message");
+        console.log(`Notified user ${receiverId} of new message via socket ${receiverSocketId}`);
+    }
+}
 
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    socket.on('register', (userId: string | number) => {
+        socketUserMap.set(socket.id, normalizeUserId(userId));
+        onlineUsers.set(normalizeUserId(userId), "online");
+    })
+
     socket.on("join_game", async (gameId: string, userId: string) => {
         console.log("join_game received:", gameId, userId);
-        socketUserMap.set(socket.id, userId);
+        socketUserMap.set(socket.id, normalizeUserId(userId));
 
         socket.join(gameId);
         console.log(`User ${userId} joined game: ${gameId}`);
@@ -90,9 +115,9 @@ io.on("connection", (socket: Socket) => {
         let service: any = pokerService;
 
         if (!game) {
-            game = BlackjackService.blackjackGames.find(
-                (g) => g.getGameId().toString() === gameId.toString()
-            );
+            // Check if it's a blackjack game (starts with 'bj-' or is numeric/known ID)
+            // Or just try to get/create if it's not a poker game
+            game = blackjackService.getOrCreateGame(gameId);
             service = blackjackService;
         }
 
@@ -117,9 +142,9 @@ io.on("connection", (socket: Socket) => {
             if (service === pokerService) {
                 await pokerService.addPlayer(
                     userId,
-                    username,
-                    displayname,
-                    balance,
+                    user?.userName ?? '-',
+                    user?.displayName ?? 'Guest',
+                    user?.balance ?? startBalance,
                     false,
                     0,
                     gameId
@@ -127,9 +152,9 @@ io.on("connection", (socket: Socket) => {
             } else if (service === blackjackService) {
                 await blackjackService.addPlayer(
                     userId,
-                    username,
-                    displayname,
-                    balance,
+                    user?.userName ?? '-',
+                    user?.displayName ?? 'Guest',
+                    user?.balance ?? startBalance,
                     gameId
                 );
             } else if (service === rouletteService) {

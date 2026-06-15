@@ -28,6 +28,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         super(gameId);
         this.blackjackDeck = new BlackjackDeck();
         this.blackJackBot = new BlackjackBot();
+        this.defaultTurnTimeoutMs = 10000;
     }
 
     public async startGame() {
@@ -59,8 +60,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     private async playRound() {
-        this.resetBets();
-        this.resetCards();
+        this.reset();
         this.blackjackDeck = new BlackjackDeck(); // New deck for each round
 
         this.currentPhase = BlackjackPhase.BETTING;
@@ -123,13 +123,6 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         }
     }
 
-    private resetCards() {
-        for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].clearHand();
-        }
-        this.blackJackBot.clearHand();
-    }
-
     private checkHandsValue() {
         for (let i: number = 0; i < this.players.length; i++) {
             this.players[i].checkHandValue();
@@ -161,16 +154,20 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             while (!turnOver && playerOnMove.getHandValue() < 21) {
                 this.emit("gameState", this.getGameState());
                 await new Promise<void>((resolve) => {
-                    const timeout = setTimeout(() => {
-                        cleanup();
+                    this.startTurnTimer(this.defaultTurnTimeoutMs, () => {
                         turnOver = true;
                         resolve();
-                    }, 15000); // 15s timeout
+                    });
+
+                    const cleanup = () => {
+                        this.off("playerMove", handleMove);
+                        this.off("playerLeft", handleRemoval);
+                    };
 
                     const handleMove = async (detail: { playerId: string }) => {
                         if (detail && detail.playerId == playerOnMove.getPlayerId()) {
                             if (playerOnMove.getMadeMove()) {
-                                cleanup();
+                                this.stopTurnTimer();
                                 if (playerOnMove.getPressedStand()) {
                                     turnOver = true;
                                 }
@@ -193,6 +190,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                                 }
                                 playerOnMove.resetMadeMove();
                                 this.emit("gameState", this.getGameState());
+                                cleanup();
                                 resolve();
                             }
                         }
@@ -200,16 +198,11 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
                     const handleRemoval = (detail: { playerId: string }) => {
                         if (detail && detail.playerId === playerOnMove.getPlayerId()) {
-                            cleanup();
+                            this.stopTurnTimer();
                             turnOver = true;
+                            cleanup();
                             resolve();
                         }
-                    };
-
-                    const cleanup = () => {
-                        clearTimeout(timeout);
-                        this.removeListener("playerMove", handleMove);
-                        this.removeListener("playerLeft", handleRemoval);
                     };
 
                     this.on("playerMove", handleMove);
@@ -223,11 +216,10 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
         }
         this.currentPlayerId = null;
+        this.stopTurnTimer();
     }
 
     private async waitForBets() {
-        this.emit("gameState", this.getGameState());
-
         // Automatically apply desired bets for players who have them
         for (const player of this.players) {
             const desired = player.getDesiredBet();
@@ -241,17 +233,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             }
         }
 
+        this.emit("gameState", this.getGameState());
+
         // Wait for all players to place a bet or timeout
         await new Promise<void>((resolve) => {
-            const betTimeout = setTimeout(() => {
-                cleanup();
+            this.startTurnTimer(this.defaultTurnTimeoutMs, () => {
                 resolve();
-            }, 15000); // 15 seconds for betting
+            });
 
             const handleBet = () => {
                 const allBet = this.players.every(p => p.getBet() > 0 || p.getBalance() === 0);
                 if (allBet) {
-                    cleanup();
+                    this.stopTurnTimer();
                     resolve();
                 }
                 this.emit("gameState", this.getGameState());
@@ -262,17 +255,12 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
                 handleBet();
             };
 
-            const cleanup = () => {
-                clearTimeout(betTimeout);
-                this.removeListener("playerBet", handleBet);
-                this.removeListener("playerLeft", handleLeft);
-            };
-
             this.on("playerBet", handleBet);
             this.on("playerLeft", handleLeft);
 
             handleBet();
         });
+        this.stopTurnTimer();
     }
 
     public async handlePlayerMove(playerId: string, action: string, amount?: number) {
@@ -302,12 +290,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
         switch (action) {
             case "hit":
+                if (player.getHandValue() >= 21) {
+                    return { success: false, message: "Cannot hit with 21 or more" };
+                }
                 player.userPressedHit();
                 break;
             case "stand":
                 player.userPressedStand();
                 break;
             case "double":
+                if (player.getHandValue() >= 21) {
+                    return { success: false, message: "Cannot double with 21 or more" };
+                }
                 if (player.getCards().length !== 2) {
                     return { success: false, message: "Can only double on first move" };
                 }
@@ -335,6 +329,8 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             isRunning: this.isRunning,
             phase: this.currentPhase,
             currentPlayerId: this.currentPlayerId,
+            turnEndsAt: this.turnEndTime,
+            turnRemainingSeconds: this.getTurnRemainingSeconds(),
             players: this.players.map(p => ({
                 id: p.getPlayerId(),
                 username: p.getUsername(),
@@ -353,14 +349,13 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         };
     }
 
-    private makeBets() {
-        // This is now handled by waitForBets and handlePlayerMove("bet")
-    }
-
-    private resetBets() {
+    private reset() {
         for (let i: number = 0; i < this.players.length; i++) {
-            this.players[i].makeNewBet(0);
+            this.players[i].clearHand(); //reset Cards
+            this.players[i].makeNewBet(0); //reset Bets
+            this.players[i].resetBust(); // reset Bust
         }
+        this.blackJackBot.clearHand();
     }
 
     private async handOutWin() {

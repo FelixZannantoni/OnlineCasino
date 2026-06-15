@@ -1,3 +1,5 @@
+import { userService } from "../app";
+
 export class Player {
     private playerId: string;
     private username: string;
@@ -53,6 +55,9 @@ export class Player {
             throw new Error(`Not enogh money`);
         }
         this.balance -= this.bet;
+
+        // dont await this, because we dont want to wait for the database to update, we can do it in the background
+        userService.updateUserBalance(this.playerId, this.balance);
     }
 
     public makeNewBet(bet: number) {
@@ -69,10 +74,16 @@ export class Player {
         }
         this.balance -= (bet - this.bet);
         this.bet = bet;
+
+        // dont await this, because we dont want to wait for the database to update, we can do it in the background
+        userService.updateUserBalance(this.playerId, this.balance);
     }
 
-    public winMoney(win: number) {
+    public async winMoney(win: number) {
         this.balance += win;
+
+        // dont await this, because we dont want to wait for the database to update, we can do it in the background
+        userService.updateUserBalance(this.playerId, this.balance);
     }
 
     public makeTip(amount: number): void {

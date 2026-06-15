@@ -9,7 +9,7 @@
     --navbar-mid: #1a3a52;
     --text-gold: #d19e1d;
     --text-purple: #6d28d9;
-    --text-gold-dark: rgb(117, 87, 10);
+    --text-gold-dark: #573e00; /* darker color needed to pass the WCAG AAA */
     --gray-light: #f5f5f5;
     --gray-mid: #e0e0e0;
     --gray-dark: #333333;

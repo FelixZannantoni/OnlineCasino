@@ -41,7 +41,6 @@ export class DB {
             CREATE TABLE IF NOT EXISTS users (
                 uuid text PRIMARY KEY,
                 userName text UNIQUE,
-                socialId text UNIQUE,
                 passwordHash text,
                 email text,
                 balance real not null default 1000,
@@ -87,6 +86,25 @@ export class DB {
                 PRIMARY KEY (roundId, userId),
                 FOREIGN KEY (roundId) REFERENCES game_rounds(roundId),
                 FOREIGN KEY (userId) REFERENCES users(uuid)
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS friendship_requests (
+                senderId text,
+                receiverId text,
+                accepted integer, CHECK (accepted IN (0, 1)) -- 0 for pending, 1 for accepted
+                PRIMARY KEY (senderId, receiverId),
+                FOREIGN KEY (senderId) REFERENCES users(uuid),
+                FOREIGN KEY (receiverId) REFERENCES users(uuid)
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS chat_messages (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                senderId text,
+                receiverId text,
+                content text,
+                timestamp text -- Timestamp in ISO format
             )
             `).run();
 
@@ -150,8 +168,8 @@ export class DB {
                 const isFromGithub: number = 0;
                 const lastOnline: string = new Date().toISOString();
 
-                await connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount, isFromGithub,
-                    lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
+                await connection.prepare(`INSERT INTO users (uuid, userName, passwordHash, email, displayName, streakCount, isFromGithub,
+                    lastOnline) VALUES (:uuid, :username, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
                 `).run({
                     uuid: uuid,
                     username: username,
