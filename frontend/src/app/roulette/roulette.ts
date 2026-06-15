@@ -92,8 +92,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
   /** Authentic European pocket sequence */
   private readonly SEQUENCE = [
-    0, 28, 9, 26, 30, 11, 7, 20, 32, 17, 5, 22, 34, 15, 3, 24, 36, 13, 1,
-    27, 10, 25, 29, 12, 8, 19, 31, 18, 6, 21, 33, 16, 4, 23, 35, 14, 2,
+    0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
   ];
 
   /** Felt grid — 3 rows × 12 columns, displayed top-to-bottom */
@@ -177,7 +176,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private handleGameState(state: any): void {
-    console.log('Roulette State Update:', state);
+    console.log('Roulette State Update:', state.phase, 'Current Phase:', this.currentPhase);
     if (state.chipOptions) {
       this.chipOptions.set(state.chipOptions);
     }
@@ -194,7 +193,8 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
     }
     this.remainingTime.set(state.remainingTime);
 
-    if (state.phase === 'SPINNING' && this.currentPhase !== 'SPINNING' && state.lastWinningNumber !== null) {
+    if (state.phase === 'SPINNING' && this.currentPhase !== 'SPINNING') {
+      console.log('Triggering spin animation for result:', state.lastWinningNumber);
       this.animateSpin(state.lastWinningNumber);
     }
 
@@ -310,15 +310,18 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
     const slice = (Math.PI * 2) / N;
     const landingIndex = this.SEQUENCE.indexOf(result);
 
-    const pocketAngle = landingIndex * slice;
-    const needed =
-      ((-Math.PI / 2 - pocketAngle) % (Math.PI * 2) + Math.PI * 2) %
-      (Math.PI * 2);
-    const extra = Math.PI * 2 * (6 + Math.random() * 4);
-
+    // The drawing function draws each segment i at `angle + i * slice`.
+    // The top indicator is at -Math.PI / 2.
+    // So we want: targetAngle + (landingIndex * slice) = -Math.PI / 2
+    // Which means: targetAngle = -Math.PI / 2 - (landingIndex * slice)
+    const targetAngle = -Math.PI / 2 - (landingIndex * slice);
+    const extra = Math.PI * 2 * 6; // Spin 6 full rounds
     const startAngle = this.wheelAngle;
-    const currentNorm = ((startAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    const targetAngle = startAngle + extra + needed - currentNorm;
+    
+    // We want the wheel to spin *from* the current `startAngle` *to* the new `targetAngle`
+    // Adding extra rotation helps it look natural.
+    const finalAngle = startAngle + (extra + (targetAngle - (startAngle % (Math.PI * 2))));
+    console.log(`DEBUG: Result=${result}, Index=${landingIndex}, target=${targetAngle}, final=${finalAngle}, start=${startAngle}`);
 
     const duration = 4000 + Math.random() * 1000;
     const startTime = performance.now();
@@ -327,7 +330,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
       const animate = (ts: number) => {
         const t = Math.min((ts - startTime) / duration, 1);
         const eased = 1 - Math.pow(1 - t, 4);
-        const cur = startAngle + (targetAngle - startAngle) * eased;
+        const cur = startAngle + (finalAngle - startAngle) * eased;
         this.drawWheel(cur);
 
         if (t < 1) {

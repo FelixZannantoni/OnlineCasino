@@ -57,15 +57,17 @@ export class Roulette extends Game<RoulettePlayer> {
     private async playRound() {
         this.resetBets();
         this.currentPhase = RoulettePhase.BETTING;
+        console.log(`DEBUG: Entering BETTING phase for game ${this.getGameId()}`);
         await this.waitForBets();
+        console.log(`DEBUG: Exiting BETTING phase for game ${this.getGameId()}`);
 
         const activePlayers = this.players.filter(p => p.getBet() > 0);
         if (activePlayers.length === 0) {
-            // If no one bet, we still "spin" to keep the game alive
-            // but we can skip the wait if we want. For now, let's just spin.
+            console.log(`DEBUG: No active players for game ${this.getGameId()}, skipping spin.`);
         }
 
         this.currentPhase = RoulettePhase.SPINNING;
+        console.log(`DEBUG: Entering SPINNING phase for game ${this.getGameId()}`);
         this.lastWinningNumber = Math.floor(Math.random() * 37);
         this.emit("game_state", this.getGameState());
 
@@ -86,10 +88,12 @@ export class Roulette extends Game<RoulettePlayer> {
 
             const startTimer = () => {
                 if (interval) return;
+                console.log(`DEBUG: Timer started for game ${this.getGameId()}`);
                 interval = setInterval(() => {
                     this.remainingTime--;
                     this.emit("game_state", this.getGameState());
                     if (this.remainingTime <= 0) {
+                        console.log(`DEBUG: Timer reached 0 for game ${this.getGameId()}`);
                         cleanup();
                         resolve();
                     }
@@ -102,6 +106,7 @@ export class Roulette extends Game<RoulettePlayer> {
             const handleReady = () => {
                 const allReady = this.players.length > 0 && this.players.every(p => p.getIsReady());
                 if (allReady) {
+                    console.log(`DEBUG: All players ready for game ${this.getGameId()}`);
                     cleanup();
                     resolve();
                 }
