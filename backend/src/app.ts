@@ -141,7 +141,7 @@ io.on("connection", (socket: Socket) => {
                 (g) => g.getGameId().toString() === gameId.toString()
             );
             if (!game && stakes) {
-                const name = gameName || (stakes ? `Roulette ${stakes}` : "Roulette");
+                const name = gameName || `Roulette ${stakes}`;
                 const newRoulette = new Roulette(gameId, name);
                 RouletteService.rouletteGames.push(newRoulette);
                 game = newRoulette;
