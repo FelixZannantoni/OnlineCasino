@@ -55,4 +55,12 @@ export class SocketService {
     if (!this.isBrowser || !this.socket) return;
     this.socket.emit(eventName, data);
   }
+
+  register(userId: string) {
+    this.socket.emit('register', userId);
+  }
+
+  onNewMessage(callback: () => void) {
+    this.socket.on('new_message', callback);
+  }
 }
