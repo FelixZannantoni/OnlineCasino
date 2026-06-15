@@ -30,7 +30,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         super(gameId, gameName);
         this.blackjackDeck = new BlackjackDeck();
         this.blackJackBot = new BlackjackBot();
-        this.defaultTurnTimeoutMs = 10000;
+        this.defaultTurnTimeoutMs = 15000;
         this.updateSettings();
     }
 
@@ -164,13 +164,11 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             this.currentPlayerId = playerOnMove.getPlayerId();
             let turnOver = false;
             while (!turnOver && playerOnMove.getHandValue() < 21) {
+                this.startTurnTimer(this.defaultTurnTimeoutMs, () => {
+                    this.handlePlayerMove(playerOnMove.getPlayerId(), "stand").catch(err => console.error("Auto-stand failed:", err));
+                });
                 this.emit("game_state", this.getGameState());
                 await new Promise<void>((resolve) => {
-                    this.startTurnTimer(this.defaultTurnTimeoutMs, () => {
-                        turnOver = true;
-                        resolve();
-                    });
-
                     const cleanup = () => {
                         this.off("playerMove", handleMove);
                         this.off("playerLeft", handleRemoval);

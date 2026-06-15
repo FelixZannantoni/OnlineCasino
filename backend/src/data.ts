@@ -47,11 +47,26 @@ export class DB {
                 displayName text,
                 streakCount integer,
                 lastStreakIncrement text, -- Timestamp in ISO format
-                isFromGithub integer, 
+                isFromGithub integer,
                 lastOnline text -- Timestamp in ISO format
             )
             `).run();
-        connection.prepare(`
+
+        // Migration: Add lastStreakIncrement if missing
+        try {
+            connection.prepare('ALTER TABLE users ADD COLUMN lastStreakIncrement text').run();
+            console.log('DEBUG: Added lastStreakIncrement column to users table');
+        } catch (e) {
+            // Column likely already exists
+        }
+
+        // Migration: Add lastOnline if missing
+        try {
+            connection.prepare('ALTER TABLE users ADD COLUMN lastOnline text').run();
+            console.log('DEBUG: Added lastOnline column to users table');
+        } catch (e) {
+            // Column likely already exists
+        }        connection.prepare(`
             CREATE TABLE IF NOT EXISTS bonuses (
                 bonusId integer PRIMARY KEY AUTOINCREMENT,
                 userId text,
