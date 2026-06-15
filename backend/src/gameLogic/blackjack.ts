@@ -349,7 +349,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         for (let i: number = 0; i < this.players.length; i++) {
             this.players[i].clearHand(); //reset Cards
             this.players[i].makeNewBet(0); //reset Bets
-            this.players[i].resetBust; // reset Bust
+            this.players[i].resetBust(); // reset Bust
         }
         this.blackJackBot.clearHand();
     }
