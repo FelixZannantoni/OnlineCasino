@@ -333,7 +333,10 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.socketService.register(this.dataService.userId());
+    const userId = this.dataService.userId();
+    if (userId) {
+      this.socketService.register(userId);
+    }
 
     this.socketService.onNewMessage(async () => {
       const messages = await this.loadMessages();

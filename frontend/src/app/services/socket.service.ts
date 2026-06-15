@@ -59,10 +59,14 @@ export class SocketService {
   }
 
   register(userId: string) {
-    this.socket.emit('register', userId);
+    if (this.socket) {
+      this.socket.emit('register', userId);
+    }
   }
 
   onNewMessage(callback: () => void) {
-    this.socket.on('new_message', callback);
+    if (this.socket) {
+      this.socket.on('new_message', callback);
+    }
   }
 }

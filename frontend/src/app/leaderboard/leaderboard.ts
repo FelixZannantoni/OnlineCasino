@@ -47,6 +47,7 @@ export class Leaderboard implements OnInit {
   }
 
   async loadLeaderboard(): Promise<void> {
+    if (typeof window === 'undefined') return;
     const response = await fetch(`/stats/leaderboard`);
     const data: {
       rank: number,
