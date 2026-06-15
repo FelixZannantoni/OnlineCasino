@@ -213,7 +213,7 @@ body {
     max-width: 900px;
 }
 
-/* --- POSITIONIERUNG DER SPIELER AM RAND (Feinjustierung) --- */
+/* --- POSITIONIERUNG DER SPIELER --- */
 
 /* OBEN: Etwas weniger nach oben schieben, damit sie nicht den Rand sprengen */
 .grid-cell.top-left, .grid-cell.top-center, .grid-cell.top-right {
@@ -250,9 +250,9 @@ body {
     pointer-events: auto;
     z-index: 20;
     position: relative;
-    
+
     /* ÄNDERUNG: Hintergrund transparent oder sehr schwach, damit nur das Bild/Halo sichtbar ist */
-    background: rgba(0, 0, 0, 0.0); 
+    background: rgba(0, 0, 0, 0.0);
     border: none; /* Kein Rahmen mehr um den ganzen Block */
     border-radius: 0;
     padding: 0;
@@ -262,7 +262,7 @@ body {
     transition: all 0.2s ease;
     width: 120px;
     box-shadow: none; /* Kein Schatten mehr um den Block */
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -276,7 +276,7 @@ body {
     left: -6px;
     right: -6px;
     bottom: -6px;
-    
+
     border-radius: 50%; /* RUND, passend zum Avatar */
     border: 2px solid #ffd700;
     box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.6);
@@ -476,18 +476,18 @@ body {
     height: 500px;
     margin: 100px auto 30px;
     border-radius: 250px / 150px;
-    
+
     /* WICHTIG: Overflow visible, damit Spieler am Rand nicht abgeschnitten werden */
-    overflow: visible !important; 
-    
-    z-index: 5; 
+    overflow: visible !important;
+
+    z-index: 5;
 }
 
 /* ... Wood frame & Felt styles remain unchanged ... */
 
-/* 
-   GRID OVERLAY 
-   Dieses Grid liegt ÜBER dem Tisch (z-index höher als Filz), 
+/*
+   GRID OVERLAY
+   Dieses Grid liegt ÜBER dem Tisch (z-index höher als Filz),
    deckt ihn aber vollständig ab.
 */
 [game-content] {
@@ -496,19 +496,19 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    
+
     display: grid;
     /* 3 Spalten: Links (Avatar), Mitte (Frei für Karten), Rechts (Avatar) */
-    grid-template-columns: 1fr 2fr 1fr; 
+    grid-template-columns: 1fr 2fr 1fr;
     /* 3 Reihen: Oben (Avatar), Mitte (Frei für Karten), Unten (Avatar) */
-    grid-template-rows: 1fr 2fr 1fr;    
-    
+    grid-template-rows: 1fr 2fr 1fr;
+
     gap: 0;
     padding: 0;
-    
-    /* WICHTIG: Pointer events none, damit man durch das Grid auf den Tisch klicken kann 
+
+    /* WICHTIG: Pointer events none, damit man durch das Grid auf den Tisch klicken kann
        (falls nötig). Die Player-Displays bekommen pointer-events: auto zurück. */
-    pointer-events: none; 
+    pointer-events: none;
     z-index: 4; /* Über dem Filz (z-index 2), unter den Karten (z-index 10) */
 }
 
@@ -559,7 +559,7 @@ body {
 /* ECKEN: Diagonal schieben */
 .grid-cell.top-left { transform: translate(-50%, -50%); }
 .grid-cell.top-right { transform: translate(50%, -50%); }
-.grid-cell.bottom-left { transform: translate(-50%, 50%); }
+.grid-cell.bottom-left { transform: translate(-100%, 300%); }
 .grid-cell.bottom-right { transform: translate(50%, 50%); }
 
 
@@ -602,5 +602,3 @@ body {
     from { opacity: 0.5; transform: scale(0.98); }
     to { opacity: 1; transform: scale(1.02); }
 }
-
-/* ... rest of css (buttons etc) remains unchanged ... */

@@ -40,6 +40,13 @@
 
         <!-- CENTER: reels -->
         <div class="center">
+            <div class="slot-top-bar">
+                <div class="top-icons">
+                    <button class="home-btn" routerLink="/home" aria-label="Back to Home">
+                        <mat-icon>exit_to_app</mat-icon>
+                    </button>
+                </div>
+            </div>
             <div class="center-top">
                 <span class="ornament">-</span>
                 <span class="center-label">Payline</span>
@@ -55,25 +62,27 @@
                             <div class="sym placeholder"></div>
                             <div class="sym placeholder"></div>
                             <div class="sym placeholder"></div>
+                            <div class="sym placeholder"></div>
+                            <div class="sym placeholder"></div>
                         </div>
                     </div>
                     }
                 </div>
+                @if (winAmount > 0) {
+                <div class="win-msg-overlay">+{{ winAmount }}</div>
+                }
             </div>
 
-            @if (isWin) {
-            <div class="win-msg">+{{ winAmount }}</div>
-            } @else {
             <div class="win-msg-placeholder"></div>
-            }
         </div>
 
         <!-- BOTTOM: buttons -->
         <div class="bottom">
             <div class="btn-row">
                 <button class="aux-btn" (click)="setMaxBet()" [disabled]="spinning">Max Wager</button>
-                <button class="spin-btn" (click)="spin()" [disabled]="spinning || autoSpin">Spin</button>
-                <button class="auto-btn" (click)="toggleAutoSpin()" [class.active]="autoSpin">
+                <button class="spin-btn" (click)="spin()" [disabled]="!canSpin || spinning">Spin</button>
+                <button class="auto-btn" (click)="toggleAutoSpin()" [class.active]="autoSpin"
+                    [disabled]="!autoSpin && !canSpin">
                     @if (autoSpin) { Stop } @else { Auto }
                 </button>
                 <button class="aux-btn" (click)="resetCredits()">Reset</button>

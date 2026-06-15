@@ -1,30 +1,34 @@
 import { Database } from "better-sqlite3";
+import { v4 as generateUUID } from "uuid";
 import { DB } from "../data";
 import { FriendshipRequest, User, UserDisplay } from "../model";
 import { hashPassword, normalizeUserId, verifyPassword } from "../utils";
 import { onlineUsers } from "../app";
 
 export class UserService {
-    // TODO
 
     async getAllUsers(): Promise<User[]> {
-        let result: User[] = [];
-
         const connection: Database = await DB.createDBConnection();
 
-        result = connection.prepare<{}, User>("SELECT uuid, userName, displayName, email, streakCount FROM users").all({});
-        return result;
+        const rows: any[] = connection.prepare("SELECT * FROM users").all();
+        return rows.map(row => ({
+            uuid: row.uuid,
+            username: row.userName,
+            displayname: row.displayName,
+            email: row.email,
+            balance: row.balance,
+            streakCount: row.streakCount,
+            passwordHash: row.passwordHash
+        }));
     }
 
     async checkUserCredentials(username: string, password: string): Promise<[boolean, string]> {
         try {
             const connection: Database = await DB.createDBConnection();
 
-            const rows = connection.prepare<{username: string}, User>("SELECT * FROM users WHERE userName = :username AND isFromGithub = 0").all({username: username});
+            const rows: any[] = connection.prepare("SELECT uuid, passwordHash FROM users WHERE userName = ? AND isFromGithub = 0").all(username);
 
-            //await connection.close();
-
-            const user: User = rows[0];
+            const user = rows[0];
             if(!user) return [false, "-1"];
 
             const passwordHash = user.passwordHash;
@@ -39,18 +43,20 @@ export class UserService {
     async registerUser(username: string, password: string): Promise<[boolean, string]> {
         try {
             const pwHash: string = await hashPassword(password);
+            const uuid: string = generateUUID();
 
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare<{usernameInput: string, passwordHash: string}, {}>("INSERT INTO users (userName, passwordHash) VALUES (:usernameInput, :passwordHash)").run({
-                usernameInput: username,
-                passwordHash: pwHash
-            });
+            const result = connection.prepare("INSERT INTO users (uuid, userName, passwordHash) VALUES (?, ?, ?)").run(
+                uuid,
+                username,
+                pwHash
+            );
 
             // await connection.close();
 
             if(result.changes === 1) {
-                return [true, result.lastInsertRowid.toString()];
+                return [true, uuid];
             }
             return [false, "Invalid credentials!"];
         } catch(err) {
