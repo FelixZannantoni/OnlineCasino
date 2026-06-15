@@ -44,6 +44,12 @@ export class PokerService {
     return game.handlePlayerMove(playerId, "raise", raiseAmount);
   }
 
+  async tipDealer(playerId: string, gameId: string): Promise<{ success: boolean; message: string }> {
+    const { game } = this.getGameById(gameId);
+    if (!game) return { success: false, message: `Game #${gameId} not found` };
+    return game.tipDealer(playerId);
+  }
+
   async addPlayer(
     playerId: string,
     username: string,

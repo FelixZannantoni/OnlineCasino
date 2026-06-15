@@ -21,9 +21,12 @@ type PokerPlayerState = {
   id: string;
   displayname: string;
   bet: number;
+  desiredBet: number;
   folded: boolean;
   balance: number;
   cards: PokerBoardCard[];
+  isDealer: boolean;
+  handName: string;
 };
 
 type PokerGameState = {
@@ -34,6 +37,9 @@ type PokerGameState = {
   players: PokerPlayerState[];
   board: PokerBoardCard[];
   currentPlayerId: string | null;
+  isLoading: boolean;
+  turnRemainingSeconds: number | null;
+  gameStartRemainingSeconds: number | null;
 };
 
 @Component({
@@ -53,10 +59,32 @@ export class Poker implements OnInit {
   pot = 0;
 
   public gameState = signal<PokerGameState | null>(null);
+  protected isProcessing = signal<boolean>(false);
+  protected turnRemaining = signal<number | null>(null);
+  protected gameStartsIn = signal<number | null>(null);
+  private playerTurnTimer: any = null;
+  private gameStartTimer: any = null;
 
   private readonly gameId = signal<string>('1');
 
   protected readonly getCardRank = getCardRank;
+
+  // Local state for the betting UI
+  protected selectedBetAmount = signal<number>(20);
+  protected showBetSlider = signal<boolean>(false);
+
+  protected readonly minBet = computed(() => {
+    const state = this.gameState();
+    if (!state) return 10;
+    // Standard raise is usually at least currentBet + bigBlind (10)
+    return Math.max(10, state.currentBet + 10);
+  });
+
+  protected readonly maxBet = computed(() => {
+    const me = this.myPlayer();
+    if (!me) return 1000;
+    return me.balance;
+  });
 
   protected readonly myPlayer = computed(() => {
     const state = this.gameState();
@@ -79,19 +107,66 @@ export class Poker implements OnInit {
 
     const userId = this.dataService.userId();
 
+    if (!userId) {
+      console.warn("No user logged in. Cannot join game.");
+      return;
+    }
+
     this.socketService.onEvent('game_state', (state: unknown) => {
       const s = state as PokerGameState;
+      console.log("Received game state update:", s);
       this.gameState.set(s);
+      this.isProcessing.set(false);
+
+      // Handle Timer
+      if (s.turnRemainingSeconds !== null) {
+        this.turnRemaining.set(s.turnRemainingSeconds);
+        this.startLocalTimerForPlayerTurn();
+      } else {
+        this.stopLocalTimerForPlayerTurn();
+      }
+
+      if(s.gameStartRemainingSeconds != null) {
+        this.gameStartsIn.set(s.gameStartRemainingSeconds);
+        this.startLocalTimerForGameStart();
+      }
 
       // Keep table-game bindings in sync with backend state
       if (typeof s?.pot === 'number') this.pot = s.pot;
-      if (Array.isArray(s?.players)) {
-        const me = s.players.find((p) => p.id === userId);
-        if (me && typeof me.balance === 'number') this.balance = me.balance;
+      
+      const me = s.players.find((p) => p.id === userId);
+      if (me) {
+        if (typeof me.balance === 'number') this.balance = me.balance;
+        // Sync selectedBetAmount with server's desiredBet if it's different
+        if (me.desiredBet !== this.selectedBetAmount()) {
+          this.selectedBetAmount.set(me.desiredBet || this.minBet());
+        }
       }
     });
 
     this.socketService.joinGame(id, userId);
+  }
+
+  private startLocalTimerForPlayerTurn(): void {
+    if (this.playerTurnTimer) clearInterval(this.playerTurnTimer);
+    this.playerTurnTimer = setInterval(() => {
+      this.turnRemaining.update(v => v !== null && v > 0 ? v - 1 : 0);
+    }, 1000);
+  }
+
+  private startLocalTimerForGameStart(): void {
+    if (this.gameStartTimer) clearInterval(this.gameStartTimer);
+    this.gameStartTimer = setInterval(() => {
+      this.gameStartsIn.update(v => v != null && v > 0 ? v - 1 : 0);
+    }, 1000);
+  }
+
+  private stopLocalTimerForPlayerTurn(): void {
+    if (this.playerTurnTimer) {
+      clearInterval(this.playerTurnTimer);
+      this.playerTurnTimer = null;
+    }
+    this.turnRemaining.set(null);
   }
 
   private getMyPlayer(): PokerPlayerState | null {
@@ -112,14 +187,25 @@ export class Poker implements OnInit {
     const gid = this.gameId();
     if (!gid) return;
 
-    const userId = this.dataService.userId(); // for debug/logging only; socket uses socketUserMap
-    void userId;
-
+    this.isProcessing.set(true);
     this.socketService.emitEvent('player_move', {
       gameId: gid,
       action,
       amount,
     });
+  }
+
+  private setBetAmount(amount: number): void {
+    this.selectedBetAmount.set(amount);
+    this.socketService.emitEvent('set_desired_bet', {
+      gameId: this.gameId(),
+      amount: amount
+    });
+  }
+
+  updateBetAmount(event: Event): void {
+    const amount = parseInt((event.target as HTMLInputElement).value, 10);
+    this.setBetAmount(amount);
   }
 
   makeCheckOrCall(): void {
@@ -140,24 +226,70 @@ export class Poker implements OnInit {
     const me = this.getMyPlayer();
     if (!state || !me) return 'Check';
 
-    return me.bet === state.currentBet ? 'Check' : 'Call';
+    if (me.bet === state.currentBet) {
+      return 'Check';
+    } else {
+      const callAmount = state.currentBet - me.bet;
+      return `Call ${callAmount}`;
+    }
   }
 
   makeBetOrRaise(): void {
     const state = this.gameState();
     if (!state) return;
 
-    const amount = 20; // from old template
+    const totalBet = this.selectedBetAmount();
+    // In Poker, 'bet' and 'raise' amounts in handlePlayerMove are increments
+    const increment = totalBet - state.currentBet;
+
     if (state.currentBet === 0) {
-      this.makeMove('bet', amount);
+      this.makeMove('bet', totalBet);
     } else {
-      this.makeMove('raise', amount);
+      this.makeMove('raise', increment);
     }
+  }
+
+  toggleBetSlider(): void {
+    if (!this.isMyTurn()) return;
+    this.showBetSlider.update(v => !v);
+  }
+
+  confirmBet(): void {
+    this.makeBetOrRaise();
+    this.showBetSlider.set(false);
+  }
+
+  setHalfPot(): void {
+    const state = this.gameState();
+    if (!state) return;
+    const amount = Math.max(this.minBet(), Math.min(this.maxBet(), Math.floor(state.pot / 2)));
+    this.setBetAmount(amount);
+  }
+
+  setPot(): void {
+    const state = this.gameState();
+    if (!state) return;
+    const amount = Math.max(this.minBet(), Math.min(this.maxBet(), state.pot));
+    this.setBetAmount(amount);
+  }
+
+  setAllIn(): void {
+    this.setBetAmount(this.maxBet());
   }
 
   betOrRaiseLabel(): string {
     const state = this.gameState();
     if (!state) return 'Bet';
-    return state.currentBet === 0 ? 'Bet 20' : 'Raise';
+    return state.currentBet === 0 ? 'Bet' : 'Raise';
+  }
+
+  tipDealer(): void {
+    const gid = this.gameId();
+    if (!gid) return;
+
+    this.socketService.emitEvent('tip_dealer', {
+      gameId: gid
+    });
   }
 }
+
