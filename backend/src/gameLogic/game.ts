@@ -5,6 +5,7 @@ export class Game<T extends Player = Player> extends EventEmitter {
     protected players: T[];
     private gameId: string;
     private gameName: string;
+    protected currentRoundId: number = -1;
     protected gameBalance: number = Infinity;
 
     constructor(gameId: string, gameName: string = "") {

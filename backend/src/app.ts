@@ -17,6 +17,7 @@ import { Roulette } from "./gameLogic/roulette";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 import { RouletteService } from "./services/roulette-service";
+import { RoundService } from "./services/round-service";
 import { StatsService } from "./services/stats-service";
 import { statsRouter } from "./router/stats-router";
 import { ChatService } from "./services/chat-service";

@@ -1,5 +1,7 @@
 import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
+import { userService, roundService } from "../app";
+import { DEFAULT_CHIPS, getChipsForGame } from "../config";
 import { userService } from "../app";
 import { DEFAULT_CHIPS, getChipsForGame, getBalanceLimits, getGameMode } from "../config";
 
@@ -56,6 +58,14 @@ export class Roulette extends Game<RoulettePlayer> {
 
     private async playRound() {
         this.resetBets();
+
+        // End previous round if any
+        if (this.currentRoundId !== -1) {
+            await roundService.endRound(this.currentRoundId);
+        }
+        // Start new round in DB
+        this.currentRoundId = await roundService.startRound(this.getGameId());
+
         this.currentPhase = RoulettePhase.BETTING;
         console.log(`DEBUG: Entering BETTING phase for game ${this.getGameId()}`);
         await this.waitForBets();
@@ -144,6 +154,7 @@ export class Roulette extends Game<RoulettePlayer> {
             try {
                 player.placeBet(field as rouletteField, amount);
                 await userService.updateUserBalance(playerId, player.getBalance());
+                await roundService.recordPlayerBet(this.currentRoundId, playerId, amount);
                 this.emit("playerBet", { playerId });
                 return { success: true, message: "Bet placed" };
             } catch (e) {
@@ -225,6 +236,10 @@ export class Roulette extends Game<RoulettePlayer> {
                 player.winMoney(totalWin);
                 await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
             }
+
+            // Record profit
+            const profit = totalWin - player.getBet();
+            await roundService.updatePlayerProfit(this.currentRoundId, player.getPlayerId(), profit);
         }
     }
 
@@ -235,6 +250,7 @@ export class Roulette extends Game<RoulettePlayer> {
     public getGameState() {
         return {
             gameId: this.getGameId(),
+            roundId: this.currentRoundId,
             gameBalance: this.gameBalance,
             isRunning: this.isRunning,
             phase: this.currentPhase,
