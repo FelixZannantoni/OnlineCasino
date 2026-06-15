@@ -13,8 +13,8 @@ export class UserService {
         const rows: any[] = connection.prepare("SELECT * FROM users").all();
         return rows.map(row => ({
             uuid: row.uuid,
-            username: row.userName,
-            displayname: row.displayName,
+            userName: row.userName,
+            displayName: row.displayName,
             email: row.email,
             balance: row.balance,
             streakCount: row.streakCount,
@@ -85,7 +85,7 @@ export class UserService {
         return "";
     }
 
-    async githubLogin(githubId: string | number, username: string, displayName: string): Promise<boolean> {
+    async githubLogin(githubId: string | number, username: string, displayName: string): Promise<{ success: boolean, uuid: string }> {
         const normalizedGithubId = this.normalizeUserId(githubId);
 
         // check for invalid params
@@ -179,10 +179,6 @@ export class UserService {
 
             if (!normalizedUserId) return null;
 
-            const normalizedUserId: string = normalizeUserId(userId);
-
-            if (!normalizedUserId) return null;
-
             const result = connection.prepare<{ userId: string }, User>(`SELECT * FROM users WHERE uuid = :userId`)
             .get({ userId: normalizedUserId});
             return result ?? null;
@@ -196,13 +192,6 @@ export class UserService {
         try {
             const connection: Database = await DB.createDBConnection();
             const normalizedUserId = this.normalizeUserId(userId);
-
-            if (!normalizedUserId) {
-                console.error(`Invalid userId for updateUserBalance: ${userId}`);
-                return false;
-            }
-
-            const normalizedUserId: string = normalizeUserId(userId);
 
             if (!normalizedUserId) {
                 console.error(`Invalid userId for updateUserBalance: ${userId}`);

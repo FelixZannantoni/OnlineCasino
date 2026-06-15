@@ -25,6 +25,8 @@ export type LeaderboardEntry = {
     balance: number,
     streak: number,
     avatar: string
+}
+
 export type UserDisplay = {
     uuid: string,
     username: string,

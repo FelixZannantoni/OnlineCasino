@@ -82,7 +82,7 @@ userRouter.post("/register", async (req: Request, res: Response) => {
 });
 
 userRouter.get("/:userId", async (req: Request, res: Response) => {
-    const userId: string = req.params.userId;
+    const userId = req.params.userId as string;
     const service: UserService = new UserService();
 
     const user = await service.getUserById(userId);
@@ -90,8 +90,8 @@ userRouter.get("/:userId", async (req: Request, res: Response) => {
     if(user) {
         res.status(StatusCodes.OK).json({ 
             userId: user.uuid,
-            username: user.username, 
-            displayname: user.displayname,
+            username: user.userName, 
+            displayname: user.displayName,
             balance: user.balance
         });
     } else {

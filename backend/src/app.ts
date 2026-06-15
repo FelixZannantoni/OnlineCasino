@@ -89,7 +89,7 @@ export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
     // socket id map is Map<socketId, userId>, so we need to find the socketId for the receiverId
     console.log(`Attempting to notify user ${receiverId} of new message`);
-    const receiverSocketId = socketUserMap.entries().find(([socketId, userId]) => userId === receiverId)?.[0];
+    const receiverSocketId = Array.from(socketUserMap.entries()).find(([socketId, userId]) => userId === receiverId)?.[0];
 
     if (receiverSocketId) {
         io.to(receiverSocketId).emit("new_message");
@@ -156,8 +156,9 @@ io.on("connection", (socket: Socket) => {
         if(user == null) {
             //TODO
         }
-        const username = user!.username ?? '-';
-        const displayname = user?.displayname || user?.username || 'Guest';
+        const startBalance = 10000000;
+        const username = user!.userName ?? '-';
+        const displayname = user?.displayName || user?.userName || 'Guest';
         const balance = user!.balance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
