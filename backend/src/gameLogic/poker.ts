@@ -6,6 +6,8 @@ import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
 import { userService, roundService } from "../app";
+import { userService } from "../app";
+import { getGameMode, getPokerDefaultBet, getPokerTipAmount, GameMode, getBalanceLimits } from "../config";
 
 export const MAX_PLAYER_COUNT: number = 5;
 export const PLAYER_CARDS_NUMBER: number = 2;
@@ -21,6 +23,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private defaultBet: number = 10;
     private currentBet: number = 0;
     private pot: number = 0;
+    private mode: GameMode;
 
     private phase: GamePhase = 'pre-flop';
     private currentPlayerIndex: number = 0;
@@ -42,14 +45,9 @@ export class Poker extends CardGame<PokerPlayer> {
         this.pokerDeck = new PokerDeck();
         this.defaultTurnTimeoutMs = 10000;
 
-        const name = this.getGameName().toLowerCase();
-        if (name.includes('high')) {
-            this.defaultBet = 100;
-        } else if (name.includes('middle')) {
-            this.defaultBet = 50;
-        } else {
-            this.defaultBet = 10;
-        }
+        this.mode = getGameMode(this.getGameName());
+        this.defaultBet = getPokerDefaultBet(this.mode);
+        this.gameBalance = getBalanceLimits(this.mode).max;
     }
 
     public handlePlayerDisconnect(playerId: string) {
@@ -65,9 +63,10 @@ export class Poker extends CardGame<PokerPlayer> {
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
         try {
-            player.makeTip(10);
+            const tipAmount = getPokerTipAmount(this.mode);
+            player.makeTip(tipAmount);
             await userService.updateUserBalance(playerId, player.getBalance());
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             return { success: true, message: "Dealer: Thank you for the tip!" };
         } catch (e) {
             return { success: false, message: "Not enough money to tip" };
@@ -75,16 +74,21 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     public startGameStartTimer() {
-        if (this.gameStartTimer) {
+        if (this.isStarted) return;
+        
+        if(this.gameStartTimer) {
             // reset timer if it's already running (e.g. a new player joined)
             clearTimeout(this.gameStartTimer);
         }
 
-        console.log(`Starting game start timer for game ${this.getGameId()}!`);
+        console.log(`Starting game start timer for game ${this.getGameId()}! Players: ${this.players.length}`);
         this.gameStartEndTime = Date.now() + this.GAME_START_DELAY_MS;
         this.gameStartTimer = setTimeout(() => {
-            if (!this.isStarted) {
+            if (!this.isStarted && this.players.length >= 2) {
+                console.log(`Timer triggered: Starting game ${this.getGameId()}!`);
                 this.startGame();
+            } else {
+                console.log(`Timer triggered: Not enough players to start game ${this.getGameId()} (Players: ${this.players.length})`);
             }
         }, this.GAME_START_DELAY_MS);
     }
@@ -167,7 +171,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.startTurnTimer();
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private resetPlayers() {
@@ -242,7 +246,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.checkPlayersHands();
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private reveal(count: number) {
@@ -272,7 +276,7 @@ export class Poker extends CardGame<PokerPlayer> {
         this.moveToNextActivePlayer(); // Moves to the first active player after dealer
 
         this.startTurnTimer();
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private async handleShowdown() {
@@ -310,7 +314,9 @@ export class Poker extends CardGame<PokerPlayer> {
         });
 
         const winAmount = this.pot / winners.length;
-        winners.forEach(w => w.winMoney(winAmount));
+        for (const w of winners) {
+            await w.winMoney(winAmount, this.gameBalance);
+        }
 
         this.lastWinners = winners.map(w => ({
             id: w.getPlayerId(),
@@ -325,7 +331,7 @@ export class Poker extends CardGame<PokerPlayer> {
         }
 
         this.isLoading = true;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         setTimeout(() => {
             this.startNewHand();
@@ -407,7 +413,7 @@ export class Poker extends CardGame<PokerPlayer> {
         const activePlayers = this.players.filter(p => !p.getPressedFold());
         if (activePlayers.length === 1) {
             const winner = activePlayers[0];
-            winner.winMoney(this.pot);
+            await winner.winMoney(this.pot, this.gameBalance);
             this.lastWinners = [{
                 id: winner.getPlayerId(),
                 handName: "Last player standing"
@@ -420,7 +426,7 @@ export class Poker extends CardGame<PokerPlayer> {
             }
 
             this.isLoading = true;
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             setTimeout(() => this.startNewHand(), 3000);
             return { success: true, message: "Only one player left" };
         }
@@ -432,7 +438,7 @@ export class Poker extends CardGame<PokerPlayer> {
             this.startTurnTimer();
         }
 
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
         return { success: success, message: message };
     }
 
@@ -467,6 +473,7 @@ export class Poker extends CardGame<PokerPlayer> {
         return {
             gameId: this.getGameId(),
             roundId: this.currentRoundId,
+            gameBalance: this.gameBalance,
             phase: this.phase,
             pot: this.pot,
             currentBet: this.currentBet,

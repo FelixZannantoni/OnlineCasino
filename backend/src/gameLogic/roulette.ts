@@ -2,6 +2,8 @@ import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
 import { userService, roundService } from "../app";
 import { DEFAULT_CHIPS, getChipsForGame } from "../config";
+import { userService } from "../app";
+import { DEFAULT_CHIPS, getChipsForGame, getBalanceLimits, getGameMode } from "../config";
 
 export enum RoulettePhase {
     WAITING = "WAITING",
@@ -20,6 +22,7 @@ export class Roulette extends Game<RoulettePlayer> {
     constructor(gameId: string, gameName: string = "") {
         super(gameId, gameName);
         this.chipOptions = getChipsForGame(this.getGameName());
+        this.gameBalance = getBalanceLimits(getGameMode(this.getGameName())).max;
     }
 
     public setChipOptions(options: any[]) {
@@ -27,23 +30,30 @@ export class Roulette extends Game<RoulettePlayer> {
     }
 
     public async startGame() {
+        console.log(`DEBUG: startGame called for game ${this.getGameId()}. isRunning: ${this.isRunning}`);
         if (this.isRunning) return;
         this.isRunning = true;
+        console.log(`DEBUG: Roulette game ${this.getGameId()} loop started.`);
 
         while (this.isRunning) {
+            console.log(`DEBUG: Roulette round starting for game ${this.getGameId()}. Players: ${this.players.length}`);
             if (this.players.length === 0) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
-                if (this.players.length === 0) break;
+                if (this.players.length === 0) {
+                    console.log(`DEBUG: No players, stopping loop for game ${this.getGameId()}.`);
+                    break;
+                }
             }
 
             await this.playRound();
             this.currentPhase = RoulettePhase.FINISHED;
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
         this.isRunning = false;
         this.currentPhase = RoulettePhase.WAITING;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
+        console.log(`DEBUG: Roulette game ${this.getGameId()} loop ended.`);
     }
 
     private async playRound() {
@@ -57,58 +67,59 @@ export class Roulette extends Game<RoulettePlayer> {
         this.currentRoundId = await roundService.startRound(this.getGameId());
 
         this.currentPhase = RoulettePhase.BETTING;
+        console.log(`DEBUG: Entering BETTING phase for game ${this.getGameId()}`);
         await this.waitForBets();
+        console.log(`DEBUG: Exiting BETTING phase for game ${this.getGameId()}`);
 
         const activePlayers = this.players.filter(p => p.getBet() > 0);
         if (activePlayers.length === 0) {
-            // If no one bet, we still "spin" to keep the game alive
-            // but we can skip the wait if we want. For now, let's just spin.
+            console.log(`DEBUG: No active players for game ${this.getGameId()}, skipping spin.`);
         }
 
         this.currentPhase = RoulettePhase.SPINNING;
+        console.log(`DEBUG: Entering SPINNING phase for game ${this.getGameId()}`);
         this.lastWinningNumber = Math.floor(Math.random() * 37);
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         // Wait for frontend animation
         await new Promise(resolve => setTimeout(resolve, 5000));
 
         await this.handOutWin(this.lastWinningNumber);
         this.currentPhase = RoulettePhase.FINISHED;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
     }
 
     private async waitForBets() {
         this.remainingTime = 15;
-        this.emit("gameState", this.getGameState());
+        this.emit("game_state", this.getGameState());
 
         await new Promise<void>((resolve) => {
             let interval: NodeJS.Timeout | null = null;
-            let timerStarted = false;
 
             const startTimer = () => {
-                if (timerStarted) return;
-                timerStarted = true;
+                if (interval) return;
+                console.log(`DEBUG: Timer started for game ${this.getGameId()}`);
                 interval = setInterval(() => {
                     this.remainingTime--;
-                    this.emit("gameState", this.getGameState());
+                    this.emit("game_state", this.getGameState());
                     if (this.remainingTime <= 0) {
+                        console.log(`DEBUG: Timer reached 0 for game ${this.getGameId()}`);
                         cleanup();
                         resolve();
                     }
                 }, 1000);
             };
 
+            // Start the timer immediately
+            startTimer();
+
             const handleReady = () => {
                 const allReady = this.players.length > 0 && this.players.every(p => p.getIsReady());
                 if (allReady) {
+                    console.log(`DEBUG: All players ready for game ${this.getGameId()}`);
                     cleanup();
                     resolve();
                 }
-            };
-
-            const handleBet = () => {
-                startTimer();
-                this.emit("gameState", this.getGameState());
             };
 
             const cleanup = () => {
@@ -117,13 +128,12 @@ export class Roulette extends Game<RoulettePlayer> {
                 this.removeListener("playerReady", handleReady);
             };
 
+            const handleBet = () => {
+                this.emit("game_state", this.getGameState());
+            };
+
             this.on("playerBet", handleBet);
             this.on("playerReady", handleReady);
-
-            // If a player is already betting (e.g. they joined right as we reset)
-            if (this.players.some(p => p.getBet() > 0)) {
-                startTimer();
-            }
         });
     }
 
@@ -159,7 +169,7 @@ export class Roulette extends Game<RoulettePlayer> {
             // If amount is provided, use it as the new ready status, otherwise toggle
             const newReadyStatus = amount !== undefined ? !!amount : !player.getIsReady();
             player.setReady(newReadyStatus);
-            this.emit("gameState", this.getGameState());
+            this.emit("game_state", this.getGameState());
             this.emit("playerReady", { playerId });
             return { success: true, message: `Player ${newReadyStatus ? "ready" : "unready"}` };
         }
@@ -241,6 +251,7 @@ export class Roulette extends Game<RoulettePlayer> {
         return {
             gameId: this.getGameId(),
             roundId: this.currentRoundId,
+            gameBalance: this.gameBalance,
             isRunning: this.isRunning,
             phase: this.currentPhase,
             lastWinningNumber: this.lastWinningNumber,

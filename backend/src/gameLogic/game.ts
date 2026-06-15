@@ -6,6 +6,7 @@ export class Game<T extends Player = Player> extends EventEmitter {
     private gameId: string;
     private gameName: string;
     protected currentRoundId: number = -1;
+    protected gameBalance: number = Infinity;
 
     constructor(gameId: string, gameName: string = "") {
         super();
@@ -26,11 +27,22 @@ export class Game<T extends Player = Player> extends EventEmitter {
         this.gameName = name;
     }
 
+    public getGameBalance() {
+        return this.gameBalance;
+    }
+
+    public setGameBalance(balance: number) {
+        this.gameBalance = balance;
+    }
+
     public addPlayer(player: T): void {
         if (this.players.find(p => p.getPlayerId() == player.getPlayerId())) {
             throw new Error("Player with this id is already in the game");
         }
         else {
+            if (player.getBalance() > this.gameBalance) {
+                player.setBalance(this.gameBalance);
+            }
             this.players.push(player);
         }
     }

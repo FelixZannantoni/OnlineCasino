@@ -56,3 +56,39 @@ Content-Type: application/json
 }
 
 ###
+
+GET {{baseUrl}}/users/8ec215af-afe2-496f-a4a2-ea5449d53c36/friends
+
+###
+
+POST {{baseUrl}}/users/friends
+Content-Type: application/json
+
+{
+    "userId": "3e6259c4-84dd-4221-aa56-e7b1c4aa4daf",
+    "toUsername": "Hasi12"
+}
+
+###
+
+PUT {{baseUrl}}/users/friends/accept
+Content-Type: application/json
+
+{
+    "userId": "8ec215af-afe2-496f-a4a2-ea5449d53c36",
+    "fromUserId": "3e6259c4-84dd-4221-aa56-e7b1c4aa4daf"
+}
+
+###
+
+DELETE {{baseUrl}}/users/friends
+Content-Type: application/json
+
+{
+    "userId": "8ec215af-afe2-496f-a4a2-ea5449d53c36",
+    "friendId": "3e6259c4-84dd-4221-aa56-e7b1c4aa4daf"
+}
+
+###
+
+GET {{baseUrl}}/users/8ec215af-afe2-496f-a4a2-ea5449d53c36/friends/pending

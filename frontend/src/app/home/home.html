@@ -9,7 +9,7 @@
                     <mat-icon class="news-icon">stars</mat-icon>
                     <span>What you friends play</span>
                 </button>
-                <div class="game-card featured" routerLink="/slotmachine">
+                <div class="game-card featured" (click)="onGameClick('Slotmachine')">
                     <button class="favorite-btn" (click)="toggleFavorite('Slotmachine', $event)">
                         <mat-icon>{{ isFavorite('Slotmachine') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
@@ -38,7 +38,7 @@
                     <mat-icon class="news-icon">casino</mat-icon>
                     <span>You played last</span>
                 </button>
-                <div class="game-card featured" routerLink="/blackjack">
+                <div class="game-card featured" (click)="onGameClick('Blackjack')">
                     <button class="favorite-btn" (click)="toggleFavorite('Blackjack', $event)">
                         <mat-icon>{{ isFavorite('Blackjack') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
@@ -67,7 +67,7 @@
                     <mat-icon class="news-icon">games</mat-icon>
                     <span>Event games</span>
                 </button>
-                <div class="game-card featured" routerLink="/poker">
+                <div class="game-card featured" (click)="onGameClick('PokerTexas')">
                     <button class="favorite-btn" (click)="toggleFavorite('PokerTexas', $event)">
                         <mat-icon>{{ isFavorite('PokerTexas') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
@@ -79,7 +79,7 @@
                     </div>
                 </div>
 
-                <button class="game-card featured" routerLink="/roulette">
+                <div class="game-card featured" (click)="onGameClick('Roulette')">
                     <button class="favorite-btn" (click)="toggleFavorite('Roulette', $event)">
                         <mat-icon>{{ isFavorite('Roulette') ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>
@@ -89,7 +89,7 @@
                     <div class="game-card-content">
                         <span class="game-title">Roulette</span>
                     </div>
-                </button>
+                </div>
                 <button class="game-card">
                     <div class="game-card-content">
                         <span class="game-title">Spiel tmp</span>
@@ -104,7 +104,7 @@
                     <span>Favorite games</span>
                 </button>
                 @for (game of favoriteGames; track game.key) {
-                <div class="game-card featured" [routerLink]="game.route">
+                <div class="game-card featured" (click)="onGameClick(game.key)">
                     <button class="favorite-btn" (click)="toggleFavorite(game.key, $event)">
                         <mat-icon>{{ isFavorite(game.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
                     </button>

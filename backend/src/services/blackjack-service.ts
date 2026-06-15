@@ -2,6 +2,7 @@ import { Database } from "better-sqlite3";
 import { Blackjack } from "../gameLogic/blackjack";
 import { BlackjackPlayer } from "../gameLogic/blackjackPlayer";
 import { DB } from "../data";
+import { getGameMode, getBalanceLimits } from "../config";
 
 export class BlackjackService {
     static blackjackGames: Blackjack[] = [];
@@ -39,8 +40,19 @@ export class BlackjackService {
             };
         }
 
+        const game = gameResult.game;
+        const mode = getGameMode(game.getGameName());
+        const limits = getBalanceLimits(mode);
+
+        if (balance < limits.min || (limits.max !== Infinity && balance > limits.max)) {
+            return {
+                success: false,
+                message: `Balance ${balance} is out of bounds for ${mode} mode (Min: ${limits.min}, Max: ${limits.max})`
+            };
+        }
+
         const newPlayer: BlackjackPlayer = new BlackjackPlayer(playerId, username, displayname, balance);
-        gameResult.game.addPlayer(newPlayer);
+        game.addPlayer(newPlayer);
 
         return {
             success: true,
@@ -74,13 +86,18 @@ export class BlackjackService {
         }
     }
 
-    getOrCreateGame(gameId: string, gameName?: string): Blackjack {
+    getOrCreateGame(gameId: string, gameName: string): Blackjack {
         const gameResult = this.getGameById(gameId);
         if (gameResult.game) {
+            // Update the name and settings if the game already exists
+            if (gameResult.game.getGameName() !== gameName) {
+                gameResult.game.setGameName(gameName);
+                gameResult.game.updateSettings();
+            }
             return gameResult.game;
         }
 
-        const newGame = new Blackjack(gameId, gameName ?? `Blackjack ${gameId}`);
+        const newGame = new Blackjack(gameId, gameName);
         BlackjackService.blackjackGames.push(newGame);
         return newGame;
     }
