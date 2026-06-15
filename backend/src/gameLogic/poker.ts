@@ -44,6 +44,7 @@ export class Poker extends CardGame<PokerPlayer> {
         super(gameId, gameName);
         this.pokerDeck = new PokerDeck();
         this.defaultTurnTimeoutMs = 10000;
+        this.maxPlayers = MAX_PLAYER_COUNT;
 
         this.mode = getGameMode(this.getGameName());
         this.defaultBet = getPokerDefaultBet(this.mode);

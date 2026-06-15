@@ -21,6 +21,7 @@ export class Roulette extends Game<RoulettePlayer> {
 
     constructor(gameId: string, gameName: string = "") {
         super(gameId, gameName);
+        this.maxPlayers = 5;
         this.chipOptions = getChipsForGame(this.getGameName());
         this.gameBalance = getBalanceLimits(getGameMode(this.getGameName())).max;
     }

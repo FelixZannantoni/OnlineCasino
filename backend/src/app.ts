@@ -166,8 +166,9 @@ io.on("connection", (socket: Socket) => {
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
         if (!existingPlayer) {
+            let addResult = { success: true, message: "" };
             if (service === pokerService) {
-                await pokerService.addPlayer(
+                addResult = await pokerService.addPlayer(
                     userId,
                     user?.userName ?? '-',
                     user?.displayName ?? 'Guest',
@@ -177,7 +178,7 @@ io.on("connection", (socket: Socket) => {
                     gameId
                 );
             } else if (service === blackjackService) {
-                await blackjackService.addPlayer(
+                addResult = await blackjackService.addPlayer(
                     userId,
                     user?.userName ?? '-',
                     user?.displayName ?? 'Guest',
@@ -185,21 +186,18 @@ io.on("connection", (socket: Socket) => {
                     gameId
                 );
             } else if (service === rouletteService) {
-                await rouletteService.addPlayer(
+                addResult = await rouletteService.addPlayer(
                     userId,
                     username,
                     displayname,
                     balance,
                     gameId
                 );
-            } else if (service === rouletteService) {
-                await rouletteService.addPlayer(
-                    userId,
-                    username,
-                    displayname,
-                    balance,
-                    gameId
-                );
+            }
+
+            if (!addResult.success) {
+                socket.emit("error", { message: addResult.message });
+                return;
             }
         } else {
             // Update existing player info in case it was "Guest" before

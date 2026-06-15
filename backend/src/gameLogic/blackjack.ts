@@ -31,6 +31,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.blackjackDeck = new BlackjackDeck();
         this.blackJackBot = new BlackjackBot();
         this.defaultTurnTimeoutMs = 15000;
+        this.maxPlayers = 5;
         this.updateSettings();
     }
 
