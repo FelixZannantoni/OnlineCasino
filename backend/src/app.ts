@@ -105,9 +105,9 @@ io.on("connection", (socket: Socket) => {
         let service: any = pokerService;
 
         if (!game) {
-            game = BlackjackService.blackjackGames.find(
-                (g) => g.getGameId().toString() === gameId.toString()
-            );
+            // Check if it's a blackjack game (starts with 'bj-' or is numeric/known ID)
+            // Or just try to get/create if it's not a poker game
+            game = blackjackService.getOrCreateGame(gameId);
             service = blackjackService;
         }
 

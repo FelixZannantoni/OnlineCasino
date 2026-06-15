@@ -71,11 +71,24 @@ export class UserService {
      * @param name github name of the user
      * @returns true if login (or registration) was successful, false otherwise
      */
-    async githubLogin(githubId: string | number, username: string, displayName: string): Promise<{ success: boolean, uuid: string }> {
-        const normalizedGithubId = normalizeUserId(githubId);
+    private normalizeUserId(userId: string | number): string {
+        if (typeof userId === "number") {
+            if (!Number.isFinite(userId)) return "";
+            return String(Math.trunc(userId));
+        }
+
+        if (typeof userId === "string") {
+            return userId.replace(/\.0+$/, "");
+        }
+
+        return "";
+    }
+
+    async githubLogin(githubId: string | number, username: string, displayName: string): Promise<boolean> {
+        const normalizedGithubId = this.normalizeUserId(githubId);
 
         // check for invalid params
-        if(!normalizedGithubId || !username || !displayName) {
+        if (!normalizedGithubId || !username || !displayName) {
             console.error(`Invalid parameters for github login: githubId: ${githubId}, username: ${username}, displayName: ${displayName}`);
             return {
                 success: false,
@@ -126,7 +139,7 @@ export class UserService {
                 };
             }
 
-        } catch(err) {
+        } catch (err) {
             console.error(`Something happened while trying to login via github (user-service): ${err}`);
             return {
                 success: false,
@@ -161,6 +174,9 @@ export class UserService {
     async getUserById(userId: string | number): Promise<User | null> {
         try {
             const connection: Database = await DB.createDBConnection();
+            const normalizedUserId = this.normalizeUserId(userId);
+
+            if (!normalizedUserId) return null;
 
             const normalizedUserId: string = normalizeUserId(userId);
 
@@ -178,6 +194,12 @@ export class UserService {
     async updateUserBalance(userId: string | number, newBalance: number): Promise<boolean> {
         try {
             const connection: Database = await DB.createDBConnection();
+            const normalizedUserId = this.normalizeUserId(userId);
+
+            if (!normalizedUserId) {
+                console.error(`Invalid userId for updateUserBalance: ${userId}`);
+                return false;
+            }
 
             const normalizedUserId: string = normalizeUserId(userId);
 

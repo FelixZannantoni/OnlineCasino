@@ -143,3 +143,67 @@
   color: white !important;
   box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4) !important;
 }
+
+/* --- CHIP TRAY (reuse roulette styles) --- */
+.tray {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.tray-lbl {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(201, 168, 76, 0.6);
+  text-transform: uppercase;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.chip-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.15s;
+  border: 3px solid;
+  position: relative;
+}
+
+.chip-btn::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+.chip-btn:focus-visible {
+  outline: 2px solid #f0c040;
+  outline-offset: 3px;
+}
+
+.chip-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 18px rgba(0,0,0,0.7); }
+.chip-btn.on { transform: translateY(-7px); box-shadow: 0 10px 22px rgba(0,0,0,0.8), 0 0 0 2px #f0c040; }
+
+.ch1 { background: #e2e8f0; border-color: #94a3b8; color: #1e293b; }
+.ch5 { background: #dc2626; border-color: #7f1d1d; color: #fff; }
+.ch25 { background: #16a34a; border-color: #14532d; color: #fff; }
+.ch100 { background: #2563eb; border-color: #1e3a8a; color: #fff; }
+.ch500 { background: #7c3aed; border-color: #4c1d95; color: #f0c040; }
+
+.tray-gap { flex: 1; }
+.tbtn { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius:5px; color: rgba(201,168,76,0.65); padding:7px 12px; cursor:pointer; }
+

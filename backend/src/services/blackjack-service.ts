@@ -73,6 +73,17 @@ export class BlackjackService {
         }
     }
 
+    getOrCreateGame(gameId: string): Blackjack {
+        const gameResult = this.getGameById(gameId);
+        if (gameResult.game) {
+            return gameResult.game;
+        }
+
+        const newGame = new Blackjack(gameId);
+        BlackjackService.blackjackGames.push(newGame);
+        return newGame;
+    }
+
     getGameById(gameId: string): {game: Blackjack | null, message: string} {
         const game: Blackjack | undefined = BlackjackService.blackjackGames.find(g => g.getGameId().toString() === gameId);
         if(!game) {
