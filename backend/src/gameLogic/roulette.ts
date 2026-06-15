@@ -215,7 +215,8 @@ export class Roulette extends Game<RoulettePlayer> {
             });
 
             if (totalWin > 0) {
-                await player.winMoney(totalWin, this.gameBalance);
+                player.winMoney(totalWin);
+                await userService.updateUserBalance(player.getPlayerId(), player.getBalance());
             }
         }
     }

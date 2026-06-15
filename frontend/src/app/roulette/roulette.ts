@@ -17,6 +17,7 @@ import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../services/socket.service';
 import { getBetLimits, getChipOptions, getModeConfigByMode } from '../game-mode-overlay/game-mode-overlay';
+import { SocketService } from '../services/socket.service';
 import { DataService } from '../services/data-service';
 
 interface Bet {
