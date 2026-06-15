@@ -28,13 +28,19 @@ export class Roulette extends Game<RoulettePlayer> {
     }
 
     public async startGame() {
+        console.log(`DEBUG: startGame called for game ${this.getGameId()}. isRunning: ${this.isRunning}`);
         if (this.isRunning) return;
         this.isRunning = true;
+        console.log(`DEBUG: Roulette game ${this.getGameId()} loop started.`);
 
         while (this.isRunning) {
+            console.log(`DEBUG: Roulette round starting for game ${this.getGameId()}. Players: ${this.players.length}`);
             if (this.players.length === 0) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
-                if (this.players.length === 0) break;
+                if (this.players.length === 0) {
+                    console.log(`DEBUG: No players, stopping loop for game ${this.getGameId()}.`);
+                    break;
+                }
             }
 
             await this.playRound();
@@ -45,6 +51,7 @@ export class Roulette extends Game<RoulettePlayer> {
         this.isRunning = false;
         this.currentPhase = RoulettePhase.WAITING;
         this.emit("game_state", this.getGameState());
+        console.log(`DEBUG: Roulette game ${this.getGameId()} loop ended.`);
     }
 
     private async playRound() {
@@ -76,11 +83,9 @@ export class Roulette extends Game<RoulettePlayer> {
 
         await new Promise<void>((resolve) => {
             let interval: NodeJS.Timeout | null = null;
-            let timerStarted = false;
 
             const startTimer = () => {
-                if (timerStarted) return;
-                timerStarted = true;
+                if (interval) return;
                 interval = setInterval(() => {
                     this.remainingTime--;
                     this.emit("game_state", this.getGameState());
@@ -91,6 +96,9 @@ export class Roulette extends Game<RoulettePlayer> {
                 }, 1000);
             };
 
+            // Start the timer immediately
+            startTimer();
+
             const handleReady = () => {
                 const allReady = this.players.length > 0 && this.players.every(p => p.getIsReady());
                 if (allReady) {
@@ -99,24 +107,18 @@ export class Roulette extends Game<RoulettePlayer> {
                 }
             };
 
-            const handleBet = () => {
-                startTimer();
-                this.emit("game_state", this.getGameState());
-            };
-
             const cleanup = () => {
                 if (interval) clearInterval(interval);
                 this.removeListener("playerBet", handleBet);
                 this.removeListener("playerReady", handleReady);
             };
 
+            const handleBet = () => {
+                this.emit("game_state", this.getGameState());
+            };
+
             this.on("playerBet", handleBet);
             this.on("playerReady", handleReady);
-
-            // If a player is already betting (e.g. they joined right as we reset)
-            if (this.players.some(p => p.getBet() > 0)) {
-                startTimer();
-            }
         });
     }
 

@@ -114,39 +114,41 @@ io.on("connection", (socket: Socket) => {
 
         const user = await userService.getUserById(userId);
 
-        let game: any = PokerService.pokerGames.find(
-            (g) => g.getGameId().toString() === gameId.toString()
-        );
-        let service: any = pokerService;
+        let game: any = null;
+        let service: any = null;
 
-        if (!game) {
-            const name = gameName || (stakes ? `Blackjack ${stakes}` : "Blackjack");
-            game = blackjackService.getOrCreateGame(gameId, name);
-            service = blackjackService;
-        }
-
-        if (!game) {
-            game = PokerService.pokerGames.find((g) => g.getGameId().toString() === gameId.toString());
-            if (!game && stakes) {
-                const name = gameName || `Poker ${stakes}`;
-                const newPoker = new Poker(gameId, name);
-                PokerService.pokerGames.push(newPoker);
-                game = newPoker;
-            }
+        // Try to find the game in each service
+        game = PokerService.pokerGames.find((g) => g.getGameId().toString() === gameId.toString());
+        if (game) {
             service = pokerService;
+        } else {
+            game = blackjackService.getGameById(gameId).game;
+            if (game) {
+                service = blackjackService;
+            } else {
+                game = RouletteService.rouletteGames.find((g) => g.getGameId().toString() === gameId.toString());
+                if (game) {
+                    service = rouletteService;
+                }
+            }
         }
 
+        // If not found, check if it should be created (Roulette case)
         if (!game) {
-            game = RouletteService.rouletteGames.find(
-                (g) => g.getGameId().toString() === gameId.toString()
-            );
-            if (!game && stakes) {
-                const name = gameName || `Roulette ${stakes}`;
-                const newRoulette = new Roulette(gameId, name);
-                RouletteService.rouletteGames.push(newRoulette);
-                game = newRoulette;
+            if (gameId.startsWith("roulette")) {
+                const name = gameName || `Roulette ${gameId}`;
+                game = new Roulette(gameId, name);
+                RouletteService.rouletteGames.push(game);
+                service = rouletteService;
+            } else if (gameId.startsWith("blackjack")) {
+                game = blackjackService.getOrCreateGame(gameId, gameName || `Blackjack ${gameId}`);
+                service = blackjackService;
+            } else if (gameId.startsWith("poker")) {
+                const name = gameName || `Poker ${gameId}`;
+                game = new Poker(gameId, name);
+                PokerService.pokerGames.push(game);
+                service = pokerService;
             }
-            service = rouletteService;
         }
 
         if (!game) {
@@ -214,12 +216,14 @@ io.on("connection", (socket: Socket) => {
         }
 
         const playerCount = game.getGameState().players.length;
+        console.log(`DEBUG: join_game, gameId: ${gameId}, playerCount: ${playerCount}, isRoulette: ${service === rouletteService}`);
         // Start game based on type
         if (service === pokerService && playerCount >= 2 && playerCount <= 5) {
             game.startGameStartTimer();
         } else if (service === blackjackService && playerCount >= 1) {
             game.startGame();
         } else if (service === rouletteService && playerCount >= 1) {
+            console.log(`DEBUG: Attempting to start Roulette game: ${gameId}`);
             game.startGame();
         }
         socket.emit("game_state", game.getGameState());
