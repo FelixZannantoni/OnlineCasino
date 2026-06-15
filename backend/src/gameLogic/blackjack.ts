@@ -165,7 +165,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             let turnOver = false;
             while (!turnOver && playerOnMove.getHandValue() < 21) {
                 this.startTurnTimer(this.defaultTurnTimeoutMs, () => {
-                    turnOver = true;
+                    this.handlePlayerMove(playerOnMove.getPlayerId(), "stand").catch(err => console.error("Auto-stand failed:", err));
                 });
                 this.emit("game_state", this.getGameState());
                 await new Promise<void>((resolve) => {
