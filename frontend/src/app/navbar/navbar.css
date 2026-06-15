@@ -414,3 +414,25 @@ a {
         gap: 0.6rem;
     }
 }
+/* ── Mobile Responsive Navbar ── */
+@media (max-width: 480px) {
+    .navbar_container {
+        padding: 0.35rem 0.5rem;
+        gap: 0.5rem;
+    }
+    .brand_link {
+        font-size: 1.1rem;
+    }
+    .chips {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
+    }
+    .chips_icon {
+        font-size: 0.9rem;
+    }
+    .settings_btn,
+    .profile_pic {
+        width: 36px;
+        height: 36px;
+    }
+}

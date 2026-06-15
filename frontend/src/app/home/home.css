@@ -580,3 +580,46 @@
         flex-direction: column;
     }
 }
+/* ── Additional Mobile Fixes ── */
+@media (max-width: 600px) {
+    .home-container {
+        padding: 0.75rem;
+    }
+    .game-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+    }
+    .news-banner {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        min-height: 60px;
+        padding: 0.75rem;
+        gap: 0.5rem;
+    }
+    .news-icon {
+        font-size: 1.4rem;
+        width: 1.4rem;
+        height: 1.4rem;
+    }
+    .news-banner span:last-child {
+        font-size: 0.6rem;
+    }
+    .game-card {
+        min-height: 70px;
+    }
+    .game-title {
+        font-size: 0.8rem;
+    }
+    .sidebar {
+        border-left: none;
+        border-top: 2px solid var(--light-gold);
+    }
+    .club-title {
+        font-size: 1.5rem;
+    }
+}
+@media (max-width: 380px) {
+    .game-row {
+        grid-template-columns: 1fr;
+    }
+}

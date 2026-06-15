@@ -215,3 +215,9 @@
 .tray-gap { flex: 1; }
 .tbtn { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius:5px; color: rgba(201,168,76,0.65); padding:7px 12px; cursor:pointer; }
 
+
+/* ── Mobile Responsive Blackjack ── */
+@media (max-width: 600px) {
+    ::ng-deep .dealer-area { top: 30%; }
+    ::ng-deep .player-cards { bottom: 10%; }
+}

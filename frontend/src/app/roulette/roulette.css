@@ -751,3 +751,17 @@ dl {
   font-family: 'Oswald', sans-serif;
   margin: 0;
 }
+/* ── Mobile Responsive Roulette ── */
+@media (max-width: 900px) {
+    .topbar {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 8px 12px;
+    }
+    .recent-nums { flex-wrap: wrap; justify-content: center; }
+    .rc-ball { width: 22px; height: 22px; font-size: 8px; }
+}
+
+@media (max-width: 768px) {
+    .logo { font-size: 16px; letter-spacing: 3px; }
+}

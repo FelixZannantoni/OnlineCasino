@@ -602,3 +602,22 @@ body {
     from { opacity: 0.5; transform: scale(0.98); }
     to { opacity: 1; transform: scale(1.02); }
 }
+
+/* ── Mobile Responsive Table Game ── */
+@media (max-width: 768px) {
+    .game-layout {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto 1fr auto !important;
+    }
+    .game-table {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-bar {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        padding: 0.5rem;
+    }
+}

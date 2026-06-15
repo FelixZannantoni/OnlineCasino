@@ -332,3 +332,8 @@
   50% { transform: translateX(-50%) scale(1.08); }
   100% { transform: translateX(-50%) scale(1); }
 }
+/* ── Mobile Responsive Poker ── */
+@media (max-width: 600px) {
+    ::ng-deep .board-cards { top: 40%; gap: 4px; }
+    ::ng-deep .player-cards { bottom: 8%; gap: 4px; }
+}

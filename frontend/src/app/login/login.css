@@ -481,3 +481,234 @@ a:hover {
         font-size: 1.5rem;
     }
 }
+/* ── Validation error styles ── */
+.input-group {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.input-group input {
+    position: relative;
+    z-index: 1;
+}
+
+/* Re-anchor icons since input-group is now column flex */
+.input-icon {
+    position: absolute;
+    left: 14px;
+    top: 22px; /* vertically center inside input (input height ~48px) */
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.toggle-password {
+    left: auto !important;
+    right: 14px !important;
+    top: 22px;
+}
+
+.input-group.has-error input {
+    border-color: #e53e3e;
+    background-color: #fff5f5;
+}
+
+.input-group.has-error input:focus {
+    border-color: #e53e3e;
+    box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.15);
+}
+
+.field-error {
+    display: block;
+    color: #e53e3e;
+    font-size: 11.5px;
+    font-weight: 600;
+    margin-top: 4px;
+    padding-left: 6px;
+    text-align: left;
+    width: 100%;
+    animation: fadeIn 0.2s ease;
+}
+
+.form-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff5f5;
+    border: 1.5px solid #e53e3e;
+    border-radius: 8px;
+    color: #c53030;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 14px;
+    margin-top: 4px;
+    width: 100%;
+    text-align: left;
+    animation: fadeIn 0.25s ease;
+}
+
+.form-error mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Mobile switch link (only shown on mobile) ── */
+.mobile-switch {
+    display: none;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: var(--primary-purple);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    border-radius: 0;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.link-btn:hover {
+    color: var(--primary-purple-dark);
+}
+
+/* ── Improved Mobile Responsiveness ── */
+@media (max-width: 768px) {
+    :host {
+        padding: 12px;
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+
+    .container {
+        width: 100%;
+        min-height: unset;
+        border-radius: 16px;
+    }
+
+    .form-container {
+        width: 100%;
+        position: relative;
+        left: 0;
+        height: auto;
+        padding: 0;
+        min-height: unset;
+    }
+
+    .sign-in-container,
+    .sign-up-container {
+        width: 100%;
+        position: relative;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    .sign-up-container {
+        display: none;
+    }
+
+    .container.right-panel-active .sign-up-container {
+        display: flex;
+        animation: none;
+    }
+
+    .container.right-panel-active .sign-in-container {
+        display: none;
+    }
+
+    .overlay-container {
+        display: none;
+    }
+
+    .mobile-switch {
+        display: block;
+    }
+
+    form {
+        padding: 24px 20px 28px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .logo-container {
+        margin-bottom: 0.75rem;
+    }
+
+    .casino-chip {
+        width: 56px;
+        height: 56px;
+    }
+
+    .casino-chip mat-icon {
+        font-size: 26px;
+        width: 26px;
+        height: 26px;
+    }
+
+    .input-group {
+        margin: 6px 0;
+    }
+
+    .input-group input {
+        padding: 12px 15px 12px 42px;
+        font-size: 16px; /* prevents iOS zoom on focus */
+    }
+
+    .input-icon {
+        top: 20px;
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+    }
+
+    .toggle-password {
+        top: 20px;
+    }
+
+    button.shining-btn {
+        padding: 12px 40px;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .socials-btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+    }
+
+    .accent-line {
+        margin: 0.75rem auto;
+    }
+
+    .forgot-password-link {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 400px) {
+    :host {
+        padding: 8px;
+    }
+
+    form {
+        padding: 20px 16px 24px;
+    }
+}
