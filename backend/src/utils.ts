@@ -17,3 +17,16 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 
     return await bcrypt.compare(password, hash);
 }
+
+export function normalizeUserId(userId: string | number): string {
+        if (typeof userId === 'number') {
+            if (!Number.isFinite(userId)) return "";
+            return String(Math.trunc(userId));
+        }
+
+        if (typeof userId === 'string') {
+            return userId.replace(/\.0+$/, "")
+        }
+
+        return "";
+    }

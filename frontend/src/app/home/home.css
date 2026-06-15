@@ -296,7 +296,7 @@
     flex: 1;
 }
 
-/* Toggle Switch with sliding background - based on provided code */
+/* Toggle Switch with sliding background */
 .slide-controls {
     position: relative;
     display: flex;
