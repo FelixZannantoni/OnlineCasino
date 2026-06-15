@@ -13,9 +13,12 @@ import { rouletteRouter } from "./router/roulette-router";
 import { PokerService } from "./services/poker-service";
 import { slotmachineRouter } from "./router/slotmachine-router";
 import { Poker } from "./gameLogic/poker";
+import { Roulette } from "./gameLogic/roulette";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
 import { RouletteService } from "./services/roulette-service";
+import { StatsService } from "./services/stats-service";
+import { statsRouter } from "./router/stats-router";
 import { ChatService } from "./services/chat-service";
 import { chatRouter } from "./router/chat-router";
 import { normalizeUserId } from "./utils";
@@ -38,6 +41,7 @@ app.use("/poker", pokerRouter);
 app.use("/blackjack", blackjackRouter);
 app.use("/roulette", rouletteRouter);
 app.use("/slotmachine", slotmachineRouter);
+app.use("/stats", statsRouter);
 app.use("/chats", chatRouter);
 
 // Redirect root to login page
@@ -76,8 +80,10 @@ const blackjackService: BlackjackService = new BlackjackService();
 const rouletteService: RouletteService = new RouletteService();
 const userService: UserService = new UserService();
 
+const statsService: StatsService = new StatsService();
+
 const chatService: ChatService = new ChatService();
-export { pokerService, blackjackService, rouletteService, userService, chatService, onlineUsers };
+export { pokerService, blackjackService, rouletteService, userService, chatService, onlineUsers, statsService };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
@@ -94,20 +100,19 @@ export function onMessageSentToUser(receiverId: string) {
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    socket.on('register', (userId: string | number) => {
+  
+  socket.on('register', (userId: string | number) => {
         socketUserMap.set(socket.id, normalizeUserId(userId));
         onlineUsers.set(normalizeUserId(userId), "online");
     })
-
-    socket.on("join_game", async (gameId: string, userId: string) => {
-        console.log("join_game received:", gameId, userId);
-        socketUserMap.set(socket.id, normalizeUserId(userId));
-
+    socket.on("join_game", async (gameId: string, userId: string, stakes?: string, gameName?: string) => {
+        console.log("join_game received:", gameId, userId, "stakes:", stakes, "name:", gameName);
+        socketUserMap.set(socket.id, userId);
+   
         socket.join(gameId);
         console.log(`User ${userId} joined game: ${gameId}`);
 
         const user = await userService.getUserById(userId);
-        const startBalance: number = 1000;
 
         let game: any = PokerService.pokerGames.find(
             (g) => g.getGameId().toString() === gameId.toString()
@@ -115,16 +120,32 @@ io.on("connection", (socket: Socket) => {
         let service: any = pokerService;
 
         if (!game) {
-            // Check if it's a blackjack game (starts with 'bj-' or is numeric/known ID)
-            // Or just try to get/create if it's not a poker game
-            game = blackjackService.getOrCreateGame(gameId);
+            const name = gameName || (stakes ? `Blackjack ${stakes}` : "Blackjack");
+            game = blackjackService.getOrCreateGame(gameId, name);
             service = blackjackService;
+        }
+
+        if (!game) {
+            game = PokerService.pokerGames.find((g) => g.getGameId().toString() === gameId.toString());
+            if (!game && stakes) {
+                const name = gameName || `Poker ${stakes}`;
+                const newPoker = new Poker(gameId, name);
+                PokerService.pokerGames.push(newPoker);
+                game = newPoker;
+            }
+            service = pokerService;
         }
 
         if (!game) {
             game = RouletteService.rouletteGames.find(
                 (g) => g.getGameId().toString() === gameId.toString()
             );
+            if (!game && stakes) {
+                const name = gameName || `Roulette ${stakes}`;
+                const newRoulette = new Roulette(gameId, name);
+                RouletteService.rouletteGames.push(newRoulette);
+                game = newRoulette;
+            }
             service = rouletteService;
         }
 
@@ -132,10 +153,12 @@ io.on("connection", (socket: Socket) => {
             socket.emit("error", { message: `Game ${gameId} not found` });
             return;
         }
-
-        const username = user?.username ?? '-';
+        if(user == null) {
+            //TODO
+        }
+        const username = user!.username ?? '-';
         const displayname = user?.displayname || user?.username || 'Guest';
-        const balance = user?.balance ?? startBalance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
+        const balance = user!.balance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
         if (!existingPlayer) {
@@ -165,6 +188,14 @@ io.on("connection", (socket: Socket) => {
                     balance,
                     gameId
                 );
+            } else if (service === rouletteService) {
+                await rouletteService.addPlayer(
+                    userId,
+                    username,
+                    displayname,
+                    balance,
+                    gameId
+                );
             }
         } else {
             // Update existing player info in case it was "Guest" before
@@ -175,8 +206,8 @@ io.on("connection", (socket: Socket) => {
             io.to(gameId).emit("game_state", game.getGameState());
         }
 
-        if (game.listenerCount("gameState") === 0) {
-            game.on("gameState", (state: any) => {
+        if (game.listenerCount("game_state") === 0) {
+            game.on("game_state", (state: any) => {
                 io.to(gameId).emit("game_state", state);
             });
         }

@@ -1,6 +1,7 @@
 import { Component, Inject, PLATFORM_ID, signal, computed, inject, OnInit } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { getBetLimits, getModeConfigByMode } from '../../game-mode-overlay/game-mode-overlay';
 import { TableGameComponent } from '../table-game';
 import { MatIconModule } from '@angular/material/icon';
 import { SocketService } from '../../services/socket.service';
@@ -27,6 +28,7 @@ type PokerPlayerState = {
   cards: PokerBoardCard[];
   isDealer: boolean;
   handName: string;
+  handValue: number;
 };
 
 type PokerGameState = {
@@ -65,7 +67,11 @@ export class Poker implements OnInit {
   private playerTurnTimer: any = null;
   private gameStartTimer: any = null;
 
+  flippingCards = new Set<string>();
+  private revealedCards = new Set<string>();
+
   private readonly gameId = signal<string>('1');
+  gameName: string = 'Poker';
 
   protected readonly getCardRank = getCardRank;
 
@@ -73,17 +79,22 @@ export class Poker implements OnInit {
   protected selectedBetAmount = signal<number>(20);
   protected showBetSlider = signal<boolean>(false);
 
+  protected readonly modeLimits = signal<{ minBet: number; maxBet: number }>({ minBet: 10, maxBet: 10000 });
+
   protected readonly minBet = computed(() => {
     const state = this.gameState();
-    if (!state) return 10;
-    // Standard raise is usually at least currentBet + bigBlind (10)
-    return Math.max(10, state.currentBet + 10);
+    const modeMin = this.modeLimits().minBet;
+    if (!state) return modeMin;
+    // Must be at least the mode minimum AND a valid raise over current bet
+    return Math.max(modeMin, state.currentBet + modeMin);
   });
 
   protected readonly maxBet = computed(() => {
     const me = this.myPlayer();
-    if (!me) return 1000;
-    return me.balance;
+    const modeMax = this.modeLimits().maxBet;
+    if (!me) return modeMax;
+    // Cap at both player balance and mode maximum
+    return Math.min(me.balance, modeMax);
   });
 
   protected readonly myPlayer = computed(() => {
@@ -99,12 +110,14 @@ export class Poker implements OnInit {
     return state.players.filter(p => p.id !== this.dataService.userId());
   });
 
-  ngOnInit(): void {
+    ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const id = this.route.snapshot.paramMap.get('id') ?? '1';
+    const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
+    const modeConfig = getModeConfigByMode(modeParam);
+    const id = modeConfig.pokerId;
     this.gameId.set(id);
-
+    this.gameName = `Poker ${modeParam}`;
     const userId = this.dataService.userId();
 
     if (!userId) {
@@ -114,7 +127,6 @@ export class Poker implements OnInit {
 
     this.socketService.onEvent('game_state', (state: unknown) => {
       const s = state as PokerGameState;
-      console.log("Received game state update:", s);
       this.gameState.set(s);
       this.isProcessing.set(false);
 
@@ -126,25 +138,57 @@ export class Poker implements OnInit {
         this.stopLocalTimerForPlayerTurn();
       }
 
-      if(s.gameStartRemainingSeconds != null) {
+      if (s.gameStartRemainingSeconds != null) {
         this.gameStartsIn.set(s.gameStartRemainingSeconds);
         this.startLocalTimerForGameStart();
       }
 
-      // Keep table-game bindings in sync with backend state
+      // Keep table-game bindings in sync
       if (typeof s?.pot === 'number') this.pot = s.pot;
       
       const me = s.players.find((p) => p.id === userId);
       if (me) {
         if (typeof me.balance === 'number') this.balance = me.balance;
-        // Sync selectedBetAmount with server's desiredBet if it's different
         if (me.desiredBet !== this.selectedBetAmount()) {
           this.selectedBetAmount.set(me.desiredBet || this.minBet());
         }
       }
+
+      // Pause Overlay Logic: only show overlay at round end (winning hand)
+      this.handlePauseOverlayLogic(s);
     });
 
-    this.socketService.joinGame(id, userId);
+    this.modeLimits.set(getBetLimits(modeParam));
+    this.selectedBetAmount.set(this.modeLimits().minBet);
+
+    this.socketService.joinGame(id, userId, undefined, this.gameName);
+  }
+
+  private handlePauseOverlayLogic(s: PokerGameState): void {
+    // Show overlay only when server marks the game as loading and provides lastWinners
+    // (this indicates a round has finished and winners are available).
+    if (s.isLoading && (s as any).lastWinners && (s as any).lastWinners.length > 0) {
+      const lastWinners = (s as any).lastWinners as { id: string, handName: string }[];
+      const winnerInfo = lastWinners[0]; // show primary winner (if split pot, first entry)
+      const winnerPlayer = s.players.find(p => p.id === winnerInfo.id) || null;
+
+      window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
+        detail: {
+          title: 'Gewinner!',
+          message: `${winnerPlayer?.displayname || 'Spieler'} gewinnt mit ${winnerInfo.handName || winnerPlayer?.handName || 'Gewinnende Hand'}`,
+          timerSeconds: 5,
+          boardCards: s.board,
+          winnerCards: winnerPlayer?.cards || [],
+          handName: winnerInfo.handName || winnerPlayer?.handName
+        }
+      }));
+      return;
+    }
+
+    // Otherwise close overlay
+    window.dispatchEvent(new CustomEvent('togglePauseOverlay', {
+      detail: { isOpen: false, title: '', message: '' }
+    }));
   }
 
   private startLocalTimerForPlayerTurn(): void {
@@ -291,5 +335,33 @@ export class Poker implements OnInit {
       gameId: gid
     });
   }
-}
+  private triggerFlipsForNewlyRevealedCards(newState: PokerGameState): void {
+    if (newState.phase === 'PRE_FLOP' || newState.phase === 'WAITING') this.revealedCards.clear();
+    newState.board.forEach((card, i) => {
+      const key = `board-${i}`;
+      if (card.visibility === 'all' && !this.revealedCards.has(key)) {
+        this.revealedCards.add(key);
+        this.triggerFlip(key);
+      }
+    });
+    newState.players.forEach(player => {
+      player.cards.forEach((card, i) => {
+        const key = `player-${player.id}-${i}`;
+        if (card.visibility === 'all' && !this.revealedCards.has(key)) {
+          this.revealedCards.add(key);
+          this.triggerFlip(key);
+        }
+      });
+    });
+  }
 
+  private triggerFlip(key: string): void {
+    this.flippingCards.add(key);
+    setTimeout(() => this.flippingCards.delete(key), 520);
+  }
+
+  isFlipping(key: string): boolean {
+    return this.flippingCards.has(key);
+  }
+
+}

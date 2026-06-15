@@ -14,6 +14,9 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { SocketService } from '../services/socket.service';
+import { getBetLimits, getChipOptions, getModeConfigByMode } from '../game-mode-overlay/game-mode-overlay';
 import { SocketService } from '../services/socket.service';
 import { DataService } from '../services/data-service';
 
@@ -58,6 +61,7 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   private readonly zone = inject(NgZone);
   private readonly socketService = inject(SocketService);
   private readonly dataService = inject(DataService);
+  private readonly route = inject(ActivatedRoute);
   private isBrowser: boolean;
 
   //
@@ -71,7 +75,8 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   readonly resultLabel = signal('');
   readonly resultClass = signal('');
   readonly recentResults = signal<number[]>([]);
-  readonly gameId = '3'; // Assuming Roulette game ID is 3
+  gameId = '3'; // Default
+  gameName: string = 'Roulette';
   private userId: string | null = null;
   private currentPhase: string = 'WAITING';
 
@@ -101,13 +106,13 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
   readonly colLabels = ['3rd Col', '2nd Col', '1st Col'];
 
-  readonly chipOptions: ChipOption[] = [
+  readonly chipOptions = signal<ChipOption[]>([
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },
     { value: 100, cls: 'ch100' },
     { value: 500, cls: 'ch500' },
-  ];
+  ]);
 
   readonly dozens: DozenBet[] = [
     { label: '1st Dozen' },
@@ -148,9 +153,18 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
+    const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
+    const modeConfig = getModeConfigByMode(modeParam);
+    this.gameId = modeConfig.rouletteId;
+    this.gameName = `Roulette ${modeParam}`;
+
+    const { minBet, maxBet } = getBetLimits(modeParam);
+    this.chipOptions.set(getChipOptions(minBet, maxBet) as ChipOption[]);
+    const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;
+
     if (this.userId) {
       // Allow time for the socket to connect before joining
-      this.socketService.joinGame(this.gameId, this.userId);
+      this.socketService.joinGame(this.gameId, this.userId, stakes, this.gameName);
     }
 
     this.socketService.onEvent('game_state', (data: any) => {
@@ -165,6 +179,9 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
 
   private handleGameState(state: any): void {
     console.log('Roulette State Update:', state);
+    if (state.chipOptions) {
+      this.chipOptions.set(state.chipOptions);
+    }
     this.players.set(state.players);
     const me = state.players.find((p: any) => p.id === this.userId);
     if (me) {
@@ -183,8 +200,8 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (state.phase === 'FINISHED' && this.currentPhase === 'SPINNING') {
-        // Just ensure spinning signal is false if it wasn't already
-        this.spinning.set(false);
+      // Just ensure spinning signal is false if it wasn't already
+      this.spinning.set(false);
     }
 
     this.currentPhase = state.phase;

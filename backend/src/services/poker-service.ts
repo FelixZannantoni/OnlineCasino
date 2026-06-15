@@ -84,6 +84,7 @@ export class PokerService {
 
       type GameRow = {
         gameId: string;
+        name: string;
         type: string;
       };
 
@@ -96,7 +97,7 @@ export class PokerService {
       }
 
       result.forEach((pokergameData) => {
-        const poker = new Poker(pokergameData.gameId);
+        const poker = new Poker(pokergameData.gameId, pokergameData.name);
         PokerService.pokerGames.push(poker);
       });
     } catch (err) {

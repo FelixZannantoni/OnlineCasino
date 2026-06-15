@@ -18,6 +18,7 @@ export class UserService {
             email: row.email,
             balance: row.balance,
             streakCount: row.streakCount,
+            lastStreakIncrement: row.lastStreakIncrement,
             passwordHash: row.passwordHash
         }));
     }

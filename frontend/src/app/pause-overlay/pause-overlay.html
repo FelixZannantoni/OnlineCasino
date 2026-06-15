@@ -1,0 +1,55 @@
+<div class="pause-overlay" [class.active]="state.isOpen">
+  <!-- Backdrop -->
+  <div class="overlay-backdrop"></div>
+
+  <!-- Dialog Card -->
+  @if (state.isOpen) {
+    <div class="pause-dialog">
+      <!-- Icon basierend auf Timer -->
+      <div class="icon-wrap">
+        <mat-icon>{{ state.timerSeconds ? 'hourglass_empty' : 'casino' }}</mat-icon>
+      </div>
+
+      <h2>{{ state.title }}</h2>
+      <p>{{ state.message }}</p>
+
+      <!-- Wenn Karten mitgeliefert werden: Board anzeigen -->
+      @if (state.boardCards && state.boardCards.length > 0) {
+        <div class="overlay-card-row">
+          @for (card of state.boardCards; track $index) {
+            <div class="card-mini">{{ card.name || card.rank || (card.value + ' ' + card.suit) }}</div>
+          }
+        </div>
+      }
+
+      <!-- Gewinner-Karten anzeigen -->
+      @if (state.winnerCards && state.winnerCards.length > 0) {
+        <div class="winner-cards">
+          @if (state.handName) { <div class="winner-hand-name">{{ state.handName }}</div> }
+          <div class="winner-card-row">
+            @for (card of state.winnerCards; track $index) {
+              <div class="card-mini">{{ card.name || card.rank || (card.value + ' ' + card.suit) }}</div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Optionaler Countdown -->
+      @if (state.timerSeconds !== undefined && state.timerSeconds !== null) {
+        <div class="timer-display">
+          <span class="timer-value">{{ state.timerSeconds }}</span>
+          <span class="timer-label">Sekunden</span>
+        </div>
+      }
+
+      <!-- Fortschrittsbalken wenn Timer läuft -->
+      @if (state.timerSeconds !== undefined && state.timerSeconds !== null && state.timerSeconds > 0) {
+        <div class="progress-bar">
+          <div class="progress-fill" 
+               [style.width.%]="(state.timerSeconds / 5) * 100">
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

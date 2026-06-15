@@ -7,8 +7,8 @@ export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T>
     protected turnEndTime: number | null = null;
     protected defaultTurnTimeoutMs: number = 15000;
 
-    constructor(gameId: string) {
-        super(gameId);
+    constructor(gameId: string, gameName: string = "") {
+        super(gameId, gameName);
     }
 
     public setDefaultDealerChip() {
