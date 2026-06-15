@@ -213,5 +213,18 @@
 .ch50000 { background: #581c87; border-color: #3b0764; color: #fff; }
 
 .tray-gap { flex: 1; }
-.tbtn { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius:5px; color: rgba(201,168,76,0.65); padding:7px 12px; cursor:pointer; }
+
+
+/* --- TIMER --- */
+::ng-deep .turn-timer {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+  margin-left: 5px !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+  display: inline-block !important;
+  z-index: 100 !important;
+  font-size: 0.9em !important;
+}
 

@@ -35,9 +35,7 @@
           <div class="player-info">
             <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
-            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
-              <span class="turn-timer">({{ turnRemaining() }}s)</span>
-            }
+            <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
           </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
@@ -68,9 +66,7 @@
           <div class="player-info">
             <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
-            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
-              <span class="turn-timer">({{ turnRemaining() }}s)</span>
-            }
+            <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
           </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
@@ -101,9 +97,7 @@
           <div class="player-info">
             <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
-            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
-              <span class="turn-timer">({{ turnRemaining() }}s)</span>
-            }
+            <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
           </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
@@ -134,9 +128,7 @@
           <div class="player-info">
             <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
-            @if (opp.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
-              <span class="turn-timer">({{ turnRemaining() }}s)</span>
-            }
+            <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
           </div>
             <div class="player-bet">Bet: {{ opp.bet }}</div>
           </div>
@@ -168,9 +160,7 @@
           <div class="player-info">
             <div class="player-name">
               You ({{ player.displayname || (player.id | slice:0:8) + '...' }})
-              @if (player.id === gameState()?.currentPlayerId && turnRemaining() !== null) {
-                <span class="turn-timer">({{ turnRemaining() }}s)</span>
-              }
+              <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
             </div>
             <div class="player-bet">Bet: {{ player.bet }}</div>
           </div>
