@@ -128,7 +128,7 @@ io.on("connection", (socket: Socket) => {
         if (!game) {
             game = PokerService.pokerGames.find((g) => g.getGameId().toString() === gameId.toString());
             if (!game && stakes) {
-                const name = gameName || (stakes ? `Poker ${stakes}` : "Poker");
+                const name = gameName || `Poker ${stakes}`;
                 const newPoker = new Poker(gameId, name);
                 PokerService.pokerGames.push(newPoker);
                 game = newPoker;
