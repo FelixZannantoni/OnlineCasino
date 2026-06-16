@@ -619,12 +619,14 @@ body {
     font-weight: 600;
     letter-spacing: 0.5px;
 }
-/* ── Mobile Responsive Slotmachine ── */
+
+/* Mobile Responsive Slotmachine */
 @media (max-width: 900px) {
     .sm-root {
         padding: 0.5rem;
         align-items: flex-start;
     }
+
     .panel {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr auto auto;
@@ -632,6 +634,7 @@ body {
         min-height: unset;
         border-radius: 8px;
     }
+
     .left {
         grid-column: 1;
         grid-row: 1;
@@ -643,20 +646,40 @@ body {
         gap: 1rem;
         align-items: center;
     }
-    .brand-eyebrow, .brand-sub { display: none; }
-    .brand-name { font-size: 1.4rem; }
-    .stat-block { flex-direction: row; align-items: center; gap: 0.5rem; }
-    .stat-label { margin-bottom: 0; }
-    .gold-rule { display: none; }
+
+    .brand-eyebrow,
+    .brand-sub {
+        display: none;
+    }
+
+    .brand-name {
+        font-size: 1.4rem;
+    }
+
+    .stat-block {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-label {
+        margin-bottom: 0;
+    }
+
+    .gold-rule {
+        display: none;
+    }
 
     .center {
         grid-column: 1;
         grid-row: 2;
         padding: 0.75rem 0.75rem 0.5rem;
     }
+
     .reel-frame {
         height: 300px;
     }
+
     .sym {
         height: 80px;
     }
@@ -674,11 +697,13 @@ body {
         border-top: 1px solid rgba(180, 145, 60, 0.18);
         padding: 1rem;
     }
+
     .pt-list {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
     }
+
     .pt-row {
         width: 48%;
         border-bottom: none;
@@ -686,9 +711,27 @@ body {
 }
 
 @media (max-width: 480px) {
-    .reel-frame { height: 240px; }
-    .sym { height: 65px; }
-    .btn-row { gap: 0.4rem; }
-    .spin-btn { font-size: 0.6rem; letter-spacing: 3px; padding: 0.6rem 0.5rem; }
-    .auto-btn, .aux-btn { font-size: 0.45rem; padding: 0.6rem 0.4rem; }
+    .reel-frame {
+        height: 240px;
+    }
+
+    .sym {
+        height: 65px;
+    }
+
+    .btn-row {
+        gap: 0.4rem;
+    }
+
+    .spin-btn {
+        font-size: 0.6rem;
+        letter-spacing: 3px;
+        padding: 0.6rem 0.5rem;
+    }
+
+    .auto-btn,
+    .aux-btn {
+        font-size: 0.45rem;
+        padding: 0.6rem 0.4rem;
+    }
 }

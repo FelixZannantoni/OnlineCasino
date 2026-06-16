@@ -1,4 +1,6 @@
-/* Global Variables */
+/* Global CSS variables
+   Central place for theme colors/gradients used across the app.
+*/
 @import 'app/ui/cards/cards.css';
 
 :root {
@@ -9,7 +11,8 @@
     --navbar-mid: #1a3a52;
     --text-gold: #d19e1d;
     --text-purple: #6d28d9;
-    --text-gold-dark: #573e00; /* darker color needed to pass the WCAG AAA */
+    --text-gold-dark: #573e00;
+    /* darker color needed to pass the WCAG AAA */
     --gray-light: #f5f5f5;
     --gray-mid: #e0e0e0;
     --gray-dark: #333333;
@@ -129,18 +132,23 @@ body {
     background: #d19e1d;
     border-radius: 5px;
 }
-/* ── Global Mobile Responsive Base ── */
+
+/* Global Mobile Responsive Base */
 * {
     -webkit-tap-highlight-color: transparent;
 }
 
-img, svg {
+img,
+svg {
     max-width: 100%;
     height: auto;
 }
 
-input, select, textarea {
-    font-size: 16px; /* prevent iOS zoom on focus */
+input,
+select,
+textarea {
+    font-size: 16px;
+    /* prevent iOS zoom on focus */
 }
 
 @media (max-width: 768px) {

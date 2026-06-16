@@ -59,8 +59,10 @@ img {
     height: auto;
     margin-left: 1rem;
     margin-right: 0.5rem;
-    background-color: #ffffff; /* to make logo more visible */
-    border-radius: 10rem; /*circle */
+    background-color: #ffffff;
+    /* to make logo more visible */
+    border-radius: 10rem;
+    /*circle */
 }
 
 /* Form Containers */
@@ -226,7 +228,8 @@ h1 {
     background: var(--primary-gold-gradient);
     border-radius: 2px;
     margin: 1rem;
-    margin-top: 1.4rem; /* Adjusting middle spacing */
+    margin-top: 1.4rem;
+    /* Adjusting middle spacing */
 }
 
 .forgot-password-link {
@@ -481,7 +484,10 @@ a:hover {
         font-size: 1.5rem;
     }
 }
-/* ── Validation error styles ── */
+
+/* Validation error styles
+   Used to highlight invalid inputs (border + error text) for login/sign-up flows.
+*/
 .input-group {
     flex-direction: column;
     align-items: flex-start;
@@ -496,7 +502,8 @@ a:hover {
 .input-icon {
     position: absolute;
     left: 14px;
-    top: 22px; /* vertically center inside input (input height ~48px) */
+    top: 22px;
+    /* vertically center inside input (input height ~48px) */
     transform: translateY(-50%);
     z-index: 2;
 }
@@ -554,11 +561,18 @@ a:hover {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* ── Mobile switch link (only shown on mobile) ── */
+/* Mobile switch link (only shown on mobile) */
 .mobile-switch {
     display: none;
     margin-top: 12px;
@@ -585,7 +599,7 @@ a:hover {
     color: var(--primary-purple-dark);
 }
 
-/* ── Improved Mobile Responsiveness ── */
+/* Improved Mobile Responsiveness */
 @media (max-width: 768px) {
     :host {
         padding: 12px;
@@ -667,7 +681,8 @@ a:hover {
 
     .input-group input {
         padding: 12px 15px 12px 42px;
-        font-size: 16px; /* prevents iOS zoom on focus */
+        font-size: 16px;
+        /* prevents iOS zoom on focus */
     }
 
     .input-icon {
