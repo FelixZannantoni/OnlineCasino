@@ -1,8 +1,6 @@
 import { Game } from "./game";
 import { RoulettePlayer, rouletteField } from "./roulettePlayer";
 import { userService, roundService } from "../app";
-import { DEFAULT_CHIPS, getChipsForGame } from "../config";
-import { userService } from "../app";
 import { DEFAULT_CHIPS, getChipsForGame, getBalanceLimits, getGameMode } from "../config";
 
 export enum RoulettePhase {
@@ -49,10 +47,21 @@ export class Roulette extends Game<RoulettePlayer> {
             await this.playRound();
             this.currentPhase = RoulettePhase.FINISHED;
             this.emit("game_state", this.getGameState());
+
+            // End the round in DB
+            if (this.currentRoundId !== -1) {
+                await roundService.endRound(this.currentRoundId);
+                this.currentRoundId = -1;
+            }
+
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
         this.isRunning = false;
         this.currentPhase = RoulettePhase.WAITING;
+        if (this.currentRoundId !== -1) {
+            await roundService.endRound(this.currentRoundId);
+            this.currentRoundId = -1;
+        }
         this.emit("game_state", this.getGameState());
         console.log(`DEBUG: Roulette game ${this.getGameId()} loop ended.`);
     }
@@ -60,10 +69,6 @@ export class Roulette extends Game<RoulettePlayer> {
     private async playRound() {
         this.resetBets();
 
-        // End previous round if any
-        if (this.currentRoundId !== -1) {
-            await roundService.endRound(this.currentRoundId);
-        }
         // Start new round in DB
         this.currentRoundId = await roundService.startRound(this.getGameId());
 

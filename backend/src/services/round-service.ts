@@ -40,7 +40,7 @@ export class RoundService {
         const existing = connection.prepare(`SELECT betAmount FROM player_game_rounds WHERE roundId = ? AND userId = ?`).get(roundId, userId) as { betAmount: number } | undefined;
 
         if (existing) {
-            connection.prepare(`UPDATE player_game_roundsSET betAmount = ? WHERE roundId = ? AND userId = ?`).run(existing.betAmount + betAmount, roundId, userId);
+            connection.prepare(`UPDATE player_game_rounds SET betAmount = ? WHERE roundId = ? AND userId = ?`).run(existing.betAmount + betAmount, roundId, userId);
         } else {
             connection.prepare(`INSERT INTO player_game_rounds (roundId, userId, betAmount, profit)VALUES (?, ?, ?, 0)`).run(roundId, userId, betAmount);
         }

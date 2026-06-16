@@ -156,13 +156,16 @@ io.on("connection", (socket: Socket) => {
             socket.emit("error", { message: `Game ${gameId} not found` });
             return;
         }
-        if(user == null) {
-            //TODO
+        if (!user) {
+            socket.emit("error", { message: `User ${userId} not found` });
+            return;
         }
-        const startBalance = 10000000;
-        const username = user!.userName ?? '-';
-        const displayname = user?.displayName || user?.userName || 'Guest';
-        const balance = user!.balance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
+
+        const startBalance = 1000;
+        const username = user.userName ?? '-';
+        const displayname = user.displayName || user.userName || 'Guest';
+        const balance = user.balance; 
+        console.log("DEBUG: join_game, userId:", userId, "balance from user:", user.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
         if (!existingPlayer) {

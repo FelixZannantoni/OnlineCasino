@@ -6,7 +6,6 @@ import { Card } from "../model";
 import { CardGamePlayer } from "./cardGamePlayer";
 import { PokerPlayer } from "./pokerPlayer";
 import { userService, roundService } from "../app";
-import { userService } from "../app";
 import { getGameMode, getPokerDefaultBet, getPokerTipAmount, GameMode, getBalanceLimits } from "../config";
 
 export const MAX_PLAYER_COUNT: number = 5;
@@ -127,12 +126,12 @@ export class Poker extends CardGame<PokerPlayer> {
             this.stopTurnTimer();
             // Clean up dealer chips if game can't start
             this.players.forEach(p => p.setDealerChip(false));
+            
+            if (this.currentRoundId !== -1) {
+                await roundService.endRound(this.currentRoundId);
+                this.currentRoundId = -1;
+            }
             return;
-        }
-
-        // End previous round if any
-        if (this.currentRoundId !== -1) {
-            await roundService.endRound(this.currentRoundId);
         }
 
         // Start new round in DB
@@ -334,6 +333,11 @@ export class Poker extends CardGame<PokerPlayer> {
         this.isLoading = true;
         this.emit("game_state", this.getGameState());
 
+        if (this.currentRoundId !== -1) {
+            await roundService.endRound(this.currentRoundId);
+            this.currentRoundId = -1;
+        }
+
         setTimeout(() => {
             this.startNewHand();
         }, 5000);
@@ -428,6 +432,12 @@ export class Poker extends CardGame<PokerPlayer> {
 
             this.isLoading = true;
             this.emit("game_state", this.getGameState());
+
+            if (this.currentRoundId !== -1) {
+                await roundService.endRound(this.currentRoundId);
+                this.currentRoundId = -1;
+            }
+
             setTimeout(() => this.startNewHand(), 3000);
             return { success: true, message: "Only one player left" };
         }
