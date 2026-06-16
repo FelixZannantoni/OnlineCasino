@@ -8,10 +8,7 @@ export interface PauseState {
   title: string;
   message: string;
   timerSeconds?: number | null; // Optional: Countdown anzeigen
-  // Optional: Karteninformationen (z.B. für Poker-Rundenende)
-  boardCards?: Array<any>;
-  winnerCards?: Array<any>;
-  handName?: string;
+  variant?: 'winner' | 'waiting' | 'default';
 }
 
 @Component({

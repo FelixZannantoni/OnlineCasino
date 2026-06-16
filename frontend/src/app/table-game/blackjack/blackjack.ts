@@ -25,7 +25,7 @@ export class Blackjack implements OnInit, OnDestroy {
   balance: number = 1000;
   pot: number = 0;
   private isBrowser: boolean;
-  protected turnRemaining = signal<number | null>(null);
+  turnRemaining = signal<number | null>(null);
   private timerInterval: any = null;
   // Chip betting UI (copied from roulette)
   interfaceChipOptions: any; // placeholder to keep typings simple in this file
@@ -43,13 +43,13 @@ export class Blackjack implements OnInit, OnDestroy {
   // Keys of cards that have already been revealed (so we don't re-flip)
   private revealedCards = new Set<string>();
 
-  protected readonly me = computed(() => {
+  me = computed(() => {
     const state = this.gameState();
     if (!state) return null;
     return state.players.find(p => p.id === this.userId) || null;
   });
 
-  protected readonly opponents = computed(() => {
+  opponents = computed(() => {
     const state = this.gameState();
     if (!state) return [];
     return state.players.filter(p => p.id !== this.userId);
@@ -102,6 +102,7 @@ export class Blackjack implements OnInit, OnDestroy {
       } else {
         this.stopLocalTimer();
       }
+
 
       const me = state.players.find(p => p.id === this.userId);
       if (me) {

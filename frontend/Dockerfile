@@ -1,25 +1,21 @@
-# Build stage
-FROM node:20-alpine AS build
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json package-lock.json* ./
 RUN npm install
 
 COPY . .
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
-
+FROM node:20-alpine AS runtime
 WORKDIR /app
 
-# Copy the build output
-COPY --from=build /app/dist/frontend ./dist/frontend
-COPY --from=build /app/package*.json ./
-RUN npm install --omit=dev
+COPY package.json package-lock.json* ./
+RUN npm install --production
+
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 4000
-
-# Command to run the SSR server
+ENV PORT=4000
 CMD ["npm", "run", "serve:ssr:frontend"]
