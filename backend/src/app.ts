@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 })
 
 // Serve Frontend Static Files
-const publicPath = path.resolve(__dirname, "../public");
+const publicPath = path.resolve(__dirname, "../frontend_dist");
 console.log(`Serving static files from: ${publicPath}`);
 
 // 1. Serve static files (js, css, icons)
