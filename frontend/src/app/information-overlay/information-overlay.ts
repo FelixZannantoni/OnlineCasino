@@ -21,72 +21,72 @@ export const GAME_INFO: GameInfo[] = [
     key: 'Blackjack',
     title: 'Blackjack',
     icon: 'style',
-    badge: 'Mehrspieler',
-    description: 'Das klassische Kartenspiel, bei dem du so nah wie möglich an 21 Punkte kommen musst, ohne zu überschreiten. Schlage den Dealer und gewinne das Doppelte deines Einsatzes!',
+    badge: 'Multiplayer',
+    description: 'The classic card game where you must get as close as possible to 21 without going over. Beat the dealer and win double your bet!',
     howToPlay: [
-      'Erhalte 2 Karten – der Dealer bekommt ebenfalls 2 Karten (eine verdeckt).',
-      'Entscheide: Hit (weitere Karte), Stand (halten), Double (verdoppeln) oder Split (teilen bei Paaren).',
-      'Ziel: Näher an 21 kommen als der Dealer, ohne zu überbieten.',
-      'Bild- und 10er-Karten zählen 10 Punkte, Asse zählen 1 oder 11.'
+      'Receive 2 cards — the dealer also gets 2 cards (one of them face down).',
+      'Decide: Hit (take another card), Stand (stop), Double (double down), or Split (split pairs).',
+      'Goal: Get closer to 21 than the dealer without exceeding it.',
+      'Face cards and 10s are worth 10 points; aces are 1 or 11.'
     ],
     difficulty: 'Medium',
     minBet: '10 Chips',
     maxBet: '5.000 Chips',
-    players: '1–7 Spieler'
+    players: '1–7 players'
   },
   {
     key: 'PokerTexas',
     title: "Poker Texas Hold'em",
     icon: 'casino',
-    badge: 'Mehrspieler',
-    description: "Die Königsdisziplin der Kartenspiele. Kombiniere deine 2 Handkarten mit 5 Gemeinschaftskarten zu der besten 5-Karten-Hand und überzeuge deine Gegner – oder bluffe dich zum Sieg!",
+    badge: 'Multiplayer',
+    description: "The king of card games. Combine your 2 hole cards with 5 community cards to make the best 5-card hand and outplay your opponents — or bluff your way to victory!",
     howToPlay: [
-      'Jeder Spieler erhält 2 verdeckte Handkarten (Hole Cards).',
-      '5 Gemeinschaftskarten werden schrittweise aufgedeckt: Flop (3), Turn (1), River (1).',
-      'Bilde die beste 5-Karten-Hand aus deinen 2 + den 5 Gemeinschaftskarten.',
-      'In jeder Runde: setzen (Bet), erhöhen (Raise), mitgehen (Call) oder aussteigen (Fold).',
-      'Der Spieler mit der besten Hand oder der letzte Verbleibende gewinnt den Pot.'
+      'Each player receives 2 hole cards (face down).',
+      '5 community cards are revealed in stages: Flop (3), Turn (1), River (1).',
+      'Make the best 5-card hand using your 2 + the 5 community cards.',
+      'In every round: Bet, Raise, Call, or Fold.',
+      'The player with the best hand — or the last remaining player — wins the pot.'
     ],
     difficulty: 'Hard',
     minBet: '10 Chips',
-    maxBet: 'Unbegrenzt (All-in)',
-    players: '2–9 Spieler'
+    maxBet: 'Unlimited (All-in)',
+    players: '2–9 players'
   },
   {
     key: 'Slotmachine',
     title: 'Slotmachine',
     icon: 'casino',
-    badge: 'Einzelspieler',
-    description: 'Drehe die Walzen und hoffe auf das Beste! Kombiniere Symbole auf den Gewinnlinien und kassiere massive Multiplikatoren. Jackpot-Runden und Bonusspiele warten auf dich!',
+    badge: 'Single-player',
+    description: 'Spin the reels and hope for the best! Combine symbols on winning lines and cash in big multipliers. Jackpot rounds and bonus games are waiting for you!',
     howToPlay: [
-      'Wähle deinen Einsatz und die Anzahl der aktiven Gewinnlinien.',
-      'Drücke Spin und beobachte, wie die Walzen drehen.',
-      'Gleiche Symbole auf einer aktiven Gewinnlinie = Gewinn!',
-      'Scatter-Symbole aktivieren Bonusrunden, Wild-Symbole ersetzen andere Symbole.',
-      'Fünf gleiche Jackpot-Symbole = Hauptgewinn!'
+      'Choose your bet and the number of active winning lines.',
+      'Press Spin and watch the reels turn.',
+      'Matching symbols on an active winning line = win!',
+      'Scatter symbols trigger bonus rounds, Wild symbols replace other symbols.',
+      'Five matching jackpot symbols = the main prize!'
     ],
     difficulty: 'Easy',
     minBet: '10 Chips',
     maxBet: '2.000 Chips',
-    players: '1 Spieler'
+    players: '1 player'
   },
   {
     key: 'Roulette',
     title: 'Roulette',
     icon: 'camera',
-    badge: 'Einzelspieler',
-    description: 'Das Rad der Fortuna! Setze auf Zahlen, Farben oder Zahlengruppen und sieh zu, wie die Kugel ihr Schicksal bestimmt. Mit dem richtigen Tipp kannst du bis zu das 35-fache deines Einsatzes gewinnen!',
+    badge: 'Single-player',
+    description: 'The wheel of fortune! Bet on numbers, colors, or number groups and watch as the ball decides your fate. With the right bet, you can win up to 35 times your stake!',
     howToPlay: [
-      'Platziere Chips auf dem Tisch: auf einzelne Zahlen, Farben (Rot/Schwarz), Gerade/Ungerade oder Gruppen.',
-      'Der Croupier dreht das Rad und wirft die Kugel.',
-      'Landet die Kugel auf deiner Zahl oder Farbe, gewinnst du!',
-      'Einzelne Zahlen zahlen 35:1 – Rot/Schwarz, Gerade/Ungerade zahlen 1:1.',
-      'Die Zahl 0 gewinnt nur für die Bank.'
+      'Place chips on the table: on individual numbers, colors (Red/Black), even/odd, or groups.',
+      'The croupier spins the wheel and tosses the ball.',
+      'If the ball lands on your number or color, you win!',
+      'Single numbers pay 35:1 — red/black and even/odd pay 1:1.',
+      'The number 0 wins only for the house.'
     ],
     difficulty: 'Easy',
     minBet: '10 Chips',
     maxBet: '10.000 Chips',
-    players: '1 Spieler'
+    players: '1 player'
   }
 ];
 

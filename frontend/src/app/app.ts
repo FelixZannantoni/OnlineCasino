@@ -9,6 +9,7 @@ import { InformationOverlay } from './information-overlay/information-overlay';
 
 import { filter } from 'rxjs/operators';
 import { PauseOverlay } from './pause-overlay/pause-overlay';
+import { GameModeOverlay } from './game-mode-overlay/game-mode-overlay';
 
 @Component({
   selector: 'app-root',
@@ -20,12 +21,14 @@ import { PauseOverlay } from './pause-overlay/pause-overlay';
     SettingsOverlay,
     PauseOverlay,
     QuitOverlay,
-    InformationOverlay
+    InformationOverlay,
+    GameModeOverlay
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
+
   protected readonly title = signal('frontend');
   showLogin = true;
 

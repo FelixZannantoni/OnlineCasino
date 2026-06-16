@@ -41,17 +41,32 @@ export class DB {
             CREATE TABLE IF NOT EXISTS users (
                 uuid text PRIMARY KEY,
                 userName text UNIQUE,
-                socialId text UNIQUE,
                 passwordHash text,
                 email text,
-                balance real not null default 1000,
+                balance real not null default 10000000,
                 displayName text,
                 streakCount integer,
-                isFromGithub integer, 
+                lastStreakIncrement text, -- Timestamp in ISO format
+                isFromGithub integer,
                 lastOnline text -- Timestamp in ISO format
             )
             `).run();
-        connection.prepare(`
+
+        // Migration: Add lastStreakIncrement if missing
+        try {
+            connection.prepare('ALTER TABLE users ADD COLUMN lastStreakIncrement text').run();
+            console.log('DEBUG: Added lastStreakIncrement column to users table');
+        } catch (e) {
+            // Column likely already exists
+        }
+
+        // Migration: Add lastOnline if missing
+        try {
+            connection.prepare('ALTER TABLE users ADD COLUMN lastOnline text').run();
+            console.log('DEBUG: Added lastOnline column to users table');
+        } catch (e) {
+            // Column likely already exists
+        }        connection.prepare(`
             CREATE TABLE IF NOT EXISTS bonuses (
                 bonusId integer PRIMARY KEY AUTOINCREMENT,
                 userId text,
@@ -89,6 +104,25 @@ export class DB {
                 FOREIGN KEY (userId) REFERENCES users(uuid)
             )
             `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS friendship_requests (
+                senderId text,
+                receiverId text,
+                accepted integer, CHECK (accepted IN (0, 1)) -- 0 for pending, 1 for accepted
+                PRIMARY KEY (senderId, receiverId),
+                FOREIGN KEY (senderId) REFERENCES users(uuid),
+                FOREIGN KEY (receiverId) REFERENCES users(uuid)
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS chat_messages (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                senderId text,
+                receiverId text,
+                content text,
+                timestamp text -- Timestamp in ISO format
+            )
+            `).run();
 
 
         await this.insertUserSampleData(connection);
@@ -106,14 +140,56 @@ export class DB {
 
             await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 1,
-                name: "Test Game",
+                name: "Poker Low",
                 type: "POKER"
             });
 
             await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
                 gameId: 2,
-                name: "Blackjack Table 1",
+                name: "Blackjack Low",
                 type: "BLACKJACK"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 3,
+                name: "Roulette Low",
+                type: "ROULETTE"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 4,
+                name: "Blackjack High",
+                type: "BLACKJACK"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 5,
+                name: "Roulette Middle",
+                type: "ROULETTE"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 6,
+                name: "Poker Middle",
+                type: "POKER"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 7,
+                name: "Poker High",
+                type: "POKER"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 8,
+                name: "Blackjack Middle",
+                type: "BLACKJACK"
+            });
+
+            await connection.prepare(`INSERT INTO games (gameId, name, type) VALUES (:gameId, :name, :type)`).run({
+                gameId: 9,
+                name: "Roulette High",
+                type: "ROULETTE"
             });
 
         } catch(err) {
@@ -144,8 +220,8 @@ export class DB {
                 const isFromGithub: number = 0;
                 const lastOnline: string = new Date().toISOString();
 
-                await connection.prepare(`INSERT INTO users (uuid, userName, socialId, passwordHash, email, displayName, streakCount, isFromGithub,
-                    lastOnline) VALUES (:uuid, :username, NULL, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
+                await connection.prepare(`INSERT INTO users (uuid, userName, passwordHash, email, displayName, streakCount, isFromGithub,
+                    lastOnline) VALUES (:uuid, :username, :passwordHash, :email, :displayName, :streakCount, :isFromGithub, :lastOnline)
                 `).run({
                     uuid: uuid,
                     username: username,

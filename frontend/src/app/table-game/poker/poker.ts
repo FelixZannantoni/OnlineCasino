@@ -1,6 +1,7 @@
 import { Component, Inject, PLATFORM_ID, signal, computed, inject, OnInit } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { getBetLimits, getModeConfigByMode } from '../../game-mode-overlay/game-mode-overlay';
 import { TableGameComponent } from '../table-game';
 import { MatIconModule } from '@angular/material/icon';
 import { SocketService } from '../../services/socket.service';
@@ -70,6 +71,7 @@ export class Poker implements OnInit {
   private revealedCards = new Set<string>();
 
   private readonly gameId = signal<string>('1');
+  gameName: string = 'Poker';
 
   getCardRank = getCardRank;
 
@@ -77,17 +79,22 @@ export class Poker implements OnInit {
   selectedBetAmount = signal<number>(20);
   showBetSlider = signal<boolean>(false);
 
-  minBet = computed(() => {
+  protected readonly modeLimits = signal<{ minBet: number; maxBet: number }>({ minBet: 10, maxBet: 10000 });
+
+  protected readonly minBet = computed(() => {
     const state = this.gameState();
-    if (!state) return 10;
-    // Standard raise is usually at least currentBet + bigBlind (10)
-    return Math.max(10, state.currentBet + 10);
+    const modeMin = this.modeLimits().minBet;
+    if (!state) return modeMin;
+    // Must be at least the mode minimum AND a valid raise over current bet
+    return Math.max(modeMin, state.currentBet + modeMin);
   });
 
   maxBet = computed(() => {
     const me = this.myPlayer();
-    if (!me) return 1000;
-    return me.balance;
+    const modeMax = this.modeLimits().maxBet;
+    if (!me) return modeMax;
+    // Cap at both player balance and mode maximum
+    return Math.min(me.balance, modeMax);
   });
 
   myPlayer = computed(() => {
@@ -106,8 +113,11 @@ export class Poker implements OnInit {
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const id = this.route.snapshot.paramMap.get('id') ?? '1';
+    const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
+    const modeConfig = getModeConfigByMode(modeParam);
+    const id = modeConfig.pokerId;
     this.gameId.set(id);
+    this.gameName = `Poker ${modeParam}`;
     const userId = this.dataService.userId();
 
     if (!userId) {
@@ -148,7 +158,10 @@ export class Poker implements OnInit {
       this.handlePauseOverlayLogic(s);
     });
 
-    this.socketService.joinGame(id, userId);
+    this.modeLimits.set(getBetLimits(modeParam));
+    this.selectedBetAmount.set(this.modeLimits().minBet);
+
+    this.socketService.joinGame(id, userId, undefined, this.gameName);
   }
 
   private handlePauseOverlayLogic(s: PokerGameState): void {

@@ -11,6 +11,14 @@
             </div>
             }
         </div>
+
+        <div class="timer-wrap">
+            <div class="timer-lbl">Time Left</div>
+            <div class="timer-num" [class.low]="remainingTime() <= 5">
+                {{ remainingTime() }}s
+            </div>
+        </div>
+
         <div class="balance-wrap">
             <div class="bal-lbl">Balance</div>
             <div class="bal-num">${{ balance() | number }}</div>
@@ -41,18 +49,10 @@
 
                         <!-- ZERO ROW -->
                         <div class="zrow">
-                            <div class="cell zcell" role="button" tabindex="0" aria-label="Bet on 0"
+                            <div class="cell zcell" style="width: 100%; border-bottom-left-radius: 0; border-bottom-right-radius: 0;" role="button" tabindex="0" aria-label="Bet on 0"
                                 (click)="placeBet('0', 35)" (keydown.enter)="placeBet('0', 35)">
                                 0
                                 @if (getBetOn('0'); as amt) {
-                                <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
-                                    amt }}</span>
-                                }
-                            </div>
-                            <div class="cell dzcell" role="button" tabindex="0" aria-label="Bet on double zero"
-                                (click)="placeBet('00', 35)" (keydown.enter)="placeBet('00', 35)">
-                                0 0
-                                @if (getBetOn('00'); as amt) {
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
@@ -132,7 +132,7 @@
             <div class="tray">
                 <span class="tray-lbl" id="chip-label">Chip</span>
                 <div role="radiogroup" aria-labelledby="chip-label" style="display:flex;gap:8px">
-                    @for (c of chipOptions; track c.value) {
+                    @for (c of chipOptions(); track c.value) {
                     <div class="chip-btn" [class]="c.cls" [class.on]="selectedChip() === c.value" role="radio"
                         tabindex="0" [attr.aria-checked]="selectedChip() === c.value"
                         [attr.aria-label]="'Select $' + c.value + ' chip'" (click)="selectChip(c.value)"
@@ -151,9 +151,24 @@
         <!-- RIGHT: SIDEBAR -->
         <div class="sidebar">
 
-            <button class="spin-btn" [disabled]="spinning() || bets().length === 0" (click)="spin()">
-                {{ spinning() ? 'SPINNING…' : 'SPIN' }}
+            <button class="ready-btn" [class.is-ready]="isReady()" [disabled]="spinning() || bets().length === 0" (click)="ready()">
+                {{ isReady() ? 'READY ✓' : 'READY' }}
             </button>
+
+            <!-- PLAYERS READY STATUS -->
+            <div class="scard">
+                <div class="shead">Players Status</div>
+                <div class="sbody">
+                    @for (p of players(); track p.id) {
+                    <div class="orow" [class.last]="$last">
+                        <span class="on">{{ p.displayname || p.username }}</span>
+                        <span class="ov" [style.color]="p.isReady ? '#22c55e' : '#ef4444'">
+                            {{ p.isReady ? 'READY' : 'BETTING' }}
+                        </span>
+                    </div>
+                    }
+                </div>
+            </div>
 
             <!-- CURRENT BETS -->
             <div class="scard">

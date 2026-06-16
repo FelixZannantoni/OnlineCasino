@@ -1,0 +1,107 @@
+.streak-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  user-select: none;
+}
+
+/* Flame SVG */
+.flame-container {
+  width: 2.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.flame-svg {
+  width: 2.5rem;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgba(255, 140, 0, 0.7));
+}
+
+/* Flame layers — each gets its own animation */
+.flame-red {
+  fill: crimson;
+  opacity: 0.85;
+  transform-origin: 20px 65px;
+  animation: flicker-red 1.1s ease-in-out infinite alternate;
+}
+.flame-orng {
+  fill: orange;
+  opacity: 0.9;
+  transform-origin: 20px 62px;
+  animation: flicker-orng 0.9s ease-in-out infinite alternate;
+}
+.flame-ylw {
+  fill: gold;
+  opacity: 0.95;
+  transform-origin: 20px 60px;
+  animation: flicker-ylw 1.3s ease-in-out infinite alternate;
+}
+.flame-wht {
+  fill: #fff6e0;
+  transform-origin: 20px 56px;
+  animation: flicker-wht 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes flicker-red {
+  0%   { transform: scaleX(1)    skewX(0deg);  }
+  50%  { transform: scaleX(1.06) skewX(-3deg); }
+  100% { transform: scaleX(0.95) skewX(2deg);  }
+}
+@keyframes flicker-orng {
+  0%   { transform: scaleX(1)    skewX(1deg);  }
+  50%  { transform: scaleX(0.94) skewX(-2deg); }
+  100% { transform: scaleX(1.05) skewX(3deg);  }
+}
+@keyframes flicker-ylw {
+  0%   { transform: scaleX(0.96) skewX(-1deg); }
+  50%  { transform: scaleX(1.04) skewX(2deg);  }
+  100% { transform: scaleX(0.98) skewX(-2deg); }
+}
+@keyframes flicker-wht {
+  0%   { transform: scaleX(1)    skewX(0deg);  opacity: 1;    }
+  50%  { transform: scaleX(1.08) skewX(-2deg); opacity: 0.92; }
+  100% { transform: scaleX(0.92) skewX(1deg);  opacity: 1;    }
+}
+
+/* Number pill */
+.streak-pill {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1.5px solid rgba(255, 215, 0, 0.5);
+  border-radius: 999px;
+  min-width: 1.75rem;
+  padding: 0.15rem 0.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px rgba(255, 165, 0, 0.4);
+}
+
+.streak-number {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #ffd86e;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+/* Label */
+.streak-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-gold);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .flame-red,
+  .flame-orng,
+  .flame-ylw,
+  .flame-wht { animation: none; }
+}

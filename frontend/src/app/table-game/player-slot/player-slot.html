@@ -12,6 +12,9 @@
     @if (bet() > 0) {
       <div class="player-bet">Bet: ${{ bet() }}</div>
     }
+    @if (maxBet() > 0) {
+      <div class="player-limits">{{ minBet() }}–{{ maxBet() }}</div>
+    }
   </div>
 
   <!-- KARTEN UNTER DEM AVATAR -->

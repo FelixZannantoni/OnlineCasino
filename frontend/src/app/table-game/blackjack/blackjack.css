@@ -200,10 +200,31 @@
 
 .ch1 { background: #e2e8f0; border-color: #94a3b8; color: #1e293b; }
 .ch5 { background: #dc2626; border-color: #7f1d1d; color: #fff; }
-.ch25 { background: #16a34a; border-color: #14532d; color: #fff; }
-.ch100 { background: #2563eb; border-color: #1e3a8a; color: #fff; }
-.ch500 { background: #7c3aed; border-color: #4c1d95; color: #f0c040; }
+.ch10 { background: #3b82f6; border-color: #1d4ed8; color: #fff; }
+.ch25 { background: #10b981; border-color: #064e3b; color: #fff; }
+.ch50 { background: #f59e0b; border-color: #92400e; color: #fff; }
+.ch100 { background: #1e293b; border-color: #0f172a; color: #fff; }
+.ch250 { background: #06b6d4; border-color: #083344; color: #fff; }
+.ch500 { background: #8b5cf6; border-color: #4c1d95; color: #f0c040; }
+.ch1000 { background: #fbbf24; border-color: #92400e; color: #78350f; }
+.ch2500 { background: #047857; border-color: #064e3b; color: #fff; }
+.ch5000 { background: #991b1b; border-color: #7f1d1d; color: #fff; }
+.ch10000 { background: #1e3a8a; border-color: #172554; color: #fff; }
+.ch50000 { background: #581c87; border-color: #3b0764; color: #fff; }
 
 .tray-gap { flex: 1; }
-.tbtn { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); border-radius:5px; color: rgba(201,168,76,0.65); padding:7px 12px; cursor:pointer; }
+
+
+/* --- TIMER --- */
+::ng-deep .turn-timer {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+  margin-left: 5px !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+  display: inline-block !important;
+  z-index: 100 !important;
+  font-size: 0.9em !important;
+}
 

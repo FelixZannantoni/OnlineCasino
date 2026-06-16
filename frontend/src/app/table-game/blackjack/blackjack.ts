@@ -1,17 +1,18 @@
 import { Component, OnInit, OnDestroy, signal, computed, Inject, PLATFORM_ID } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TableGameComponent } from '../table-game';
 import { SocketService } from '../../services/socket.service';
 import { DataService } from '../../services/data-service';
 import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.models';
 import { getCardRank } from '../../services/card-utils';
+import { getBetLimits, getChipOptions, getModeConfigByMode } from '../../game-mode-overlay/game-mode-overlay';
 import { FormsModule } from '@angular/forms';
-import { PlayerSlot } from '../player-slot/player-slot';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, FormsModule, PlayerSlot],
+  imports: [CommonModule, TableGameComponent, FormsModule],
   templateUrl: './blackjack.html',
   styleUrl: './blackjack.css',
 })
@@ -19,6 +20,7 @@ export class Blackjack implements OnInit, OnDestroy {
   gameState = signal<BlackjackGameState | null>(null);
   userId: string | null = null;
   gameId: string = '2'; // Default
+  gameName: string = 'Blackjack';
   betAmount: number = 10;
   balance: number = 1000;
   pot: number = 0;
@@ -27,14 +29,14 @@ export class Blackjack implements OnInit, OnDestroy {
   private timerInterval: any = null;
   // Chip betting UI (copied from roulette)
   interfaceChipOptions: any; // placeholder to keep typings simple in this file
-  selectedChip = signal(10);
-  chipOptions = [
+  readonly selectedChip = signal(10);
+  readonly chipOptions = signal<any[]>([
     { value: 1, cls: 'ch1' },
     { value: 5, cls: 'ch5' },
     { value: 25, cls: 'ch25' },
     { value: 100, cls: 'ch100' },
     { value: 500, cls: 'ch500' },
-  ];
+  ]);
 
   // Keys of cards currently playing their flip animation
   flippingCards = new Set<string>();
@@ -54,34 +56,48 @@ export class Blackjack implements OnInit, OnDestroy {
   });
 
   constructor(
-    private socketService: SocketService,
-    private dataService: DataService,
-    @Inject(PLATFORM_ID) private platformId: Object
+  private socketService: SocketService,
+  private dataService: DataService,
+  private route: ActivatedRoute,
+  @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-    this.userId = this.dataService.getUserId();
-    if (this.userId) {
-      this.gameId = `bj-${this.userId}`;
-    }
+  this.isBrowser = isPlatformBrowser(this.platformId);
+  this.userId = this.dataService.getUserId();
+  const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
+  const modeConfig = getModeConfigByMode(modeParam);
+  this.gameId = modeConfig.blackjackId; // e.g., 'blackjack-low'
+
+  // Use a unique ID for the game room, but pass the name for mode detection
+  this.gameName = `Blackjack ${modeParam}`; 
   }
 
   ngOnInit() {
-    if (!this.isBrowser) return;
+  if (!this.isBrowser) return;
 
-    if (this.userId) {
-      this.socketService.joinGame(this.gameId, this.userId);
-    }
+  const modeParam = this.route.snapshot.queryParamMap.get('mode') ?? 'low';
+  const { minBet, maxBet } = getBetLimits(modeParam);
+  this.betAmount = minBet;
+  this.chipOptions.set(getChipOptions(minBet, maxBet));
+  const stakes = this.route.snapshot.queryParamMap.get('stakes') || undefined;
+
+  if (this.userId) {
+    // Pass both ID and a descriptive name
+    this.socketService.joinGame(this.gameId, this.userId, stakes, `Blackjack ${modeParam}`);
+  }
+  // ...
 
     this.socketService.onEvent('game_state', (data: any) => {
       console.log('Blackjack State Update:', data);
       const state = data as BlackjackGameState;
+      if (state.chipOptions) {
+        this.chipOptions.set(state.chipOptions);
+      }
       this.triggerFlipsForNewlyRevealedCards(state);
       this.gameState.set(state);
 
-      // Handle Timer
-      const t = state.turnRemainingSeconds;
-      if (t !== undefined && t !== null) {
-        this.turnRemaining.set(t);
+      // Handle Timer (Poker style)
+      if (state.turnRemainingSeconds !== null) {
+        this.turnRemaining.set(state.turnRemainingSeconds);
         this.startLocalTimer();
       } else {
         this.stopLocalTimer();
