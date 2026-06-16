@@ -96,7 +96,7 @@ export class Blackjack implements OnInit, OnDestroy {
       this.gameState.set(state);
 
       // Handle Timer (Poker style)
-      if (state.turnRemainingSeconds !== null) {
+      if (state.turnRemainingSeconds != null) {
         this.turnRemaining.set(state.turnRemainingSeconds);
         this.startLocalTimer();
       } else {
