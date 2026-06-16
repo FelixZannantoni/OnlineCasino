@@ -52,7 +52,14 @@ export class BlackjackService {
         }
 
         const newPlayer: BlackjackPlayer = new BlackjackPlayer(playerId, username, displayname, balance);
-        game.addPlayer(newPlayer);
+        try {
+            game.addPlayer(newPlayer);
+        } catch (e: any) {
+            return {
+                success: false,
+                message: e.message
+            };
+        }
 
         return {
             success: true,

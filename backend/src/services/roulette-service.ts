@@ -28,7 +28,14 @@ export class RouletteService {
         }
 
         const newPlayer: RoulettePlayer = new RoulettePlayer(playerId, username, displayname, balance);
-        gameResult.game.addPlayer(newPlayer);
+        try {
+            gameResult.game.addPlayer(newPlayer);
+        } catch (e: any) {
+            return {
+                success: false,
+                message: e.message
+            };
+        }
 
         return {
             success: true,

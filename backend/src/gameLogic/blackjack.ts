@@ -31,6 +31,7 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.blackjackDeck = new BlackjackDeck();
         this.blackJackBot = new BlackjackBot();
         this.defaultTurnTimeoutMs = 15000;
+        this.maxPlayers = 5;
         this.updateSettings();
     }
 
@@ -59,11 +60,22 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             this.updateDealerChip();
             this.currentPhase = BlackjackPhase.FINISHED;
             this.emit("game_state", this.getGameState());
+            
+            // End the round in DB
+            if (this.currentRoundId !== -1) {
+                await roundService.endRound(this.currentRoundId);
+                this.currentRoundId = -1;
+            }
+
             // Wait a bit before next round
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
         this.isRunning = false;
         this.currentPhase = BlackjackPhase.WAITING;
+        if (this.currentRoundId !== -1) {
+            await roundService.endRound(this.currentRoundId);
+            this.currentRoundId = -1;
+        }
         this.emit("game_state", this.getGameState());
     }
 
@@ -75,10 +87,6 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
         this.reset();
         this.blackjackDeck = new BlackjackDeck(); // New deck for each round
 
-        // End previous round if any
-        if (this.currentRoundId !== -1) {
-            await roundService.endRound(this.currentRoundId);
-        }
         // Start new round in DB
         this.currentRoundId = await roundService.startRound(this.getGameId());
 

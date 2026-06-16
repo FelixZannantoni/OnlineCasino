@@ -156,18 +156,22 @@ io.on("connection", (socket: Socket) => {
             socket.emit("error", { message: `Game ${gameId} not found` });
             return;
         }
-        if(user == null) {
-            //TODO
+        if (!user) {
+            socket.emit("error", { message: `User ${userId} not found` });
+            return;
         }
-        const startBalance = 10000000;
-        const username = user!.userName ?? '-';
-        const displayname = user?.displayName || user?.userName || 'Guest';
-        const balance = user!.balance; console.log("DEBUG: join_game, userId:", userId, "balance from user:", user?.balance, "final balance:", balance);
+
+        const startBalance = 1000;
+        const username = user.userName ?? '-';
+        const displayname = user.displayName || user.userName || 'Guest';
+        const balance = user.balance; 
+        console.log("DEBUG: join_game, userId:", userId, "balance from user:", user.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
         if (!existingPlayer) {
+            let addResult = { success: true, message: "" };
             if (service === pokerService) {
-                await pokerService.addPlayer(
+                addResult = await pokerService.addPlayer(
                     userId,
                     user?.userName ?? '-',
                     user?.displayName ?? 'Guest',
@@ -177,7 +181,7 @@ io.on("connection", (socket: Socket) => {
                     gameId
                 );
             } else if (service === blackjackService) {
-                await blackjackService.addPlayer(
+                addResult = await blackjackService.addPlayer(
                     userId,
                     user?.userName ?? '-',
                     user?.displayName ?? 'Guest',
@@ -185,21 +189,18 @@ io.on("connection", (socket: Socket) => {
                     gameId
                 );
             } else if (service === rouletteService) {
-                await rouletteService.addPlayer(
+                addResult = await rouletteService.addPlayer(
                     userId,
                     username,
                     displayname,
                     balance,
                     gameId
                 );
-            } else if (service === rouletteService) {
-                await rouletteService.addPlayer(
-                    userId,
-                    username,
-                    displayname,
-                    balance,
-                    gameId
-                );
+            }
+
+            if (!addResult.success) {
+                socket.emit("error", { message: addResult.message });
+                return;
             }
         } else {
             // Update existing player info in case it was "Guest" before
