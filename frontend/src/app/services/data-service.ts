@@ -17,7 +17,9 @@ export class DataService {
     const initialId = this.isBrowser ? localStorage.getItem(this.STORAGE_KEY) : null;
 
     this.userId = signal(initialId);
-    console.log('id we got from local storage: ' + this.userId());
+    if (this.isBrowser) {
+      console.log('id we got from local storage: ' + this.userId());
+    }
   }
 
   /**

@@ -1,4 +1,5 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal, inject, OnInit, ChangeDetectorRef, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../services/data-service';
 import { SocketService } from '../services/socket.service';
@@ -55,6 +56,7 @@ export class Friends implements AfterViewChecked, OnInit {
   private dataService: DataService = inject(DataService);
   private socketService: SocketService = inject(SocketService);
   private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private platformId: Object = inject(PLATFORM_ID);
 
   sections = [
     { label: 'Online', status: 'online' },
@@ -333,6 +335,8 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     const userId = this.dataService.userId();
     if (userId) {
       this.socketService.register(userId);
@@ -354,6 +358,8 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async ngAfterViewChecked(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     if (this.shouldScroll && this.messageContainer) {
       const el = this.messageContainer.nativeElement;
       el.scrollTop = el.scrollHeight;

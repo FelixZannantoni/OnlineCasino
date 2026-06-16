@@ -13,7 +13,6 @@ import { GameModeOverlay } from './game-mode-overlay/game-mode-overlay';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     RouterOutlet,
     Navbar,

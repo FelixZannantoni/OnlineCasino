@@ -62,12 +62,7 @@
             "styles": [
               "src/material-theme.scss",
               "src/styles.css"
-            ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            ]
           },
           "configurations": {
             "production": {
@@ -83,6 +78,8 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+          },
           "configurations": {
             "production": {
               "buildTarget": "frontend:build:production"
@@ -91,9 +88,7 @@
               "buildTarget": "frontend:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-          }
+          "defaultConfiguration": "development"
         }
       }
     }

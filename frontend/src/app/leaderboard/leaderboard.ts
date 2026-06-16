@@ -42,7 +42,6 @@ export class Leaderboard implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    console.log('INIT');
     await this.loadLeaderboard();
   }
 

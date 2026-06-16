@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -8,14 +8,14 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine AS runtime
+FROM node:22-alpine AS runtime
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm install --production
+# Install 'serve' globally to host static files
+RUN npm install -g serve
 
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/dist/frontend/browser ./dist
 
 EXPOSE 4000
 ENV PORT=4000
-CMD ["npm", "run", "serve:ssr:frontend"]
+CMD ["serve", "-s", "dist", "-l", "4000"]
