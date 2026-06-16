@@ -8,7 +8,7 @@ import { QuitOverlay } from './quit-overlay/quit-overlay';
 import { InformationOverlay } from './information-overlay/information-overlay';
 
 import { filter } from 'rxjs/operators';
-import { PauseOverlay } from './pause-overlay/pause-overlay';
+//import { PauseOverlay } from './pause-overlay/pause-overlay';
 import { GameModeOverlay } from './game-mode-overlay/game-mode-overlay';
 
 @Component({
@@ -19,7 +19,7 @@ import { GameModeOverlay } from './game-mode-overlay/game-mode-overlay';
     Navbar,
     ProfileOverlay,
     SettingsOverlay,
-    PauseOverlay,
+    //PauseOverlay,
     QuitOverlay,
     InformationOverlay,
     GameModeOverlay
