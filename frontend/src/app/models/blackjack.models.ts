@@ -24,15 +24,9 @@ export interface BlackjackGameState {
     phase: 'WAITING' | 'BETTING' | 'PLAYING' | 'DEALER_TURN' | 'FINISHED';
     currentPlayerId: string | null;
     turnEndsAt: number | null;
-    turnRemainingSeconds: number | null;
+    turnRemainingSeconds?: number | null;
     chipOptions?: { value: number; cls: string }[];
     players: BlackjackPlayer[];
-
-    /**
-     * Remaining seconds for the current player's turn.
-     * Backend may omit this or set it to null when no timer is active.
-     */
-    turnRemainingSeconds?: number | null;
 
     bot: {
         id: string;
