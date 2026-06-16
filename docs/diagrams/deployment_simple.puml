@@ -1,0 +1,33 @@
+@startuml
+skinparam ranksep 60
+skinparam nodesep 40
+
+left to right direction
+
+title Online Casino – Deployment
+
+node "Browser" as Browser {
+  component "Angular SPA" as SPA
+}
+
+node "frontend\n:4000" as FE {
+  component "serve\n(static)" as Serve
+}
+
+node "backend :3000" as BE {
+  component "Express\nREST API" as REST
+  component "Socket.IO" as WS
+  database "casino.db\nSQLite" as DB
+  REST --> DB
+  WS --> DB
+}
+
+node "GitHub OAuth" <<external>> as OAuth
+
+SPA --> Serve  : HTTPS
+SPA --> REST   : HTTP\n/users /stats\n/chats /slotmachine
+SPA --> WS     : WS →\njoin_game\nplayer_move\nset_desired_bet\ntip_dealer
+WS --> SPA     : WS ←\ngame_state\nerror\nnew_message
+REST --> OAuth : OAuth2
+
+@enduml

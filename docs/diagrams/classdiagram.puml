@@ -1,0 +1,574 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam groupInheritance 2
+
+' ─────────────────────────────────────────────
+' ENUMS
+' ─────────────────────────────────────────────
+
+enum CardColor {
+  HEARTS
+  DIAMONDS
+  CLUBS
+  SPADES
+}
+
+enum CardName {
+  two | three | four | five | six
+  seven | eight | nine | ten
+  jack | queen | king | ace
+}
+
+enum CardVisibility {
+  player
+  none
+  all
+}
+
+enum Symbols {
+  Bar = 1
+  Cherry = 2
+  DoubleBar = 3
+  Bell = 4
+  Horseshoe = 5
+  Star = 6
+  Clover = 7
+  Wild = 8
+  Diamond = 9
+  Seven = 10
+}
+
+enum BlackjackPhase {
+  WAITING
+  BETTING
+  PLAYING
+  DEALER_TURN
+  FINISHED
+}
+
+enum GamePhase {
+  pre-flop
+  flop
+  turn
+  river
+  showdown
+}
+
+enum RoulettePhase {
+  WAITING
+  BETTING
+  SPINNING
+  FINISHED
+}
+
+enum rouletteField {
+  ZERO | ONE .. THIRTY_SIX
+  RED | BLACK
+  EVEN | ODD
+  LOW | HIGH
+  FIRST_DOZEN | SECOND_DOZEN | THIRD_DOZEN
+  COLUMN_ONE | COLUMN_TWO | COLUMN_THREE
+}
+
+' ─────────────────────────────────────────────
+' DATA MODELS
+' ─────────────────────────────────────────────
+
+interface Card {
+  +name: CardName
+  +value: number
+  +color: CardColor
+  +owner: string
+  +visibility: CardVisibility
+}
+
+class User {
+  +uuid: string
+  +userName: string
+  +displayName: string
+  +email: string
+  +balance: number
+  +streakCount: number
+  +lastStreakIncrement: string
+  +passwordHash: string
+}
+
+class ChatMessage {
+  +senderId: string
+  +receiverId: string
+  +content: string
+  +timestamp: Date
+}
+
+class LeaderboardEntry {
+  +rank: number
+  +userName: string
+  +balance: number
+  +streak: number
+  +avatar: string
+}
+
+' ─────────────────────────────────────────────
+' GAME HIERARCHY
+' ─────────────────────────────────────────────
+
+class EventEmitter {
+  +on(event, listener): void
+  +emit(event, ...args): void
+  +removeListener(event, listener): void
+  +listenerCount(event): number
+}
+
+class Game<T extends Player> {
+  #players: T[]
+  -gameId: string
+  -gameName: string
+  #currentRoundId: number
+  #gameBalance: number
+  #maxPlayers: number
+  +constructor(gameId, gameName)
+  +getGameId(): string
+  +getGameName(): string
+  +getGameBalance(): number
+  +addPlayer(player: T): void
+  +getPlayers(): T[]
+  +removePlayer(playerId: string): void
+}
+
+class CardGame<T extends CardGamePlayer> {
+  #turnTimer: NodeJS.Timeout | null
+  #turnEndTime: number | null
+  #defaultTurnTimeoutMs: number
+  +setDefaultDealerChip(): void
+  #updateDealerChip(): void
+  #startTurnTimer(timeoutMs?, onTimeout?): void
+  #stopTurnTimer(): void
+  #getTurnRemainingSeconds(): number | null
+}
+
+class SinglePlayerGame<T extends Player> {
+  -gameId: string
+  #player: T
+  +constructor(gameId, player)
+  +getGameId(): string
+  +getPlayer(): T | null
+}
+
+class Poker {
+  {static} +MAX_PLAYER_COUNT: number = 5
+  {static} +PLAYER_CARDS_NUMBER: number = 2
+  {static} +POKER_CARDS_NUMBER: number = 5
+  {static} +POKER_DESK_ID: string
+  -pokerDeck: PokerDeck
+  -board: Card[]
+  -defaultBet: number
+  -currentBet: number
+  -pot: number
+  -phase: GamePhase
+  -currentPlayerIndex: number
+  -isStarted: boolean
+  -hasActedThisRound: Set<string>
+  -lastWinners: {id, handName}[]
+  -isLoading: boolean
+  -turnTimer: NodeJS.Timeout | null
+  -turnEndTime: number | null
+  -TURN_TIMEOUT_MS: number = 10000
+  -gameStartTimer: NodeJS.Timeout | null
+  -GAME_START_DELAY_MS: number = 10000
+  +startGameStartTimer(): void
+  +startGame(): void
+  +handlePlayerMove(playerId, action, amount?): Promise<any>
+  +handlePlayerDisconnect(playerId): void
+  +tipDealer(playerId): Promise<any>
+  +getGameState(): any
+}
+
+class Blackjack {
+  {static} +PLAYER_CARDS_NUMBER: number = 2
+  {static} +BLACKJACK_BOT_ID: string
+  -blackjackDeck: BlackjackDeck
+  -blackJackBot: BlackjackBot
+  -isRunning: boolean
+  -currentPhase: BlackjackPhase
+  -currentPlayerId: string | null
+  -chipOptions: any[]
+  +startGame(): Promise<void>
+  +stopGame(): void
+  -playRound(): Promise<void>
+  -dealerPlay(): void
+  -handCardsOut(): void
+  -resetCards(): void
+  -checkHandsValue(): void
+  +removePlayer(playerId): void
+  +handlePlayerMove(playerId, action, amount?): any
+  +handlePlayerDisconnect(playerId): void
+  +getGameState(): any
+}
+
+class Roulette {
+  -isRunning: boolean
+  -currentPhase: RoulettePhase
+  -lastWinningNumber: number | null
+  -remainingTime: number
+  -chipOptions: any[]
+  +startGame(): Promise<void>
+  -playRound(): Promise<void>
+  -waitForBets(): Promise<void>
+  +handlePlayerMove(playerId, action, amount?, field?): Promise<any>
+  +handlePlayerDisconnect(playerId): void
+  -resetBets(): void
+  -handOutWin(winningNumber): Promise<void>
+  +getGameState(): any
+}
+
+class Slotmachine {
+  -slots: Symbols[][]
+  -lastWin: number
+  -winningLines: number[]
+  {static} -MATCH_MULTIPLIERS: Record<number, number>
+  {static} +WIN_LINES: number[][][]
+  {static} -SYMBOLS: Record<number, {mult, weight}>
+  +getSlots(): Symbols[][]
+  +getLastWin(): number
+  +getWinningLines(): number[]
+  +startGame(): void
+  +playRound(): void
+  -spin(): void
+  -checkSpin(): void
+  +handleMove(): void
+}
+
+class BlackjackBot {
+  -cards: Card[]
+  -handValue: number
+  +getCards(): Card[]
+  +getHandValue(): number
+  +addCard(card: Card): void
+  +revealCards(): void
+  -checkHandValue(): void
+  +makesHit(): boolean
+  +hasBlackJack(): boolean
+  +clearHand(): void
+}
+
+' ─────────────────────────────────────────────
+' PLAYER HIERARCHY
+' ─────────────────────────────────────────────
+
+class Player {
+  -playerId: string
+  -username: string
+  -displayname: string
+  -balance: number
+  -bet: number
+  -desiredBet: number
+  +getPlayerId(): string
+  +getUsername(): string
+  +getDisplayname(): string
+  +getBalance(): number
+  +getBet(): number
+  +setBalance(balance): void
+  +setDesiredBet(desiredBet): boolean
+  +makeBet(): void
+  +makeNewBet(bet): void
+  +makeIncreasedBet(bet): void
+  +winMoney(win): void
+  +makeTip(amount): void
+  +isOutOfMoney(): boolean
+  +updatePlayerInfo(username, displayname): void
+  {static} +nextPlayer(players, i): number
+  {static} +xNextPlayer(players, i, x): number
+}
+
+class CardGamePlayer {
+  #cards: Card[]
+  -hasDealerChip: boolean
+  #madeMove: boolean
+  +getCards(): Card[]
+  +getDealerChip(): boolean
+  +getMadeMove(): boolean
+  +setDealerChip(hasDealerChip): void
+  +resetMadeMove(): void
+  +addCard(card: Card): void
+  +clearHand(): void
+  {static} +playerWithDealerChip(players): number
+}
+
+class PokerPlayer {
+  -pressedFold: boolean
+  -pressedCheck: boolean
+  -pressedBet: boolean
+  -pressedCall: boolean
+  -pressedRaise: boolean
+  -valueOfHand: number[]
+  +isFolded(): boolean
+  +setFolded(folded): void
+  +userPressedFold(): void
+  +userPressedCheck(): void
+  +userPressedBet(): void
+  +userPressedCall(): void
+  +userPressedRaise(): void
+  +checkHand(cards: Card[]): void
+  +getCardCombinationValue(): number
+  +resetHandValue(): void
+  +resetMadeMove(): void
+}
+
+class BlackjackPlayer {
+  -pressedHit: boolean
+  -pressedStand: boolean
+  -pressedDouble: boolean
+  -handValue: number
+  +getHandValue(): number
+  +userPressedHit(): void
+  +userPressedStand(): void
+  +userPressedDouble(): void
+  +addCard(card: Card): void
+  +checkHandValue(): void
+}
+
+class SlotmachinePlayer {
+  -pressedSpin: boolean
+  -pressedAutoSpin: boolean
+  +getPressedSpin(): boolean
+  +getPressedAutoSpin(): boolean
+  +userPressedSpin(): void
+  +userPressedAutoSpin(): void
+  +stopAutoSpin(): void
+  +setBet(bet): void
+}
+
+class RoulettePlayer {
+  -isReady: boolean
+  -playerBets: Record<rouletteField, number>
+  +setReady(ready): void
+  +getIsReady(): boolean
+  +resetReady(): void
+  +placeBet(field, amount): void
+  +clearBets(): void
+  +getPlayerBets(): {field, amount}[]
+}
+
+' ─────────────────────────────────────────────
+' DECK HIERARCHY
+' ─────────────────────────────────────────────
+
+class Deck {
+  {static} +DEALER_ID: string
+  #deck: Card[]
+  #shuffle(cardDeck): void
+  +dealCard(cardDeck, id): Card
+  +getDeck(): Card[]
+}
+
+class BlackjackDeck {
+  +constructor()
+  -blackjackDeckInit(): void
+}
+
+class PokerDeck {
+  +constructor()
+  -pokerDeckInit(): void
+}
+
+' ─────────────────────────────────────────────
+' SERVICES
+' ─────────────────────────────────────────────
+
+class PokerService {
+  {static} +pokerGames: Poker[]
+  +fold(playerId, gameId): Promise<Result>
+  +check(playerId, gameId): Promise<Result>
+  +call(playerId, gameId): Promise<Result>
+  +bet(playerId, gameId, amount): Promise<Result>
+  +raise(playerId, gameId, amount): Promise<Result>
+  +addPlayer(playerId, username, displayname, balance, isBot, botLevel, gameId): Promise<Result>
+  +tipDealer(playerId, gameId): Promise<Result>
+  +getGameById(gameId): {game, message}
+  +loadAllPokerGames(): void
+}
+
+class BlackjackService {
+  {static} +blackjackGames: Blackjack[]
+  +hit(playerId, gameId): Promise<Result>
+  +stand(playerId, gameId): Promise<Result>
+  +double(playerId, gameId): Promise<Result>
+  +bet(playerId, gameId, amount): Promise<Result>
+  +addPlayer(playerId, username, displayname, balance, gameId): Promise<Result>
+  +getGameById(gameId): {game, message}
+  +getOrCreateGame(gameId, name): Blackjack
+  +loadAllBlackjackGames(): void
+}
+
+class RouletteService {
+  {static} +rouletteGames: Roulette[]
+  +bet(playerId, gameId, amount, field): Promise<Result>
+  +ready(playerId, gameId): Promise<Result>
+  +addPlayer(playerId, username, displayname, balance, gameId): Promise<Result>
+  +getGameById(gameId): {game, message}
+  +loadAllRouletteGames(): void
+}
+
+class UserService {
+  +getAllUsers(): Promise<User[]>
+  +getUserById(uuid): Promise<User | null>
+  +checkUserCredentials(username, password): Promise<[boolean, string]>
+  +registerUser(username, password): Promise<[boolean, string]>
+  +updateUserBalance(uuid, balance): Promise<void>
+  +updateUserProfile(uuid, displayName): Promise<void>
+  +getFriends(uuid): Promise<UserDisplay[]>
+  +sendFriendRequest(senderId, receiverId): Promise<Result>
+  +acceptFriendRequest(senderId, receiverId): Promise<Result>
+  +getLeaderboard(): Promise<LeaderboardEntry[]>
+  +updateStreak(uuid): Promise<void>
+}
+
+class RoundService {
+  +startRound(gameId): Promise<number>
+  +endRound(roundId): Promise<void>
+  +recordPlayerBet(roundId, userId, betAmount): Promise<void>
+  +updatePlayerProfit(roundId, userId, profit): Promise<void>
+}
+
+class StatsService {
+  +getStats(userId): Promise<any>
+}
+
+class ChatService {
+  +getChatMessagesForUser(uuid): Promise<ChatMessage[]>
+  +sendMessage(senderId, receiverId, content): Promise<Result>
+}
+
+' ─────────────────────────────────────────────
+' WEBSOCKET / SERVER LAYER
+' ─────────────────────────────────────────────
+
+class SocketIOServer <<socket.io>> {
+  +on(event, handler): void
+  +to(room): SocketIOServer
+  +emit(event, data): void
+}
+
+class Socket <<socket.io>> {
+  +id: string
+  +join(room): void
+  +emit(event, data): void
+  +on(event, handler): void
+  +to(room): Socket
+}
+
+class AppServer {
+  -socketUserMap: Map<string, string>
+  -onlineUsers: Map<string, string>
+  -io: SocketIOServer
+  ..WebSocket Events (inbound)..
+  +on register(userId): void
+  +on join_game(gameId, userId, stakes?, gameName?): void
+  +on player_move(gameId, action, amount?, field?): void
+  +on set_desired_bet(gameId, amount): void
+  +on tip_dealer(gameId): void
+  +on disconnect(): void
+  ..WebSocket Events (outbound)..
+  +emit game_state(state): void
+  +emit error(message): void
+  +emit new_message(): void
+  ..REST Routers..
+  +/users
+  +/poker
+  +/blackjack
+  +/roulette
+  +/slotmachine
+  +/stats
+  +/chats
+}
+
+' ─────────────────────────────────────────────
+' INHERITANCE
+' ─────────────────────────────────────────────
+
+EventEmitter <|-- Game
+Game <|-- CardGame
+Game <|-- Roulette
+CardGame <|-- Poker
+CardGame <|-- Blackjack
+SinglePlayerGame <|-- Slotmachine
+
+Deck <|-- BlackjackDeck
+Deck <|-- PokerDeck
+
+Player <|-- CardGamePlayer
+Player <|-- SlotmachinePlayer
+Player <|-- RoulettePlayer
+CardGamePlayer <|-- PokerPlayer
+CardGamePlayer <|-- BlackjackPlayer
+
+' ─────────────────────────────────────────────
+' ASSOCIATIONS
+' ─────────────────────────────────────────────
+
+' Game <-> Players
+Game "1" o-- "0..*" Player : contains >
+SinglePlayerGame "1" o-- "1" Player : contains >
+
+' Card ownership
+CardGamePlayer "1" *-- "0..*" Card : cards >
+BlackjackBot "1" *-- "0..*" Card : cards >
+Deck "1" *-- "0..*" Card : deck >
+Poker "1" *-- "0..*" Card : board >
+
+' Game internals
+Poker "1" o-- "1" PokerDeck : uses >
+Blackjack "1" o-- "1" BlackjackDeck : uses >
+Blackjack "1" *-- "1" BlackjackBot : blackJackBot >
+Slotmachine "1" *-- "0..*" Symbols : slots >
+
+' Services <-> Games
+PokerService "1" o-- "0..*" Poker : manages >
+BlackjackService "1" o-- "0..*" Blackjack : manages >
+RouletteService "1" o-- "0..*" Roulette : manages >
+
+' Services <-> Persistent layer
+UserService ..> User : reads/writes
+ChatService ..> ChatMessage : reads/writes
+RoundService ..> DB : writes rounds
+
+' WebSocket server
+AppServer "1" *-- "1" SocketIOServer : io >
+AppServer "1" *-- "1" PokerService : uses >
+AppServer "1" *-- "1" BlackjackService : uses >
+AppServer "1" *-- "1" RouletteService : uses >
+AppServer "1" *-- "1" UserService : uses >
+AppServer "1" *-- "1" RoundService : uses >
+AppServer "1" *-- "1" ChatService : uses >
+AppServer "1" *-- "1" StatsService : uses >
+
+SocketIOServer "1" o-- "0..*" Socket : manages >
+Socket ..> AppServer : events >
+Game ..> SocketIOServer : emits game_state >
+
+' ─────────────────────────────────────────────
+' NOTE
+' ─────────────────────────────────────────────
+
+note top of AppServer
+  Socket.IO events:
+  register, join_game, player_move,
+  set_desired_bet, tip_dealer, disconnect
+  ──────────────────────────────
+  Outbound: game_state, error, new_message
+end note
+
+note right of Roulette
+  New game since v1.
+  Extends Game<RoulettePlayer> directly
+  (no deck, no CardGame base).
+  Game loop: BETTING → SPINNING → FINISHED
+end note
+
+note right of CardGame
+  Added: turnTimer + turnEndTime
+  for per-turn countdown support
+  across Poker & Blackjack.
+end note
+
+@enduml
