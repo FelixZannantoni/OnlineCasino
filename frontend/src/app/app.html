@@ -1,12 +1,14 @@
 @if (showLogin) {
-    <!-- Empty container to maintain layout -->
-    <div class="login-placeholder"></div>
+<!-- Empty container to maintain layout -->
+<div class="login-placeholder"></div>
 } @else {
-    <app-navbar></app-navbar>
-    <app-profile-overlay></app-profile-overlay>
-    <app-settings-overlay></app-settings-overlay>
+<app-navbar></app-navbar>
+<app-profile-overlay></app-profile-overlay>
+<app-settings-overlay></app-settings-overlay>
 }
 
 <app-quit-overlay></app-quit-overlay>
 <app-information-overlay></app-information-overlay>
+<!-- <app-pause-overlay></app-pause-overlay> -->
+<app-game-mode-overlay></app-game-mode-overlay>
 <router-outlet />

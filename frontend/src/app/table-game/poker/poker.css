@@ -14,19 +14,23 @@
     position: absolute;
 
     /* OPTION A: Zentriert vor dem Tisch (wie auf dem Screenshot) */
-    bottom: 15%; /* Abstand vom unteren Tischrand */
+    bottom: 15%;
+    /* Abstand vom unteren Tischrand */
     left: 50%;
     transform: translateX(-50%);
 
     /* OPTION B: Wenn sie beim Avatar (unten links) sein sollen: */
     /* bottom: 10%; */
-    /* left: 15%; */ /* Anpassen basierend auf Avatar-Position */
+    /* left: 15%; */
+    /* Anpassen basierend auf Avatar-Position */
     /* transform: none; */
 
     display: flex;
     gap: 5px;
-    z-index: 20; /* Höher als der Tisch und der Avatar */
-    pointer-events: none; /* Klicks gehen durch, falls nötig */
+    z-index: 20;
+    /* Höher als der Tisch und der Avatar */
+    pointer-events: none;
+    /* Klicks gehen durch, falls nötig */
 }
 
 /* Red felt instead of default green */
@@ -108,7 +112,7 @@
     align-items: center;
     justify-content: center;
     z-index: 5;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 ::ng-deep .my-hand-name-badge {
@@ -137,7 +141,7 @@
     font-weight: bold;
     margin-top: 4px;
     border: 1px solid rgba(255, 215, 0, 0.3);
-    text-shadow: 0 0 5px rgba(0,0,0,1);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 
 ::ng-deep .betting-slider-popup {
@@ -159,8 +163,15 @@
 }
 
 @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 ::ng-deep .slider-main-area {
@@ -305,30 +316,56 @@
 }
 
 .board-area {
-    position: relative;
+    /* Must span the full table area so that the percentage-based
+       top/left on .board-cards (and the timer) actually center
+       against the table instead of collapsing to a 0x0 box. */
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 .game-start-timer {
     position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
 
-  padding: 12px 24px;
-  border-radius: 12px;
+    padding: 12px 24px;
+    border-radius: 12px;
 
-  background: rgba(0,0,0,0.85);
-  color: white;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
 
-  font-size: 28px;
-  font-weight: bold;
+    font-size: 28px;
+    font-weight: bold;
 
-  z-index: 100;
-  animation: pulse 1s infinite;
+    z-index: 100;
+    animation: pulse 1s infinite;
 }
 
 @keyframes pulse {
-  0% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.08); }
-  100% { transform: translateX(-50%) scale(1); }
+    0% {
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.08);
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+/* Mobile Responsive Poker */
+@media (max-width: 600px) {
+    ::ng-deep .board-cards {
+        top: 40%;
+        gap: 4px;
+    }
+
+    ::ng-deep .player-cards {
+        bottom: 8%;
+        gap: 4px;
+    }
 }

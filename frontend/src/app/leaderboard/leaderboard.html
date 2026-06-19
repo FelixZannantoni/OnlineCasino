@@ -1,1 +1,104 @@
-<p>leaderboard works!</p>
+<section class="lb-container" aria-label="Leaderboard">
+
+  <!-- Header -->
+  <header class="lb-header">
+    <div class="lb-title-block">
+      <span class="lb-eyebrow">Hall of Champions</span>
+      <h1 class="lb-title">Leaderboard</h1>
+    </div>
+    <nav class="lb-filters" aria-label="Time period filter">
+      <button
+        class="lb-filter-btn"
+        [class.active]="activeFilter() === 'weekly'"
+        (click)="setFilter('weekly')"
+        [attr.aria-pressed]="activeFilter() === 'weekly'">
+        Weekly
+      </button>
+      <button
+        class="lb-filter-btn"
+        [class.active]="activeFilter() === 'monthly'"
+        (click)="setFilter('monthly')"
+        [attr.aria-pressed]="activeFilter() === 'monthly'">
+        Monthly
+      </button>
+      <button
+        class="lb-filter-btn"
+        [class.active]="activeFilter() === 'alltime'"
+        (click)="setFilter('alltime')"
+        [attr.aria-pressed]="activeFilter() === 'alltime'">
+        All Time
+      </button>
+    </nav>
+  </header>
+
+  <!-- Podium (top 3) -->
+  <div class="lb-podium" aria-label="Top three players">
+    @for (player of topThree(); track player.rank) {
+      <article
+        class="podium-card"
+        [class.podium-first]="player.rank === 1"
+        [class.podium-second]="player.rank === 2"
+        [class.podium-third]="player.rank === 3"
+        [attr.aria-label]="'Rank ' + player.rank + ': ' + player.username">
+
+        <div class="podium-crown" aria-hidden="true">
+          @if (player.rank === 1) { <span class="crown-icon">♛</span> }
+        </div>
+
+        <div class="podium-avatar" aria-hidden="true">
+          <span class="avatar-initials">{{ player.avatar }}</span>
+          <div class="avatar-rank-badge">#{{ player.rank }}</div>
+        </div>
+
+        <div class="podium-info">
+          <span class="podium-username">{{ player.username }}</span>
+          @if (player.badge) {
+            <span class="podium-badge">{{ player.badge }}</span>
+          }
+          <span class="podium-score">{{ formatScore(player.score) }}</span>
+        </div>
+
+        <div class="podium-streak" [attr.aria-label]="player.streak + ' day streak'">
+          <app-streak-counter [streak]="player.streak" />
+        </div>
+
+      </article>
+    }
+  </div>
+
+  <!-- Divider -->
+  <div class="lb-divider" aria-hidden="true">
+    <span class="divider-gem">◆</span>
+  </div>
+
+  <!-- Rest of table -->
+  <ol class="lb-table" start="4" aria-label="Remaining ranked players">
+    @for (player of rest(); track player.rank) {
+      <li class="lb-row" [attr.aria-label]="'Rank ' + player.rank + ': ' + player.username">
+
+        <span class="row-rank" aria-hidden="true">{{ player.rank }}</span>
+
+        <div class="row-avatar" aria-hidden="true">
+          {{ player.avatar }}
+        </div>
+
+        <div class="row-identity">
+          <span class="row-username">{{ player.username }}</span>
+          @if (player.badge) {
+            <span class="row-badge">{{ player.badge }}</span>
+          }
+        </div>
+
+        <div class="row-streak" [attr.aria-label]="player.streak + ' day streak'">
+          <app-streak-counter [streak]="player.streak" />
+        </div>
+
+        <span class="row-score" [attr.aria-label]="formatScore(player.score) + ' points'">
+          {{ formatScore(player.score) }}
+        </span>
+
+      </li>
+    }
+  </ol>
+
+</section>

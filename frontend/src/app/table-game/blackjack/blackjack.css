@@ -1,9 +1,12 @@
-/* --- ÜBERNAHME VON POKER STYLING FÜR KARTEN --- */
+/* Blackjack: poker-like card positioning + shared chip tray
+   Mirrors the poker table behavior for dealer/player cards.
+*/
 
 /* Dealer Area (Oben Mitte, etwas höher als board-cards bei Poker) */
 ::ng-deep .dealer-area {
   position: absolute;
-  top: 35%; /* Höher als board-cards (42%) */
+  top: 35%;
+  /* Höher als board-cards (42%) */
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -71,7 +74,7 @@
   height: 28px;
   border-radius: 2px;
   background: white;
-  box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   position: relative;
   font-size: 8px;
   display: flex;
@@ -97,7 +100,7 @@
   bottom: -15px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   color: #ffd700;
   padding: 1px 4px;
   border-radius: 5px;
@@ -111,10 +114,10 @@
 ::ng-deep app-blackjack .game-table::after,
 ::ng-deep .game-blackjack .game-table::after {
   background: radial-gradient(ellipse at center,
-  var(--primary-purple) 0%,
-  #552878 40%,
-  #4a2070 70%,
-  var(--primary-purple-dark) 100%) !important;
+      var(--primary-purple) 0%,
+      #552878 40%,
+      #4a2070 70%,
+      var(--primary-purple-dark) 100%) !important;
 }
 
 ::ng-deep app-blackjack .game-table .center-emblem::before,
@@ -142,4 +145,185 @@
   border-color: #f39c12 !important;
   color: white !important;
   box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4) !important;
+}
+
+/* --- CHIP TRAY (reuse roulette styles) --- */
+.tray {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.tray-lbl {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(201, 168, 76, 0.6);
+  text-transform: uppercase;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.chip-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.15s;
+  border: 3px solid;
+  position: relative;
+}
+
+.chip-btn::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+.chip-btn:focus-visible {
+  outline: 2px solid #f0c040;
+  outline-offset: 3px;
+}
+
+.chip-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
+}
+
+.chip-btn.on {
+  transform: translateY(-7px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.8), 0 0 0 2px #f0c040;
+}
+
+.ch1 {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.ch5 {
+  background: #dc2626;
+  border-color: #7f1d1d;
+  color: #fff;
+}
+
+.ch10 {
+  background: #3b82f6;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+
+.ch25 {
+  background: #10b981;
+  border-color: #064e3b;
+  color: #fff;
+}
+
+.ch50 {
+  background: #f59e0b;
+  border-color: #92400e;
+  color: #fff;
+}
+
+.ch100 {
+  background: #1e293b;
+  border-color: #0f172a;
+  color: #fff;
+}
+
+.ch250 {
+  background: #06b6d4;
+  border-color: #083344;
+  color: #fff;
+}
+
+.ch500 {
+  background: #8b5cf6;
+  border-color: #4c1d95;
+  color: #f0c040;
+}
+
+.ch1000 {
+  background: #fbbf24;
+  border-color: #92400e;
+  color: #78350f;
+}
+
+.ch2500 {
+  background: #047857;
+  border-color: #064e3b;
+  color: #fff;
+}
+
+.ch5000 {
+  background: #991b1b;
+  border-color: #7f1d1d;
+  color: #fff;
+}
+
+.ch10000 {
+  background: #1e3a8a;
+  border-color: #172554;
+  color: #fff;
+}
+
+.ch50000 {
+  background: #581c87;
+  border-color: #3b0764;
+  color: #fff;
+}
+
+.tray-gap {
+  flex: 1;
+}
+
+.tbtn {
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-radius: 5px;
+  color: rgba(201, 168, 76, 0.65);
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+
+/* Mobile Responsive Blackjack
+   Keeps dealer/player card elements visible on small screens.
+*/
+@media (max-width: 600px) {
+  ::ng-deep .dealer-area {
+    top: 30%;
+  }
+.tray-gap { flex: 1; }
+
+
+/* --- TIMER --- */
+::ng-deep .turn-timer {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+  margin-left: 5px !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+  display: inline-block !important;
+  z-index: 100 !important;
+  font-size: 0.9em !important;
+}
+
+  ::ng-deep .player-cards {
+    bottom: 10%;
+  }
 }

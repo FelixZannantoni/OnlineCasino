@@ -65,7 +65,11 @@ export class PokerService {
     }
 
     const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
-    gameResult.game.addPlayer(newPlayer);
+    try {
+      gameResult.game.addPlayer(newPlayer);
+    } catch (e: any) {
+      return { success: false, message: e.message };
+    }
 
     if (gameResult.game.getPlayers().length === 1) {
       gameResult.game.setDefaultDealerChip();
@@ -84,6 +88,7 @@ export class PokerService {
 
       type GameRow = {
         gameId: string;
+        name: string;
         type: string;
       };
 
@@ -96,7 +101,7 @@ export class PokerService {
       }
 
       result.forEach((pokergameData) => {
-        const poker = new Poker(pokergameData.gameId);
+        const poker = new Poker(pokergameData.gameId, pokergameData.name);
         PokerService.pokerGames.push(poker);
       });
     } catch (err) {

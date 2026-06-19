@@ -19,9 +19,13 @@ export interface BlackjackPlayer {
 
 export interface BlackjackGameState {
     gameId: string;
+    gameBalance: number;
     isRunning: boolean;
     phase: 'WAITING' | 'BETTING' | 'PLAYING' | 'DEALER_TURN' | 'FINISHED';
     currentPlayerId: string | null;
+    turnEndsAt: number | null;
+    turnRemainingSeconds: number | null;
+    chipOptions?: { value: number; cls: string }[];
     players: BlackjackPlayer[];
     bot: {
         id: string;

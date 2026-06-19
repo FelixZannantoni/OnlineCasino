@@ -8,6 +8,8 @@ import { QuitOverlay } from './quit-overlay/quit-overlay';
 import { InformationOverlay } from './information-overlay/information-overlay';
 
 import { filter } from 'rxjs/operators';
+//import { PauseOverlay } from './pause-overlay/pause-overlay';
+import { GameModeOverlay } from './game-mode-overlay/game-mode-overlay';
 
 @Component({
   selector: 'app-root',
@@ -17,19 +19,22 @@ import { filter } from 'rxjs/operators';
     Navbar,
     ProfileOverlay,
     SettingsOverlay,
+    //PauseOverlay,
     QuitOverlay,
-    InformationOverlay
+    InformationOverlay,
+    GameModeOverlay
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
+
   protected readonly title = signal('frontend');
   showLogin = true;
 
   constructor(private router: Router) {
     this.showLogin = this.shouldShowLogin(this.router.url);
-    
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
