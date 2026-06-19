@@ -307,6 +307,21 @@
   ::ng-deep .dealer-area {
     top: 30%;
   }
+.tray-gap { flex: 1; }
+
+
+/* --- TIMER --- */
+::ng-deep .turn-timer {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+  margin-left: 5px !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+  display: inline-block !important;
+  z-index: 100 !important;
+  font-size: 0.9em !important;
+}
 
   ::ng-deep .player-cards {
     bottom: 10%;
