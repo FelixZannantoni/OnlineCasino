@@ -2,7 +2,7 @@
 
     <!-- Sign In Form -->
     <div class="form-container sign-in-container">
-        <form (ngSubmit)="onLogin($event)">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
             <div class="logo-container">
                 <div class="casino-chip">
                     <mat-icon>casino</mat-icon>
@@ -10,19 +10,38 @@
             </div>
             <h1>Sign in</h1>
 
-            <div class="input-group">
+            <div class="input-group" [class.has-error]="lf['loginEmail'].touched && lf['loginEmail'].invalid">
                 <mat-icon class="input-icon">person_outline</mat-icon>
-                <input type="email" placeholder="Username" [(ngModel)]="loginEmail" name="loginEmail" required>
+                <input type="text" placeholder="Username" formControlName="loginEmail" autocomplete="username">
+                @if (fieldError(loginForm, 'loginEmail', 'required')) {
+                    <span class="field-error">Username is required.</span>
+                }
+                @if (fieldError(loginForm, 'loginEmail', 'minlength')) {
+                    <span class="field-error">Username must be at least 3 characters.</span>
+                }
             </div>
 
-            <div class="input-group">
+            <div class="input-group" [class.has-error]="lf['loginPassword'].touched && lf['loginPassword'].invalid">
                 <mat-icon class="input-icon">lock</mat-icon>
                 <input [type]="showLoginPassword ? 'text' : 'password'" placeholder="Password"
-                    [(ngModel)]="loginPassword" name="loginPass" required>
+                    formControlName="loginPassword" autocomplete="current-password">
                 <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('login')">
                     {{ showLoginPassword ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
+                @if (fieldError(loginForm, 'loginPassword', 'required')) {
+                    <span class="field-error">Password is required.</span>
+                }
+                @if (fieldError(loginForm, 'loginPassword', 'minlength')) {
+                    <span class="field-error">Password must be at least 8 characters.</span>
+                }
             </div>
+
+            @if (loginError) {
+                <div class="form-error">
+                    <mat-icon>error_outline</mat-icon>
+                    {{ loginError }}
+                </div>
+            }
 
             <a class="forgot-password-link" routerLink="/forgot-password">Forgot your password?</a>
 
@@ -38,12 +57,14 @@
             </button>
 
             <button class="shining-btn" type="submit">Sign In</button>
+
+            <p class="mobile-switch">Don't have an account? <button type="button" class="link-btn" (click)="togglePanel(true)">Sign Up</button></p>
         </form>
     </div>
 
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
-        <form (ngSubmit)="onRegister($event)">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate>
             <div class="logo-container">
                 <div class="casino-chip">
                     <mat-icon>casino</mat-icon>
@@ -51,41 +72,85 @@
             </div>
             <h1>Create Account</h1>
 
-
-
-            <div class="input-group">
+            <div class="input-group" [class.has-error]="rf['registerName'].touched && rf['registerName'].invalid">
                 <mat-icon class="input-icon">person_outline</mat-icon>
-                <input type="text" placeholder="Username" [(ngModel)]="registerName" name="regName" required>
+                <input type="text" placeholder="Username" formControlName="registerName" autocomplete="username">
+                @if (fieldError(registerForm, 'registerName', 'required')) {
+                    <span class="field-error">Username is required.</span>
+                }
+                @if (fieldError(registerForm, 'registerName', 'minlength')) {
+                    <span class="field-error">At least 3 characters required.</span>
+                }
+                @if (fieldError(registerForm, 'registerName', 'maxlength')) {
+                    <span class="field-error">Maximum 20 characters.</span>
+                }
+                @if (fieldError(registerForm, 'registerName', 'pattern')) {
+                    <span class="field-error">No spaces allowed in username.</span>
+                }
             </div>
 
-            <div class="input-group">
+            <div class="input-group" [class.has-error]="rf['registerDisplayName'].touched && rf['registerDisplayName'].invalid">
                 <mat-icon class="input-icon">person</mat-icon>
-                <input type="text" placeholder="Display Name" [(ngModel)]="registerDisplayName" name="regDisplayname"
-                    required>
+                <input type="text" placeholder="Display Name" formControlName="registerDisplayName" autocomplete="name">
+                @if (fieldError(registerForm, 'registerDisplayName', 'required')) {
+                    <span class="field-error">Display name is required.</span>
+                }
+                @if (fieldError(registerForm, 'registerDisplayName', 'minlength')) {
+                    <span class="field-error">At least 2 characters required.</span>
+                }
             </div>
 
-            <div class="input-group">
+            <div class="input-group" [class.has-error]="rf['registerEmail'].touched && rf['registerEmail'].invalid">
                 <mat-icon class="input-icon">mail_outline</mat-icon>
-                <input type="email" placeholder="Email" [(ngModel)]="registerEmail" name="regEmail" required>
+                <input type="email" placeholder="Email" formControlName="registerEmail" autocomplete="email">
+                @if (fieldError(registerForm, 'registerEmail', 'required')) {
+                    <span class="field-error">Email is required.</span>
+                }
+                @if (fieldError(registerForm, 'registerEmail', 'email')) {
+                    <span class="field-error">Enter a valid email address.</span>
+                }
             </div>
 
-            <div class="input-group">
+            <div class="input-group" [class.has-error]="rf['registerPassword'].touched && rf['registerPassword'].invalid">
                 <mat-icon class="input-icon">lock</mat-icon>
                 <input [type]="showRegisterPassword ? 'text' : 'password'" placeholder="Password"
-                    [(ngModel)]="registerPassword" name="regPass" required>
+                    formControlName="registerPassword" autocomplete="new-password">
                 <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('register')">
                     {{ showRegisterPassword ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
+                @if (fieldError(registerForm, 'registerPassword', 'required')) {
+                    <span class="field-error">Password is required.</span>
+                }
+                @if (fieldError(registerForm, 'registerPassword', 'minlength')) {
+                    <span class="field-error">At least 8 characters required.</span>
+                }
+                @if (fieldError(registerForm, 'registerPassword', 'pattern')) {
+                    <span class="field-error">Must include one uppercase letter and one number.</span>
+                }
             </div>
 
-            <div class="input-group">
+            <div class="input-group" [class.has-error]="rf['passwordConfirm'].touched && (rf['passwordConfirm'].invalid || registerForm.errors?.['passwordMismatch'])">
                 <mat-icon class="input-icon">lock_outline</mat-icon>
                 <input [type]="showRegisterPasswordConfirm ? 'text' : 'password'" placeholder="Confirm Password"
-                    [(ngModel)]="passwordConfirm" name="regPassConfirm" required>
+                    formControlName="passwordConfirm" autocomplete="new-password">
                 <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('confirm')">
                     {{ showRegisterPasswordConfirm ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
+                @if (fieldError(registerForm, 'passwordConfirm', 'required')) {
+                    <span class="field-error">Please confirm your password.</span>
+                }
+                @if (rf['passwordConfirm'].touched && registerForm.errors?.['passwordMismatch']) {
+                    <span class="field-error">Passwords do not match.</span>
+                }
             </div>
+
+            @if (registerError) {
+                <div class="form-error">
+                    <mat-icon>error_outline</mat-icon>
+                    {{ registerError }}
+                </div>
+            }
+
             <div class="accent-line"></div>
 
             <button class="socials-btn google-btn" type="button">
@@ -98,6 +163,8 @@
             </button>
 
             <button class="shining-btn" type="submit">Sign Up</button>
+
+            <p class="mobile-switch">Already have an account? <button type="button" class="link-btn" (click)="togglePanel(false)">Sign In</button></p>
         </form>
     </div>
 
@@ -108,13 +175,13 @@
             <div class="overlay-panel overlay-left">
                 <h1>Welcome Back!</h1>
                 <p>To keep connected with us please login with your personal info.</p>
-                <button class="ghost" (click)="togglePanel(false)">Sign In</button>
+                <button class="ghost" type="button" (click)="togglePanel(false)">Sign In</button>
             </div>
 
             <div class="overlay-panel overlay-right">
                 <h1>Hello, Friend!</h1>
                 <p>Enter your personal details and start journey with us.</p>
-                <button class="ghost" (click)="togglePanel(true)">Sign Up</button>
+                <button class="ghost" type="button" (click)="togglePanel(true)">Sign Up</button>
             </div>
 
         </div>

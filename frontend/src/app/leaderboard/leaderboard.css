@@ -90,9 +90,17 @@
 }
 
 /* Visual order: 2nd | 1st | 3rd */
-.podium-card:nth-child(1) { order: 2; }
-.podium-card:nth-child(2) { order: 1; }
-.podium-card:nth-child(3) { order: 3; }
+.podium-card:nth-child(1) {
+  order: 2;
+}
+
+.podium-card:nth-child(2) {
+  order: 1;
+}
+
+.podium-card:nth-child(3) {
+  order: 3;
+}
 
 .podium-card {
   display: flex;
@@ -159,8 +167,15 @@
 }
 
 @keyframes crownFloat {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-3px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 /* Avatar */
@@ -385,18 +400,71 @@
     grid-template-columns: 1fr;
     align-items: unset;
   }
-  .podium-card { order: unset !important; }
+
+  .podium-card {
+    order: unset !important;
+  }
 
   .lb-row {
     grid-template-columns: 1.5rem 2rem 1fr 4.5rem;
   }
-  .row-streak { display: none; }
+
+  .row-streak {
+    display: none;
+  }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .podium-first { animation: none; }
-  .crown-icon   { animation: none; }
+  .podium-first {
+    animation: none;
+  }
+
+  .crown-icon {
+    animation: none;
+  }
+
   .lb-row,
-  .podium-card  { transition: none; }
+  .podium-card {
+    transition: none;
+  }
+}
+
+/* Extra leaderboard mobile fixes */
+@media (max-width: 480px) {
+  .lb-container {
+    padding: 1.25rem 0.75rem 2rem;
+  }
+
+  .lb-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lb-title {
+    font-size: 1.5rem;
+  }
+
+  .lb-filters {
+    flex-wrap: wrap;
+  }
+
+  .lb-filter-btn {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.68rem;
+  }
+
+  .lb-row {
+    grid-template-columns: 1.5rem 2rem 1fr 4rem;
+    padding: 0.6rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .row-streak {
+    display: none;
+  }
+
+  .row-username {
+    font-size: 0.8rem;
+  }
 }
