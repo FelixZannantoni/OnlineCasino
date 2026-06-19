@@ -4,35 +4,18 @@
 
   <!-- Dialog Card -->
   @if (state.isOpen) {
-    <div class="pause-dialog">
+    <div class="pause-dialog" [class.winner-overlay]="state.variant === 'winner'">
       <!-- Icon basierend auf Timer -->
       <div class="icon-wrap">
-        <mat-icon>{{ state.timerSeconds ? 'hourglass_empty' : 'casino' }}</mat-icon>
+        @if (state.variant === 'winner') {
+          <mat-icon aria-hidden="true">emoji_events</mat-icon>
+        } @else {
+          <mat-icon aria-hidden="true">hourglass_empty</mat-icon>
+        }
       </div>
 
       <h2>{{ state.title }}</h2>
       <p>{{ state.message }}</p>
-
-      <!-- Wenn Karten mitgeliefert werden: Board anzeigen -->
-      @if (state.boardCards && state.boardCards.length > 0) {
-        <div class="overlay-card-row">
-          @for (card of state.boardCards; track $index) {
-            <div class="card-mini">{{ card.name || card.rank || (card.value + ' ' + card.suit) }}</div>
-          }
-        </div>
-      }
-
-      <!-- Gewinner-Karten anzeigen -->
-      @if (state.winnerCards && state.winnerCards.length > 0) {
-        <div class="winner-cards">
-          @if (state.handName) { <div class="winner-hand-name">{{ state.handName }}</div> }
-          <div class="winner-card-row">
-            @for (card of state.winnerCards; track $index) {
-              <div class="card-mini">{{ card.name || card.rank || (card.value + ' ' + card.suit) }}</div>
-            }
-          </div>
-        </div>
-      }
 
       <!-- Optionaler Countdown -->
       @if (state.timerSeconds !== undefined && state.timerSeconds !== null) {

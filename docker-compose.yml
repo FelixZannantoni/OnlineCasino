@@ -1,14 +1,24 @@
 services:
-  casino:
-    build: .
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - PORT=3000
-      - DB_FILE_NAME=resources/casino.db
-      - SAMPLE_USER_FILE_PATH=resources/sample_data/users.csv
+    env_file:
+      - ./backend/.env
     volumes:
-      - casino-data:/app/resources
+      - ./backend/resources:/app/resources
+    restart: unless-stopped
 
-volumes:
-  casino-data:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+    depends_on:
+      - backend
+    restart: unless-stopped

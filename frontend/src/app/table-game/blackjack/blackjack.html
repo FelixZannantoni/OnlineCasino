@@ -20,20 +20,25 @@
         @if (state.bot.handValue > 0 && gameState()?.phase !== 'PLAYING') {
           <div class="dealer-value-badge">{{ state.bot.handValue }}</div>
         }
+      </div>
+      }
+      @if (state.bot.handValue > 0 && gameState()?.phase !== 'PLAYING') {
+      <div class="dealer-value-badge">{{ state.bot.handValue }}</div>
+      }
       }
     </div>
 
     <!-- 2. OPPONENTS -->
     <div class="grid-cell top-left">
       @if (opponents()[0]; as opp) {
-        <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
-          @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
-            @if (opp.isDealer) { <div class="dealer-chip">D</div> }
-          </div>
-          <div class="player-info">
-            <div class="player-name">
+      <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
+        @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+        <div class="player-avatar">
+          <img src="assets/default-avatar.png" alt="Opponent" />
+          @if (opp.isDealer) { <div class="dealer-chip">D</div> }
+        </div>
+        <div class="player-info">
+          <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
             @if (gameState()?.phase === 'BETTING' || opp.id === gameState()?.currentPlayerId) {
               <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
@@ -51,22 +56,35 @@
                 <div class="mini-card card-back"></div>
               }
             }
-            @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
           </div>
+          <div class="player-bet">Bet: {{ opp.bet }}</div>
         </div>
+        <div class="mini-hand">
+          @for (card of opp.cards; track $index) {
+          @if (card.visibility === 'all') {
+          <div class="mini-card" [class]="'card-' + card.color.toLowerCase()">
+            <span class="mini-rank">{{ getRank(card.name) }}</span>
+          </div>
+          } @else {
+          <div class="mini-card card-back"></div>
+          }
+          }
+          @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
+        </div>
+      </div>
       }
     </div>
 
     <div class="grid-cell top-center">
       @if (opponents()[1]; as opp) {
-        <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
-          @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
-            @if (opp.isDealer) { <div class="dealer-chip">D</div> }
-          </div>
-          <div class="player-info">
-            <div class="player-name">
+      <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
+        @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+        <div class="player-avatar">
+          <img src="assets/default-avatar.png" alt="Opponent" />
+          @if (opp.isDealer) { <div class="dealer-chip">D</div> }
+        </div>
+        <div class="player-info">
+          <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
             @if (gameState()?.phase === 'BETTING' || opp.id === gameState()?.currentPlayerId) {
               <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
@@ -87,19 +105,20 @@
             @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
           </div>
         </div>
+      </div>
       }
     </div>
 
     <div class="grid-cell top-right">
       @if (opponents()[2]; as opp) {
-        <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
-          @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
-            @if (opp.isDealer) { <div class="dealer-chip">D</div> }
-          </div>
-          <div class="player-info">
-            <div class="player-name">
+      <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
+        @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+        <div class="player-avatar">
+          <img src="assets/default-avatar.png" alt="Opponent" />
+          @if (opp.isDealer) { <div class="dealer-chip">D</div> }
+        </div>
+        <div class="player-info">
+          <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
             @if (gameState()?.phase === 'BETTING' || opp.id === gameState()?.currentPlayerId) {
               <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
@@ -117,22 +136,35 @@
                 <div class="mini-card card-back"></div>
               }
             }
-            @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
           </div>
+          <div class="player-bet">Bet: {{ opp.bet }}</div>
         </div>
+        <div class="mini-hand">
+          @for (card of opp.cards; track $index) {
+          @if (card.visibility === 'all') {
+          <div class="mini-card" [class]="'card-' + card.color.toLowerCase()">
+            <span class="mini-rank">{{ getRank(card.name) }}</span>
+          </div>
+          } @else {
+          <div class="mini-card card-back"></div>
+          }
+          }
+          @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
+        </div>
+      </div>
       }
     </div>
 
     <div class="grid-cell bottom-right">
       @if (opponents()[3]; as opp) {
-        <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
-          @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
-          <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
-            @if (opp.isDealer) { <div class="dealer-chip">D</div> }
-          </div>
-          <div class="player-info">
-            <div class="player-name">
+      <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
+        @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
+        <div class="player-avatar">
+          <img src="assets/default-avatar.png" alt="Opponent" />
+          @if (opp.isDealer) { <div class="dealer-chip">D</div> }
+        </div>
+        <div class="player-info">
+          <div class="player-name">
             {{ opp.displayname || (opp.id | slice:0:8) + '...' }}
             @if (gameState()?.phase === 'BETTING' || opp.id === gameState()?.currentPlayerId) {
               <span class="turn-timer">({{ turnRemaining() ?? 0 }}s)</span>
@@ -150,9 +182,22 @@
                 <div class="mini-card card-back"></div>
               }
             }
-            @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
           </div>
+          <div class="player-bet">Bet: {{ opp.bet }}</div>
         </div>
+        <div class="mini-hand">
+          @for (card of opp.cards; track $index) {
+          @if (card.visibility === 'all') {
+          <div class="mini-card" [class]="'card-' + card.color.toLowerCase()">
+            <span class="mini-rank">{{ getRank(card.name) }}</span>
+          </div>
+          } @else {
+          <div class="mini-card card-back"></div>
+          }
+          }
+          @if (opp.handValue > 0) { <div class="mini-value">{{ opp.handValue }}</div> }
+        </div>
+      </div>
       }
     </div>
 
@@ -174,7 +219,9 @@
             </div>
             <div class="player-bet">Bet: {{ player.bet }}</div>
           </div>
+          <div class="player-bet">Bet: {{ player.bet }}</div>
         </div>
+      </div>
       }
     </div>
 
@@ -203,11 +250,11 @@
   <!-- ACTION BUTTONS -->
   <div game-actions style="display: flex; justify-content: center; gap: 15px; margin-bottom: 80px; z-index: 30;">
     @if (gameState()?.phase === 'PLAYING' && gameState()?.currentPlayerId === userId) {
-      <button class="btn-hit" (click)="hit()">Hit</button>
-      <button class="btn-stand" (click)="stand()">Stand</button>
-      @if (me()?.cards?.length === 2) {
-        <button class="btn-double" (click)="double()">Double</button>
-      }
+    <button class="btn-hit" (click)="hit()">Hit</button>
+    <button class="btn-stand" (click)="stand()">Stand</button>
+    @if (me()?.cards?.length === 2) {
+    <button class="btn-double" (click)="double()">Double</button>
+    }
     }
     @if (gameState()?.phase === 'BETTING') {
       <div style="display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.5); padding:10px; border-radius:20px;">
@@ -224,8 +271,9 @@
             }
           </div>
         </div>
-        <button class="btn-bet" (click)="placeBet()">Place Bet</button>
       </div>
+      <button class="btn-bet" (click)="placeBet()">Place Bet</button>
+    </div>
     }
   </div>
 </app-table-game>

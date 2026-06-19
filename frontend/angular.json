@@ -63,10 +63,6 @@
               "src/material-theme.scss",
               "src/styles.css"
             ],
-            "allowedCommonJsDependencies": [
-              "debug",
-              "xmlhttprequest-ssl"
-            ],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -75,22 +71,10 @@
           },
           "configurations": {
             "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "1MB",
-                  "maximumError": "2MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "30kB",
-                  "maximumError": "50kB"
-                }
-              ],
               "outputHashing": "all"
             },
             "development": {
-              "optimization": false,
+              "optimization": false,https://github.com/2526-3ahif-syp-wmc/OnlineCasino/pull/127/conflict?name=frontend%252Fangular.json&ancestor_oid=743ef7ce9749f3fd6c2733b99c58028548d94986&base_oid=5c2d304752bb934630a76aae084e4e19951c9478&head_oid=30c75f2d4e1206edfa9318ea8318d86b7b369b79
               "extractLicenses": false,
               "sourceMap": true
             }
