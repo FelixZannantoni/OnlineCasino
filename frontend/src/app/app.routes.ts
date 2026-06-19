@@ -7,6 +7,7 @@ import { ForgotPassword } from './login/forgot-password/forgot-password';
 import { Shop } from './shop/shop';
 import { Slotmachine } from './slotmachine/slotmachine';
 import { Friends } from './friends/friends';
+import { Club } from './club/club';
 import { Roulette } from './roulette/roulette';
 import { Leaderboard } from './leaderboard/leaderboard';
 
@@ -15,6 +16,7 @@ export const routes: Routes = [
     { path: "friends", component: Friends},
     { path: "login", component: Login },
     { path: "forgot-password", component: ForgotPassword },
+    { path: "club", component: Club },
     { path: "poker", component: Poker },
     { path: "roulette", component: Roulette },
     { path: "blackjack", component: Blackjack },

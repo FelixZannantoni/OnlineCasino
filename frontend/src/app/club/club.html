@@ -1,1 +1,401 @@
-<p>club works!</p>
+<div class="root">
+
+    <div class="header">
+        <div class="header-ornament" aria-hidden="true">♦ ♠ ♣ ♥</div>
+
+        <div class="title-row">
+            <div class="crown-icon" aria-hidden="true">
+                <span class="material-icons">workspace_premium</span>
+            </div>
+            <div>
+                <p class="title">{{ club.name }}</p>
+                <p class="subtitle">{{ club.tag }} · {{ club.motto }}</p>
+            </div>
+        </div>
+
+        <div class="meta-chips" role="list" aria-label="Club stats">
+            <span class="chip" role="listitem">
+                <span class="material-icons chip-icon" aria-hidden="true">bolt</span>
+                Lv.{{ level() }}
+            </span>
+            <span class="chip chip-green" role="listitem">
+                <span class="online-dot" aria-hidden="true"></span>
+                <span>{{ onlineCount() }} Online</span>
+            </span>
+            <span class="chip" role="listitem">
+                <span class="material-icons chip-icon" aria-hidden="true">group</span>
+                {{ members.length }} Members
+            </span>
+            <span class="chip chip-gold" role="listitem">
+                <span class="material-icons chip-icon" aria-hidden="true">emoji_events</span>
+                {{ formatCoins(totalWinnings()) }} won
+            </span>
+        </div>
+
+        <div class="xp-row">
+            <span class="xp-label">LV {{ level() }}</span>
+            <div class="xp-bar" role="progressbar" [attr.aria-valuenow]="xpPercent()"
+                [attr.aria-label]="'Level progress: ' + xpInLevel() + ' of ' + chipsPerLevel + ' chips'"
+                aria-valuemin="0" aria-valuemax="100">
+                <div class="xp-fill" [style.width.%]="xpPercent()">
+                    <div class="xp-shimmer" aria-hidden="true"></div>
+                </div>
+            </div>
+            <span class="xp-label">{{ formatCoins(xpInLevel()) }} / {{ formatCoins(chipsPerLevel) }}</span>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Club sections">
+            <button class="tab" role="tab" [class.active]="activeTab() === 'members'"
+                [attr.aria-selected]="activeTab() === 'members'" (click)="switchTab('members')">
+                <span class="material-icons tab-icon" aria-hidden="true">groups</span>
+                Members
+                <span class="badge" aria-label="{{ onlineCount() }} online">{{ onlineCount() }}</span>
+            </button>
+            <button class="tab" role="tab" [class.active]="activeTab() === 'chat'"
+                [attr.aria-selected]="activeTab() === 'chat'" (click)="switchTab('chat')">
+                <span class="material-icons tab-icon" aria-hidden="true">forum</span>
+                Chat
+                <span class="badge" aria-label="{{ messages().length }} messages">{{ messages().length }}</span>
+            </button>
+            <button class="tab" role="tab" [class.active]="activeTab() === 'info'"
+                [attr.aria-selected]="activeTab() === 'info'" (click)="switchTab('info')">
+                <span class="material-icons tab-icon" aria-hidden="true">workspace_premium</span>
+                Vault
+            </button>
+            <button class="tab" role="tab" [class.active]="activeTab() === 'explore'"
+                [attr.aria-selected]="activeTab() === 'explore'" (click)="switchTab('explore')">
+                <span class="material-icons tab-icon" aria-hidden="true">travel_explore</span>
+                Explore
+            </button>
+        </div>
+    </div>
+
+    <div class="body">
+
+        <!-- MEMBERS -->
+        <div class="panel" role="tabpanel" [class.active]="activeTab() === 'members'">
+            <div class="search-bar">
+                <div class="search-wrap">
+                    <span class="material-icons search-icon" aria-hidden="true">search</span>
+                    <input class="search-input" type="search" placeholder="Search vault members..."
+                        [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+                        aria-label="Search members">
+                </div>
+            </div>
+
+            <div class="member-list" role="list">
+                @for (group of roleGroups; track group.label) {
+                @if (getMembersByRoles(group.roles).length > 0) {
+                <div class="section-label" role="separator">{{ group.label }}</div>
+                @for (m of getMembersByRoles(group.roles); track m.id) {
+                <div class="member-card" [class.is-owner]="m.role === 'owner'" role="listitem">
+                    <div class="avatar">
+                        <div class="avatar-circle" [style.background]="m.color" [style.color]="m.hue"
+                            aria-hidden="true">{{ m.init }}</div>
+                        @if (m.role === 'owner') {
+                        <span class="material-icons crown-badge" aria-hidden="true">military_tech</span>
+                        }
+                        <div class="status-dot" [class]="m.status" [attr.aria-label]="m.status"></div>
+                    </div>
+                    <div class="member-info">
+                        <p class="member-name">
+                            {{ m.name }}
+                            @if (m.role !== 'member') {
+                            <span class="role-badge" [class]="m.role">
+                                <span class="material-icons role-icon" aria-hidden="true">{{ getRoleIcon(m.role)
+                                    }}</span>
+                                {{ getRoleLabel(m.role) }}
+                            </span>
+                            }
+                        </p>
+                        <p class="member-status" [class.playing]="m.activity.startsWith('Playing')"
+                            [class.online-text]="m.status === 'online' && !m.activity.startsWith('Playing')">
+                            {{ m.activity }}
+                        </p>
+                    </div>
+                    <div class="contrib" aria-label="{{ m.contribution }} chips contributed">
+                        <div class="contrib-val">{{ formatCoins(m.contribution) }}</div>
+                        <div class="contrib-lbl">
+                            <span class="material-icons" aria-hidden="true"
+                                style="font-size:10px;vertical-align:middle;">diamond</span>
+                            chips
+                        </div>
+                    </div>
+                </div>
+                }
+                }
+                }
+            </div>
+
+            <div class="stats-row" role="list" aria-label="Club statistics">
+                <div class="stat" role="listitem">
+                    <div class="stat-val">{{ members.length }}</div>
+                    <div class="stat-lbl">Members</div>
+                </div>
+                <div class="stat" role="listitem">
+                    <div class="stat-val">{{ onlineCount() }}</div>
+                    <div class="stat-lbl">Online</div>
+                </div>
+                <div class="stat" role="listitem">
+                    <div class="stat-val">{{ formatCoins(totalWinnings()) }}</div>
+                    <div class="stat-lbl">Total Chips</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAT -->
+        <div class="panel panel-chat" role="tabpanel" [class.active]="activeTab() === 'chat'">
+            <div class="chat-header">
+                <div class="avatar-circle chat-avatar"
+                    style="background:linear-gradient(135deg,#1a1228,#261840);color:#7F77DD;" aria-hidden="true">VV
+                </div>
+                <div>
+                    <p class="chat-name">{{ club.name }}</p>
+                    <p class="chat-sub">{{ onlineCount() }} members online</p>
+                </div>
+                <div class="live-pill" aria-label="Live chat active">
+                    <span class="live-dot" aria-hidden="true"></span> LIVE
+                </div>
+            </div>
+
+            <div class="messages" #chatContainer role="log" aria-live="polite" aria-label="Club chat messages">
+                <div class="system-msg" role="note">Club Chat — {{ club.name }}</div>
+                @for (msg of messages(); track $index) {
+                <div class="msg" [class.mine]="msg.mine" [class.theirs]="!msg.mine">
+                    @if (!msg.mine) {
+                    <div class="msg-avatar" [style.background]="msg.memberColor" [style.color]="msg.memberHue"
+                        aria-hidden="true">{{ msg.memberInit }}</div>
+                    }
+                    <div class="msg-content">
+                        @if (!msg.mine) {
+                        <span class="msg-sender">{{ msg.memberName }}</span>
+                        }
+                        <div class="msg-bubble">{{ msg.text }}</div>
+                        <span class="msg-time"><time>{{ msg.time }}</time></span>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="chat-input-wrap">
+                <label for="chat-input" class="sr-only">Message the vault</label>
+                <input id="chat-input" class="chat-input" type="text" placeholder="Message the vault..."
+                    [value]="messageInput()" (input)="messageInput.set($any($event.target).value)"
+                    (keydown.enter)="sendMsg()">
+                <button class="send-btn" (click)="sendMsg()" aria-label="Send message">
+                    <span class="material-icons" aria-hidden="true">send</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- VAULT INFO -->
+        <div class="panel" role="tabpanel" [class.active]="activeTab() === 'info'">
+            <div class="info-scroll">
+
+                <div class="vault-card">
+                    <div class="vault-card-bg" aria-hidden="true"></div>
+                    <span class="material-icons vault-emblem" aria-hidden="true">diamond</span>
+                    <div class="vault-name">{{ club.name }}</div>
+                    <div class="vault-tag">{{ club.tag }}</div>
+                    <div class="vault-motto">"{{ club.motto }}"</div>
+                    <div class="vault-founded">Est. {{ club.founded }}</div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-tile">
+                        <span class="material-icons info-tile-icon" aria-hidden="true">bolt</span>
+                        <div class="info-tile-val">Lv. {{ level() }}</div>
+                        <div class="info-tile-lbl">Club Level</div>
+                    </div>
+                    <div class="info-tile">
+                        <span class="material-icons info-tile-icon" aria-hidden="true">diamond</span>
+                        <div class="info-tile-val">{{ formatCoins(totalWinnings()) }}</div>
+                        <div class="info-tile-lbl">Total Chips</div>
+                    </div>
+                    <div class="info-tile">
+                        <span class="material-icons info-tile-icon" aria-hidden="true">group</span>
+                        <div class="info-tile-val">{{ members.length }}</div>
+                        <div class="info-tile-lbl">Members</div>
+                    </div>
+                    <div class="info-tile">
+                        <span class="material-icons info-tile-icon" aria-hidden="true">calendar_month</span>
+                        <div class="info-tile-val">{{ club.founded }}</div>
+                        <div class="info-tile-lbl">Founded</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard" aria-label="Top contributors">
+                    <div class="lb-title">
+                        <span class="material-icons" aria-hidden="true"
+                            style="font-size:14px;vertical-align:middle;margin-right:6px;">leaderboard</span>
+                        Top Contributors
+                    </div>
+                    @for (m of topContributors(); track m.id; let i = $index) {
+                    <div class="lb-row" [class.gold]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2"
+                        role="listitem">
+                        <span class="material-icons lb-rank-icon" [class.rank-gold]="i === 0"
+                            [class.rank-silver]="i === 1" [class.rank-bronze]="i === 2" aria-hidden="true">{{
+                            getRankIcon(i) }}</span>
+                        <div class="lb-avatar" [style.background]="m.color" [style.color]="m.hue" aria-hidden="true">{{
+                            m.init }}</div>
+                        <span class="lb-name">{{ m.name }}</span>
+                        <span class="lb-chips" aria-label="{{ m.contribution }} chips">
+                            {{ formatCoins(m.contribution) }}
+                            <span class="material-icons" aria-hidden="true"
+                                style="font-size:11px;vertical-align:middle;">diamond</span>
+                        </span>
+                    </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        <!-- EXPLORE -->
+        <div class="panel" role="tabpanel" [class.active]="activeTab() === 'explore'">
+            <div class="explore-scroll">
+
+                <div class="explore-toolbar">
+                    <div class="search-wrap" style="flex:1;">
+                        <span class="material-icons search-icon" aria-hidden="true">search</span>
+                        <input class="search-input" type="search" placeholder="Search clubs by name or tag..."
+                            [value]="exploreQuery()" (input)="exploreQuery.set($any($event.target).value)"
+                            aria-label="Search clubs">
+                    </div>
+                    <button class="create-btn" [class.disabled]="!canAffordCreate()" (click)="toggleCreateForm()"
+                        [attr.aria-expanded]="showCreateForm()" [attr.aria-disabled]="!canAffordCreate()">
+                        <span class="material-icons" aria-hidden="true">add_circle</span>
+                        Create Club
+                    </button>
+                </div>
+
+                @if (showCreateForm()) {
+                <div class="create-form" role="region" aria-label="Create a new club">
+                    <div class="create-form-header">
+                        <span class="material-icons" aria-hidden="true"
+                            style="color:var(--text-gold);">workspace_premium</span>
+                        <span>Found a New Club</span>
+                        <span class="create-cost-badge">
+                            <span class="material-icons" aria-hidden="true"
+                                style="font-size:12px;vertical-align:middle;">diamond</span>
+                            {{ formatCoins(createClubCost) }} chips
+                        </span>
+                    </div>
+
+                    <div class="create-field">
+                        <label for="new-club-name" class="create-label">Club Name</label>
+                        <input id="new-club-name" class="create-input" type="text" placeholder="e.g. THE GOLDEN ACES"
+                            [value]="newClubName()" (input)="newClubName.set($any($event.target).value)" maxlength="32">
+                    </div>
+
+                    <div class="create-field">
+                        <label for="new-club-tag" class="create-label">Tag (short ID)</label>
+                        <input id="new-club-tag" class="create-input" type="text" placeholder="e.g. #GOLD"
+                            [value]="newClubTag()" (input)="newClubTag.set($any($event.target).value)" maxlength="8">
+                    </div>
+
+                    <div class="create-field">
+                        <label for="new-club-motto" class="create-label">Motto (optional)</label>
+                        <input id="new-club-motto" class="create-input" type="text"
+                            placeholder="e.g. Fortune Favours the Bold" [value]="newClubMotto()"
+                            (input)="newClubMotto.set($any($event.target).value)" maxlength="48">
+                    </div>
+
+                    <div class="create-form-footer">
+                        <div class="wallet-info">
+                            <span class="material-icons" aria-hidden="true"
+                                style="font-size:14px;color:var(--text-gold);">account_balance_wallet</span>
+                            Your balance: <strong>{{ formatCoins(playerCoins()) }}</strong> chips
+                            @if (!canAffordCreate()) {
+                            <span class="insufficient">— Insufficient funds</span>
+                            }
+                        </div>
+                        <div class="create-actions">
+                            <button class="cancel-btn" (click)="toggleCreateForm()">Cancel</button>
+                            <button class="confirm-btn" [class.disabled]="!createFormValid() || !canAffordCreate()"
+                                [attr.aria-disabled]="!createFormValid() || !canAffordCreate()"
+                                (click)="submitCreateClub()">
+                                <span class="material-icons" aria-hidden="true"
+                                    style="font-size:15px;">add_business</span>
+                                Found Club
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                }
+
+                <div class="section-label">Available Clubs</div>
+
+                <div class="explore-list" role="list">
+                    @for (c of filteredPublicClubs(); track c.id) {
+                    <div class="explore-card" role="listitem">
+                        <div class="explore-card-accent" [style.background]="c.color" aria-hidden="true"></div>
+
+                        <div class="explore-emblem" [style.background]="c.color">
+                            <span class="material-icons" aria-hidden="true">{{ c.emblemIcon }}</span>
+                        </div>
+
+                        <div class="explore-info">
+                            <div class="explore-name">{{ c.name }}</div>
+                            <div class="explore-tag-row">
+                                <span class="explore-tag">{{ c.tag }}</span>
+                                <span class="explore-motto">{{ c.motto }}</span>
+                            </div>
+                            <div class="explore-meta">
+                                <span class="explore-meta-item">
+                                    <span class="material-icons" aria-hidden="true" style="font-size:12px;">bolt</span>
+                                    Lv. {{ clubLevel(c.totalWinnings) }}
+                                </span>
+                                <span class="explore-meta-item">
+                                    <span class="material-icons" aria-hidden="true" style="font-size:12px;">group</span>
+                                    {{ c.memberCount }}/{{ c.maxMembers }}
+                                </span>
+                                <span class="explore-meta-item">
+                                    <span class="material-icons" aria-hidden="true"
+                                        style="font-size:12px;">emoji_events</span>
+                                    {{ formatCoins(c.totalWinnings) }}
+                                </span>
+                                @if (!c.open) {
+                                <span class="explore-meta-item explore-closed">
+                                    <span class="material-icons" aria-hidden="true" style="font-size:12px;">lock</span>
+                                    Invite Only
+                                </span>
+                                }
+                            </div>
+                        </div>
+
+                        <button class="join-btn" [class.full]="c.memberCount >= c.maxMembers" [class.closed]="!c.open"
+                            [attr.aria-disabled]="c.memberCount >= c.maxMembers" (click)="joinClub(c)">
+                            @if (c.memberCount >= c.maxMembers) {
+                            Full
+                            } @else if (!c.open) {
+                            Request
+                            } @else {
+                            Join
+                            }
+                        </button>
+                    </div>
+                    }
+
+                    @if (filteredPublicClubs().length === 0) {
+                    <div class="explore-empty" role="status">
+                        <span class="material-icons" aria-hidden="true"
+                            style="font-size:32px;color:rgba(209,158,29,0.25);">search_off</span>
+                        <p>No clubs match your search.</p>
+                    </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    @if (!toastHidden()) {
+    <div class="toast" role="status" aria-live="polite">
+        <span class="material-icons" aria-hidden="true"
+            style="color:var(--text-gold);font-size:18px">workspace_premium</span>
+        <span>{{ toastMessage() }}</span>
+    </div>
+    }
+</div>
