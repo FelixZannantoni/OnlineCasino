@@ -17,3 +17,10 @@ export type Card = {
     owner: string,
     visibility: CardVisibility
 }
+
+export type Cosmetic = {
+    id: number,
+    type: 'avatar' | 'card-back' | 'chip',
+    name: string,
+    price: number
+}

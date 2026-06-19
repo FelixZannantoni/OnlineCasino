@@ -89,7 +89,23 @@ export class DB {
                 FOREIGN KEY (userId) REFERENCES users(uuid)
             )
             `).run();
-
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS cosmetics (
+                cosmeticId integer PRIMARY KEY AUTOINCREMENT,
+                name text,
+                type text,
+                price real
+            )
+            `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS user_cosmetics (
+                userId text,
+                cosmeticId integer,
+                PRIMARY KEY (userId, cosmeticId),
+                FOREIGN KEY (userId) REFERENCES users(uuid),
+                FOREIGN KEY (cosmeticId) REFERENCES cosmetics(cosmeticId)
+            )
+            `).run();
 
         await this.insertUserSampleData(connection);
         await this.insertGameSampleData(connection);

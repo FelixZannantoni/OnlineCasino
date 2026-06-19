@@ -13,6 +13,7 @@ import { slotmachineRouter } from "./router/slotmachine-router";
 import { Poker } from "./gameLogic/poker";
 import { UserService } from "./services/user-service";
 import { BlackjackService } from "./services/blackjack-service";
+import { CosmeticsService } from "./services/cosmetics-service";
 
 const PORT = process.env.PORT || 3000;
 
@@ -38,7 +39,8 @@ const socketUserMap: Map<string, string> = new Map();
 const pokerService: PokerService = new PokerService();
 const blackjackService: BlackjackService = new BlackjackService();
 const userService: UserService = new UserService();
-export { pokerService, blackjackService, userService };
+const cosmeticsService: CosmeticsService = new CosmeticsService();
+export { pokerService, blackjackService, userService, cosmeticsService };
 
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
