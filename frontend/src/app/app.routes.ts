@@ -10,6 +10,7 @@ import { Friends } from './friends/friends';
 import { Club } from './club/club';
 import { Roulette } from './roulette/roulette';
 import { Leaderboard } from './leaderboard/leaderboard';
+import { Inventory } from './inventory/inventory'
 
 export const routes: Routes = [
     { path: "home", component: Home },
@@ -23,5 +24,6 @@ export const routes: Routes = [
     { path: "slotmachine", component: Slotmachine },
     { path: "shop", component: Shop },
     { path: "leaderboard", component: Leaderboard },
+    { path: "inventory", component: Inventory },
     { path: "", redirectTo: "login", pathMatch: "full" }
 ];
