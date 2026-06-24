@@ -16,16 +16,85 @@
 
 /* Games Section */
 .games-section {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
     padding-right: 1.5rem;
+    min-height: calc(100vh - 3rem);
 }
 
-.game-row {
+.variation-grid,
+.favorites-grid {
     display: grid;
-    grid-template-columns: 160px 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(220px, 1fr);
     gap: 1rem;
+}
+
+.variation-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem;
+    min-height: 180px;
+    cursor: pointer;
+}
+
+.variation-card .game-card-content {
+    align-items: flex-start;
+}
+
+.variation-game {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.variation-label {
+    color: var(--text-gold);
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.variation-tagline {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.87rem;
+    line-height: 1.4;
+}
+
+.card-overlay {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.action-btn {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border-radius: 999px;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.05);
+}
+
+.fav-duplicate {
+    border-color: rgba(255, 193, 7, 0.75);
 }
 
 /* News Banner */

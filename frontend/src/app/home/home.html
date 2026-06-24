@@ -3,135 +3,57 @@
     <div class="home-content">
         <!-- Games Grid Section -->
         <div class="games-section">
-            <!-- Row 1 -->
-            <div class="game-row">
+            @if (favoriteVariants.length > 0) {
+            <div class="games-header-row">
                 <button class="news-banner">
                     <mat-icon class="news-icon">stars</mat-icon>
-                    <span>What you friends play</span>
-                </button>
-                <div class="game-card featured" (click)="onGameClick('Slotmachine')">
-                    <button class="favorite-btn" (click)="toggleFavorite('Slotmachine', $event)">
-                        <mat-icon>{{ isFavorite('Slotmachine') ? 'favorite' : 'favorite_border' }}</mat-icon>
-                    </button>
-                    <button class="info-btn" (click)="openInfo('Slotmachine', $event)" aria-label="Game Info">
-                        <mat-icon>info_outline</mat-icon>
-                    </button>
-                    <div class="game-card-content">
-                        <span class="game-title">Slotmachine</span>
-                    </div>
-                </div>
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
-                    </div>
-                </button>
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
-                    </div>
+                    <span>Favorites</span>
                 </button>
             </div>
-
-            <!-- Row 2 -->
-            <div class="game-row">
-                <button class="news-banner">
-                    <mat-icon class="news-icon">casino</mat-icon>
-                    <span>You played last</span>
-                </button>
-                <div class="game-card featured" (click)="onGameClick('Blackjack')">
-                    <button class="favorite-btn" (click)="toggleFavorite('Blackjack', $event)">
-                        <mat-icon>{{ isFavorite('Blackjack') ? 'favorite' : 'favorite_border' }}</mat-icon>
-                    </button>
-                    <button class="info-btn" (click)="openInfo('Blackjack', $event)" aria-label="Game Info">
-                        <mat-icon>info_outline</mat-icon>
-                    </button>
+            <div class="variation-grid favorites-grid">
+                @for (fav of favoriteVariants; track fav.game.key + '-' + fav.mode.key) {
+                <div class="game-card variation-card fav-duplicate" (click)="launchGame(fav.game.key, fav.mode)">
                     <div class="game-card-content">
-                        <span class="game-title">Blackjack</span>
+                        <span class="variation-game">{{ fav.game.title }}</span>
+                        <span class="variation-label">{{ fav.mode.label }}</span>
+                        <span class="variation-tagline">{{ fav.mode.tagline }}</span>
                     </div>
-                </div>
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
-                    </div>
-                </button>
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
-                    </div>
-                </button>
-            </div>
-
-            <!-- Row 3 -->
-            <div class="game-row">
-                <button class="news-banner">
-                    <mat-icon class="news-icon">games</mat-icon>
-                    <span>Event games</span>
-                </button>
-                <div class="game-card featured" (click)="onGameClick('PokerTexas')">
-                    <button class="favorite-btn" (click)="toggleFavorite('PokerTexas', $event)">
-                        <mat-icon>{{ isFavorite('PokerTexas') ? 'favorite' : 'favorite_border' }}</mat-icon>
-                    </button>
-                    <button class="info-btn" (click)="openInfo('PokerTexas', $event)" aria-label="Game Info">
-                        <mat-icon>info_outline</mat-icon>
-                    </button>
-                    <div class="game-card-content">
-                        <span class="game-title">Poker Texas Hold'em</span>
-                    </div>
-                </div>
-
-                <div class="game-card featured" (click)="onGameClick('Roulette')">
-                    <button class="favorite-btn" (click)="toggleFavorite('Roulette', $event)">
-                        <mat-icon>{{ isFavorite('Roulette') ? 'favorite' : 'favorite_border' }}</mat-icon>
-                    </button>
-                    <button class="info-btn" (click)="openInfo('Roulette', $event)" aria-label="Game Info">
-                        <mat-icon>info_outline</mat-icon>
-                    </button>
-                    <div class="game-card-content">
-                        <span class="game-title">Roulette</span>
-                    </div>
-                </div>
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">Spiel tmp</span>
-                    </div>
-                </button>
-            </div>
-
-            <!-- Row 4 -->
-            <div class="game-row">
-                <button class="news-banner">
-                    <mat-icon class="news-icon">favorite</mat-icon>
-                    <span>Favorite games</span>
-                </button>
-                @for (game of favoriteGames; track game.key) {
-                <div class="game-card featured" (click)="onGameClick(game.key)">
-                    <button class="favorite-btn" (click)="toggleFavorite(game.key, $event)">
-                        <mat-icon>{{ isFavorite(game.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
-                    </button>
-                    <button class="info-btn" (click)="openInfo(game.key, $event)" aria-label="Game Info">
-                        <mat-icon>info_outline</mat-icon>
-                    </button>
-                    <div class="game-card-content">
-                        <span class="game-title">{{ game.title }}</span>
+                    <div class="card-overlay">
+                        <button class="action-btn" (click)="toggleFavorite(fav.game.key, fav.mode.key, $event)" aria-label="Toggle favorite">
+                            <mat-icon>{{ isFavorite(fav.game.key, fav.mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                        </button>
+                        <button class="action-btn" (click)="openInfo(fav.game.key, $event)" aria-label="Game info">
+                            <mat-icon>info_outline</mat-icon>
+                        </button>
                     </div>
                 </div>
                 }
-                @empty {
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">No favorites yet</span>
-                    </div>
+            </div>
+            }
+
+            <div class="games-header-row">
+                <button class="news-banner">
+                    <mat-icon class="news-icon">casino</mat-icon>
+                    <span>Games</span>
                 </button>
-                <button class="game-card">
+            </div>
+            <div class="variation-grid">
+                @for (variant of gameVariants; track variant.game.key + '-' + variant.mode.key) {
+                <div class="game-card variation-card" (click)="launchGame(variant.game.key, variant.mode)">
                     <div class="game-card-content">
-                        <span class="game-title">Click ♥ to add</span>
+                        <span class="variation-game">{{ variant.game.title }}</span>
+                        <span class="variation-label">{{ variant.mode.label }}</span>
+                        <span class="variation-tagline">{{ variant.mode.tagline }}</span>
                     </div>
-                </button>
-                <button class="game-card">
-                    <div class="game-card-content">
-                        <span class="game-title">Fav game</span>
+                    <div class="card-overlay">
+                        <button class="action-btn" (click)="toggleFavorite(variant.game.key, variant.mode.key, $event)" aria-label="Toggle favorite">
+                            <mat-icon>{{ isFavorite(variant.game.key, variant.mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                        </button>
+                        <button class="action-btn" (click)="openInfo(variant.game.key, $event)" aria-label="Game info">
+                            <mat-icon>info_outline</mat-icon>
+                        </button>
                     </div>
-                </button>
+                </div>
                 }
             </div>
         </div>
