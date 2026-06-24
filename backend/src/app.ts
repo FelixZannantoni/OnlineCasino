@@ -85,7 +85,7 @@ const roundService: RoundService = new RoundService();
 const statsService: StatsService = new StatsService();
 
 const chatService: ChatService = new ChatService();
-export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService };
+export { rouletteService, roundService, chatService, onlineUsers, statsService };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
