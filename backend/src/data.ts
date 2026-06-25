@@ -47,7 +47,7 @@ export class DB {
                 displayName text,
                 streakCount integer,
                 lastStreakIncrement text, -- Timestamp in ISO format
-                isFromGithub integer,
+                isFromGithub integer default 0,
                 lastOnline text -- Timestamp in ISO format
             )
             `).run();
