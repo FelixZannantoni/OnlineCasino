@@ -18,11 +18,11 @@
                         <span class="variation-label">{{ fav.mode.label }}</span>
                         <span class="variation-tagline">{{ fav.mode.tagline }}</span>
                     </div>
-                    <div class="card-overlay">
-                        <button class="action-btn" (click)="toggleFavorite(fav.game.key, fav.mode.key, $event)" aria-label="Toggle favorite">
+                    <div class="card-actions">
+                        <button class="variation-favorite-btn" (click)="toggleFavorite(fav.game.key, fav.mode.key, $event)" aria-label="Toggle favorite">
                             <mat-icon>{{ isFavorite(fav.game.key, fav.mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
                         </button>
-                        <button class="action-btn" (click)="openInfo(fav.game.key, $event)" aria-label="Game info">
+                        <button class="variation-info-btn" (click)="openInfo(fav.game.key, $event)" aria-label="Game info">
                             <mat-icon>info_outline</mat-icon>
                         </button>
                     </div>
@@ -45,11 +45,11 @@
                         <span class="variation-label">{{ variant.mode.label }}</span>
                         <span class="variation-tagline">{{ variant.mode.tagline }}</span>
                     </div>
-                    <div class="card-overlay">
-                        <button class="action-btn" (click)="toggleFavorite(variant.game.key, variant.mode.key, $event)" aria-label="Toggle favorite">
+                    <div class="card-actions">
+                        <button class="variation-favorite-btn" (click)="toggleFavorite(variant.game.key, variant.mode.key, $event)" aria-label="Toggle favorite">
                             <mat-icon>{{ isFavorite(variant.game.key, variant.mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
                         </button>
-                        <button class="action-btn" (click)="openInfo(variant.game.key, $event)" aria-label="Game info">
+                        <button class="variation-info-btn" (click)="openInfo(variant.game.key, $event)" aria-label="Game info">
                             <mat-icon>info_outline</mat-icon>
                         </button>
                     </div>

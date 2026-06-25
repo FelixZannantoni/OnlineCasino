@@ -2,7 +2,7 @@
 .home-container {
     min-height: 100vh;
     background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
-    padding: 1.5rem 0 1.5rem 1.5rem;
+    padding: 0 0 1.5rem 1.5rem;
 }
 
 /* Main Content Grid */
@@ -20,7 +20,17 @@
     grid-template-columns: 1fr;
     gap: 1rem;
     padding-right: 1.5rem;
-    min-height: calc(100vh - 3rem);
+    padding-top: 1.5rem;
+    height: calc(100vh - 3rem);
+    overflow-y: auto;
+}
+
+.games-header-row {
+    width: 100%;
+}
+
+.games-header-row .news-banner {
+    width: 100%;
 }
 
 .variation-grid,
@@ -32,6 +42,7 @@
 }
 
 .variation-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -42,6 +53,51 @@
 
 .variation-card .game-card-content {
     align-items: flex-start;
+}
+
+.card-actions {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.variation-favorite-btn,
+.variation-info-btn {
+    background: rgba(0, 0, 0, 0.55);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    padding: 0;
+}
+
+.variation-favorite-btn mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #f44336;
+}
+
+.variation-info-btn mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--light-gold, #ffd700);
+}
+
+.variation-favorite-btn:hover,
+.variation-info-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
 }
 
 .variation-game {
@@ -305,9 +361,13 @@
 
 /* Sidebar */
 .sidebar {
+    animation: none !important;
+    display: block !important;
+    opacity: 1 !important;
+
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100%;
     background: var(--casino-surface);
     border-left: 2px solid var(--light-gold);
     display: flex;
