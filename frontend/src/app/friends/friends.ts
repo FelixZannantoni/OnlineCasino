@@ -118,7 +118,7 @@ export class Friends implements AfterViewChecked, OnInit {
   async sendMsg(): Promise<void> {
     if (!this.messageInput.trim() || !this.activeFriend) return;
 
-    const response = await fetch('http://localhost:3000/chats', {
+    const response = await fetch('/chats', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -147,7 +147,7 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async removeFriend(id: string): Promise<void> {
-    const response = await fetch('http://localhost:3000/users/friends', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends'
+    const response = await fetch('/users/friends', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -169,7 +169,7 @@ export class Friends implements AfterViewChecked, OnInit {
     const name = this.addInput.trim();
     if (!name) return;
 
-    const response = await fetch('http://localhost:3000/users/friends', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends'
+    const response = await fetch('/users/friends', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -202,7 +202,7 @@ export class Friends implements AfterViewChecked, OnInit {
   async loadPendingRequests(): Promise<PendingRequest[]> {
     const result: PendingRequest[] = [];
 
-    const response = await fetch(`http://localhost:3000/users/${this.dataService.userId()}/friends/pending`, { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/userId/users/friends/pending'
+    const response = await fetch(`/users/${this.dataService.userId()}/friends/pending`, {
       method: 'GET'
     });
 
@@ -245,7 +245,7 @@ export class Friends implements AfterViewChecked, OnInit {
   async loadFriends(): Promise<Friend[]> {
     const result: Friend[] = [];
 
-    const response = await fetch(`http://localhost:3000/users/${this.dataService.userId()}/friends`, { //TODO Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/userId/friends'
+    const response = await fetch(`/users/${this.dataService.userId()}/friends`, {
       method: 'GET'
     });
 
@@ -273,7 +273,7 @@ export class Friends implements AfterViewChecked, OnInit {
   async loadMessages(): Promise<Message[]> {
     const result: Message[] = [];
 
-    const response = await fetch(`http://localhost:3000/chats?userId=${this.dataService.userId()}`, { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/chats?userId=xxx'
+    const response = await fetch(`/chats?userId=${this.dataService.userId()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -298,7 +298,7 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async acceptReq(req: PendingRequest): Promise<void> {
-    const response = await fetch('http://localhost:3000/users/friends/accept', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends/accept'
+    const response = await fetch('/users/friends/accept', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -316,7 +316,7 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async declineReq(req: PendingRequest): Promise<void> {
-    const response = await fetch('http://localhost:3000/users/friends', { //TODO:  Wenn wir das in Main mergen, 'http://localhost:3000' löschen -> '/users/friends'
+    const response = await fetch('/users/friends', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
