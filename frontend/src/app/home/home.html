@@ -37,23 +37,30 @@
                     <span>Games</span>
                 </button>
             </div>
-            <div class="variation-grid">
-                @for (variant of gameVariants; track variant.game.key + '-' + variant.mode.key) {
-                <div class="game-card variation-card" (click)="launchGame(variant.game.key, variant.mode)">
+            <div class="variation-grid labeled-variation-grid">
+                @for (game of games; track game.key) {
+                <button class="news-banner row-label">
+                    <mat-icon class="news-icon">{{ iconFor(game.key) }}</mat-icon>
+                    <span>{{ game.title }}</span>
+                </button>
+                @for (mode of modes; track mode.key) {
+                <div class="game-card variation-card" (click)="launchGame(game.key, mode)">
                     <div class="game-card-content">
-                        <span class="variation-game">{{ variant.game.title }}</span>
-                        <span class="variation-label">{{ variant.mode.label }}</span>
-                        <span class="variation-tagline">{{ variant.mode.tagline }}</span>
+                        <span class="variation-game">{{ game.title }}</span>
+                        <span class="variation-label">{{ mode.label }}</span>
+                        <!-- <span class="variation-tagline">{{ mode.tagline }}
+                        </span> -->
                     </div>
                     <div class="card-actions">
-                        <button class="variation-favorite-btn" (click)="toggleFavorite(variant.game.key, variant.mode.key, $event)" aria-label="Toggle favorite">
-                            <mat-icon>{{ isFavorite(variant.game.key, variant.mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                        <button class="variation-favorite-btn" (click)="toggleFavorite(game.key, mode.key, $event)" aria-label="Toggle favorite">
+                            <mat-icon>{{ isFavorite(game.key, mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
                         </button>
-                        <button class="variation-info-btn" (click)="openInfo(variant.game.key, $event)" aria-label="Game info">
+                        <button class="variation-info-btn" (click)="openInfo(game.key, $event)" aria-label="Game info">
                             <mat-icon>info_outline</mat-icon>
                         </button>
                     </div>
                 </div>
+                }
                 }
             </div>
         </div>

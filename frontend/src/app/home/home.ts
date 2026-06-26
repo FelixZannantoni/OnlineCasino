@@ -50,6 +50,21 @@ export class Home {
     );
   }
 
+  iconFor(gameKey: string): string {
+    switch (gameKey) {
+      case 'Roulette':
+        return 'camera';
+      case 'Blackjack':
+        return 'style';
+      case 'PokerTexas':
+        return 'games';
+      case 'Slotmachine':
+        return 'stars';
+      default:
+        return 'casino';
+    }
+  }
+
   launchGame(gameKey: string, mode: ModeConfig): void {
     if (!this.isBrowser) return;
 
