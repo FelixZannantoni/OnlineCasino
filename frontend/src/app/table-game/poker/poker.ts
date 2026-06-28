@@ -227,6 +227,11 @@ export class Poker implements OnInit {
     return state.currentPlayerId === this.dataService.userId();
   });
 
+  protected isGameStarting = computed(() => {
+    const t = this.gameStartsIn();
+    return t !== null && t > 0;
+  });
+
   makeMove(action: 'fold' | 'check' | 'call' | 'bet' | 'raise', amount?: number): void {
     const gid = this.gameId();
     if (!gid) return;

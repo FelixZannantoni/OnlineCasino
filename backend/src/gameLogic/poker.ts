@@ -454,14 +454,16 @@ export class Poker extends CardGame<PokerPlayer> {
     }
 
     private moveToNextActivePlayer() {
-        let tries = 0;
         const totalPlayers = this.players.length;
+        if (totalPlayers === 0) return;
+
+        let tries = 0;
         do {
             this.currentPlayerIndex = (this.currentPlayerIndex + 1) % totalPlayers;
             tries++;
             // Skip players who folded OR are all-in (unless it's the start of the round and they need to check/call)
             const p = this.players[this.currentPlayerIndex];
-            if (!p.getPressedFold() && p.getBalance() > 0) return;
+            if (p && !p.getPressedFold() && p.getBalance() > 0) return;
         } while (tries < totalPlayers);
     }
 

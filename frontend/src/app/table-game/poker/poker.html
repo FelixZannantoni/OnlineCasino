@@ -194,7 +194,7 @@
           {{ selectedBetAmount() | number }}
         </div>
 
-        <button class="btn-confirm-bet" (click)="confirmBet()" [disabled]="(gameState()?.isLoading ?? false) || isProcessing()">
+        <button class="btn-confirm-bet" (click)="confirmBet()" [disabled]="(gameState()?.isLoading ?? false) || isProcessing() || isGameStarting()">
           BESTÄTIGEN
         </button>
         
@@ -203,14 +203,14 @@
     }
 
     <div style="display: flex; gap: 10px;">
-      <button class="btn-tip" (click)="tipDealer()" [disabled]="(gameState()?.isLoading ?? false)">Tip Dealer (10)</button>
-      <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">Fold</button>
-      <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">{{ checkOrCallLabel() }}</button>
+      <button class="btn-tip" (click)="tipDealer()" [disabled]="(gameState()?.isLoading ?? false) || isGameStarting()">Tip Dealer (10)</button>
+      <button class="btn-fold" (click)="makeMove('fold')" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing() || isGameStarting()">Fold</button>
+      <button class="btn-check" (click)="makeCheckOrCall()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing() || isGameStarting()">{{ checkOrCallLabel() }}</button>
       
       @if (showBetSlider()) {
-        <button class="btn-bet" (click)="confirmBet()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">{{ betOrRaiseLabel() }}</button>
+        <button class="btn-bet" (click)="confirmBet()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing() || isGameStarting()">{{ betOrRaiseLabel() }}</button>
       } @else {
-        <button class="btn-bet" (click)="toggleBetSlider()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing()">{{ betOrRaiseLabel() }}</button>
+        <button class="btn-bet" (click)="toggleBetSlider()" [disabled]="!isMyTurn() || (gameState()?.isLoading ?? false) || isProcessing() || isGameStarting()">{{ betOrRaiseLabel() }}</button>
       }
     </div>
   </div>
