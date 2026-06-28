@@ -4,12 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { Subscription, fromEvent } from 'rxjs';
 import { DataService } from '../services/data-service';
-import { execArgv } from 'process';
+import { Avatar } from '../avatar/avatar';
 
 @Component({
   selector: 'app-profile-overlay',
   standalone: true,
-  imports: [RouterLink, MatIconModule, CommonModule],
+  imports: [RouterLink, MatIconModule, CommonModule, Avatar],
   templateUrl: './profile-overlay.html',
   styleUrls: ['./profile-overlay.css']
 })
@@ -26,7 +26,6 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   public username: string | null = null;
   public displayName: string | null = null;
   public balance: number | null = null;
-  public profileImageUrl = 'https://via.placeholder.com/100';
   private readonly dataService = inject(DataService);
 
   constructor() {

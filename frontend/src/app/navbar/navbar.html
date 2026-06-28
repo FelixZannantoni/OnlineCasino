@@ -37,7 +37,7 @@
 
         <div class="navbar_right">
             <button class="profile_pic" (click)="toggleProfile()" aria-label="Open profile menu">
-                <img src="https://via.placeholder.com/40" alt="Profile" class="profile_image">
+                <app-avatar [name]="displayName() || 'Guest'" [size]="42" />
             </button>
         </div>
     </div>

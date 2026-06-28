@@ -8,11 +8,12 @@ import { BlackjackGameState, BlackjackPlayer } from '../../models/blackjack.mode
 import { getCardRank } from '../../services/card-utils';
 import { getBetLimits, getChipOptions, getModeConfigByMode } from '../../game-mode-overlay/game-mode-overlay';
 import { FormsModule } from '@angular/forms';
+import { Avatar } from '../../avatar/avatar';
 
 @Component({
   selector: 'app-blackjack',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, FormsModule],
+  imports: [CommonModule, TableGameComponent, FormsModule, Avatar],
   templateUrl: './blackjack.html',
   styleUrl: './blackjack.css',
 })

@@ -2,7 +2,7 @@
   @if (isCurrent()) { <div class="halo"></div> }
 
   <div class="player-avatar">
-    <img src="assets/default-avatar.png" alt="Avatar" />
+    <app-avatar [name]="displayName()" [size]="60" />
     @if (isDealer()) { <div class="dealer-chip">D</div> }
   </div>
 
