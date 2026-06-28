@@ -56,6 +56,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn('0'); track ob.playerId) {
+                                    <div class="other-bet-chip">
+                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
+                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                         </div>
 
@@ -71,6 +79,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container vertical">
+                                    @for (ob of getOtherBetsOn(colLabels[$index]); track ob.playerId) {
+                                    <div class="other-bet-chip">
+                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
+                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             @for (n of row; track n) {
                             <div class="cell ncell" [class.nr]="isRed(n)" [class.nb]="!isRed(n)" role="button"
@@ -81,6 +97,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn('' + n); track ob.playerId) {
+                                    <div class="other-bet-chip">
+                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
+                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             }
                             }
@@ -97,6 +121,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn(d.label); track ob.playerId) {
+                                    <div class="other-bet-chip">
+                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
+                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             }
                         </div>
@@ -120,6 +152,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn(e.label); track ob.playerId) {
+                                    <div class="other-bet-chip">
+                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
+                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             }
                         </div>
