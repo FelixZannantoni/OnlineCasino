@@ -24,6 +24,8 @@ import { ChatService } from "./services/chat-service";
 import { chatRouter } from "./router/chat-router";
 import { normalizeUserId } from "./utils";
 import { CosmeticsService } from "./services/cosmetics-service";
+import { ClubService } from "./services/club-service";
+import { clubRouter } from "./router/club-router";
 
 const PORT = process.env.PORT || 3000;
 
@@ -45,6 +47,7 @@ app.use("/roulette", rouletteRouter);
 app.use("/slotmachine", slotmachineRouter);
 app.use("/stats", statsRouter);
 app.use("/chats", chatRouter);
+app.use("/clubs", clubRouter);
 
 // Redirect root to login page
 app.get("/", (req, res) => {
@@ -83,9 +86,10 @@ const rouletteService: RouletteService = new RouletteService();
 const userService: UserService = new UserService();
 const roundService: RoundService = new RoundService();
 const statsService: StatsService = new StatsService();
+const clubService: ClubService = new ClubService();
 
 const chatService: ChatService = new ChatService();
-export { rouletteService, roundService, chatService, onlineUsers, statsService };
+export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService, clubService };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
