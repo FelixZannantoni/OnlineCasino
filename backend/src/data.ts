@@ -48,7 +48,8 @@ export class DB {
                 streakCount integer,
                 lastStreakIncrement text, -- Timestamp in ISO format
                 isFromGithub integer,
-                lastOnline text -- Timestamp in ISO format
+                lastOnline text, -- Timestamp in ISO format
+                clubId number default null
             )
             `).run();
 
@@ -123,7 +124,12 @@ export class DB {
                 timestamp text -- Timestamp in ISO format
             )
             `).run();
-
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS clubs (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                name text
+            )
+            `).run();
 
         await this.insertUserSampleData(connection);
         await this.insertGameSampleData(connection);

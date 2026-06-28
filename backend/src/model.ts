@@ -48,3 +48,16 @@ export type ChatMessage = {
     content: string,
     timestamp: Date
 }
+
+export type Cosmetic = {
+    id: number,
+    type: 'avatar' | 'card-back' | 'chip',
+    name: string,
+    price: number
+}
+
+export type Club = {
+    id: number,
+    name: string,
+    members: UserDisplay[]
+}

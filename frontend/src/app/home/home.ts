@@ -1,7 +1,14 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { DataService } from '../services/data-service';
+interface ClubMember {
+  uuid: string,
+  username: string,
+  displayname: string,
+  status: string
+}
 
 @Component({
   selector: 'app-home',
@@ -10,9 +17,13 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
-export class Home {
+export class Home implements OnInit {
   showLeaderboard = false;
   private isBrowser: boolean;
+
+  dataService: DataService = inject(DataService);
+  clubName: WritableSignal<string> = signal('[name]');
+  clubMembers: WritableSignal<ClubMember[]> = signal([]);
 
   favorites: { [key: string]: boolean } = {
     'Blackjack': false,
@@ -31,6 +42,21 @@ export class Home {
   constructor() {
     const platformId = inject(PLATFORM_ID);
     this.isBrowser = isPlatformBrowser(platformId);
+  }
+
+  async ngOnInit(): Promise<void> {
+    const res = await fetch(`/clubs/${this.dataService.getUserId()}`, {
+      method: 'GET'
+    });
+
+    if (res.ok) {
+      const club = (await res.json()).club;
+
+      if (club) {
+        this.clubName.set(club.name);
+        this.clubMembers.set(club.members);
+      }
+    }
   }
 
   setSlide(slide: 'friends' | 'leaderboard'): void {
