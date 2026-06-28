@@ -48,7 +48,7 @@ export class UserService {
 
             const connection: Database = await DB.createDBConnection();
 
-            const result = connection.prepare("INSERT INTO users (uuid, userName, passwordHash) VALUES (?, ?, ?)").run(
+            const result = connection.prepare("INSERT INTO users (uuid, userName, passwordHash, isFromGithub) VALUES (?, ?, ?, 0)").run(
                 uuid,
                 username,
                 pwHash

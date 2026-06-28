@@ -1,8 +1,8 @@
 /* Home Container */
 .home-container {
-    min-height: 100vh;
     background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
-    padding: 1.5rem 0 1.5rem 1.5rem;
+    padding: 0 0 0 1.5rem;
+    /* margin-bottom: 0; */
 }
 
 /* Main Content Grid */
@@ -16,16 +16,172 @@
 
 /* Games Section */
 .games-section {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
     padding-right: 1.5rem;
+    padding-top: 1.5rem;
+    height: calc(100vh - 1.5rem);
+    box-sizing: border-box;
+    overflow-y: auto;
+    align-content: start; /* <-- das */
 }
 
-.game-row {
+.games-header-row {
+    width: 100%;
+}
+
+.games-header-row .news-banner {
+    width: 100%;
+    height: auto;
+}
+
+.variation-grid,
+.favorites-grid {
     display: grid;
-    grid-template-columns: 160px 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(220px, 1fr);
     gap: 1rem;
+}
+
+.labeled-variation-grid {
+    grid-template-columns: 160px repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(180px, auto);
+}
+
+.row-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    min-height: 120px;
+    text-align: left;
+}
+
+.row-label .news-icon {
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+}
+
+.row-label span {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-gold);
+}
+
+.variation-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem;
+    min-height: 180px;
+    cursor: pointer;
+}
+
+.variation-card .game-card-content {
+    align-items: flex-start;
+}
+
+.card-actions {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.variation-favorite-btn,
+.variation-info-btn {
+    background: rgba(0, 0, 0, 0.55);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+    padding: 0;
+}
+
+.variation-favorite-btn mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #f44336;
+}
+
+.variation-info-btn mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--light-gold, #ffd700);
+}
+
+.variation-favorite-btn:hover,
+.variation-info-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
+}
+
+.variation-game {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.variation-label {
+    color: var(--text-gold);
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.variation-tagline {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.87rem;
+    line-height: 1.4;
+}
+
+.card-overlay {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.action-btn {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border-radius: 999px;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.05);
+}
+
+.fav-duplicate {
+    border-color: rgba(255, 193, 7, 0.75);
 }
 
 /* News Banner */
@@ -58,6 +214,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.news-banner span {
+    display: block;
+    width: 100%;
+    text-align: center;
 }
 
 .news-banner span:last-child {
@@ -236,9 +398,13 @@
 
 /* Sidebar */
 .sidebar {
+    animation: none !important;
+    display: block !important;
+    opacity: 1 !important;
+
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100%;
     background: var(--casino-surface);
     border-left: 2px solid var(--light-gold);
     display: flex;

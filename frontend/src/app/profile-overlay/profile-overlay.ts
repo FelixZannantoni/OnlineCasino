@@ -1,13 +1,15 @@
-import { Component, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { Subscription, fromEvent } from 'rxjs';
+import { DataService } from '../services/data-service';
+import { execArgv } from 'process';
 
 @Component({
   selector: 'app-profile-overlay',
   standalone: true,
-  imports: [RouterLink, MatIconModule],
+  imports: [RouterLink, MatIconModule, CommonModule],
   templateUrl: './profile-overlay.html',
   styleUrls: ['./profile-overlay.css']
 })
@@ -16,6 +18,16 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   private toggleSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private isBrowser: boolean;
+
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  // user data
+  public userId: string | null = null;
+  public username: string | null = null;
+  public displayName: string | null = null;
+  public balance: number | null = null;
+  public profileImageUrl = 'https://via.placeholder.com/100';
+  private readonly dataService = inject(DataService);
 
   constructor() {
     const platformId = inject(PLATFORM_ID);
@@ -30,6 +42,7 @@ export class ProfileOverlay implements OnInit, OnDestroy {
         window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
         this.isOpen = !this.isOpen;
         this.updateBodyScroll();
+        if (this.isOpen) this.loadUserData();
       });
 
     fromEvent(window, 'closeOtherOverlays').subscribe(() => {
@@ -43,6 +56,26 @@ export class ProfileOverlay implements OnInit, OnDestroy {
           console.log('pressed escape')
         }
       });
+  }
+
+  private async loadUserData(): Promise<void> {
+      if (!this.isBrowser) return;
+      const id = this.dataService.getUserId();
+      this.userId = id;
+      if (!id) return;
+
+      try {
+        const res = await fetch(`/users/${id}`);
+        if (!res.ok) return;
+        const body = await res.json();
+        this.username = body.username || null;
+        this.displayName = body.displayname || null;
+        this.balance = typeof body.balance === 'number' ? body.balance : null;
+        
+        this.cdr.detectChanges();
+      } catch (e) {
+        console.error('Failed to load user data', e);
+      }
   }
 
   ngOnDestroy(): void {

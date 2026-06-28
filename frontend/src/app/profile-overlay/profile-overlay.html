@@ -12,10 +12,13 @@
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-picture">
-                <img src="https://via.placeholder.com/100" alt="Profile Picture">
+                <img [src]="profileImageUrl" alt="Profile Picture">
             </div>
-            <h3 class="username">Benutzername</h3>
-            <p class="user-email">user@example.com</p>
+            <h3 class="displayName">{{ displayName || 'User' }}</h3>
+            <p class="userName">{{ username || '—' }}</p>
+            @if (balance !== null) {
+                <p class="user-balance">Balance: {{ balance | number:'1.2-2' }}</p>
+            }
         </div>
 
         <!-- Menu Items -->

@@ -23,6 +23,7 @@ import { statsRouter } from "./router/stats-router";
 import { ChatService } from "./services/chat-service";
 import { chatRouter } from "./router/chat-router";
 import { normalizeUserId } from "./utils";
+import { CosmeticsService } from "./services/cosmetics-service";
 
 const PORT = process.env.PORT || 3000;
 
@@ -84,7 +85,7 @@ const roundService: RoundService = new RoundService();
 const statsService: StatsService = new StatsService();
 
 const chatService: ChatService = new ChatService();
-export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService };
+export { rouletteService, roundService, chatService, onlineUsers, statsService };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
@@ -97,6 +98,8 @@ export function onMessageSentToUser(receiverId: string) {
         console.log(`Notified user ${receiverId} of new message via socket ${receiverSocketId}`);
     }
 }
+const cosmeticsService: CosmeticsService = new CosmeticsService();
+export { pokerService, blackjackService, userService, cosmeticsService };
 
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);

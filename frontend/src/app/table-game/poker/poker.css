@@ -316,7 +316,12 @@
 }
 
 .board-area {
-    position: relative;
+    /* Must span the full table area so that the percentage-based
+       top/left on .board-cards (and the timer) actually center
+       against the table instead of collapsing to a 0x0 box. */
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 .game-start-timer {

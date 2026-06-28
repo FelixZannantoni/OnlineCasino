@@ -14,7 +14,7 @@ export class SocketService {
     this.isBrowser = isPlatformBrowser(platformId);
     
     if (this.isBrowser) {
-      this.socket = io('http://localhost:3000', {
+      this.socket = io('/', {
         transports: ['websocket']
       });
 
