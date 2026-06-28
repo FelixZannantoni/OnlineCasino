@@ -7,29 +7,36 @@
   text-align: center;
   width: 140px;
   transition: all 0.3s ease;
-  overflow: visible; /* Wichtig damit Karten rausragen können */
+  overflow: visible; /* cards must be able to overflow the slot */
 }
+
 .player-slot.active {
-  border-color: #ffd700;
+  border-color: var(--gold);
   background: rgba(50, 40, 20, 0.9);
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 15px rgba(200, 165, 80, 0.5);
 }
+
 .halo {
   position: absolute;
-  top: -5px; left: -5px; right: -5px; bottom: -5px;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
   border: 3px solid transparent;
   border-radius: 10px;
-  background: linear-gradient(rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 0.3)) border-box;
+  background: linear-gradient(rgba(200, 165, 80, 0.8), rgba(200, 165, 80, 0.3)) border-box;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: halo-glow 2s ease-in-out infinite;
+  animation: haloGlow 2s ease-in-out infinite;
   z-index: -1;
 }
-@keyframes halo-glow {
-  0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
-  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+
+@keyframes haloGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(200, 165, 80, 0.6); }
+  50%      { box-shadow: 0 0 20px rgba(200, 165, 80, 0.8); }
 }
+
 .player-avatar {
   width: 60px;
   height: 60px;
@@ -40,49 +47,65 @@
   position: relative;
   z-index: 1;
 }
-.player-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.dealer-chip {
-  position: absolute; bottom: 0; right: 0;
-  width: 18px; height: 18px;
-  background: #fff; border: 2px solid #333;
-  border-radius: 50%; color: #000;
-  font-weight: bold; font-size: 10px;
-  display: flex; align-items: center; justify-content: center;
-}
-.player-name { font-weight: bold; color: #fff; font-size: 12px; margin-bottom: 2px; }
-.player-balance { color: #4ade80; font-size: 11px; font-weight: bold; }
-.player-bet { color: #ffd700; font-size: 10px; font-weight: bold; }
 
-/* Karten unter dem Avatar */
+.player-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.dealer-chip {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border: 2px solid #333;
+  border-radius: 50%;
+  color: #000;
+  font-weight: bold;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-name { font-weight: bold; color: #fff; font-size: 12px; margin-bottom: 2px; }
+.player-balance { color: var(--success); font-size: 11px; font-weight: bold; }
+.player-bet { color: var(--gold); font-size: 10px; font-weight: bold; }
+
+/* Cards under the avatar */
 .player-hand {
   display: flex;
   justify-content: center;
   gap: 2px;
   margin-top: 8px;
   position: relative;
-  height: 40px; /* Platz für Mini-Karten */
+  height: 40px;
 }
+
 .mini-card {
   width: 30px;
   height: 42px;
   border-radius: 3px;
   background: white;
-  box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   position: relative;
 }
+
 .card-back {
   background: repeating-linear-gradient(45deg, #b71c1c, #b71c1c 3px, #d32f2f 3px, #d32f2f 6px);
   border: 1px solid #fff;
 }
+
 .card-top-mini {
   position: absolute;
-  top: 2px; left: 2px;
+  top: 2px;
+  left: 2px;
   font-size: 8px;
   line-height: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .card-suit-mini { font-size: 8px; }
 .suit-hearts, .suit-diamonds { color: red; }
 .suit-clubs, .suit-spades { color: black; }
@@ -92,8 +115,8 @@
   bottom: -15px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.8);
-  color: #ffd700;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--gold);
   padding: 1px 4px;
   border-radius: 5px;
   font-size: 9px;
@@ -103,7 +126,7 @@
 
 .player-limits {
   font-size: 0.7rem;
-  color: rgba(255, 215, 0, 0.5);
+  color: rgba(200, 165, 80, 0.5);
   margin-top: 2px;
   letter-spacing: 0.3px;
 }

@@ -13,12 +13,7 @@
             <div class="input-group" [class.has-error]="lf['loginEmail'].touched && lf['loginEmail'].invalid">
                 <mat-icon class="input-icon">person_outline</mat-icon>
                 <input type="text" placeholder="Username" formControlName="loginEmail" autocomplete="username">
-                @if (fieldError(loginForm, 'loginEmail', 'required')) {
-                    <span class="field-error">Username is required.</span>
-                }
-                @if (fieldError(loginForm, 'loginEmail', 'minlength')) {
-                    <span class="field-error">Username must be at least 3 characters.</span>
-                }
+                <!-- no client-side validation messages for login -->
             </div>
 
             <div class="input-group" [class.has-error]="lf['loginPassword'].touched && lf['loginPassword'].invalid">
@@ -28,20 +23,13 @@
                 <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('login')">
                     {{ showLoginPassword ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
-                @if (fieldError(loginForm, 'loginPassword', 'required')) {
-                    <span class="field-error">Password is required.</span>
-                }
-                @if (fieldError(loginForm, 'loginPassword', 'minlength')) {
-                    <span class="field-error">Password must be at least 8 characters.</span>
-                }
+                <!-- no client-side validation messages for login -->
             </div>
 
-            @if (loginError) {
-                <div class="form-error">
-                    <mat-icon>error_outline</mat-icon>
-                    {{ loginError }}
-                </div>
-            }
+            <div *ngIf="loginError" class="form-error">
+                <mat-icon>error_outline</mat-icon>
+                {{ loginError }}
+            </div>
 
             <a class="forgot-password-link" routerLink="/forgot-password">Forgot your password?</a>
 
@@ -75,40 +63,24 @@
             <div class="input-group" [class.has-error]="rf['registerName'].touched && rf['registerName'].invalid">
                 <mat-icon class="input-icon">person_outline</mat-icon>
                 <input type="text" placeholder="Username" formControlName="registerName" autocomplete="username">
-                @if (fieldError(registerForm, 'registerName', 'required')) {
-                    <span class="field-error">Username is required.</span>
-                }
-                @if (fieldError(registerForm, 'registerName', 'minlength')) {
-                    <span class="field-error">At least 3 characters required.</span>
-                }
-                @if (fieldError(registerForm, 'registerName', 'maxlength')) {
-                    <span class="field-error">Maximum 20 characters.</span>
-                }
-                @if (fieldError(registerForm, 'registerName', 'pattern')) {
-                    <span class="field-error">No spaces allowed in username.</span>
-                }
+                <span *ngIf="fieldError(registerForm, 'registerName', 'required')" class="field-error">Username is required.</span>
+                <span *ngIf="fieldError(registerForm, 'registerName', 'minlength')" class="field-error">At least 3 characters required.</span>
+                <span *ngIf="fieldError(registerForm, 'registerName', 'maxlength')" class="field-error">Maximum 20 characters.</span>
+                <span *ngIf="fieldError(registerForm, 'registerName', 'pattern')" class="field-error">No spaces allowed in username.</span>
             </div>
 
             <div class="input-group" [class.has-error]="rf['registerDisplayName'].touched && rf['registerDisplayName'].invalid">
                 <mat-icon class="input-icon">person</mat-icon>
                 <input type="text" placeholder="Display Name" formControlName="registerDisplayName" autocomplete="name">
-                @if (fieldError(registerForm, 'registerDisplayName', 'required')) {
-                    <span class="field-error">Display name is required.</span>
-                }
-                @if (fieldError(registerForm, 'registerDisplayName', 'minlength')) {
-                    <span class="field-error">At least 2 characters required.</span>
-                }
+                <span *ngIf="fieldError(registerForm, 'registerDisplayName', 'required')" class="field-error">Display name is required.</span>
+                <span *ngIf="fieldError(registerForm, 'registerDisplayName', 'minlength')" class="field-error">At least 2 characters required.</span>
             </div>
 
             <div class="input-group" [class.has-error]="rf['registerEmail'].touched && rf['registerEmail'].invalid">
                 <mat-icon class="input-icon">mail_outline</mat-icon>
                 <input type="email" placeholder="Email" formControlName="registerEmail" autocomplete="email">
-                @if (fieldError(registerForm, 'registerEmail', 'required')) {
-                    <span class="field-error">Email is required.</span>
-                }
-                @if (fieldError(registerForm, 'registerEmail', 'email')) {
-                    <span class="field-error">Enter a valid email address.</span>
-                }
+                <span *ngIf="fieldError(registerForm, 'registerEmail', 'required')" class="field-error">Email is required.</span>
+                <span *ngIf="fieldError(registerForm, 'registerEmail', 'email')" class="field-error">Enter a valid email address.</span>
             </div>
 
             <div class="input-group" [class.has-error]="rf['registerPassword'].touched && rf['registerPassword'].invalid">
@@ -118,15 +90,9 @@
                 <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('register')">
                     {{ showRegisterPassword ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
-                @if (fieldError(registerForm, 'registerPassword', 'required')) {
-                    <span class="field-error">Password is required.</span>
-                }
-                @if (fieldError(registerForm, 'registerPassword', 'minlength')) {
-                    <span class="field-error">At least 8 characters required.</span>
-                }
-                @if (fieldError(registerForm, 'registerPassword', 'pattern')) {
-                    <span class="field-error">Must include one uppercase letter and one number.</span>
-                }
+                <span *ngIf="fieldError(registerForm, 'registerPassword', 'required')" class="field-error">Password is required.</span>
+                <span *ngIf="fieldError(registerForm, 'registerPassword', 'minlength')" class="field-error">At least 8 characters required.</span>
+                <span *ngIf="fieldError(registerForm, 'registerPassword', 'pattern')" class="field-error">Must include one uppercase letter and one number.</span>
             </div>
 
             <div class="input-group" [class.has-error]="rf['passwordConfirm'].touched && (rf['passwordConfirm'].invalid || registerForm.errors?.['passwordMismatch'])">
@@ -136,20 +102,14 @@
                 <mat-icon class="input-icon toggle-password" (click)="togglePasswordVisibility('confirm')">
                     {{ showRegisterPasswordConfirm ? 'visibility' : 'visibility_off' }}
                 </mat-icon>
-                @if (fieldError(registerForm, 'passwordConfirm', 'required')) {
-                    <span class="field-error">Please confirm your password.</span>
-                }
-                @if (rf['passwordConfirm'].touched && registerForm.errors?.['passwordMismatch']) {
-                    <span class="field-error">Passwords do not match.</span>
-                }
+                <span *ngIf="fieldError(registerForm, 'passwordConfirm', 'required')" class="field-error">Please confirm your password.</span>
+                <span *ngIf="rf['passwordConfirm'].touched && registerForm.errors?.['passwordMismatch']" class="field-error">Passwords do not match.</span>
             </div>
 
-            @if (registerError) {
-                <div class="form-error">
-                    <mat-icon>error_outline</mat-icon>
-                    {{ registerError }}
-                </div>
-            }
+            <div *ngIf="registerError" class="form-error">
+                <mat-icon>error_outline</mat-icon>
+                {{ registerError }}
+            </div>
 
             <div class="accent-line"></div>
 

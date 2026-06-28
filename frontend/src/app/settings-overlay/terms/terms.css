@@ -1,78 +1,45 @@
-.terms-content {
-    padding: 1rem 2rem 2rem 2rem;
-}
+.terms-content { padding: 1rem 2rem 2rem; }
 
 .terms-content h2 {
-    font-size: 1.5rem;
-    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-family: var(--font-display);
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.2rem;
 }
 
-.subtitle {
-    color: #666;
-    font-size: 0.95rem;
-    margin: 0 0 1.5rem 0;
-}
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 1.5rem; }
 
-h2 {
-    padding-bottom: 0.2rem;
-}
-
-.terms-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
+.terms-list { display: flex; flex-direction: column; gap: 1rem; }
 
 .terms-item {
-    display: flex;
-    gap: 1rem;
-    background: rgba(209, 158, 29, 0.05);
-    border: 1px solid rgba(209, 158, 29, 0.2);
-    border-radius: 12px;
-    padding: 1rem;
-    transition: all 0.3s ease;
+  display: flex;
+  gap: 1rem;
+  background: var(--gold-subtle);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.3s ease;
 }
 
-.terms-item:hover {
-    background: rgba(209, 158, 29, 0.1);
-    border-color: #d19e1d;
-}
+.terms-item:hover { background: rgba(200, 165, 80, 0.1); border-color: var(--gold); }
 
 .terms-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--gold-gradient);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.terms-icon mat-icon {
-    color: #0a0a0a;
-    font-size: 1.3rem;
-    width: 1.3rem;
-    height: 1.3rem;
-}
+.terms-icon mat-icon { color: var(--bg); font-size: 1.3rem; width: 1.3rem; height: 1.3rem; }
 
-.terms-text {
-    flex: 1;
-}
-
-.terms-text h3 {
-    color: #ffd86e;
-    font-size: 1rem;
-    margin: 0 0 0.5rem 0;
-}
-
-.terms-text p {
-    color: #666;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin: 0;
-}
+.terms-text { flex: 1; }
+.terms-text h3 { color: var(--gold-light); font-size: 1rem; margin: 0 0 0.5rem; }
+.terms-text p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin: 0; }

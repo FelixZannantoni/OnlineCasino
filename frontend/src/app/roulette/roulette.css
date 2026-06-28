@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap');
-
 :host {
   display: block;
 }
@@ -12,11 +10,11 @@
 
 /*  SHELL  */
 .roulette-shell {
-  background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Roboto Condensed', sans-serif;
+  font-family: var(--font-body);
 }
 
 /*  TOP BAR  */
@@ -26,15 +24,15 @@
   align-items: center;
   padding: 10px 20px;
   background: rgba(0, 0, 0, 0.5);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.3);
+  border-bottom: 1px solid rgba(200, 165, 80, 0.3);
 }
 
 .logo {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 700;
-  letter-spacing: 6px;
-  color: #c9a84c;
+  letter-spacing: 4px;
+  color: var(--gold);
 }
 
 .recent-nums {
@@ -59,7 +57,7 @@
   justify-content: center;
   font-size: 9px;
   font-weight: 700;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
 }
 
 .rc-r {
@@ -87,37 +85,37 @@
 .bal-lbl {
   font-size: 10px;
   letter-spacing: 3px;
-  color: rgba(201, 168, 76, 0.5);
+  color: rgba(200, 165, 80, 0.5);
   text-transform: uppercase;
 }
 
 .bal-num {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 24px;
   font-weight: 700;
-  color: #f0c040;
+  color: var(--gold-light);
   letter-spacing: 2px;
 }
 
 /* TIMER */
 .timer-wrap {
   text-align: center;
-  background: rgba(201, 168, 76, 0.05);
+  background: rgba(200, 165, 80, 0.05);
   padding: 4px 15px;
   border-radius: 8px;
-  border: 1px solid rgba(201, 168, 76, 0.15);
+  border: 1px solid rgba(200, 165, 80, 0.15);
   min-width: 100px;
 }
 
 .timer-lbl {
   font-size: 9px;
   letter-spacing: 2px;
-  color: rgba(201, 168, 76, 0.4);
+  color: rgba(200, 165, 80, 0.4);
   text-transform: uppercase;
 }
 
 .timer-num {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 20px;
   font-weight: 700;
   color: #fff;
@@ -160,7 +158,7 @@
   justify-content: center;
   padding: 20px 12px;
   gap: 16px;
-  border-right: 1px solid rgba(201, 168, 76, 0.15);
+  border-right: 1px solid rgba(200, 165, 80, 0.15);
   background: rgba(0, 0, 0, 0.2);
 }
 
@@ -176,7 +174,7 @@
   border-radius: 50%;
   box-shadow:
     0 0 0 4px #2c1200,
-    0 0 0 6px #c9a84c,
+    0 0 0 6px var(--gold),
     0 0 0 10px #1a0b00,
     0 12px 40px rgba(0, 0, 0, 0.9);
 }
@@ -197,12 +195,12 @@
 }
 
 .result-display {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 26px;
   font-weight: 700;
   letter-spacing: 3px;
   min-height: 40px;
-  color: #c9a84c;
+  color: var(--gold);
   text-align: center;
 }
 
@@ -234,7 +232,7 @@
   padding: 8px;
   border: 2px solid #5a3010;
   box-shadow:
-    0 0 0 1px rgba(201, 168, 76, 0.25),
+    0 0 0 1px rgba(200, 165, 80, 0.25),
     0 10px 50px rgba(0, 0, 0, 0.9),
     inset 0 2px 4px rgba(0, 0, 0, 0.8);
   flex: 1;
@@ -282,7 +280,7 @@
 }
 
 .cell:focus-visible {
-  outline: 2px solid #f0c040;
+  outline: 2px solid var(--gold-light);
   outline-offset: 2px;
   z-index: 4;
 }
@@ -298,7 +296,7 @@
 .zcell {
   background: linear-gradient(135deg, #1e7a1e, #145214);
   border-radius: 3px;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 20px;
   font-weight: 700;
   color: #fff;
@@ -307,7 +305,7 @@
 .dzcell {
   background: linear-gradient(135deg, #1e7a1e, #145214);
   border-radius: 3px;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 3px;
@@ -324,7 +322,7 @@
 
 .ncell {
   border-radius: 2px;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 16px;
   font-weight: 700;
   color: #fff;
@@ -342,7 +340,7 @@
 .col-label {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 2px;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 11px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
@@ -368,7 +366,7 @@
 .dcell {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
   border-radius: 3px;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 2px;
@@ -393,7 +391,7 @@
   border-radius: 3px;
   flex-direction: column;
   gap: 2px;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
 }
 
 .eg {
@@ -449,184 +447,16 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   z-index: 3;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
-/*  CHIP TRAY  */
-.tray {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(90deg, #1a0b00, #2c1200, #1a0b00);
-  border: 1px solid rgba(90, 48, 16, 0.8);
-  border-radius: 8px;
-  padding: 8px 14px;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
-  flex-shrink: 0;
-}
-
-.tray-lbl {
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: rgba(201, 168, 76, 0.4);
-  text-transform: uppercase;
-  margin-right: 4px;
-  white-space: nowrap;
-}
-
-.chip-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  transition: all 0.15s;
-  border: 3px solid;
-  position: relative;
-}
-
-.chip-btn::before {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.3);
-  pointer-events: none;
-}
-
-.chip-btn:focus-visible {
-  outline: 2px solid #f0c040;
-  outline-offset: 3px;
-}
-
-.chip-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
-}
-
-.chip-btn.on {
-  transform: translateY(-7px);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.8), 0 0 0 2px #f0c040;
-}
-
-.ch1 {
-  background: #e2e8f0;
-  border-color: #94a3b8;
-  color: #1e293b;
-}
-
-.ch5 {
-  background: #dc2626;
-  border-color: #7f1d1d;
-  color: #fff;
-}
-
-.ch10 {
-  background: #3b82f6;
-  border-color: #1d4ed8;
-  color: #fff;
-}
-
-.ch25 {
-  background: #10b981;
-  border-color: #064e3b;
-  color: #fff;
-}
-
-.ch50 {
-  background: #f59e0b;
-  border-color: #92400e;
-  color: #fff;
-}
-
-.ch100 {
-  background: #1e293b;
-  border-color: #0f172a;
-  color: #fff;
-}
-
-.ch250 {
-  background: #06b6d4;
-  border-color: #083344;
-  color: #fff;
-}
-
-.ch500 {
-  background: #8b5cf6;
-  border-color: #4c1d95;
-  color: #f0c040;
-}
-
-.ch1000 {
-  background: #fbbf24;
-  border-color: #92400e;
-  color: #78350f;
-}
-
-.ch2500 {
-  background: #047857;
-  border-color: #064e3b;
-  color: #fff;
-}
-
-.ch5000 {
-  background: #991b1b;
-  border-color: #7f1d1d;
-  color: #fff;
-}
-
-.ch10000 {
-  background: #1e3a8a;
-  border-color: #172554;
-  color: #fff;
-}
-
-.ch50000 {
-  background: #581c87;
-  border-color: #3b0764;
-  color: #fff;
-}
-
-
-.tray-gap {
-  flex: 1;
-}
-
-.tbtn {
-  background: rgba(201, 168, 76, 0.08);
-  border: 1px solid rgba(201, 168, 76, 0.25);
-  border-radius: 5px;
-  color: rgba(201, 168, 76, 0.65);
-  font-size: 11px;
-  letter-spacing: 1px;
-  padding: 7px 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: 'Roboto Condensed', sans-serif;
-}
-
-.tbtn:hover:not(:disabled) {
-  background: rgba(201, 168, 76, 0.16);
-  color: #c9a84c;
-}
-
-.tbtn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
 
 /*  SIDEBAR  */
 .sidebar {
-  border-left: 1px solid rgba(201, 168, 76, 0.15);
-  background: linear-gradient(180deg, #0d0f1e, #111627);
+  border-left: 1px solid rgba(200, 165, 80, 0.15);
+  background: linear-gradient(180deg, var(--bg), var(--surface));
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -637,11 +467,11 @@
 .ready-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(90deg, #7a5c18, #c9a84c, #f0c040, #c9a84c, #7a5c18);
+  background: linear-gradient(90deg, #7a5c18, var(--gold), var(--gold-light), var(--gold), #7a5c18);
   background-size: 300% 100%;
   border: none;
   border-radius: 6px;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 5px;
@@ -654,7 +484,7 @@
 
 .ready-btn:not(:disabled):hover {
   transform: scale(1.02);
-  box-shadow: 0 4px 24px rgba(201, 168, 76, 0.4);
+  box-shadow: 0 4px 24px rgba(200, 165, 80, 0.4);
 }
 
 .ready-btn:not(:disabled):active {
@@ -675,7 +505,7 @@
 }
 
 .ready-btn:focus-visible {
-  outline: 2px solid #f0c040;
+  outline: 2px solid var(--gold-light);
   outline-offset: 2px;
 }
 
@@ -690,19 +520,19 @@
 }
 
 .scard {
-  border: 1px solid rgba(201, 168, 76, 0.16);
+  border: 1px solid rgba(200, 165, 80, 0.16);
   border-radius: 6px;
   overflow: hidden;
   flex-shrink: 0;
 }
 
 .shead {
-  background: rgba(201, 168, 76, 0.06);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+  background: rgba(200, 165, 80, 0.06);
+  border-bottom: 1px solid rgba(200, 165, 80, 0.1);
   padding: 6px 10px;
   font-size: 9px;
   letter-spacing: 3px;
-  color: rgba(201, 168, 76, 0.5);
+  color: rgba(200, 165, 80, 0.5);
   text-transform: uppercase;
 }
 
@@ -725,8 +555,8 @@
 
 .ba {
   font-size: 11px;
-  color: #c9a84c;
-  font-family: 'Oswald', sans-serif;
+  color: var(--gold);
+  font-family: var(--font-label);
 }
 
 .nobets {
@@ -742,21 +572,21 @@
   justify-content: space-between;
   margin-top: 7px;
   padding-top: 7px;
-  border-top: 1px solid rgba(201, 168, 76, 0.25);
+  border-top: 1px solid rgba(200, 165, 80, 0.25);
 }
 
 .tl {
   font-size: 8px;
   letter-spacing: 2px;
-  color: rgba(201, 168, 76, 0.45);
+  color: rgba(200, 165, 80, 0.45);
   text-transform: uppercase;
 }
 
 .tv {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 16px;
   font-weight: 700;
-  color: #f0c040;
+  color: var(--gold-light);
 }
 
 .rstrip {
@@ -774,7 +604,7 @@
   justify-content: center;
   font-size: 9px;
   font-weight: 700;
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
 }
 
 .rb-r {
@@ -819,8 +649,8 @@ dl {
 
 .ov {
   font-size: 11px;
-  color: rgba(201, 168, 76, 0.75);
-  font-family: 'Oswald', sans-serif;
+  color: rgba(200, 165, 80, 0.75);
+  font-family: var(--font-label);
   margin: 0;
 }
 
@@ -891,7 +721,7 @@ dl {
 }
 
 .other-chip-amount {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-label);
   font-size: 7px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
@@ -903,9 +733,9 @@ dl {
   position: absolute;
   top: -5px;
   left: 80%;
-  background: rgba(15, 23, 42, 0.85); /* Slate 900 background */
+  background: rgba(15, 23, 42, 0.85);
   color: #fff;
-  font-family: 'Roboto Condensed', sans-serif;
+  font-family: var(--font-body);
   font-size: 6px;
   font-weight: 700;
   padding: 1px 3.5px;

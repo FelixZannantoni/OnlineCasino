@@ -2,7 +2,7 @@
 
 :host {
     display: block;
-    background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
     min-height: 100vh;
 }
 
@@ -19,9 +19,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-raised) 100%);
     border-radius: 16px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    border: 2px solid rgba(200, 165, 80, 0.3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     margin-bottom: 2rem;
 }
@@ -37,12 +37,13 @@
     width: 2rem;
     height: 2rem;
     color: var(--light-gold);
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+    filter: drop-shadow(0 0 10px rgba(200, 165, 80, 0.5));
 }
 
 .shop-title h1 {
     margin: 0;
-    font-size: 1.6rem;
+    font-family: var(--font-display);
+    font-size: 1.7rem;
     font-weight: 700;
     color: #fff;
 }
@@ -60,7 +61,7 @@
     background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-dark) 100%);
     border-radius: 999px;
     border: 2px solid var(--light-gold);
-    box-shadow: 0 2px 12px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 2px 12px rgba(200, 165, 80, 0.3);
 }
 
 .balance-badge mat-icon {
@@ -85,7 +86,7 @@
     padding: 1.5rem;
     background: linear-gradient(135deg, var(--navbar-dark) 0%, var(--navbar-mid) 50%, var(--navbar-dark) 100%);
     border-radius: 20px;
-    border: 2px solid rgba(255, 215, 0, 0.4);
+    border: 2px solid rgba(200, 165, 80, 0.4);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
     margin-bottom: 2rem;
     position: relative;
@@ -99,7 +100,7 @@
     right: -20%;
     width: 60%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(255, 215, 0, 0.12) 0%, transparent 60%);
+    background: radial-gradient(ellipse, rgba(200, 165, 80, 0.12) 0%, transparent 60%);
     pointer-events: none;
 }
 
@@ -108,10 +109,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.02) 100%);
+    background: linear-gradient(135deg, rgba(200, 165, 80, 0.1) 0%, rgba(200, 165, 80, 0.02) 100%);
     border-radius: 16px;
-    border: 2px solid rgba(255, 215, 0, 0.4);
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(200, 165, 80, 0.4);
+    box-shadow: 0 4px 20px rgba(200, 165, 80, 0.2);
     position: relative;
     z-index: 1;
 }
@@ -121,7 +122,7 @@
     width: 3.5rem;
     height: 3.5rem;
     color: var(--light-gold);
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+    filter: drop-shadow(0 0 15px rgba(200, 165, 80, 0.7));
     animation: chipFloat 3s ease-in-out infinite;
 }
 
@@ -160,10 +161,11 @@
 
 .featured-content h2 {
     margin: 0;
-    font-size: 1.5rem;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--light-gold);
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    text-shadow: 0 0 15px rgba(200, 165, 80, 0.4);
 }
 
 .featured-content p {
@@ -210,13 +212,13 @@
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.4s ease;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(200, 165, 80, 0.4);
 }
 
 .featured-btn:hover {
     background-position: 0% 50%;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+    box-shadow: 0 6px 20px rgba(200, 165, 80, 0.6);
 }
 
 .featured-btn mat-icon {
@@ -239,7 +241,7 @@
     gap: 0.5rem;
     padding: 0.65rem 1.1rem;
     background: rgba(26, 26, 46, 0.8);
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(200, 165, 80, 0.2);
     border-radius: 12px;
     color: rgba(255, 255, 255, 0.75);
     font-weight: 600;
@@ -255,18 +257,18 @@
 }
 
 .filter-tab:hover {
-    border-color: rgba(255, 215, 0, 0.5);
+    border-color: rgba(200, 165, 80, 0.5);
     background: rgba(97, 48, 146, 0.5);
     color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(200, 165, 80, 0.15);
 }
 
 .filter-tab.active {
     background: var(--primary-gold-gradient);
     border-color: var(--light-gold);
     color: var(--text-gold-dark);
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(200, 165, 80, 0.4);
 }
 
 .filter-tab.active mat-icon {
@@ -284,7 +286,7 @@
     position: relative;
     background: linear-gradient(145deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.9) 100%);
     border-radius: 16px;
-    border: 2px solid rgba(255, 215, 0, 0.15);
+    border: 2px solid rgba(200, 165, 80, 0.15);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -324,12 +326,12 @@
 }
 
 .product-item[data-rarity="legendary"] {
-    border-color: rgba(255, 215, 0, 0.5);
+    border-color: rgba(200, 165, 80, 0.5);
 }
 
 .product-item[data-rarity="legendary"]:hover {
-    border-color: rgba(255, 215, 0, 0.8);
-    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.5);
+    border-color: rgba(200, 165, 80, 0.8);
+    box-shadow: 0 12px 35px rgba(200, 165, 80, 0.5);
 }
 
 .product-image-area {
@@ -364,10 +366,10 @@
     justify-content: center;
     width: 75px;
     height: 75px;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.03) 100%);
+    background: linear-gradient(135deg, rgba(200, 165, 80, 0.12) 0%, rgba(200, 165, 80, 0.03) 100%);
     border-radius: 50%;
-    border: 2px solid rgba(255, 215, 0, 0.25);
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15);
+    border: 2px solid rgba(200, 165, 80, 0.25);
+    box-shadow: 0 4px 15px rgba(200, 165, 80, 0.15);
 }
 
 .product-icon mat-icon {
@@ -375,7 +377,7 @@
     width: 2.5rem;
     height: 2.5rem;
     color: var(--light-gold);
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+    filter: drop-shadow(0 0 8px rgba(200, 165, 80, 0.4));
 }
 
 .product-info {
@@ -406,7 +408,7 @@
     justify-content: space-between;
     margin-top: 0.6rem;
     padding-top: 0.75rem;
-    border-top: 1px solid rgba(255, 215, 0, 0.15);
+    border-top: 1px solid rgba(200, 165, 80, 0.15);
 }
 
 .product-price {
@@ -440,12 +442,12 @@
     width: 38px;
     height: 38px;
     background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-dark) 100%);
-    border: 2px solid rgba(255, 215, 0, 0.4);
+    border: 2px solid rgba(200, 165, 80, 0.4);
     border-radius: 10px;
     color: var(--light-gold);
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(200, 165, 80, 0.2);
 }
 
 .add-btn:hover {
@@ -453,7 +455,7 @@
     border-color: var(--light-gold);
     color: var(--text-gold-dark);
     transform: scale(1.08);
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 4px 15px rgba(200, 165, 80, 0.5);
 }
 
 .add-btn mat-icon {

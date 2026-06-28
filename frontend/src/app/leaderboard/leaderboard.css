@@ -3,8 +3,14 @@
   max-width: 860px;
   margin: 0 auto;
   padding: 2rem 1.5rem 3rem;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   color: #fff;
+}
+
+.lb-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
 /* Header */
@@ -16,7 +22,7 @@
   gap: 1rem;
   margin-bottom: 2.5rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(209, 158, 29, 0.25);
+  border-bottom: 1px solid rgba(200, 165, 80, 0.25);
 }
 
 .lb-eyebrow {
@@ -31,9 +37,10 @@
 
 .lb-title {
   margin: 0;
-  font-size: 1.9rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   background: var(--primary-gold-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -41,14 +48,14 @@
   line-height: 1.1;
 }
 
-/* Filter Tabs */
+/* Filter Tabs — visually identical to the shared .tab-group/.tab-btn pattern */
 .lb-filters {
   display: flex;
   gap: 0.3rem;
   background: rgba(255, 255, 255, 0.04);
   padding: 0.25rem;
   border-radius: 999px;
-  border: 1px solid rgba(209, 158, 29, 0.15);
+  border: 1px solid var(--gold-border);
 }
 
 .lb-filter-btn {
@@ -56,8 +63,8 @@
   border-radius: 999px;
   border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: 'Montserrat', sans-serif;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -66,17 +73,17 @@
 }
 
 .lb-filter-btn:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-primary);
 }
 
 .lb-filter-btn.active {
-  background: var(--primary-gold-gradient);
-  color: #1a0a00;
+  background: var(--gold-gradient);
+  color: var(--text-gold-dark);
   font-weight: 700;
 }
 
 .lb-filter-btn:focus-visible {
-  outline: 2px solid var(--gold-shine);
+  outline: 2px solid var(--gold-light);
   outline-offset: 2px;
 }
 
@@ -128,14 +135,14 @@
   right: 10%;
   height: 2px;
   border-radius: 0 0 4px 4px;
-  background: rgba(209, 158, 29, 0.3);
+  background: rgba(200, 165, 80, 0.3);
 }
 
 .podium-first {
-  border-color: rgba(255, 215, 0, 0.4);
+  border-color: rgba(200, 165, 80, 0.4);
   box-shadow:
-    0 0 0 1px rgba(255, 215, 0, 0.15),
-    0 8px 40px rgba(255, 215, 0, 0.15),
+    0 0 0 1px rgba(200, 165, 80, 0.15),
+    0 8px 40px rgba(200, 165, 80, 0.15),
     0 2px 12px rgba(0, 0, 0, 0.5);
   animation: goldPulse 3s ease-in-out infinite;
 }
@@ -146,6 +153,42 @@
   left: 0;
   right: 0;
   border-radius: 0;
+}
+
+.podium-second {
+  border-color: rgba(192, 197, 206, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(192, 197, 206, 0.12),
+    0 6px 28px rgba(192, 197, 206, 0.1),
+    0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.podium-second::after {
+  background: linear-gradient(90deg, #9aa3ad, #d7dde3, #9aa3ad);
+  height: 2.5px;
+}
+
+.podium-second .avatar-rank-badge {
+  background: linear-gradient(135deg, #c0c5ce, #8b939d);
+  color: #1a1d21;
+}
+
+.podium-third {
+  border-color: rgba(193, 130, 84, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(193, 130, 84, 0.12),
+    0 6px 28px rgba(193, 130, 84, 0.1),
+    0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.podium-third::after {
+  background: linear-gradient(90deg, #8a5a36, #c1824e, #8a5a36);
+  height: 2.5px;
+}
+
+.podium-third .avatar-rank-badge {
+  background: linear-gradient(135deg, #c1824e, #8a5a36);
+  color: #fff;
 }
 
 /* Crown */
@@ -162,7 +205,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+  filter: drop-shadow(0 0 6px rgba(200, 165, 80, 0.6));
   animation: crownFloat 2.5s ease-in-out infinite;
 }
 
@@ -198,7 +241,7 @@
   height: 100%;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary-purple-dark), var(--primary-purple));
-  border: 2px solid rgba(255, 215, 0, 0.25);
+  border: 2px solid rgba(200, 165, 80, 0.25);
   font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -206,8 +249,8 @@
 }
 
 .podium-first .avatar-initials {
-  border-color: rgba(255, 215, 0, 0.6);
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+  border-color: rgba(200, 165, 80, 0.6);
+  box-shadow: 0 0 12px rgba(200, 165, 80, 0.3);
 }
 
 .avatar-rank-badge {
@@ -249,10 +292,10 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-gold);
-  background: rgba(209, 158, 29, 0.12);
+  background: rgba(200, 165, 80, 0.12);
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(209, 158, 29, 0.25);
+  border: 1px solid rgba(200, 165, 80, 0.25);
 }
 
 .podium-score {
@@ -290,7 +333,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(209, 158, 29, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(200, 165, 80, 0.3), transparent);
 }
 
 .divider-gem {
@@ -323,7 +366,7 @@
 
 .lb-row:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(209, 158, 29, 0.2);
+  border-color: rgba(200, 165, 80, 0.2);
   transform: translateX(3px);
 }
 
@@ -340,7 +383,7 @@
   height: 2.25rem;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary-purple-dark), var(--primary-purple));
-  border: 1px solid rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(200, 165, 80, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;

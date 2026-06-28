@@ -1,6 +1,6 @@
 :host {
     display: block;
-    background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
     min-height: 100vh;
 }
 
@@ -17,9 +17,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-raised) 100%);
     border-radius: 16px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    border: 2px solid rgba(200, 165, 80, 0.3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     margin-bottom: 2rem;
 }
@@ -35,12 +35,13 @@
     width: 2rem;
     height: 2rem;
     color: var(--light-gold);
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+    filter: drop-shadow(0 0 10px rgba(200, 165, 80, 0.5));
 }
 
 .inventory-title h1 {
     margin: 0;
-    font-size: 1.6rem;
+    font-family: var(--font-display);
+    font-size: 1.8rem;
     font-weight: 700;
     color: #fff;
 }
@@ -69,7 +70,7 @@
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--light-gold);
-    box-shadow: 0 2px 12px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 2px 12px rgba(200, 165, 80, 0.3);
 }
 
 .equipped-label mat-icon {
@@ -115,20 +116,20 @@
     align-items: center;
     gap: 0.85rem;
     padding: 0.9rem 1.1rem;
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.9) 100%);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-raised) 100%);
     border-radius: 14px;
-    border: 2px solid rgba(255, 215, 0, 0.15);
+    border: 2px solid rgba(200, 165, 80, 0.15);
     transition: all 0.3s ease;
 }
 
 .loadout-slot.equipped {
-    border-color: rgba(255, 215, 0, 0.35);
-    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.1);
+    border-color: rgba(200, 165, 80, 0.35);
+    box-shadow: 0 4px 16px rgba(200, 165, 80, 0.1);
 }
 
 .loadout-slot.equipped[data-rarity="legendary"] {
-    border-color: rgba(255, 215, 0, 0.6);
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
+    border-color: rgba(200, 165, 80, 0.6);
+    box-shadow: 0 4px 20px rgba(200, 165, 80, 0.25);
 }
 
 .loadout-slot.equipped[data-rarity="epic"] {
@@ -225,9 +226,9 @@
 }
 
 .rarity-pill[data-rarity="legendary"] {
-    background: rgba(255, 215, 0, 0.15);
+    background: rgba(200, 165, 80, 0.15);
     color: var(--light-gold);
-    border: 1px solid rgba(255, 215, 0, 0.4);
+    border: 1px solid rgba(200, 165, 80, 0.4);
 }
 
 /* Filter Tabs */
@@ -243,15 +244,15 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.65rem 1.1rem;
-    background: rgba(26, 26, 46, 0.8);
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    background: var(--surface);
+    border: 2px solid rgba(200, 165, 80, 0.2);
     border-radius: 12px;
     color: rgba(255, 255, 255, 0.75);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
 }
 
 .filter-tab mat-icon {
@@ -261,7 +262,7 @@
 }
 
 .tab-count {
-    background: rgba(255, 215, 0, 0.15);
+    background: rgba(200, 165, 80, 0.15);
     color: var(--light-gold);
     border-radius: 999px;
     font-size: 0.7rem;
@@ -272,18 +273,18 @@
 }
 
 .filter-tab:hover {
-    border-color: rgba(255, 215, 0, 0.5);
+    border-color: rgba(200, 165, 80, 0.5);
     background: rgba(97, 48, 146, 0.5);
     color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(200, 165, 80, 0.15);
 }
 
 .filter-tab.active {
     background: var(--primary-gold-gradient);
     border-color: var(--light-gold);
     color: var(--text-gold-dark);
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(200, 165, 80, 0.4);
 }
 
 .filter-tab.active mat-icon {
@@ -305,9 +306,9 @@
 /* Cosmetic Card  */
 .cosmetic-card {
     position: relative;
-    background: linear-gradient(145deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.9) 100%);
+    background: linear-gradient(145deg, var(--surface) 0%, var(--surface-raised) 100%);
     border-radius: 16px;
-    border: 2px solid rgba(255, 215, 0, 0.15);
+    border: 2px solid rgba(200, 165, 80, 0.15);
     overflow: hidden;
     transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
@@ -327,8 +328,8 @@
 .cosmetic-card[data-rarity="epic"] { border-color: rgba(155, 89, 182, 0.4); }
 .cosmetic-card[data-rarity="epic"]:hover { border-color: rgba(155, 89, 182, 0.7); box-shadow: 0 12px 30px rgba(155, 89, 182, 0.3); }
 
-.cosmetic-card[data-rarity="legendary"] { border-color: rgba(255, 215, 0, 0.45); }
-.cosmetic-card[data-rarity="legendary"]:hover { border-color: rgba(255, 215, 0, 0.8); box-shadow: 0 12px 35px rgba(255, 215, 0, 0.4); }
+.cosmetic-card[data-rarity="legendary"] { border-color: rgba(200, 165, 80, 0.45); }
+.cosmetic-card[data-rarity="legendary"]:hover { border-color: rgba(200, 165, 80, 0.8); box-shadow: 0 12px 35px rgba(200, 165, 80, 0.4); }
 
 .cosmetic-card.is-equipped {
     outline: 2px solid rgba(46, 204, 113, 0.5);
@@ -567,15 +568,15 @@
     padding: 0.65rem;
     margin-top: 0.4rem;
     background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-dark) 100%);
-    border: 2px solid rgba(255, 215, 0, 0.35);
+    border: 2px solid rgba(200, 165, 80, 0.35);
     border-radius: 10px;
     color: var(--light-gold);
     font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: 'Montserrat', sans-serif;
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.15);
+    font-family: var(--font-body);
+    box-shadow: 0 2px 8px rgba(200, 165, 80, 0.15);
 }
 
 .equip-btn mat-icon {
@@ -589,7 +590,7 @@
     border-color: var(--light-gold);
     color: var(--text-gold-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.45);
+    box-shadow: 0 4px 15px rgba(200, 165, 80, 0.45);
 }
 
 .equip-btn:hover:not(:disabled) mat-icon {

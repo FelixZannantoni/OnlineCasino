@@ -68,29 +68,29 @@
 
 /* Number pill */
 .streak-pill {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  border: 1.5px solid rgba(255, 215, 0, 0.5);
+  background: linear-gradient(135deg, var(--surface), var(--surface-raised));
+  border: 1.5px solid var(--gold-border);
   border-radius: 999px;
   min-width: 1.75rem;
   padding: 0.15rem 0.45rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 8px rgba(255, 165, 0, 0.4);
+  box-shadow: 0 0 8px rgba(200, 165, 80, 0.4);
 }
 
 .streak-number {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 900;
-  color: #ffd86e;
+  color: var(--gold-light);
   line-height: 1;
   letter-spacing: 0.02em;
 }
 
 /* Label */
 .streak-label {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.14em;

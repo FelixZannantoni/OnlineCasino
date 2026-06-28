@@ -1,6 +1,6 @@
 .f-root {
   height: 700px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   background: var(--casino-bg);
   color: #e8e0d0;
   border-radius: 18px;
@@ -13,7 +13,7 @@
 
 .f-header {
   background: linear-gradient(135deg, var(--casino-bg) 0%, var(--casino-accent) 50%, var(--casino-bg) 100%);
-  border-bottom: 1px solid rgba(209, 158, 29, 0.35);
+  border-bottom: 1px solid rgba(200, 165, 80, 0.35);
   padding: 24px 28px 0;
   position: relative;
   overflow: hidden;
@@ -50,13 +50,13 @@
   width: 38px;
   height: 38px;
   background: linear-gradient(135deg, #1e1a10, #2a2210);
-  border: 1px solid rgba(209, 158, 29, 0.4);
+  border: 1px solid rgba(200, 165, 80, 0.4);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-gold);
-  box-shadow: 0 0 12px rgba(209, 158, 29, 0.2), inset 0 1px 0 rgba(255, 216, 110, 0.15);
+  box-shadow: 0 0 12px rgba(200, 165, 80, 0.2), inset 0 1px 0 rgba(255, 216, 110, 0.15);
   flex-shrink: 0;
 }
 
@@ -65,7 +65,8 @@
 }
 
 .f-title {
-  font-size: 20px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-weight: 700;
   background: var(--primary-gold-gradient);
   -webkit-background-clip: text;
@@ -103,7 +104,7 @@
   border-right: none;
   transition: all 0.25s;
   background: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
 }
 
 .f-tab.active {
@@ -156,7 +157,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(209, 158, 29, 0.35);
+  border-right: 1px solid rgba(200, 165, 80, 0.35);
   transition: width 0.3s ease;
   overflow: hidden;
   min-width: 0;
@@ -176,7 +177,7 @@
 
 .f-search-bar {
   padding: 18px 20px 14px;
-  border-bottom: 1px solid rgba(209, 158, 29, 0.1);
+  border-bottom: 1px solid rgba(200, 165, 80, 0.1);
   flex-shrink: 0;
 }
 
@@ -198,19 +199,19 @@
   width: 100%;
   box-sizing: border-box;
   background: var(--casino-surface);
-  border: 1px solid rgba(209, 158, 29, 0.35);
+  border: 1px solid rgba(200, 165, 80, 0.35);
   border-radius: 10px;
   padding: 10px 14px 10px 44px;
   color: #e8e0d0;
   font-size: 13px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .f-search-input:focus {
   border-color: var(--text-gold);
-  box-shadow: 0 0 0 3px rgba(209, 158, 29, 0.15);
+  box-shadow: 0 0 0 3px rgba(200, 165, 80, 0.15);
 }
 
 .f-search-input::placeholder {
@@ -243,7 +244,7 @@
 }
 
 .f-list::-webkit-scrollbar-thumb {
-  background: rgba(209, 158, 29, 0.3);
+  background: rgba(200, 165, 80, 0.3);
   border-radius: 4px;
 }
 
@@ -264,12 +265,12 @@
 
 .f-friend-card:hover {
   background: var(--casino-surface);
-  border-color: rgba(209, 158, 29, 0.35);
+  border-color: rgba(200, 165, 80, 0.35);
 }
 
 .f-friend-card.selected {
-  background: linear-gradient(135deg, rgba(209, 158, 29, 0.08), rgba(209, 158, 29, 0.04));
-  border-color: rgba(209, 158, 29, 0.5);
+  background: linear-gradient(135deg, rgba(200, 165, 80, 0.08), rgba(200, 165, 80, 0.04));
+  border-color: rgba(200, 165, 80, 0.5);
 }
 
 .f-avatar {
@@ -286,7 +287,7 @@
   justify-content: center;
   font-weight: 700;
   font-size: 16px;
-  border: 2px solid rgba(209, 158, 29, 0.35);
+  border: 2px solid rgba(200, 165, 80, 0.35);
   overflow: hidden;
 }
 
@@ -368,8 +369,8 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid rgba(209, 158, 29, 0.35);
-  background: rgba(209, 158, 29, 0.06);
+  border: 1px solid rgba(200, 165, 80, 0.35);
+  background: rgba(200, 165, 80, 0.06);
   color: var(--text-gold);
   cursor: pointer;
   display: flex;
@@ -385,7 +386,7 @@
 }
 
 .f-action-btn:hover {
-  background: rgba(209, 158, 29, 0.18);
+  background: rgba(200, 165, 80, 0.18);
   border-color: var(--text-gold);
 }
 
@@ -402,7 +403,7 @@
 
 .f-stats-row {
   display: flex;
-  border-top: 1px solid rgba(209, 158, 29, 0.35);
+  border-top: 1px solid rgba(200, 165, 80, 0.35);
   flex-shrink: 0;
 }
 
@@ -410,7 +411,7 @@
   flex: 1;
   padding: 12px 10px;
   text-align: center;
-  border-right: 1px solid rgba(209, 158, 29, 0.1);
+  border-right: 1px solid rgba(200, 165, 80, 0.1);
 }
 
 .f-stat:last-child {
@@ -451,7 +452,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(209, 158, 29, 0.35);
+  border-bottom: 1px solid rgba(200, 165, 80, 0.35);
   background: linear-gradient(135deg, var(--casino-bg), var(--casino-accent));
   flex-shrink: 0;
 }
@@ -474,7 +475,7 @@
 .f-chat-close {
   margin-left: auto;
   background: none;
-  border: 1px solid rgba(209, 158, 29, 0.35);
+  border: 1px solid rgba(200, 165, 80, 0.35);
   color: var(--text-gold);
   width: 28px;
   height: 28px;
@@ -498,8 +499,8 @@
 }
 
 .f-chat-invite-btn {
-  background: linear-gradient(135deg, rgba(209, 158, 29, 0.15), rgba(209, 158, 29, 0.08));
-  border: 1px solid rgba(209, 158, 29, 0.35);
+  background: linear-gradient(135deg, rgba(200, 165, 80, 0.15), rgba(200, 165, 80, 0.08));
+  border: 1px solid rgba(200, 165, 80, 0.35);
   border-radius: 8px;
   color: var(--text-gold);
   font-size: 11px;
@@ -508,7 +509,7 @@
   text-transform: uppercase;
   padding: 6px 14px;
   cursor: pointer;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   transition: all 0.2s;
   display: flex;
   align-items: center;
@@ -523,8 +524,8 @@
 }
 
 .f-chat-invite-btn:hover {
-  background: linear-gradient(135deg, rgba(209, 158, 29, 0.28), rgba(209, 158, 29, 0.15));
-  box-shadow: 0 0 12px rgba(209, 158, 29, 0.2);
+  background: linear-gradient(135deg, rgba(200, 165, 80, 0.28), rgba(200, 165, 80, 0.15));
+  box-shadow: 0 0 12px rgba(200, 165, 80, 0.2);
 }
 
 .f-messages {
@@ -542,7 +543,7 @@
 }
 
 .f-messages::-webkit-scrollbar-thumb {
-  background: rgba(209, 158, 29, 0.3);
+  background: rgba(200, 165, 80, 0.3);
   border-radius: 4px;
 }
 
@@ -568,7 +569,7 @@
   font-size: 10px;
   font-weight: 700;
   flex-shrink: 0;
-  border: 1px solid rgba(209, 158, 29, 0.35);
+  border: 1px solid rgba(200, 165, 80, 0.35);
 }
 
 .f-msg-bubble {
@@ -581,14 +582,14 @@
 
 .f-msg.theirs .f-msg-bubble {
   background: var(--casino-surface);
-  border: 1px solid rgba(209, 158, 29, 0.12);
+  border: 1px solid rgba(200, 165, 80, 0.12);
   border-bottom-left-radius: 4px;
   color: #d8d0c0;
 }
 
 .f-msg.mine .f-msg-bubble {
-  background: linear-gradient(135deg, rgba(209, 158, 29, 0.2), rgba(209, 158, 29, 0.1));
-  border: 1px solid rgba(209, 158, 29, 0.35);
+  background: linear-gradient(135deg, rgba(200, 165, 80, 0.2), rgba(200, 165, 80, 0.1));
+  border: 1px solid rgba(200, 165, 80, 0.35);
   border-bottom-right-radius: 4px;
   color: #f0e8d0;
 }
@@ -619,16 +620,16 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(209, 158, 29, 0.35));
+  background: linear-gradient(90deg, transparent, rgba(200, 165, 80, 0.35));
 }
 
 .f-system-msg::after {
-  background: linear-gradient(90deg, rgba(209, 158, 29, 0.35), transparent);
+  background: linear-gradient(90deg, rgba(200, 165, 80, 0.35), transparent);
 }
 
 .f-chat-input-wrap {
   padding: 14px 20px;
-  border-top: 1px solid rgba(209, 158, 29, 0.35);
+  border-top: 1px solid rgba(200, 165, 80, 0.35);
   background: var(--navbar-dark);
   display: flex;
   gap: 10px;
@@ -640,12 +641,12 @@
   flex: 1;
   min-width: 0;
   background: var(--casino-surface);
-  border: 1px solid rgba(209, 158, 29, 0.25);
+  border: 1px solid rgba(200, 165, 80, 0.25);
   border-radius: 10px;
   padding: 10px 16px;
   color: #e8e0d0;
   font-size: 13px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   outline: none;
   transition: border-color 0.2s;
 }
@@ -680,7 +681,7 @@
 
 .f-send-btn:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 14px rgba(209, 158, 29, 0.5);
+  box-shadow: 0 0 14px rgba(200, 165, 80, 0.5);
 }
 
 .f-empty-chat {
@@ -695,7 +696,7 @@
 
 .f-empty-icon {
   font-size: 40px !important;
-  color: rgba(209, 158, 29, 0.15);
+  color: rgba(200, 165, 80, 0.15);
   display: block;
 }
 
@@ -716,7 +717,7 @@
   padding: 14px 18px;
   font-size: 13px;
   color: var(--light-gold);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(209, 158, 29, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(200, 165, 80, 0.2);
   display: flex;
   gap: 10px;
   align-items: center;
@@ -755,8 +756,8 @@
 
 .f-add-box {
   margin: 24px 20px 0;
-  background: linear-gradient(135deg, rgba(209, 158, 29, 0.06), rgba(209, 158, 29, 0.02));
-  border: 1px solid rgba(209, 158, 29, 0.35);
+  background: linear-gradient(135deg, rgba(200, 165, 80, 0.06), rgba(200, 165, 80, 0.02));
+  border: 1px solid rgba(200, 165, 80, 0.35);
   border-radius: 14px;
   padding: 24px;
   flex-shrink: 0;
@@ -786,19 +787,19 @@
   flex: 1;
   min-width: 0;
   background: var(--casino-surface);
-  border: 1px solid rgba(209, 158, 29, 0.35);
+  border: 1px solid rgba(200, 165, 80, 0.35);
   border-radius: 10px;
   padding: 10px 16px;
   color: #e8e0d0;
   font-size: 13px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .f-add-input:focus {
   border-color: var(--text-gold);
-  box-shadow: 0 0 0 3px rgba(209, 158, 29, 0.15);
+  box-shadow: 0 0 0 3px rgba(200, 165, 80, 0.15);
 }
 
 .f-add-input::placeholder {
@@ -813,7 +814,7 @@
   color: var(--text-gold-dark);
   font-size: 12px;
   font-weight: 700;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.2s;
@@ -830,7 +831,7 @@
 
 .f-add-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(209, 158, 29, 0.4);
+  box-shadow: 0 4px 16px rgba(200, 165, 80, 0.4);
 }
 
 .f-requests-section {
@@ -852,7 +853,7 @@
   gap: 12px;
   padding: 14px;
   background: var(--casino-surface);
-  border: 1px solid rgba(209, 158, 29, 0.2);
+  border: 1px solid rgba(200, 165, 80, 0.2);
   border-radius: 12px;
   margin-bottom: 10px;
   animation: slideIn 0.3s ease;
@@ -885,7 +886,7 @@
   color: #3ecf6e;
   font-size: 11px;
   font-weight: 700;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body);
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.2s;
@@ -931,7 +932,7 @@
 
   .f-left-col {
     border-right: none;
-    border-bottom: 1px solid rgba(209, 158, 29, 0.35);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.35);
     width: 100% !important;
   }
 
