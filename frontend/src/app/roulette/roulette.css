@@ -703,7 +703,7 @@ dl {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(200, 165, 80, 0.25);
+  background: rgba(201, 168, 76, 0.25); /* ponytail: more transparent than player's own Purple chip */
   border: 1.5px dashed rgba(255, 255, 255, 0.65);
   display: flex;
   align-items: center;
@@ -716,7 +716,7 @@ dl {
 
 .other-bet-chip:hover {
   transform: scale(1.2);
-  background: rgba(200, 165, 80, 0.6);
+  background: rgba(201, 168, 76, 0.6);
   z-index: 12;
 }
 
@@ -740,7 +740,7 @@ dl {
   font-weight: 700;
   padding: 1px 3.5px;
   border-radius: 3px;
-  border: 1px solid rgba(200, 165, 80, 0.5);
+  border: 1px solid rgba(201, 168, 76, 0.5);
   white-space: nowrap;
   pointer-events: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);

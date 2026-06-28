@@ -73,7 +73,7 @@
                     <h2 class="club-title">Club</h2>
                     <div class="player-of-week">
                         <span class="label">Player of the Week:</span>
-                        <span class="name">[name]</span>
+                        <span class="name">{{ clubName() }}</span>
                     </div>
                 </div>
 
@@ -97,24 +97,14 @@
                             <!-- Friends Slide -->
                             <div class="slide-content">
                                 <ul class="friends-list">
-                                    <li class="friend-item online">
-                                        <button class="friend-btn">
-                                            <span class="status-dot"></span>
-                                            <span class="friend-name">Member 1</span>
-                                        </button>
-                                    </li>
-                                    <li class="friend-item online">
-                                        <button class="friend-btn">
-                                            <span class="status-dot"></span>
-                                            <span class="friend-name">Member 2</span>
-                                        </button>
-                                    </li>
-                                    <li class="friend-item offline">
-                                        <button class="friend-btn">
-                                            <span class="status-dot"></span>
-                                            <span class="friend-name">Member 3</span>
-                                        </button>
-                                    </li>
+                                    @for (member of clubMembers(); track $index) {
+                                        <li class="friend-item online">
+                                            <button class="friend-btn">
+                                                <span class="status-dot"></span>
+                                                <span class="friend-name">{{ member.displayname }}</span>
+                                            </button>
+                                        </li>
+                                    }
                                 </ul>
                             </div>
 

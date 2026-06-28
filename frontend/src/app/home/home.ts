@@ -3,6 +3,17 @@ import { Router, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MODE_CONFIG, type ModeConfig } from '../game-mode-overlay/game-mode-overlay';
+import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { DataService } from '../services/data-service';
+interface ClubMember {
+  uuid: string,
+  username: string,
+  displayname: string,
+  status: string
+}
 
 @Component({
   selector: 'app-home',
@@ -11,12 +22,22 @@ import { MODE_CONFIG, type ModeConfig } from '../game-mode-overlay/game-mode-ove
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
-export class Home {
+export class Home implements OnInit {
   showLeaderboard = false;
   private isBrowser: boolean;
   private readonly router = inject(Router);
 
   readonly modes = MODE_CONFIG;
+  dataService: DataService = inject(DataService);
+  clubName: WritableSignal<string> = signal('[name]');
+  clubMembers: WritableSignal<ClubMember[]> = signal([]);
+
+  favorites: { [key: string]: boolean } = {
+    'Blackjack': false,
+    'PokerTexas': false,
+    'Slotmachine': false,
+    'Roulette': false,
+  };
 
   readonly games = [
     { key: 'Roulette',    title: 'Roulette',             route: '/roulette'    },
@@ -79,6 +100,21 @@ export class Home {
     if (!route) return;
 
     this.router.navigate([route], { queryParams: { mode: mode.key.toLowerCase() } });
+  }
+
+  async ngOnInit(): Promise<void> {
+    const res = await fetch(`/clubs/${this.dataService.getUserId()}`, {
+      method: 'GET'
+    });
+
+    if (res.ok) {
+      const club = (await res.json()).club;
+
+      if (club) {
+        this.clubName.set(club.name);
+        this.clubMembers.set(club.members);
+      }
+    }
   }
 
   setSlide(slide: 'friends' | 'leaderboard'): void {
