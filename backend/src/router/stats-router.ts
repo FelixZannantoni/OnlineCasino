@@ -20,7 +20,7 @@ statsRouter.post(`/games/:gameId/favourite`, async (req: Request, res: Response)
 
     await statsService.favouriteGame(userId, gameId);
 
-    return res.status(StatusCodes.OK);
+    return res.status(StatusCodes.OK).json({});
 });
 
 statsRouter.delete(`/games/:gameId/favourite`, async (req: Request, res: Response) => {
@@ -33,7 +33,7 @@ statsRouter.delete(`/games/:gameId/favourite`, async (req: Request, res: Respons
 
     await statsService.unFavouriteGame(userId, gameId);
 
-    return res.status(StatusCodes.NO_CONTENT);
+    return res.status(StatusCodes.NO_CONTENT).json({});
 });
 
 statsRouter.get("/games/favourite", async (req: Request, res: Response) => {
