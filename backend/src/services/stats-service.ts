@@ -7,6 +7,8 @@ export class StatsService {
         try {
             const connection: Database = await DB.createDBConnection();
 
+            connection.exec(`UPDATE users SET streakCount = 0 WHERE date(lastStreakIncrement) < date('now', '-1 day')`);
+
             // Update streak when player has not won before today
             const data = connection.prepare<{ uuid: string }, { lastStreakIncrement: string }>(`SELECT lastStreakIncrement FROM users WHERE uuid = :uuid`).get({ uuid: userId });
         
@@ -27,6 +29,9 @@ export class StatsService {
     async getLeaderboard(): Promise<LeaderboardEntry[]> {
         try {
             const connection: Database = await DB.createDBConnection();
+
+            // update streak to 0 when lastStreakIncrement is >= 2 days ago
+            connection.exec(`UPDATE users SET streakCount = 0 WHERE date(lastStreakIncrement) < date('now', '-1 day')`);
 
             // we need rank, username, balance, streak
             const result = connection.prepare<{}, LeaderboardEntry>(`SELECT userName, streakCount AS streak, balance FROM users ORDER BY balance DESC`).all({});
