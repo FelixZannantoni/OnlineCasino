@@ -94,7 +94,13 @@ export class Home implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.loadFavoriteGames(), this.loadClubInfo()]);
+    console.log("Home Init");
+    console.log("UserId:", this.dataService.getUserId());
+
+    await Promise.all([
+      this.loadFavoriteGames(),
+      this.loadClubInfo(),
+    ]);
   }
 
   setSlide(slide: 'friends' | 'leaderboard'): void {
@@ -158,6 +164,7 @@ export class Home implements OnInit {
     if (!this.isBrowser) return;
 
     const userId = this.dataService.getUserId();
+    console.log("loadFavoriteGames UserId:", userId);
     if (!userId) {
       this.favoriteCards.clear();
       return;
@@ -167,7 +174,12 @@ export class Home implements OnInit {
       const res = await fetch(`/stats/games/favourite?userId=${encodeURIComponent(userId)}`);
       if (!res.ok) return;
 
-      const payload = await res.json() as { gameIds?: Array<number | { gameId?: number }> };
+      const pl = await res.json();
+
+console.log("Payload:", pl);
+console.log("gameIds:", pl.gameIds);
+
+      const payload = pl as { gameIds?: Array<number | { gameId?: number }> };
       const favoriteIds = (payload.gameIds ?? [])
         .map((entry) => typeof entry === 'number' ? entry : entry?.gameId)
         .filter((value): value is number => typeof value === 'number');
