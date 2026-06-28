@@ -103,7 +103,6 @@ export function onMessageSentToUser(receiverId: string) {
     }
 }
 const cosmeticsService: CosmeticsService = new CosmeticsService();
-export { pokerService, blackjackService, userService, cosmeticsService };
 
 io.on("connection", (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
