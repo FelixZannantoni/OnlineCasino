@@ -130,6 +130,13 @@ export class DB {
                 name text
             )
             `).run();
+        connection.prepare(`
+            CREATE TABLE IF NOT EXISTS favourite_games (
+                gameId integer PRIMARY KEY,
+                userId text,
+                FOREIGN KEY (userId) REFERENCES users(uuid)
+            )
+            `).run();
 
         await this.insertUserSampleData(connection);
         await this.insertGameSampleData(connection);

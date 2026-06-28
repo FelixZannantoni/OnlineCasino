@@ -1,18 +1,15 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MODE_CONFIG, type ModeConfig } from '../game-mode-overlay/game-mode-overlay';
-import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { DataService } from '../services/data-service';
+
 interface ClubMember {
-  uuid: string,
-  username: string,
-  displayname: string,
-  status: string
+  uuid: string;
+  username: string;
+  displayname: string;
+  status: string;
 }
 
 @Component({
@@ -20,7 +17,7 @@ interface ClubMember {
   standalone: true,
   imports: [RouterOutlet, MatIconModule, CommonModule],
   templateUrl: './home.html',
-  styleUrls: ['./home.css']
+  styleUrls: ['./home.css'],
 })
 export class Home implements OnInit {
   showLeaderboard = false;
@@ -28,25 +25,25 @@ export class Home implements OnInit {
   private readonly router = inject(Router);
 
   readonly modes = MODE_CONFIG;
-  dataService: DataService = inject(DataService);
+  private readonly dataService: DataService = inject(DataService);
   clubName: WritableSignal<string> = signal('[name]');
   clubMembers: WritableSignal<ClubMember[]> = signal([]);
 
-  favorites: { [key: string]: boolean } = {
-    'Blackjack': false,
-    'PokerTexas': false,
-    'Slotmachine': false,
-    'Roulette': false,
-  };
-
   readonly games = [
-    { key: 'Roulette',    title: 'Roulette',             route: '/roulette'    },
-    { key: 'Blackjack',   title: 'Blackjack',            route: '/blackjack'   },
-    { key: 'PokerTexas',  title: "Poker Texas Hold'em",  route: '/poker'       },
-    { key: 'Slotmachine', title: 'Slotmachine',          route: '/slotmachine' },
+    { key: 'Roulette', title: 'Roulette', route: '/roulette' },
+    { key: 'Blackjack', title: 'Blackjack', route: '/blackjack' },
+    { key: 'PokerTexas', title: 'Poker Texas Hold\'em', route: '/poker' },
+    { key: 'Slotmachine', title: 'Slotmachine', route: '/slotmachine' },
   ];
 
   readonly favoriteCards = new Set<string>();
+
+  private readonly backendGameIds: Record<string, Record<string, number>> = {
+    Roulette: { Low: 1, Middle: 2, High: 3 },
+    Blackjack: { Low: 4, Middle: 5, High: 6 },
+    PokerTexas: { Low: 7, Middle: 8, High: 9 },
+    Slotmachine: { Low: 10, Middle: 11, High: 12 },
+  };
 
   constructor() {
     const platformId = inject(PLATFORM_ID);
@@ -58,16 +55,10 @@ export class Home implements OnInit {
   }
 
   get favoriteVariants() {
-    return this.games.flatMap(game =>
+    return this.games.flatMap((game) =>
       this.modes
-        .filter(mode => this.favoriteCards.has(this.getCardId(game.key, mode.key)))
-        .map(mode => ({ game, mode }))
-    );
-  }
-
-  get gameVariants() {
-    return this.games.flatMap(game =>
-      this.modes.map(mode => ({ game, mode }))
+        .filter((mode) => this.favoriteCards.has(this.getCardId(game.key, mode.key)))
+        .map((mode) => ({ game, mode })),
     );
   }
 
@@ -103,32 +94,26 @@ export class Home implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    const res = await fetch(`/clubs/${this.dataService.getUserId()}`, {
-      method: 'GET'
-    });
-
-    if (res.ok) {
-      const club = (await res.json()).club;
-
-      if (club) {
-        this.clubName.set(club.name);
-        this.clubMembers.set(club.members);
-      }
-    }
+    await Promise.all([this.loadFavoriteGames(), this.loadClubInfo()]);
   }
 
   setSlide(slide: 'friends' | 'leaderboard'): void {
     this.showLeaderboard = slide === 'leaderboard';
   }
 
-  toggleFavorite(gameKey: string, modeKey: string, event: Event): void {
+  async toggleFavorite(gameKey: string, modeKey: string, event: Event): Promise<void> {
     event.stopPropagation();
-    const id = this.getCardId(gameKey, modeKey);
-    if (this.favoriteCards.has(id)) {
-      this.favoriteCards.delete(id);
+
+    const cardId = this.getCardId(gameKey, modeKey);
+    const shouldFavorite = !this.favoriteCards.has(cardId);
+
+    if (shouldFavorite) {
+      this.favoriteCards.add(cardId);
     } else {
-      this.favoriteCards.add(id);
+      this.favoriteCards.delete(cardId);
     }
+
+    await this.syncFavoriteGames(gameKey, modeKey, shouldFavorite);
   }
 
   isFavorite(gameKey: string, modeKey: string): boolean {
@@ -144,5 +129,84 @@ export class Home implements OnInit {
   onGameClick(gameKey: string): void {
     if (!this.isBrowser) return;
     window.dispatchEvent(new CustomEvent('toggleGameModeOverlay', { detail: { gameKey } }));
+  }
+
+  private async loadClubInfo(): Promise<void> {
+    if (!this.isBrowser) return;
+
+    const userId = this.dataService.getUserId();
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`/clubs/${userId}`, { method: 'GET' });
+
+      if (!res.ok) return;
+
+      const payload = await res.json();
+      const club = payload?.club;
+
+      if (club) {
+        this.clubName.set(club.name);
+        this.clubMembers.set(club.members ?? []);
+      }
+    } catch (error) {
+      console.error('Failed to load club info', error);
+    }
+  }
+
+  private async loadFavoriteGames(): Promise<void> {
+    if (!this.isBrowser) return;
+
+    const userId = this.dataService.getUserId();
+    if (!userId) {
+      this.favoriteCards.clear();
+      return;
+    }
+
+    try {
+      const res = await fetch(`/stats/games/favourite?userId=${encodeURIComponent(userId)}`);
+      if (!res.ok) return;
+
+      const payload = await res.json() as { gameIds?: Array<number | { gameId?: number }> };
+      const favoriteIds = (payload.gameIds ?? [])
+        .map((entry) => typeof entry === 'number' ? entry : entry?.gameId)
+        .filter((value): value is number => typeof value === 'number');
+
+      this.favoriteCards.clear();
+
+      for (const game of this.games) {
+        for (const mode of this.modes) {
+          const backendGameId = this.backendGameIds[game.key]?.[mode.key];
+          if (backendGameId !== undefined && favoriteIds.includes(backendGameId)) {
+            this.favoriteCards.add(this.getCardId(game.key, mode.key));
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load favorite games', error);
+    }
+  }
+
+  private async syncFavoriteGames(gameKey: string, modeKey: string, shouldFavorite: boolean): Promise<void> {
+    if (!this.isBrowser) return;
+
+    const userId = this.dataService.getUserId();
+    if (!userId) return;
+
+    const gameId = this.backendGameIds[gameKey]?.[modeKey];
+    if (gameId === undefined) return;
+
+    try {
+      const url = `/stats/games/${gameId}/favourite?userId=${encodeURIComponent(userId)}`;
+      const res = shouldFavorite
+        ? await fetch(url, { method: 'POST' })
+        : await fetch(url, { method: 'DELETE' });
+
+      if (!res.ok && res.status !== 204) {
+        throw new Error(`Failed to sync favorite state for ${gameKey}/${modeKey}`);
+      }
+    } catch (error) {
+      console.error('Failed to sync favorite games', error);
+    }
   }
 }

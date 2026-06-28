@@ -45,4 +45,45 @@ export class StatsService {
             return [];
         }
     }
+
+    async favouriteGame(userId: string, gameId: number): Promise<void> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+
+            connection.prepare<{ gameId: number, userId: string }>(`INSERT INTO favourite_games (gameId, userId) VALUES (:gameId, :userId)`).run({
+                userId,
+                gameId
+            });
+        } catch (error) {
+            console.error(`Something happened while trying to favourite game with id ${gameId} for user with id ${userId}`);
+        }
+    }
+
+    async unFavouriteGame(userId: string, gameId: number): Promise<void> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+
+            connection.prepare<{ gameId: number, userId: string }>(`DELETE FROM favourite_games WHERE gameId = :gameId AND userId = :userId`).run({
+                userId,
+                gameId
+            });
+        } catch (error) {
+            console.error(`Something happened while trying to unfavourite game with id ${gameId} for user with id ${userId}`);
+        }
+    }
+
+    async getFavouriteGames(userId: string): Promise<{gameId: number}[]> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+
+            const games = connection.prepare<{ userId: string }, { gameId: number }>(`SELECT gameId FROM favourite_games WHERE userId = :userId`).all({
+                userId
+            });
+
+            return games;
+        } catch (error) {
+            console.error(`Something happened while trying to retrieve favourite games for user with id ${userId}`);
+            return [];
+        }
+    }
 }
