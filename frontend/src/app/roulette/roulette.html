@@ -58,9 +58,9 @@
                                 }
                                 <div class="other-bets-container">
                                     @for (ob of getOtherBetsOn('0'); track ob.playerId) {
-                                    <div class="other-bet-chip">
-                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
-                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
                                     </div>
                                     }
                                 </div>
@@ -81,9 +81,9 @@
                                 }
                                 <div class="other-bets-container vertical">
                                     @for (ob of getOtherBetsOn(colLabels[$index]); track ob.playerId) {
-                                    <div class="other-bet-chip">
-                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
-                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
                                     </div>
                                     }
                                 </div>
@@ -99,9 +99,9 @@
                                 }
                                 <div class="other-bets-container">
                                     @for (ob of getOtherBetsOn('' + n); track ob.playerId) {
-                                    <div class="other-bet-chip">
-                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
-                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
                                     </div>
                                     }
                                 </div>
@@ -123,9 +123,9 @@
                                 }
                                 <div class="other-bets-container">
                                     @for (ob of getOtherBetsOn(d.label); track ob.playerId) {
-                                    <div class="other-bet-chip">
-                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
-                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
                                     </div>
                                     }
                                 </div>
@@ -154,9 +154,9 @@
                                 }
                                 <div class="other-bets-container">
                                     @for (ob of getOtherBetsOn(e.label); track ob.playerId) {
-                                    <div class="other-bet-chip">
-                                        {{ ob.playerName.slice(0, 2).toUpperCase() }}
-                                        <div class="tooltip-text">{{ ob.playerName }}: ${{ ob.amount }}</div>
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
                                     </div>
                                     }
                                 </div>
