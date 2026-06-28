@@ -114,8 +114,6 @@ export class Login implements OnInit {
 
   async onLogin(): Promise<void> {
     this.loginError = '';
-    this.loginForm.markAllAsTouched();
-    if (this.loginForm.invalid) return;
     if (!this.isBrowser) return;
 
     try {
