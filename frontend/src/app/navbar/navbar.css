@@ -137,11 +137,6 @@
   box-shadow: 0 4px 12px rgba(200, 165, 80, 0.5);
 }
 
-.profile_image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 /* Decorative flying chips behind the brand name */
 .coin-bg {

@@ -12,7 +12,7 @@
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-picture">
-                <img [src]="profileImageUrl" alt="Profile Picture">
+                <app-avatar [name]="displayName || username || 'User'" [size]="100" />
             </div>
             <h3 class="displayName">{{ displayName || 'User' }}</h3>
             <p class="userName">{{ username || '—' }}</p>

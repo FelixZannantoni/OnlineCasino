@@ -29,7 +29,7 @@
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
           @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
           <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
+            <app-avatar [name]="opp.displayname || opp.id" [size]="46" />
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
@@ -62,7 +62,7 @@
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
           @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
           <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
+            <app-avatar [name]="opp.displayname || opp.id" [size]="46" />
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
@@ -95,7 +95,7 @@
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
           @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
           <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
+            <app-avatar [name]="opp.displayname || opp.id" [size]="46" />
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
@@ -128,7 +128,7 @@
         <div class="player-display" [class.active]="opp.id === gameState()?.currentPlayerId">
           @if (opp.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
           <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Opponent" />
+            <app-avatar [name]="opp.displayname || opp.id" [size]="46" />
             @if (opp.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">
@@ -162,7 +162,7 @@
         <div class="player-display" [class.active]="player.id === gameState()?.currentPlayerId">
           @if (player.id === gameState()?.currentPlayerId) { <div class="halo"></div> }
           <div class="player-avatar">
-            <img src="assets/default-avatar.png" alt="Me" />
+            <app-avatar [name]="player.displayname || player.id" [size]="46" />
             @if (player.isDealer) { <div class="dealer-chip">D</div> }
           </div>
           <div class="player-info">

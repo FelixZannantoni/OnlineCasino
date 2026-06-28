@@ -1,9 +1,10 @@
 import {Component, input} from '@angular/core';
 import {getCardRank} from '../../services/card-utils';
+import {Avatar} from '../../avatar/avatar';
 
 @Component({
   selector: 'app-player-slot',
-  imports: [],
+  imports: [Avatar],
   templateUrl: './player-slot.html',
   styleUrl: './player-slot.css',
 })

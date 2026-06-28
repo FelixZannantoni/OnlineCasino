@@ -12,10 +12,11 @@
       
       <!-- Profilbild -->
       <div class="player-avatar">
-        <img 
-          [src]="player.profileImage || 'assets/default-avatar.png'" 
-          [alt]="player.displayname || 'Player'"
-        />
+        @if (player.profileImage) {
+          <img [src]="player.profileImage" [alt]="player.displayname || 'Player'" />
+        } @else {
+          <app-avatar [name]="player.displayname || player.id" [size]="80" />
+        }
       </div>
       
       <!-- Spieler Info -->

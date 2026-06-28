@@ -9,6 +9,7 @@ import { DataService } from '../../services/data-service';
 import { DevTeam } from "../../settings-overlay/dev-team/dev-team";
 import { PokerPlayersComponent } from './poker-players/poker-players';
 import { getCardRank } from '../../services/card-utils';
+import { Avatar } from '../../avatar/avatar';
 
 type PokerBoardCard = {
   name: string;
@@ -47,7 +48,7 @@ type PokerGameState = {
 @Component({
   selector: 'app-poker',
   standalone: true,
-  imports: [CommonModule, TableGameComponent, MatIconModule],
+  imports: [CommonModule, TableGameComponent, MatIconModule, Avatar],
   templateUrl: './poker.html',
   styleUrls: ['./poker.css'],
 })

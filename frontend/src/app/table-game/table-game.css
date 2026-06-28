@@ -259,7 +259,6 @@ body { overflow: hidden; }
   background: #000;
 }
 
-.player-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .player-name {
   font-weight: 700;

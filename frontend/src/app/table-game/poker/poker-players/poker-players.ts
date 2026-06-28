@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { Avatar } from '../../../avatar/avatar';
 
 export interface PokerPlayer {
   id: string;
@@ -14,7 +15,7 @@ export interface PokerPlayer {
 @Component({
   selector: 'app-poker-players',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Avatar],
   templateUrl: './poker-players.html',
   styleUrls: ['./poker-players.css']
 })
