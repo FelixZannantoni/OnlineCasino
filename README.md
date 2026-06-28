@@ -250,7 +250,9 @@ Mockup der Social-Features
 5. Testen
 
 ### 8.2. Meilensteine
+ 
+1. **Ostern** *(7. April 2026)*: Funktionierender Grundsatz — erste Spiele (Blackjack, Poker) spielbar, grundlegende Backend-Struktur und grobe Benutzeroberfläche.
+2. **Staatsfeiertag** *(5. Mai 2026)*: Weitere Funktionen und Features — WebSockets, verbesserte Spiellogik, ausgearbeitetes UI/UX für alle Spiele.
+3. **June** *(16. Juni 2026)*: Alle Spiele (Poker, Blackjack, Slotmachine, Roulette) vollständig spielbar, UI fertiggestellt, Social-Features und Hosting eingerichtet.
+4. **Vortrag** *(29. Juni 2026)*: Finales Polishing, vollständige Dokumentation und Vorbereitung der Abschlusspräsentation.
 
-1. **Ostern:** Funktionierender Grundsatz (erste Spiele spielbar und grobe Benutzeroberfläche)
-2. **Mai:** Weitere Funktionen und Features + anschauliches UI/UX
-3. **Juni:** Polishing und Fertigstellung, eventuelle Monetarisierung
