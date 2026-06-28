@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
@@ -18,6 +18,8 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   private toggleSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private isBrowser: boolean;
+
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // user data
   public userId: string | null = null;
@@ -57,24 +59,23 @@ export class ProfileOverlay implements OnInit, OnDestroy {
   }
 
   private async loadUserData(): Promise<void> {
-    if (!this.isBrowser) return;
-    const id = this.dataService.getUserId();
-    this.userId = id;
-    if (!id) return;
+      if (!this.isBrowser) return;
+      const id = this.dataService.getUserId();
+      this.userId = id;
+      if (!id) return;
 
-    try {
-      const res = await fetch(`/users/${id}`);
-      if (!res.ok) return;
-      const body = await res.json();
-      this.username = body.username || null;
-      this.displayName = body.displayname || null;
-      this.balance = typeof body.balance === 'number' ? body.balance : null;
-      // keep placeholder image for now; could extend backend with avatar URL
-
-      // console.log(this.userId, this.username, this.displayName, this.balance)
-    } catch (e) {
-      console.error('Failed to load user data', e);
-    }
+      try {
+        const res = await fetch(`/users/${id}`);
+        if (!res.ok) return;
+        const body = await res.json();
+        this.username = body.username || null;
+        this.displayName = body.displayname || null;
+        this.balance = typeof body.balance === 'number' ? body.balance : null;
+        
+        this.cdr.detectChanges();
+      } catch (e) {
+        console.error('Failed to load user data', e);
+      }
   }
 
   ngOnDestroy(): void {
