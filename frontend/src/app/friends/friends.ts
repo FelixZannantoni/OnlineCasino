@@ -1,4 +1,5 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, WritableSignal, signal, inject, OnInit, ChangeDetectorRef, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../services/data-service';
 import { SocketService } from '../services/socket.service';
@@ -55,6 +56,12 @@ export class Friends implements AfterViewChecked, OnInit {
   private dataService: DataService = inject(DataService);
   private socketService: SocketService = inject(SocketService);
   private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private isBrowser: boolean;
+
+  constructor() {
+    const platformId = inject(PLATFORM_ID);
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
 
   sections = [
     { label: 'Online', status: 'online' },
@@ -333,6 +340,7 @@ export class Friends implements AfterViewChecked, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    if (!this.isBrowser) return;
     const userId = this.dataService.userId();
     if (userId) {
       this.socketService.register(userId);

@@ -1,12 +1,8 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MODE_CONFIG, type ModeConfig } from '../game-mode-overlay/game-mode-overlay';
-import { Component, inject, OnInit, PLATFORM_ID, signal, WritableSignal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { DataService } from '../services/data-service';
 interface ClubMember {
   uuid: string,
@@ -103,6 +99,7 @@ export class Home implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    if (!this.isBrowser) return;
     const res = await fetch(`/clubs/${this.dataService.getUserId()}`, {
       method: 'GET'
     });

@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
 
 interface ClubMember {
   id: string;
@@ -66,7 +65,7 @@ function xpInCurrentLevel(totalWinnings: number): number {
 
 @Component({
   selector: 'app-club',
-  imports: [FormsModule, DecimalPipe],
+  imports: [FormsModule],
   templateUrl: './club.html',
   styleUrl: './club.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
