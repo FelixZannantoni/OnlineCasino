@@ -253,6 +253,23 @@ export class Roulette implements OnInit, AfterViewInit, OnDestroy {
     return this.bets().find(b => b.label === label)?.amount ?? null;
   }
 
+  getOtherBetsOn(label: string): { playerId: string; playerName: string; amount: number }[] {
+    const list: { playerId: string; playerName: string; amount: number }[] = [];
+    for (const p of this.players()) {
+      if (p.id === this.userId) continue;
+      const b = p.bets?.find((bet: any) => bet.field === label);
+      if (b && b.amount > 0) {
+        list.push({
+          playerId: p.id,
+          playerName: p.displayname || p.username || 'Player',
+          amount: b.amount
+        });
+      }
+    }
+    // ponytail: return other players' bets for live multi-player chip visibility
+    return list;
+  }
+
   //
   selectChip(value: number): void {
     this.selectedChip.set(value);

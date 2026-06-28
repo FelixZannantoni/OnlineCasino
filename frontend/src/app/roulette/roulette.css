@@ -850,3 +850,70 @@ dl {
     letter-spacing: 3px;
   }
 }
+
+/* OTHER PLAYERS' BETS CHIPS */
+.other-bets-container {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  display: flex;
+  gap: 3px;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+.other-bets-container.vertical {
+  flex-direction: column;
+  bottom: auto;
+  top: 2px;
+}
+
+.other-bet-chip {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.25); /* ponytail: more transparent than player's own Purple chip */
+  border: 1.5px dashed rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s, background 0.2s;
+  pointer-events: auto;
+}
+
+.other-bet-chip:hover {
+  transform: scale(1.2);
+  background: rgba(201, 168, 76, 0.6);
+  z-index: 12;
+}
+
+.other-chip-amount {
+  font-family: 'Oswald', sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.other-chip-player-name {
+  position: absolute;
+  top: -5px;
+  left: 80%;
+  background: rgba(15, 23, 42, 0.85); /* Slate 900 background */
+  color: #fff;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 6px;
+  font-weight: 700;
+  padding: 1px 3.5px;
+  border-radius: 3px;
+  border: 1px solid rgba(201, 168, 76, 0.5);
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
