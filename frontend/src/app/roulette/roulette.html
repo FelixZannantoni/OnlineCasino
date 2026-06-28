@@ -56,6 +56,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn('0'); track ob.playerId) {
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                         </div>
 
@@ -71,6 +79,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container vertical">
+                                    @for (ob of getOtherBetsOn(colLabels[$index]); track ob.playerId) {
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             @for (n of row; track n) {
                             <div class="cell ncell" [class.nr]="isRed(n)" [class.nb]="!isRed(n)" role="button"
@@ -81,6 +97,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn('' + n); track ob.playerId) {
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             }
                             }
@@ -97,6 +121,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn(d.label); track ob.playerId) {
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             }
                         </div>
@@ -120,6 +152,14 @@
                                 <span class="cmark" aria-hidden="true">{{ amt >= 1000 ? (amt / 1000).toFixed(1) + 'k' :
                                     amt }}</span>
                                 }
+                                <div class="other-bets-container">
+                                    @for (ob of getOtherBetsOn(e.label); track ob.playerId) {
+                                    <div class="other-bet-chip" [attr.title]="ob.playerName + ': $' + ob.amount">
+                                        <span class="other-chip-amount">{{ ob.amount >= 1000 ? (ob.amount / 1000).toFixed(0) + 'k' : ob.amount }}</span>
+                                        <span class="other-chip-player-name">{{ ob.playerName }}</span>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                             }
                         </div>

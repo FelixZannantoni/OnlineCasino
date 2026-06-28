@@ -1,445 +1,251 @@
 .navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: linear-gradient(90deg, #0a0a0a 0%, #1a3a52 50%, #0a0a0a 100%);
-    color: #fff;
-    box-shadow:
-        0 2px 20px rgba(0, 0, 0, 0.5),
-        0 0 10px rgba(255, 215, 0, 0.2);
-    border-bottom: 1.5px solid var(--light-gold);
-    overflow: visible;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, var(--bg) 0%, var(--surface-raised) 50%, var(--bg) 100%);
+  color: #fff;
+  box-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.5),
+    0 0 10px rgba(200, 165, 80, 0.2);
+  border-bottom: 1.5px solid var(--gold);
+  overflow: visible;
 }
 
 .navbar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-            transparent 0%,
-            rgba(255, 215, 0, 0.5) 20%,
-            rgba(255, 215, 0, 0.8) 50%,
-            rgba(255, 215, 0, 0.5) 80%,
-            transparent 100%);
-    animation: goldShimmer 3s ease-in-out infinite;
-}
-
-@keyframes goldShimmer {
-
-    0%,
-    100% {
-        opacity: 0.5;
-    }
-
-    50% {
-        opacity: 1;
-    }
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gold-rule);
+  animation: goldShimmer 3s ease-in-out infinite;
 }
 
 .navbar_container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0.4rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.4rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .navbar_brand {
-    flex: 0 0 auto;
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 10;
 }
 
 .brand_link {
-    color: var(--gold-dark);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.3rem;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 10);
-    position: relative;
-    z-index: 1002;
+  color: var(--gold);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-shadow: 0 0 10px rgba(200, 165, 80, 0.3);
+  position: relative;
+  z-index: 1002;
+  transition: text-shadow 0.5s ease-in-out;
 }
 
 .brand_link:hover {
-    /*cursor: pointer; /* geht nicht*/
-    text-shadow: 0 0 10px rgba(255, 215, 0, 10);
-    transition: all 0.5s ease-in-out;
+  text-shadow: 0 0 14px rgba(200, 165, 80, 0.55);
 }
 
 .navbar_center {
-    flex: 1 1 0;
-    display: flex;
-    justify-content: center;
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
 }
 
 .navbar_nav ul {
-    display: flex;
-    gap: 0.75rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  display: flex;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar_right {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .navbar_meta {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
-a {
-    cursor: pointer;
-}
-
-.chips {
-    background: linear-gradient(135deg, #1a3a52 0%, #0f2847 100%);
-    padding: 0.35rem 0.8rem;
-    border-radius: 999px;
-    color: #ffd700;
-    /*Bober*/
-    font-weight: 700;
-    border: 1px solid #ffd700;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
-}
-
-.chips_icon {
-    font-size: 1rem;
-}
-
-.chips_amount {
-    font-family: 'Courier New', monospace;
-    letter-spacing: 1px;
-}
-
-/* Settings Button */
+/* Settings button */
 .settings_btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 2px solid #ffd700;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-    transition: all 0.2s ease;
-    box-shadow: var(--primary-purple) 0px 2px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  box-shadow: var(--primary-purple) 0px 2px 8px;
 }
 
 .settings_btn:hover {
-    border-color: #ffeab0;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+  border-color: var(--gold-light);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(200, 165, 80, 0.5);
 }
 
 .settings-icon {
-    color: #ffd700;
-    font-size: 1.4rem;
-    width: 1.4rem;
-    height: 1.4rem;
-    transition: color 0.2s ease;
+  color: var(--gold);
+  font-size: 1.4rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  transition: color 0.2s ease;
 }
 
-/* Hover: Spin infinitely + Color Change */
 .settings_btn:hover .settings-icon {
-    color: #ffeab0;
-    animation: spin 3s linear infinite;
-    /* 3 seconds for a full rotation */
+  color: var(--gold-light);
+  animation: spin 3s linear infinite;
 }
 
-/* Profile Button */
+/* Profile button */
 .profile_pic {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 2px solid #ffd700;
-    overflow: hidden;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-    transition: all 0.2s ease;
-    box-shadow: var(--primary-purple) 0px 2px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  overflow: hidden;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  box-shadow: var(--primary-purple) 0px 2px 8px;
 }
 
 .profile_pic:hover {
-    border-color: #ffeab0;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+  border-color: var(--gold-light);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(200, 165, 80, 0.5);
 }
 
 .profile_image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Static poker chip background
-   Creates the decorative “flying chips” canvas behind the brand.
-*/
-
-.navbar_brand {
-    position: relative;
-    z-index: 10;
-}
-
-/* Container for the static chip background */
+/* Decorative flying chips behind the brand name */
 .coin-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 180px;
-    height: 60px;
-    pointer-events: none;
-    z-index: -1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 60px;
+  pointer-events: none;
+  z-index: -1;
 }
-
 
 .chip {
-    position: absolute;
-    border-radius: 50%;
-    background:
-        repeating-conic-gradient(from 0deg,
-            #fff 0deg 8deg,
-            transparent 8deg 16deg),
-        radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
-    background-size: 100% 100%, 80% 80%;
-    background-repeat: no-repeat;
-    box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.3),
-        inset 0 0 0 2px rgba(255, 255, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg),
+    radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
+  background-size: 100% 100%, 80% 80%;
+  background-repeat: no-repeat;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chip::before {
-    content: '';
-    position: absolute;
-    width: 65%;
-    height: 65%;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #fff, #e0e0e0);
-    border: 1px dashed rgba(0, 0, 0, 0.15);
+  content: '';
+  position: absolute;
+  width: 65%;
+  height: 65%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff, #e0e0e0);
+  border: 1px dashed rgba(0, 0, 0, 0.15);
 }
 
-/* Dollar sign on chip */
 .chip::after {
-    content: '$';
-    position: relative;
-    font-family: 'Georgia';
-    font-weight: bold;
-    font-size: 0.8em;
-    color: #333;
+  content: '$';
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: bold;
+  font-size: 0.8em;
+  color: #333;
 }
 
-.chip-red {
-    background:
-        repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg),
-        radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
-    background-size: 100% 100%, 80% 80%;
-}
-
-.chip-blue {
-    background:
-        repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg),
-        radial-gradient(circle at 30% 30%, #4dabf7, #1864ab);
-    background-size: 100% 100%, 80% 80%;
-}
-
-.chip-green {
-    background:
-        repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg),
-        radial-gradient(circle at 30% 30%, #69db7c, #2f9e44);
-    background-size: 100% 100%, 80% 80%;
-}
-
+.chip-red   { background: repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg), radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a); background-size: 100% 100%, 80% 80%; }
+.chip-blue  { background: repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg), radial-gradient(circle at 30% 30%, #4dabf7, #1864ab); background-size: 100% 100%, 80% 80%; }
+.chip-green { background: repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg), radial-gradient(circle at 30% 30%, #69db7c, #2f9e44); background-size: 100% 100%, 80% 80%; }
+.chip-black { background: repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg), radial-gradient(circle at 30% 30%, #495057, #212529); background-size: 100% 100%, 80% 80%; }
 .chip-gold {
-    background:
-        repeating-conic-gradient(from 0deg, #ffd700 0deg 8deg, transparent 8deg 16deg),
-        radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
-    background-size: 100% 100%, 80% 80%;
-    box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.3),
-        inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+  background:
+    repeating-conic-gradient(from 0deg, var(--gold) 0deg 8deg, transparent 8deg 16deg),
+    radial-gradient(circle at 30% 30%, var(--gold) 0%, #a07010 100%);
+  background-size: 100% 100%, 80% 80%;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
 
-.chip-black {
-    background:
-        repeating-conic-gradient(from 0deg, #fff 0deg 8deg, transparent 8deg 16deg),
-        radial-gradient(circle at 30% 30%, #495057, #212529);
-    background-size: 100% 100%, 80% 80%;
+/* Final positions (offsets from text center) */
+.chip-1 { width: 22px; height: 22px; --fx: -75px; --fy: -25px; --fr: -30deg; }
+.chip-2 { width: 26px; height: 26px; --fx: -5px;  --fy: -30px; --fr: 15deg; }
+.chip-3 { width: 20px; height: 20px; --fx: 65px;  --fy: -25px; --fr: -20deg; }
+.chip-4 { width: 24px; height: 24px; --fx: 85px;  --fy: -15px; --fr: 40deg; }
+.chip-5 { width: 18px; height: 18px; --fx: -60px; --fy: 14px;  --fr: -45deg; }
+.chip-6 { width: 23px; height: 23px; --fx: 35px;  --fy: 5px;   --fr: 25deg;  z-index: 1001; }
+.chip-7 { width: 19px; height: 19px; --fx: -25px; --fy: 2px;   --fr: -30deg; z-index: 1001; }
+
+/* All chips hidden at text center by default */
+.navbar_brand > .chip {
+  position: absolute;
+  opacity: 0;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0) rotate(0deg);
+  pointer-events: none;
 }
 
-/* Final positions (offsets from text center at 65%/50% of navbar brand) */
-.chip-1 {
-    width: 22px;
-    height: 22px;
-    --fx: -75px;
-    --fy: -25px;
-    --fr: -30deg;
+/* Hover: fly out to final positions, staggered */
+.navbar_brand:hover > .chip {
+  opacity: 1;
+  animation: chipFlyOut 0.6s var(--overlay-enter) forwards;
 }
-
-.chip-2 {
-    width: 26px;
-    height: 26px;
-    --fx: -5px;
-    --fy: -30px;
-    --fr: 15deg;
-}
-
-.chip-3 {
-    width: 20px;
-    height: 20px;
-    --fx: 65px;
-    --fy: -25px;
-    --fr: -20deg;
-}
-
-.chip-4 {
-    width: 24px;
-    height: 24px;
-    --fx: 85px;
-    --fy: -15px;
-    --fr: 40deg;
-}
-
-.chip-5 {
-    width: 18px;
-    height: 18px;
-    --fx: -60px;
-    --fy: 14px;
-    --fr: -45deg;
-}
-
-.chip-6 {
-    width: 23px;
-    height: 23px;
-    --fx: 35px;
-    --fy: 5px;
-    --fr: 25deg;
-    z-index: 1001;
-}
-
-.chip-7 {
-    width: 19px;
-    height: 19px;
-    --fx: -25px;
-    --fy: 2px;
-    --fr: -30deg;
-    z-index: 1001;
-}
-
-/* Default: all chips hidden at text center */
-.navbar_brand>.chip {
-    position: absolute;
-    opacity: 0;
-    top: 65%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0) rotate(0deg);
-    pointer-events: none;
-}
-
-/* Hover: fly out to final positions */
-.navbar_brand:hover>.chip {
-    opacity: 1;
-    animation: chipFlyOut 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-/* Staggered cascade */
-.navbar_brand:hover>.chip-1 {
-    animation-delay: 0.24s;
-}
-
-.navbar_brand:hover>.chip-2 {
-    animation-delay: 0.16s;
-}
-
-.navbar_brand:hover>.chip-3 {
-    animation-delay: 0.08s;
-}
-
-.navbar_brand:hover>.chip-4 {
-    animation-delay: 0.12s;
-}
-
-.navbar_brand:hover>.chip-5 {
-    animation-delay: 0.06s;
-}
-
-.navbar_brand:hover>.chip-6 {
-    animation-delay: 0.20s;
-}
-
-.navbar_brand:hover>.chip-7 {
-    animation-delay: 0.04s;
-}
-
-@keyframes chipFlyOut {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0) rotate(0deg);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translate(var(--fx), var(--fy)) scale(1) rotate(var(--fr));
-    }
-}
-
+.navbar_brand:hover > .chip-1 { animation-delay: 0.24s; }
+.navbar_brand:hover > .chip-2 { animation-delay: 0.16s; }
+.navbar_brand:hover > .chip-3 { animation-delay: 0.08s; }
+.navbar_brand:hover > .chip-4 { animation-delay: 0.12s; }
+.navbar_brand:hover > .chip-5 { animation-delay: 0.06s; }
+.navbar_brand:hover > .chip-6 { animation-delay: 0.20s; }
+.navbar_brand:hover > .chip-7 { animation-delay: 0.04s; }
 
 /* Responsive */
 @media (max-width: 720px) {
-    .navbar_container {
-        padding: 0.35rem;
-    }
-
-    .navbar_center {
-        display: none;
-    }
-
-    .navbar_right {
-        gap: 0.6rem;
-    }
+  .navbar_container { padding: 0.35rem; }
+  .navbar_center { display: none; }
+  .navbar_right { gap: 0.6rem; }
 }
 
-/* Mobile Responsive Navbar */
 @media (max-width: 480px) {
-    .navbar_container {
-        padding: 0.35rem 0.5rem;
-        gap: 0.5rem;
-    }
-
-    .brand_link {
-        font-size: 1.1rem;
-    }
-
-    .chips {
-        padding: 0.3rem 0.6rem;
-        font-size: 0.85rem;
-    }
-
-    .chips_icon {
-        font-size: 0.9rem;
-    }
-
-    .settings_btn,
-    .profile_pic {
-        width: 36px;
-        height: 36px;
-    }
+  .navbar_container { padding: 0.35rem 0.5rem; gap: 0.5rem; }
+  .brand_link { font-size: 1.2rem; }
+  .settings_btn,
+  .profile_pic { width: 36px; height: 36px; }
 }

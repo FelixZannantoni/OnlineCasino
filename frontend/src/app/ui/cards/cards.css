@@ -1,12 +1,9 @@
-/* Google Font (Cinzel for card typography) */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
-
-/* Card design tokens */
+/* Card design tokens (card-specific; font and base gold tokens come from global styles.css) */
 :root {
   --card-bg: #fdfaf2;
   --card-gold-bright: #ffd86e;
-  --card-gold-mid: #d19e1d;
-  --card-gold-dark: #a07010;
+  --card-gold-mid: var(--gold);
+  --card-gold-dark: var(--gold-dark);
   --card-red: #c0272d;
   --card-black: #1a1a1a;
   --card-shadow: rgba(0, 0, 0, 0.6);
@@ -20,7 +17,7 @@
   position: relative;
   cursor: pointer;
   box-sizing: border-box;
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-weight: 700;
   user-select: none;
   overflow: hidden;
@@ -132,7 +129,7 @@
 
 /* Karten-Rang-Anzeige */
 .card-rank {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
   line-height: 1;
@@ -243,13 +240,13 @@
   border-radius: inherit;
   background-image:
     repeating-linear-gradient(45deg,
-      rgba(255, 215, 0, 0.06) 0px,
-      rgba(255, 215, 0, 0.06) 1px,
+      rgba(200, 165, 80, 0.06) 0px,
+      rgba(200, 165, 80, 0.06) 1px,
       transparent 1px,
       transparent 12px),
     repeating-linear-gradient(-45deg,
-      rgba(255, 215, 0, 0.06) 0px,
-      rgba(255, 215, 0, 0.06) 1px,
+      rgba(200, 165, 80, 0.06) 0px,
+      rgba(200, 165, 80, 0.06) 1px,
       transparent 1px,
       transparent 12px);
   z-index: 1;

@@ -1,5 +1,5 @@
 .root {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     background: var(--casino-bg);
     color: #e8e0d0;
     border-radius: 18px;
@@ -25,7 +25,7 @@
 /* Header */
 .header {
     background: linear-gradient(135deg, var(--casino-bg) 0%, var(--casino-accent) 50%, var(--casino-bg) 100%);
-    border-bottom: 1px solid rgba(209, 158, 29, 0.35);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.35);
     padding: 24px 28px 0;
     position: relative;
     overflow: hidden;
@@ -53,13 +53,13 @@
     width: 38px;
     height: 38px;
     background: linear-gradient(135deg, #1e1a10, #2a2210);
-    border: 1px solid rgba(209, 158, 29, 0.4);
+    border: 1px solid rgba(200, 165, 80, 0.4);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-gold);
-    box-shadow: 0 0 12px rgba(209, 158, 29, 0.2), inset 0 1px 0 rgba(255, 216, 110, 0.15);
+    box-shadow: 0 0 12px rgba(200, 165, 80, 0.2), inset 0 1px 0 rgba(255, 216, 110, 0.15);
     flex-shrink: 0;
 }
 
@@ -68,7 +68,8 @@
 }
 
 .title {
-    font-size: 20px;
+    font-family: var(--font-display);
+    font-size: 22px;
     font-weight: 700;
     background: var(--primary-gold-gradient);
     -webkit-background-clip: text;
@@ -99,8 +100,8 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: rgba(209, 158, 29, 0.07);
-    border: 1px solid rgba(209, 158, 29, 0.25);
+    background: rgba(200, 165, 80, 0.07);
+    border: 1px solid rgba(200, 165, 80, 0.25);
     border-radius: 999px;
     padding: 3px 10px;
     font-size: 10px;
@@ -116,8 +117,8 @@
 }
 
 .chip-gold {
-    background: rgba(255, 215, 0, 0.06);
-    border-color: rgba(255, 215, 0, 0.3);
+    background: rgba(200, 165, 80, 0.06);
+    border-color: rgba(200, 165, 80, 0.3);
     color: var(--light-gold);
 }
 
@@ -159,7 +160,7 @@
 .xp-label {
     font-size: 9px;
     font-weight: 700;
-    color: rgba(209, 158, 29, 0.5);
+    color: rgba(200, 165, 80, 0.5);
     letter-spacing: 1.5px;
     white-space: nowrap;
     flex-shrink: 0;
@@ -171,7 +172,7 @@
     background: rgba(255, 255, 255, 0.04);
     border-radius: 999px;
     overflow: hidden;
-    border: 1px solid rgba(209, 158, 29, 0.12);
+    border: 1px solid rgba(200, 165, 80, 0.12);
 }
 
 .xp-fill {
@@ -222,7 +223,7 @@
     border-right: none;
     transition: color 0.25s, border-color 0.25s;
     background: none;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -280,7 +281,7 @@
 /* Members panel */
 .search-bar {
     padding: 18px 20px 14px;
-    border-bottom: 1px solid rgba(209, 158, 29, 0.1);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.1);
     flex-shrink: 0;
 }
 
@@ -302,19 +303,19 @@
     width: 100%;
     box-sizing: border-box;
     background: var(--casino-surface);
-    border: 1px solid rgba(209, 158, 29, 0.35);
+    border: 1px solid rgba(200, 165, 80, 0.35);
     border-radius: 10px;
     padding: 10px 14px 10px 44px;
     color: #e8e0d0;
     font-size: 13px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .search-input:focus {
     border-color: var(--text-gold);
-    box-shadow: 0 0 0 3px rgba(209, 158, 29, 0.15);
+    box-shadow: 0 0 0 3px rgba(200, 165, 80, 0.15);
 }
 
 .search-input::placeholder {
@@ -348,7 +349,7 @@
 }
 
 .member-list::-webkit-scrollbar-thumb {
-    background: rgba(209, 158, 29, 0.3);
+    background: rgba(200, 165, 80, 0.3);
     border-radius: 4px;
 }
 
@@ -368,16 +369,16 @@
 
 .member-card:hover {
     background: var(--casino-surface);
-    border-color: rgba(209, 158, 29, 0.35);
+    border-color: rgba(200, 165, 80, 0.35);
 }
 
 .member-card.is-owner {
-    background: linear-gradient(135deg, rgba(209, 158, 29, 0.06), rgba(209, 158, 29, 0.02));
-    border-color: rgba(209, 158, 29, 0.25);
+    background: linear-gradient(135deg, rgba(200, 165, 80, 0.06), rgba(200, 165, 80, 0.02));
+    border-color: rgba(200, 165, 80, 0.25);
 }
 
 .member-card.is-owner:hover {
-    border-color: rgba(209, 158, 29, 0.5);
+    border-color: rgba(200, 165, 80, 0.5);
 }
 
 /* Avatar */
@@ -395,7 +396,7 @@
     justify-content: center;
     font-weight: 700;
     font-size: 16px;
-    border: 2px solid rgba(209, 158, 29, 0.35);
+    border: 2px solid rgba(200, 165, 80, 0.35);
     overflow: hidden;
 }
 
@@ -413,7 +414,7 @@
     transform: translateX(-50%);
     font-size: 13px !important;
     color: var(--light-gold);
-    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7));
+    filter: drop-shadow(0 0 6px rgba(200, 165, 80, 0.7));
     line-height: 1;
 }
 
@@ -474,8 +475,8 @@
 }
 
 .role-badge.owner {
-    background: rgba(209, 158, 29, 0.12);
-    border: 1px solid rgba(209, 158, 29, 0.4);
+    background: rgba(200, 165, 80, 0.12);
+    border: 1px solid rgba(200, 165, 80, 0.4);
     color: var(--text-gold);
 }
 
@@ -524,7 +525,7 @@
 
 .contrib-lbl {
     font-size: 9px;
-    color: rgba(209, 158, 29, 0.4);
+    color: rgba(200, 165, 80, 0.4);
     letter-spacing: 1px;
     text-transform: uppercase;
 }
@@ -532,7 +533,7 @@
 /* Stats row */
 .stats-row {
     display: flex;
-    border-top: 1px solid rgba(209, 158, 29, 0.35);
+    border-top: 1px solid rgba(200, 165, 80, 0.35);
     flex-shrink: 0;
 }
 
@@ -540,7 +541,7 @@
     flex: 1;
     padding: 12px 10px;
     text-align: center;
-    border-right: 1px solid rgba(209, 158, 29, 0.1);
+    border-right: 1px solid rgba(200, 165, 80, 0.1);
 }
 
 .stat:last-child {
@@ -576,15 +577,16 @@
     align-items: center;
     gap: 12px;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(209, 158, 29, 0.35);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.35);
     background: linear-gradient(135deg, var(--casino-bg), var(--casino-accent));
     flex-shrink: 0;
 }
 
 .chat-name {
-    font-size: 14px;
+    font-family: var(--font-display);
+    font-size: 16px;
     font-weight: 700;
-    color: var(--light-gold);
+    color: var(--gold-light);
     margin: 0;
     letter-spacing: 1px;
 }
@@ -637,7 +639,7 @@
 }
 
 .messages::-webkit-scrollbar-thumb {
-    background: rgba(209, 158, 29, 0.3);
+    background: rgba(200, 165, 80, 0.3);
     border-radius: 4px;
 }
 
@@ -659,7 +661,7 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(209, 158, 29, 0.35);
+    background: rgba(200, 165, 80, 0.35);
 }
 
 .msg {
@@ -686,7 +688,7 @@
     font-size: 10px;
     font-weight: 700;
     flex-shrink: 0;
-    border: 1px solid rgba(209, 158, 29, 0.35);
+    border: 1px solid rgba(200, 165, 80, 0.35);
 }
 
 .msg-content {
@@ -704,7 +706,7 @@
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 1.5px;
-    color: rgba(209, 158, 29, 0.55);
+    color: rgba(200, 165, 80, 0.55);
     text-transform: uppercase;
     padding: 0 2px;
 }
@@ -722,14 +724,14 @@
 
 .msg.theirs .msg-bubble {
     background: var(--casino-surface);
-    border: 1px solid rgba(209, 158, 29, 0.12);
+    border: 1px solid rgba(200, 165, 80, 0.12);
     border-bottom-left-radius: 4px;
     color: #d8d0c0;
 }
 
 .msg.mine .msg-bubble {
-    background: linear-gradient(135deg, rgba(209, 158, 29, 0.2), rgba(209, 158, 29, 0.1));
-    border: 1px solid rgba(209, 158, 29, 0.35);
+    background: linear-gradient(135deg, rgba(200, 165, 80, 0.2), rgba(200, 165, 80, 0.1));
+    border: 1px solid rgba(200, 165, 80, 0.35);
     border-bottom-right-radius: 4px;
     color: #f0e8d0;
 }
@@ -745,7 +747,7 @@
 /* Chat input */
 .chat-input-wrap {
     padding: 14px 20px;
-    border-top: 1px solid rgba(209, 158, 29, 0.35);
+    border-top: 1px solid rgba(200, 165, 80, 0.35);
     background: var(--navbar-dark);
     display: flex;
     gap: 10px;
@@ -759,19 +761,19 @@
     flex: 1;
     min-width: 0;
     background: var(--casino-surface);
-    border: 1px solid rgba(209, 158, 29, 0.25);
+    border: 1px solid rgba(200, 165, 80, 0.25);
     border-radius: 10px;
     padding: 10px 16px;
     color: #e8e0d0;
     font-size: 13px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .chat-input:focus {
     border-color: var(--text-gold);
-    box-shadow: 0 0 0 3px rgba(209, 158, 29, 0.15);
+    box-shadow: 0 0 0 3px rgba(200, 165, 80, 0.15);
 }
 
 .chat-input::placeholder {
@@ -800,7 +802,7 @@
 
 .send-btn:hover {
     transform: scale(1.08);
-    box-shadow: 0 0 14px rgba(209, 158, 29, 0.5);
+    box-shadow: 0 0 14px rgba(200, 165, 80, 0.5);
 }
 
 .send-btn:focus-visible {
@@ -823,13 +825,13 @@
 }
 
 .info-scroll::-webkit-scrollbar-thumb {
-    background: rgba(209, 158, 29, 0.3);
+    background: rgba(200, 165, 80, 0.3);
     border-radius: 4px;
 }
 
 .vault-card {
     background: linear-gradient(140deg, rgba(20, 15, 36, 0.95), rgba(10, 10, 15, 0.98));
-    border: 1px solid rgba(209, 158, 29, 0.35);
+    border: 1px solid rgba(200, 165, 80, 0.35);
     border-radius: 14px;
     padding: 28px 20px 22px;
     text-align: center;
@@ -850,14 +852,14 @@
 .vault-card-bg {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(209, 158, 29, 0.07) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(200, 165, 80, 0.07) 0%, transparent 60%);
     pointer-events: none;
 }
 
 .vault-emblem {
     font-size: 42px !important;
     color: var(--text-gold);
-    filter: drop-shadow(0 0 20px rgba(209, 158, 29, 0.7));
+    filter: drop-shadow(0 0 20px rgba(200, 165, 80, 0.7));
     margin-bottom: 12px;
     display: block;
     position: relative;
@@ -865,7 +867,8 @@
 }
 
 .vault-name {
-    font-size: 16px;
+    font-family: var(--font-display);
+    font-size: 19px;
     font-weight: 800;
     letter-spacing: 4px;
     background: var(--primary-gold-gradient);
@@ -879,7 +882,7 @@
 
 .vault-tag {
     font-size: 10px;
-    color: rgba(209, 158, 29, 0.45);
+    color: rgba(200, 165, 80, 0.45);
     letter-spacing: 3px;
     margin-bottom: 8px;
     position: relative;
@@ -913,7 +916,7 @@
 
 .info-tile {
     background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(209, 158, 29, 0.12);
+    border: 1px solid rgba(200, 165, 80, 0.12);
     border-radius: 12px;
     padding: 15px 10px;
     text-align: center;
@@ -921,8 +924,8 @@
 }
 
 .info-tile:hover {
-    background: rgba(209, 158, 29, 0.04);
-    border-color: rgba(209, 158, 29, 0.28);
+    background: rgba(200, 165, 80, 0.04);
+    border-color: rgba(200, 165, 80, 0.28);
 }
 
 .info-tile-icon {
@@ -953,7 +956,7 @@
 /* Leaderboard */
 .leaderboard {
     background: rgba(255, 255, 255, 0.015);
-    border: 1px solid rgba(209, 158, 29, 0.15);
+    border: 1px solid rgba(200, 165, 80, 0.15);
     border-radius: 14px;
     overflow: hidden;
 }
@@ -965,7 +968,7 @@
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--text-gold);
-    border-bottom: 1px solid rgba(209, 158, 29, 0.1);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.1);
 }
 
 .lb-row {
@@ -982,7 +985,19 @@
 }
 
 .lb-row:hover {
-    background: rgba(209, 158, 29, 0.04);
+    background: rgba(200, 165, 80, 0.04);
+}
+
+.lb-row.gold {
+    background: linear-gradient(90deg, rgba(200, 165, 80, 0.1), transparent);
+}
+
+.lb-row.silver {
+    background: linear-gradient(90deg, rgba(192, 197, 206, 0.08), transparent);
+}
+
+.lb-row.bronze {
+    background: linear-gradient(90deg, rgba(193, 130, 84, 0.08), transparent);
 }
 
 .lb-rank-icon {
@@ -1014,7 +1029,7 @@
     justify-content: center;
     font-size: 11px;
     font-weight: 700;
-    border: 1px solid rgba(209, 158, 29, 0.25);
+    border: 1px solid rgba(200, 165, 80, 0.25);
     flex-shrink: 0;
 }
 
@@ -1053,7 +1068,7 @@
     padding: 14px 18px;
     font-size: 13px;
     color: var(--light-gold);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(209, 158, 29, 0.2);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(200, 165, 80, 0.2);
     display: flex;
     gap: 10px;
     align-items: center;
@@ -1091,7 +1106,7 @@
 }
 
 .explore-scroll::-webkit-scrollbar-thumb {
-    background: rgba(209, 158, 29, 0.3);
+    background: rgba(200, 165, 80, 0.3);
     border-radius: 4px;
 }
 
@@ -1110,7 +1125,7 @@
     background: var(--primary-gold-gradient);
     border: none;
     color: var(--text-gold-dark);
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -1122,7 +1137,7 @@
 
 .create-btn:hover:not(.disabled) {
     transform: scale(1.04);
-    box-shadow: 0 0 14px rgba(209, 158, 29, 0.45);
+    box-shadow: 0 0 14px rgba(200, 165, 80, 0.45);
 }
 
 .create-btn.disabled {
@@ -1142,7 +1157,7 @@
 /* Create form */
 .create-form {
     background: linear-gradient(135deg, rgba(20, 15, 36, 0.98), rgba(10, 10, 18, 0.98));
-    border: 1px solid rgba(209, 158, 29, 0.35);
+    border: 1px solid rgba(200, 165, 80, 0.35);
     border-radius: 14px;
     overflow: hidden;
     animation: slide-down 0.22s ease;
@@ -1165,8 +1180,8 @@
     align-items: center;
     gap: 10px;
     padding: 13px 18px;
-    background: rgba(209, 158, 29, 0.05);
-    border-bottom: 1px solid rgba(209, 158, 29, 0.15);
+    background: rgba(200, 165, 80, 0.05);
+    border-bottom: 1px solid rgba(200, 165, 80, 0.15);
     font-size: 13px;
     font-weight: 700;
     color: var(--light-gold);
@@ -1175,8 +1190,8 @@
 
 .create-cost-badge {
     margin-left: auto;
-    background: rgba(209, 158, 29, 0.1);
-    border: 1px solid rgba(209, 158, 29, 0.3);
+    background: rgba(200, 165, 80, 0.1);
+    border: 1px solid rgba(200, 165, 80, 0.3);
     border-radius: 999px;
     padding: 2px 10px;
     font-size: 10px;
@@ -1198,7 +1213,7 @@
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: rgba(209, 158, 29, 0.5);
+    color: rgba(200, 165, 80, 0.5);
     margin-bottom: 6px;
 }
 
@@ -1206,19 +1221,19 @@
     width: 100%;
     box-sizing: border-box;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(209, 158, 29, 0.2);
+    border: 1px solid rgba(200, 165, 80, 0.2);
     border-radius: 8px;
     padding: 9px 14px;
     color: #e8e0d0;
     font-size: 13px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .create-input:focus {
     border-color: var(--text-gold);
-    box-shadow: 0 0 0 3px rgba(209, 158, 29, 0.12);
+    box-shadow: 0 0 0 3px rgba(200, 165, 80, 0.12);
 }
 
 .create-input::placeholder {
@@ -1233,7 +1248,7 @@
     gap: 12px;
     flex-wrap: wrap;
     margin-top: 12px;
-    border-top: 1px solid rgba(209, 158, 29, 0.1);
+    border-top: 1px solid rgba(200, 165, 80, 0.1);
 }
 
 .wallet-info {
@@ -1262,18 +1277,18 @@
     padding: 8px 16px;
     border-radius: 8px;
     background: transparent;
-    border: 1px solid rgba(209, 158, 29, 0.2);
+    border: 1px solid rgba(200, 165, 80, 0.2);
     color: #6a6880;
     font-size: 11px;
     font-weight: 700;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     cursor: pointer;
     letter-spacing: 1px;
     transition: border-color 0.2s, color 0.2s;
 }
 
 .cancel-btn:hover {
-    border-color: rgba(209, 158, 29, 0.4);
+    border-color: rgba(200, 165, 80, 0.4);
     color: #a09880;
 }
 
@@ -1285,7 +1300,7 @@
     color: var(--text-gold-dark);
     font-size: 11px;
     font-weight: 700;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     cursor: pointer;
     letter-spacing: 1px;
     display: inline-flex;
@@ -1296,7 +1311,7 @@
 
 .confirm-btn:hover:not(.disabled) {
     transform: scale(1.04);
-    box-shadow: 0 0 12px rgba(209, 158, 29, 0.45);
+    box-shadow: 0 0 12px rgba(200, 165, 80, 0.45);
 }
 
 .confirm-btn.disabled {
@@ -1317,7 +1332,7 @@
     gap: 13px;
     padding: 13px 14px;
     border-radius: 12px;
-    border: 1px solid rgba(209, 158, 29, 0.12);
+    border: 1px solid rgba(200, 165, 80, 0.12);
     background: rgba(255, 255, 255, 0.015);
     position: relative;
     overflow: hidden;
@@ -1325,8 +1340,8 @@
 }
 
 .explore-card:hover {
-    border-color: rgba(209, 158, 29, 0.3);
-    background: rgba(209, 158, 29, 0.03);
+    border-color: rgba(200, 165, 80, 0.3);
+    background: rgba(200, 165, 80, 0.03);
 }
 
 .explore-card-accent {
@@ -1345,7 +1360,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border: 1px solid rgba(209, 158, 29, 0.2);
+    border: 1px solid rgba(200, 165, 80, 0.2);
 }
 
 .explore-emblem .material-icons {
@@ -1379,7 +1394,7 @@
 .explore-tag {
     font-size: 9px;
     font-weight: 700;
-    color: rgba(209, 158, 29, 0.45);
+    color: rgba(200, 165, 80, 0.45);
     letter-spacing: 2px;
 }
 
@@ -1418,7 +1433,7 @@
     background: var(--primary-gold-gradient);
     border: none;
     color: var(--text-gold-dark);
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-body);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.5px;
@@ -1430,7 +1445,7 @@
 
 .join-btn:hover:not(.full) {
     transform: scale(1.06);
-    box-shadow: 0 0 12px rgba(209, 158, 29, 0.45);
+    box-shadow: 0 0 12px rgba(200, 165, 80, 0.45);
 }
 
 .join-btn.full {

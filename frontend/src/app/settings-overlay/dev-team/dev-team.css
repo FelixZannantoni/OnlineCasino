@@ -1,89 +1,54 @@
-.dev-team-content {
-    padding: 1rem 2rem 2rem 2rem;
-}
+.dev-team-content { padding: 1rem 2rem 2rem; }
 
 .dev-team-content h2 {
-    font-size: 1.5rem;
-    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-family: var(--font-display);
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.2rem;
 }
 
-.subtitle {
-    color: #666;
-    font-size: 0.95rem;
-    margin: 0 0 1.5rem 0;
-}
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 1.5rem; }
 
-h2 {
-    padding-bottom: 0.2rem;
-}
-
-.team-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-}
+.team-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
 
 .developer-card {
-    background: rgba(209, 158, 29, 0.05);
-    border: 1px solid rgba(209, 158, 29, 0.2);
-    border-radius: 12px;
-    padding: 1.25rem;
-    text-align: center;
-    transition: all 0.3s ease;
+  background: var(--gold-subtle);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.3s ease;
 }
 
-.developer-card:hover {
-    background: rgba(209, 158, 29, 0.1);
-    border-color: #d19e1d;
-}
+.developer-card:hover { background: rgba(200, 165, 80, 0.1); border-color: var(--gold); }
 
 .avatar-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 0.75rem;
-    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 0.75rem;
+  background: var(--gold-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.avatar-icon mat-icon {
-    color: #0a0a0a;
-    font-size: 1.8rem;
-    width: 1.8rem;
-    height: 1.8rem;
-}
+.avatar-icon mat-icon { color: var(--bg); font-size: 1.8rem; width: 1.8rem; height: 1.8rem; }
 
-.name {
-    font-size: 1.1rem;
-    color: #ffd86e;
-    margin: 0 0 0.25rem 0;
-}
+.name { font-family: var(--font-display); font-size: 1.15rem; color: var(--gold-light); margin: 0 0 0.25rem; }
+.role { color: var(--gold); font-size: 0.9rem; margin: 0 0 1rem; font-weight: 500; }
 
-.role {
-    color: #d19e1d;
-    font-size: 0.9rem;
-    margin: 0 0 1rem 0;
-    font-weight: 500;
-}
-
-.skills {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.4rem;
-}
+.skills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
 
 .skill-tag {
-    background: linear-gradient(18deg, #d19e1d 0%, #ffd86e 50%, #e3a812 100%);
-    color: #0a0a0a;
-    padding: 0.3rem 0.6rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
+  background: var(--gold-gradient);
+  color: var(--bg);
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
