@@ -45,7 +45,7 @@
 
 ## 3. Funktionale Anforderungen
 
-Die Zielsetzung ist die Entwicklung eines benutzerfreundlichen Online-Casinos mit moderner Benutzeroberfläche. Es sollen verschiedene Spiele implementiert werden: Slots, Poker, Roulette und Blackjack. Das System soll Casino Chips als Währung haben, neue User starten mit 1000 Chips, der stand verändert sich durch gewinnen oder verlieren und um sicherzustellen das der User nicht 0 Chips hat und dann nie wieder spielen kann, werden tägliche Belohnungen eingeführt.
+Die Zielsetzung ist die Entwicklung eines benutzerfreundlichen Online-Casinos mit moderner Benutzeroberfläche. Es sollen verschiedene Spiele implementiert werden: Slots, Poker, Roulette und Blackjack. Das System soll Casino Chips als Währung haben, neue User starten mit 1000 Chips, der stand verändert sich durch gewinnen oder verlieren.
 Auserdem brauchen wir eine faire Zufallslogik.
 
 Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Projekterfahrungen und potenziell Monetarisierung. Die Umsetzung erfolgt in Meilensteinen: Grundfunktionen bis Ostern, Erweiterungen bis Mai, Fertigstellung bis Juni.
@@ -61,16 +61,15 @@ Ziele umfassen: Hohe Verfügbarkeit, Automatisierung der Spiele, Sammeln von Pro
 1. Der Benutzer öffnet die Anwendung nach dem Login
 2. Das System zeigt das Hauptmenü (Dashboard) an
 3. Der Benutzer sieht folgende zentrale Elemente:
-    1. Aktuelles Chips & Bonusinformationen (oben prominent)
-    2. Schnellzugriffe / Kategorien
-    3. Empfohlene / beliebte Spiele
-    4. Kontostand(Chips) und Chat
+    1. Schnellzugriffe / Kategorien
+    2. Empfohlene / beliebte Spiele
+    3. Klub
     
 4. Der Benutzer kann per Klick/Tap in einen Spielbereich
 
 **Nachbedingung:** Jegliche Aktionen sind verarbeitet, Chips aktualisiert.
 
-**Ausnahmen:** Keine Internetverbindung -> Offline-Hinweis, -> Loadingscreen
+**Ausnahmen:** Nicht genug Kapital für Tischeinsätze -> Blockieren des Spielbeitritts -> Alert, dass das Geld Fehlt 
 
 Mockup des Hauptmenüs
 ![Startmenü](docs/mockups/Startmenü.jpeg)
@@ -176,26 +175,18 @@ Mockup des Pokertisch
 **Beschreibung:**
 1. Der Benutzer klickt auf das Social-/Chat-Symbol in der Navigation.
 2. Die Freundesliste wird geladen und angezeigt.
-3. Der Benutzer kann die Liste absteigend oder aufsteigend sortieren nach:
-   - Chips
-   - Freundschaftsdauer
-   - Aktuelle Streak-Länge
-   - Name
-4. Eingehende Freundschaftsanfragen:
+3. Eingehende Freundschaftsanfragen:
    - Annehmen -> Freund wird hinzugefügt
    - Ablehnen
-5. Chatten mit einem Freund:
+4. Chatten mit einem Freund:
    - Wird ein Freund ausgewählt, ist auf der Seite der Chatverlauf dessen offen
    - Nachrichten können gesendet werden
    - Empfangene Nachrichten werden angezeigt
 
 **Nachbedingung:**
-- Freundesliste ist sichtbar + sortiert
+- Freundesliste ist sichtbar
 - Gesendete/angenommene Anfragen sind gespeichert
 - Chat mit Freunden ist offen bzw. aktualisiert
-
-**Wichtige Ausnahmen:**
-- Freundesliste leer -> Hinweis + Button „Freunde finden / einladen“
 
 Mockup der Social-Features
 ![SocialFeatures](docs/mockups/SocialFeatures.jpeg)
