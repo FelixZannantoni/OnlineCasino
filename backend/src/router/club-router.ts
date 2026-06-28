@@ -26,4 +26,6 @@ clubRouter.put("/:clubId", async (req: Request, res: Response) => {
     }
 
     await clubService.joinClub(userId, clubId);
+
+    return res.status(StatusCodes.OK);
 })
