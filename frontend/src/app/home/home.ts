@@ -36,10 +36,10 @@ export class Home implements OnInit {
   };
 
   readonly games = [
-    { key: 'Roulette',    title: 'Roulette',             route: '/roulette'    },
-    { key: 'Blackjack',   title: 'Blackjack',            route: '/blackjack'   },
-    { key: 'PokerTexas',  title: "Poker Texas Hold'em",  route: '/poker'       },
-    { key: 'Slotmachine', title: 'Slotmachine',          route: '/slotmachine' },
+    { key: 'Roulette', title: 'Roulette', route: '/roulette' },
+    { key: 'Blackjack', title: 'Blackjack', route: '/blackjack' },
+    { key: 'PokerTexas', title: "Poker Texas Hold'em", route: '/poker' },
+    { key: 'Slotmachine', title: 'Slotmachine', route: '/slotmachine' },
   ];
 
   readonly favoriteCards = new Set<string>();
@@ -98,21 +98,37 @@ export class Home implements OnInit {
     this.router.navigate([route], { queryParams: { mode: mode.key.toLowerCase() } });
   }
 
+  private readonly hardcodedClubMembers: ClubMember[] = [
+    { uuid: 'velvet', username: 'VelvetAce', displayname: 'VelvetAce', status: 'online' },
+    { uuid: 'golden', username: 'GoldenRush', displayname: 'GoldenRush', status: 'online' },
+    { uuid: 'night', username: 'NightDealer', displayname: 'NightDealer', status: 'online' },
+    { uuid: 'blaze', username: 'BlazeMerchant', displayname: 'BlazeMerchant', status: 'away' },
+    { uuid: 'steel', username: 'SteelBluff', displayname: 'SteelBluff', status: 'offline' },
+    { uuid: 'dusk', username: 'DuskCroupier', displayname: 'DuskCroupier', status: 'offline' },
+  ];
+
   async ngOnInit(): Promise<void> {
     if (!this.isBrowser) return;
-    const res = await fetch(`/clubs/${this.dataService.getUserId()}`, {
-      method: 'GET'
-    });
 
-    if (res.ok) {
+    // API currently doesn't work for this view -> hardcode for now.
+    this.clubName.set('THE VELVET VAULT');
+    this.clubMembers.set(this.hardcodedClubMembers);
+
+    // Keep API attempt in place for later; don't overwrite hardcoded values if it fails.
+    try {
+      const res = await fetch(`/clubs/${this.dataService.getUserId()}`, { method: 'GET' });
+      if (!res.ok) return;
+
       const club = (await res.json()).club;
-
-      if (club) {
+      if (club?.name && Array.isArray(club?.members) && club.members.length > 0) {
         this.clubName.set(club.name);
         this.clubMembers.set(club.members);
       }
+    } catch {
+      // ignore
     }
   }
+
 
   setSlide(slide: 'friends' | 'leaderboard'): void {
     this.showLeaderboard = slide === 'leaderboard';

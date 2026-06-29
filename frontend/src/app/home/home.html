@@ -19,10 +19,13 @@
                         <span class="variation-tagline">{{ fav.mode.tagline }}</span>
                     </div>
                     <div class="card-actions">
-                        <button class="variation-favorite-btn" (click)="toggleFavorite(fav.game.key, fav.mode.key, $event)" aria-label="Toggle favorite">
-                            <mat-icon>{{ isFavorite(fav.game.key, fav.mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                        <button class="variation-favorite-btn"
+                            (click)="toggleFavorite(fav.game.key, fav.mode.key, $event)" aria-label="Toggle favorite">
+                            <mat-icon>{{ isFavorite(fav.game.key, fav.mode.key) ? 'favorite' : 'favorite_border'
+                                }}</mat-icon>
                         </button>
-                        <button class="variation-info-btn" (click)="openInfo(fav.game.key, $event)" aria-label="Game info">
+                        <button class="variation-info-btn" (click)="openInfo(fav.game.key, $event)"
+                            aria-label="Game info">
                             <mat-icon>info_outline</mat-icon>
                         </button>
                     </div>
@@ -52,7 +55,8 @@
                         </span> -->
                     </div>
                     <div class="card-actions">
-                        <button class="variation-favorite-btn" (click)="toggleFavorite(game.key, mode.key, $event)" aria-label="Toggle favorite">
+                        <button class="variation-favorite-btn" (click)="toggleFavorite(game.key, mode.key, $event)"
+                            aria-label="Toggle favorite">
                             <mat-icon>{{ isFavorite(game.key, mode.key) ? 'favorite' : 'favorite_border' }}</mat-icon>
                         </button>
                         <button class="variation-info-btn" (click)="openInfo(game.key, $event)" aria-label="Game info">
@@ -98,12 +102,15 @@
                             <div class="slide-content">
                                 <ul class="friends-list">
                                     @for (member of clubMembers(); track $index) {
-                                        <li class="friend-item online">
-                                            <button class="friend-btn">
-                                                <span class="status-dot"></span>
-                                                <span class="friend-name">{{ member.displayname }}</span>
-                                            </button>
-                                        </li>
+                                    <li class="friend-item" [class.online]="member.status === 'online'"
+                                        [class.away]="member.status === 'away'"
+                                        [class.offline]="member.status === 'offline'">
+                                        <button class="friend-btn">
+                                            <span class="status-dot"></span>
+                                            <span class="friend-name">{{ member.displayname }}</span>
+                                        </button>
+                                    </li>
+
                                     }
                                 </ul>
                             </div>
@@ -114,15 +121,16 @@
                                     <li class="leaderboard-item">
                                         <button class="leaderboard-btn">
                                             <span class="rank">1</span>
-                                            <span class="player-name">[name]</span>
+                                            <span class="player-name">{{ clubMembers()[0]?.displayname }}</span>
                                         </button>
                                     </li>
                                     <li class="leaderboard-item">
                                         <button class="leaderboard-btn">
                                             <span class="rank">2</span>
-                                            <span class="player-name">[name]</span>
+                                            <span class="player-name">{{ clubMembers()[1]?.displayname }}</span>
                                         </button>
                                     </li>
+
                                 </ul>
                             </div>
                         </div>

@@ -459,6 +459,7 @@
 
 .friend-item.online .status-dot { background: var(--success); box-shadow: 0 0 8px rgba(76, 175, 80, 0.6); }
 .friend-item.offline .status-dot { background: var(--danger); box-shadow: 0 0 8px rgba(229, 62, 62, 0.6); }
+.friend-item.away .status-dot { background: var(--danger); box-shadow: 0 0 8px rgba(236, 228, 2, 0.993); } 
 
 .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
