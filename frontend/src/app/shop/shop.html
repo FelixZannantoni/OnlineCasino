@@ -8,7 +8,10 @@
         <div class="balance-badge">
             <mat-icon>account_balance_wallet</mat-icon>
             <span class="balance-amount">{{ userCredits | number }}</span>
-            <button (click)="getFreeMoney()">get free money</button>
+            <button class="free-chips-btn" (click)="claimFreeChips()" [disabled]="isClaimingFreeChips">
+                <mat-icon>add</mat-icon>
+                <span>1,000 free chips</span>
+            </button>
         </div>
     </div>
 

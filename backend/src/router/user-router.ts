@@ -98,6 +98,29 @@ userRouter.get("/:userId", async (req: Request, res: Response) => {
         res.status(StatusCodes.NOT_FOUND).json({ message: "User not found!" });
     }
 });
+
+userRouter.post("/:userId/free-chips", async (req: Request, res: Response) => {
+    const userId = req.params.userId as string;
+    const service: UserService = new UserService();
+    const freeChipAmount = 1000;
+
+    const user = await service.getUserById(userId);
+
+    if (!user) {
+        res.status(StatusCodes.NOT_FOUND).json({ message: "User not found!" });
+        return;
+    }
+
+    const balance = user.balance + freeChipAmount;
+    const success = await service.updateUserBalance(userId, balance);
+
+    if (success) {
+        res.status(StatusCodes.OK).json({ balance });
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not update balance!" });
+    }
+});
+
 userRouter.get("/:userId/friends", async (req: Request, res: Response) => {
     const userId: string = req.params.userId.toString();
 
