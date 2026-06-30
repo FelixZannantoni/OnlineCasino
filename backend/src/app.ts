@@ -26,6 +26,7 @@ import { normalizeUserId } from "./utils";
 import { CosmeticsService } from "./services/cosmetics-service";
 import { ClubService } from "./services/club-service";
 import { clubRouter } from "./router/club-router";
+import { cosmeticsRouter } from "./router/cosmetics-router";
 
 const PORT = process.env.PORT || 3000;
 
@@ -48,6 +49,7 @@ app.use("/slotmachine", slotmachineRouter);
 app.use("/stats", statsRouter);
 app.use("/chats", chatRouter);
 app.use("/clubs", clubRouter);
+app.use("/cosmetics", cosmeticsRouter);
 
 // Redirect root to login page
 app.get("/", (req, res) => {
@@ -66,7 +68,7 @@ app.use(express.static(publicPath, {
 
 // 2. Catch-all for Angular Routing
 // Using a RegExp object directly bypasses path-to-regexp string parsing
-app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine)).*/, (req, res) => {
+app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine|stats|chats|clubs|cosmetics)).*/, (req, res) => {
     res.sendFile(path.join(publicPath, "index.html"));
 });
 
