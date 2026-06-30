@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { DataService } from '../services/data-service';
 
 interface ShopItem {
@@ -28,9 +28,12 @@ interface ShopItem {
 })
 export class Shop implements OnInit {
   private readonly dataService = inject(DataService);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'table-felts' | 'bundles' = 'all';
-  userCredits: number = 2450;
+  selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'bundles' = 'all';
+  userCredits: number = 0;
+  isClaimingFreeChips = false;
 
   featuredItem: ShopItem = {
     id: 0,
@@ -76,9 +79,48 @@ export class Shop implements OnInit {
     }
   }
 
-  getFreeMoney(): void {
-    this.userCredits += 1000;
-    // TODO: run an ad before giving money;
+  async ngOnInit(): Promise<void> {
+    await this.loadUserBalance();
+  }
+
+  private async loadUserBalance(): Promise<void> {
+    if (!this.isBrowser) return;
+
+    const userId = this.dataService.getUserId();
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`/users/${userId}`);
+      if (!res.ok) return;
+
+      const body = await res.json();
+      this.userCredits = typeof body.balance === 'number' ? body.balance : 0;
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Failed to load shop balance', error);
+    }
+  }
+
+  async claimFreeChips(): Promise<void> {
+    if (!this.isBrowser || this.isClaimingFreeChips) return;
+
+    const userId = this.dataService.getUserId();
+    if (!userId) return;
+
+    this.isClaimingFreeChips = true;
+
+    try {
+      const res = await fetch(`/users/${userId}/free-chips`, { method: 'POST' });
+      if (!res.ok) return;
+
+      const body = await res.json();
+      this.userCredits = typeof body.balance === 'number' ? body.balance : this.userCredits;
+    } catch (error) {
+      console.error('Failed to claim free chips', error);
+    } finally {
+      this.isClaimingFreeChips = false;
+      this.cdr.detectChanges();
+    }
   }
 
   async buy(item: ShopItem): Promise<void> {
