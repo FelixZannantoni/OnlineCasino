@@ -79,6 +79,38 @@
     letter-spacing: 1px;
 }
 
+.free-chips-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.free-chips-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.free-chips-btn:disabled {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.free-chips-btn mat-icon {
+    color: #fff;
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+}
+
 /* Featured Banner */
 .featured-banner {
     display: flex;

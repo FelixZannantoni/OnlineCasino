@@ -8,7 +8,10 @@
         <div class="balance-badge">
             <mat-icon>account_balance_wallet</mat-icon>
             <span class="balance-amount">{{ userCredits | number }}</span>
-            <button (click)="getFreeMoney()">get free money</button>
+            <button class="free-chips-btn" (click)="claimFreeChips()" [disabled]="isClaimingFreeChips">
+                <mat-icon>add</mat-icon>
+                <span>1,000 free chips</span>
+            </button>
         </div>
     </div>
 
@@ -29,8 +32,8 @@
                     <mat-icon>paid</mat-icon>
                     <span>{{ featuredItem.price | number }}</span>
                 </div>
-                <button class="featured-btn">
-                    <span>Get It Now</span>
+                <button class="featured-btn" (click)="buy(featuredItem)" [disabled]="featuredItem.isOwned">
+                    <span>{{ featuredItem.isOwned ? 'Owned' : 'Get It Now' }}</span>
                     <mat-icon>shopping_cart</mat-icon>
                 </button>
             </div>
@@ -49,7 +52,7 @@
 
     <!-- Products Grid -->
     <div class="products-grid">
-        @for (item of filteredItems; track item.id) {
+        @for (item of filteredItems; track item.type + '-' + item.id) {
         <div class="product-item" [attr.data-rarity]="item.rarity">
             <div class="product-image-area">
                 @if (item.isNew) {
@@ -74,8 +77,8 @@
                         {{ item.price | number }}
                     </span>
                     }
-                    <button class="add-btn" title="Add to cart">
-                        <mat-icon>add_shopping_cart</mat-icon>
+                    <button class="add-btn" [title]="item.isOwned ? 'Owned' : 'Buy'" (click)="buy(item)" [disabled]="item.isOwned">
+                        <mat-icon>{{ item.isOwned ? 'check' : 'add_shopping_cart' }}</mat-icon>
                     </button>
                 </div>
             </div>
