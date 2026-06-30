@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { DecimalPipe } from '@angular/common';
-import { Router } from 'express';
+import { DataService } from '../services/data-service';
 
 interface ShopItem {
   id: number;
+  type: 'avatar' | 'card-back' | 'chip' | 'table-felt';
   name: string;
   price: number;
   currency: 'credits' | 'free';
   icon: string;
-  category: 'avatars' | 'card-backs' | 'chip-designs' | 'bundles';
+  category: 'avatars' | 'card-backs' | 'chip-designs' | 'table-felts' | 'bundles';
   description: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  isOwned: boolean;
+  previewColors?: string[];
   isNew?: boolean;
   isFeatured?: boolean;
 }
@@ -23,12 +26,15 @@ interface ShopItem {
   templateUrl: './shop.html',
   styleUrls: ['./shop.css']
 })
-export class Shop {
-  selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'bundles' = 'all';
+export class Shop implements OnInit {
+  private readonly dataService = inject(DataService);
+
+  selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'table-felts' | 'bundles' = 'all';
   userCredits: number = 2450;
 
   featuredItem: ShopItem = {
     id: 0,
+    type: 'avatar',
     name: 'High Roller Bundle',
     price: 4999,
     currency: 'credits',
@@ -36,75 +42,15 @@ export class Shop {
     category: 'bundles',
     description: 'Exclusive avatar + gold chip design + premium card backs',
     rarity: 'legendary',
+    isOwned: false,
     isFeatured: true
   };
 
-  items: ShopItem[] = [
-    {
-      id: 1,
-      name: 'Royal Avatar',
-      price: 500,
-      currency: 'credits',
-      icon: 'star', /* Use of a star icon to represent royalty, because "royalty" does not exist in MatIcons */
-      category: 'avatars',
-      description: 'Show your royal status at the poker table',
-      rarity: 'epic',
-      isNew: true
-    },
-    {
-      id: 2,
-      name: 'Diamond Avatar',
-      price: 1000,
-      currency: 'credits',
-      icon: 'diamond',
-      category: 'avatars',
-      description: 'Sparkle with every hand you play',
-      rarity: 'legendary'
-    },
-    {
-      id: 3,
-      name: 'Gold Chip Design',
-      price: 750,
-      currency: 'credits',
-      icon: 'monetization_on',
-      category: 'chip-designs',
-      description: 'Premium gold-plated chip appearance',
-      rarity: 'epic',
-      isNew: true
-    },
-    {
-      id: 4,
-      name: 'Classic Red Card Back',
-      price: 100,
-      currency: 'credits',
-      icon: 'credit_card',
-      category: 'card-backs',
-      description: 'Timeless classic poker card design',
-      rarity: 'common'
-    },
-    {
-      id: 5,
-      name: 'Purple Dragon Avatar',
-      price: 1500,
-      currency: 'credits',
-      icon: 'pets',
-      category: 'avatars',
-      description: 'Unleash the dragon at the table',
-      rarity: 'legendary',
-      isFeatured: true
-    },
-    {
-      id: 6,
-      name: 'Starter Bundle',
-      price: 0,
-      currency: 'free',
-      icon: 'shopping_bag',
-      category: 'bundles',
-      description: 'Free bundle with basic cosmetics',
-      rarity: 'common',
-      isNew: true
-    }
-  ];
+  items: ShopItem[] = [];
+
+  async ngOnInit(): Promise<void> {
+    await this.loadShopItems();
+  }
 
   get filteredItems(): ShopItem[] {
     if (this.selectedCategory === 'all') return this.items;
@@ -116,6 +62,7 @@ export class Shop {
     { id: 'avatars' as const, label: 'Avatars', icon: 'account_circle' },
     { id: 'card-backs' as const, label: 'Card Backs', icon: 'credit_card' },
     { id: 'chip-designs' as const, label: 'Chip Designs', icon: 'casino' },
+    { id: 'table-felts' as const, label: 'Table Felts', icon: 'table_restaurant' },
     { id: 'bundles' as const, label: 'Bundles', icon: 'shopping_bag' }
   ];
 
@@ -132,5 +79,48 @@ export class Shop {
   getFreeMoney(): void {
     this.userCredits += 1000;
     // TODO: run an ad before giving money;
+  }
+
+  async buy(item: ShopItem): Promise<void> {
+    const userId = this.dataService.getUserId();
+    if (!userId || item.isOwned || item.category === 'bundles') return;
+    if (item.currency !== 'free' && this.userCredits < item.price) return;
+
+    const response = await fetch('/cosmetics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId,
+        cosmeticId: item.id,
+        cosmeticType: item.type,
+      }),
+    });
+
+    if (!response.ok) return;
+
+    item.isOwned = true;
+    if (item.currency !== 'free') {
+      this.userCredits -= item.price;
+    }
+  }
+
+  private async loadShopItems(): Promise<void> {
+    const userId = this.dataService.getUserId();
+    if (!userId) return;
+
+    const response = await fetch(`/cosmetics?userId=${encodeURIComponent(userId)}&includeUnowned=true`);
+    if (!response.ok) return;
+
+    this.items = (await response.json() as ShopItem[])
+      .filter(item => item.price > 0)
+      .map(item => ({
+        ...item,
+        currency: item.price === 0 ? 'free' : 'credits',
+        isNew: item.rarity === 'legendary',
+        isFeatured: item.rarity === 'legendary',
+      }));
+
+    const featured = this.items.find(item => item.isFeatured && !item.isOwned);
+    if (featured) this.featuredItem = featured;
   }
 }
