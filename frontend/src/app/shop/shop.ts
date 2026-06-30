@@ -31,7 +31,7 @@ export class Shop implements OnInit {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly cdr = inject(ChangeDetectorRef);
 
-  selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'bundles' = 'all';
+  selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'table-felts' | 'bundles' = 'all';
   userCredits: number = 0;
   isClaimingFreeChips = false;
 
@@ -52,7 +52,10 @@ export class Shop implements OnInit {
   items: ShopItem[] = [];
 
   async ngOnInit(): Promise<void> {
-    await this.loadShopItems();
+    await Promise.all([
+      this.loadShopItems(),
+      this.loadUserBalance(),
+    ]);
   }
 
   get filteredItems(): ShopItem[] {
@@ -77,10 +80,6 @@ export class Shop implements OnInit {
       case 'legendary': return '#ffd700';
       default: return '#fff';
     }
-  }
-
-  async ngOnInit(): Promise<void> {
-    await this.loadUserBalance();
   }
 
   private async loadUserBalance(): Promise<void> {
