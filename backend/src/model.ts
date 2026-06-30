@@ -61,3 +61,10 @@ export type Club = {
     name: string,
     members: UserDisplay[]
 }
+
+export type ClubSummary = {
+    id: number,
+    name: string,
+    memberCount: number,
+    totalBalance: number
+}
