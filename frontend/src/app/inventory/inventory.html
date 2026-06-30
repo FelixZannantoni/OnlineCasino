@@ -63,7 +63,7 @@
 
     <!-- Items Grid -->
     <div class="items-grid">
-        @for (item of filteredItems; track item.id) {
+        @for (item of filteredItems; track item.type + '-' + item.id) {
             <div class="cosmetic-card" [attr.data-rarity]="item.rarity" [class.is-equipped]="item.isEquipped">
 
                 <!-- Equipped ribbon -->

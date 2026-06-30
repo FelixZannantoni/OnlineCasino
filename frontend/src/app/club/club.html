@@ -24,7 +24,7 @@
             </span>
             <span class="chip" role="listitem">
                 <span class="material-icons chip-icon" aria-hidden="true">group</span>
-                {{ members.length }} Members
+                {{ members().length }} Members
             </span>
             <span class="chip chip-gold" role="listitem">
                 <span class="material-icons chip-icon" aria-hidden="true">emoji_events</span>
@@ -129,7 +129,7 @@
 
             <div class="stats-row" role="list" aria-label="Club statistics">
                 <div class="stat" role="listitem">
-                    <div class="stat-val">{{ members.length }}</div>
+                    <div class="stat-val">{{ members().length }}</div>
                     <div class="stat-lbl">Members</div>
                 </div>
                 <div class="stat" role="listitem">
@@ -214,7 +214,7 @@
                     </div>
                     <div class="info-tile">
                         <span class="material-icons info-tile-icon" aria-hidden="true">group</span>
-                        <div class="info-tile-val">{{ members.length }}</div>
+                        <div class="info-tile-val">{{ members().length }}</div>
                         <div class="info-tile-lbl">Members</div>
                     </div>
                     <div class="info-tile">

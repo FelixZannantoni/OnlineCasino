@@ -51,13 +51,27 @@ export type ChatMessage = {
 
 export type Cosmetic = {
     id: number,
-    type: 'avatar' | 'card-back' | 'chip',
+    type: 'avatar' | 'card-back' | 'chip' | 'table-felt',
     name: string,
-    price: number
+    price: number,
+    description: string,
+    icon: string,
+    category: 'avatars' | 'card-backs' | 'chip-designs' | 'table-felts',
+    rarity: 'common' | 'rare' | 'epic' | 'legendary',
+    previewColors: string[],
+    isOwned: boolean,
+    isEquipped: boolean
 }
 
 export type Club = {
     id: number,
     name: string,
     members: UserDisplay[]
+}
+
+export type ClubSummary = {
+    id: number,
+    name: string,
+    memberCount: number,
+    totalBalance: number
 }
