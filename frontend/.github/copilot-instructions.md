@@ -54,3 +54,25 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## Testing
+
+- Use Angular's configured test framework (Jasmine/Karma by default, or Jest if configured in `package.json`)
+- Write unit tests for all components, services, and pipes
+- Test components in isolation; mock injected dependencies (services, HTTP client)
+- Use `TestBed` for component/service test setup
+- Prefer testing behavior (inputs → outputs, user interactions) over internal implementation details
+- Use `async`/`fakeAsync`/`tick()` for testing asynchronous code and observables
+- Keep tests fast and isolated — no reliance on real network calls or shared mutable state between tests
+- Aim for meaningful coverage of edge cases (empty states, error states, loading states), not just the happy path
+- Run the full test suite before committing changes: `ng test` (or the project's configured test command)
+
+## Error Handling & Loading States
+
+- Every component that makes an async call (HTTP request, observable subscription) MUST handle three states: loading, success, and error
+- Represent loading/error state with signals (e.g. `isLoading = signal(false)`, `error = signal<string | null>(null)`) rather than boolean flags scattered across the template
+- Never let an unhandled observable error silently fail — use the `catchError` operator or a `try`/`catch` around async/await calls
+- Show user-friendly error messages in the UI; never expose raw error objects, stack traces, or backend error codes directly to the user
+- Log errors to the console (or a logging service, if one exists) with enough context to debug, without exposing sensitive data
+- Use the async pipe with an `@if`/`@else` block (or equivalent signal-based pattern) to cleanly render loading/error/success states in templates
+- On failed HTTP requests, prefer graceful degradation (e.g. show a retry button) over crashing the component or leaving it in a stuck loading state
