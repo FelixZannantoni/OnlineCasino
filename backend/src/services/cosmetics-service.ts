@@ -92,12 +92,54 @@ export class CosmeticsService {
 
             if (!normalizedUserId || !cosmeticId || !cosmeticType) return false;
 
-            const result = connection.prepare(`
-                INSERT OR IGNORE INTO user_cosmetics (user_id, cosmetic_id, cosmetic_type, is_equipped)
-                VALUES (?, ?, ?, 0)
-            `).run(normalizedUserId, cosmeticId, cosmeticType);
+            // Check if user already owns this cosmetic
+            const ownsCosmetic = connection.prepare(`
+                SELECT user_id FROM user_cosmetics
+                WHERE user_id = ? AND cosmetic_id = ? AND cosmetic_type = ?
+            `).get(normalizedUserId, cosmeticId, cosmeticType);
 
-            return result.changes >= 0;
+            if (ownsCosmetic) {
+                // Already owned, nothing to do
+                return true;
+            }
+
+            // Get the cosmetic details and user's current balance
+            const cosmetic = connection.prepare<{ id: number, type: string, price: number }>(`
+                SELECT id, type, price FROM cosmetics
+                WHERE id = ? AND type = ?
+            `).get(cosmeticId, cosmeticType);
+
+            if (!cosmetic || cosmetic.price < 0) {
+                // Invalid cosmetic
+                return false;
+            }
+
+            const user = connection.prepare<{ userId: string, balance: number }>(`
+                SELECT uuid as userId, balance FROM users WHERE uuid = ?
+            `).get(normalizedUserId);
+
+            if (!user || user.balance < cosmetic.price) {
+                // Not enough balance
+                return false;
+            }
+
+            // Start transaction
+            const transaction = connection.transaction(() => {
+                // Deduct price from user's balance
+                connection.prepare(`
+                    UPDATE users SET balance = balance - ?
+                    WHERE uuid = ?
+                `).run(cosmetic.price, normalizedUserId);
+
+                // Add cosmetic to user's inventory
+                connection.prepare(`
+                    INSERT INTO user_cosmetics (user_id, cosmetic_id, cosmetic_type, is_equipped)
+                    VALUES (?, ?, ?, 0)
+                `).run(normalizedUserId, cosmeticId, cosmeticType);
+            });
+
+            transaction();
+            return true;
         } catch (error) {
             console.error(`Something happened while trying to add cosmetic ${cosmeticType}#${cosmeticId} to userId ${userId}:`, error);
             return false;

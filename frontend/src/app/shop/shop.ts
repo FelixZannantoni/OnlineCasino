@@ -142,21 +142,30 @@ export class Shop implements OnInit {
     if (!userId || item.isOwned || item.category === 'bundles') return;
     if (item.currency !== 'free' && this.userCredits < item.price) return;
 
-    const response = await fetch('/cosmetics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId,
-        cosmeticId: item.id,
-        cosmeticType: item.type,
-      }),
-    });
+    try {
+      const response = await fetch('/cosmetics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          cosmeticId: item.id,
+          cosmeticType: item.type,
+        }),
+      });
 
-    if (!response.ok) return;
+      if (!response.ok) return;
 
-    item.isOwned = true;
-    if (item.currency !== 'free') {
-      this.userCredits -= item.price;
+      // Mark item as owned
+      item.isOwned = true;
+      if (item.currency !== 'free') {
+        this.userCredits -= item.price;
+      }
+
+      // Refresh the balance after successful purchase
+      await this.loadUserBalance();
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Failed to purchase item', error);
     }
   }
 
