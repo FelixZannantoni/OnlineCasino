@@ -67,7 +67,17 @@ export class DB {
             console.log('DEBUG: Added lastOnline column to users table');
         } catch (e) {
             // Column likely already exists
-        }        connection.prepare(`
+        }
+
+        // Migration: Add lastFreeChipsClaim if missing
+        try {
+            connection.prepare('ALTER TABLE users ADD COLUMN lastFreeChipsClaim text').run();
+            console.log('DEBUG: Added lastFreeChipsClaim column to users table');
+        } catch (e) {
+            // Column likely already exists
+        }
+
+        connection.prepare(`
             CREATE TABLE IF NOT EXISTS bonuses (
                 bonusId integer PRIMARY KEY AUTOINCREMENT,
                 userId text,

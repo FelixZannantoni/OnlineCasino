@@ -34,6 +34,7 @@ export class Shop implements OnInit {
   selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'table-felts' | 'bundles' = 'all';
   userCredits: number = 0;
   isClaimingFreeChips = false;
+  freeChipsCooldown = { isActive: false, message: '', availableAt: '' as string | Date }
 
   featuredItem: ShopItem = {
     id: 0,
@@ -110,10 +111,24 @@ export class Shop implements OnInit {
 
     try {
       const res = await fetch(`/users/${userId}/free-chips`, { method: 'POST' });
-      if (!res.ok) return;
+      if (!res.ok) {
+        const errorData = await res.json();
+        if (res.status === 429 && errorData.message) {
+          // Cooldown is active
+          this.freeChipsCooldown = {
+            isActive: true,
+            message: `Free chips available in ${errorData.cooldownHours} hours`,
+            availableAt: errorData.availableAt
+          };
+        } else {
+          console.error('Failed to claim free chips', await res.text());
+        }
+        return;
+      }
 
       const body = await res.json();
       this.userCredits = typeof body.balance === 'number' ? body.balance : this.userCredits;
+      this.freeChipsCooldown = { isActive: false, message: '', availableAt: '' };
     } catch (error) {
       console.error('Failed to claim free chips', error);
     } finally {

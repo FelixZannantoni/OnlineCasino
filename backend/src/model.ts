@@ -8,6 +8,7 @@ export type User = {
     balance: number,
     streakCount: number,
     lastStreakIncrement: string,
+    lastFreeChipsClaim?: string,
     passwordHash: string
 }
 

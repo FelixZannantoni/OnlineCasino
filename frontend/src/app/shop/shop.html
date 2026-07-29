@@ -8,9 +8,14 @@
         <div class="balance-badge">
             <mat-icon>account_balance_wallet</mat-icon>
             <span class="balance-amount">{{ userCredits | number }}</span>
-            <button class="free-chips-btn" (click)="claimFreeChips()" [disabled]="isClaimingFreeChips">
+            <button class="free-chips-btn" (click)="claimFreeChips()" [disabled]="isClaimingFreeChips || freeChipsCooldown.isActive">
                 <mat-icon>add</mat-icon>
-                <span>1,000 free chips</span>
+                <span *ngIf="!freeChipsCooldown.isActive">
+                    1,000 free chips
+                </span>
+                <span *ngIf="freeChipsCooldown.isActive">
+                    {{ freeChipsCooldown.message }}
+                </span>
             </button>
         </div>
     </div>

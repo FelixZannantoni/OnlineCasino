@@ -103,6 +103,7 @@ userRouter.post("/:userId/free-chips", async (req: Request, res: Response) => {
     const userId = req.params.userId as string;
     const service: UserService = new UserService();
     const freeChipAmount = 1000;
+    const COOLDOWN_HOURS = 23;
 
     const user = await service.getUserById(userId);
 
@@ -111,10 +112,27 @@ userRouter.post("/:userId/free-chips", async (req: Request, res: Response) => {
         return;
     }
 
+    // Check if enough time has passed since last free-chip claim
+    if (user.lastFreeChipsClaim) {
+        const lastClaimTime = new Date(user.lastFreeChipsClaim).getTime();
+        const currentTime = Date.now();
+        const cooldownMs = COOLDOWN_HOURS * 60 * 60 * 1000;
+
+        if (currentTime - lastClaimTime < cooldownMs) {
+            const timeUntilReset = new Date(lastClaimTime + cooldownMs);
+            res.status(StatusCodes.TOO_MANY_REQUESTS).json({
+                message: `Free chips available in ${COOLDOWN_HOURS} hours`,
+                availableAt: timeUntilReset.toISOString(),
+                cooldownHours: COOLDOWN_HOURS
+            });
+            return;
+        }
+    }
+
     const balance = user.balance + freeChipAmount;
     const success = await service.updateUserBalance(userId, balance);
-
     if (success) {
+        await service.updateLastFreeChipsClaim(userId);
         res.status(StatusCodes.OK).json({ balance });
     } else {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not update balance!" });
