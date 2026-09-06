@@ -76,3 +76,12 @@ export type ClubSummary = {
     memberCount: number,
     totalBalance: number
 }
+
+export type ClubChatMessage = {
+    id: number,
+    senderId: string,
+    senderName: string,
+    clubId: number,
+    content: string,
+    timestamp: string
+}

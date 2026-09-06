@@ -27,6 +27,8 @@ import { CosmeticsService } from "./services/cosmetics-service";
 import { ClubService } from "./services/club-service";
 import { clubRouter } from "./router/club-router";
 import { cosmeticsRouter } from "./router/cosmetics-router";
+import { ClubChatService } from "./services/club-chat-service";
+import { clubChatRouter } from "./router/club-chat-router";
 
 const PORT = process.env.PORT || 3000;
 

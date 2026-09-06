@@ -141,6 +141,16 @@ export class DB {
             )
             `).run();
         connection.prepare(`
+            CREATE TABLE IF NOT EXISTS club_chat_messages (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                clubId number,
+                senderId text,
+                senderName text,
+                content text,
+                timestamp text -- Timestamp in ISO format
+            )
+            `).run();
+        connection.prepare(`
             CREATE TABLE IF NOT EXISTS cosmetics (
                 id integer,
                 type text CHECK (type IN ('avatar', 'card-back', 'chip', 'table-felt')),
