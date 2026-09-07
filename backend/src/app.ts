@@ -51,6 +51,7 @@ app.use("/slotmachine", slotmachineRouter);
 app.use("/stats", statsRouter);
 app.use("/chats", chatRouter);
 app.use("/clubs", clubRouter);
+app.use("/club-chat", clubChatRouter);
 app.use("/cosmetics", cosmeticsRouter);
 
 // Redirect root to login page
@@ -91,10 +92,9 @@ const userService: UserService = new UserService();
 const roundService: RoundService = new RoundService();
 const statsService: StatsService = new StatsService();
 const clubService: ClubService = new ClubService();
-
-const chatService: ChatService = new ChatService();
+const clubChatService: ClubChatService = new ClubChatService();
 const cosmeticsService: CosmeticsService = new CosmeticsService();
-export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService, clubService, cosmeticsService };
+export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
@@ -115,7 +115,13 @@ io.on("connection", (socket: Socket) => {
   socket.on('register', (userId: string | number) => {
         socketUserMap.set(socket.id, normalizeUserId(userId));
         onlineUsers.set(normalizeUserId(userId), "online");
-    })
+    });
+    socket.on('join_club', (clubId: string) => {
+        const userId = socketUserMap.get(socket.id);
+        if (!userId) return;
+        socket.join(`club_${clubId}`);
+        console.log(`User ${userId} joined club: ${clubId}`);
+    });
     socket.on("join_game", async (gameId: string, userId: string, stakes?: string, gameName?: string) => {
         console.log("join_game received:", gameId, userId, "stakes:", stakes, "name:", gameName);
         socketUserMap.set(socket.id, userId);
@@ -333,6 +339,24 @@ io.on("connection", (socket: Socket) => {
         const result = await pokerService.tipDealer(playerId, gameId);
         if (!result.success) {
             socket.emit("error", { message: result.message });
+        }
+    });
+
+    socket.on("send_club_message", async (data: { clubId: string, senderId: string, senderName: string, content: string }) => {
+        console.log(`Sending club message: clubId=${data.clubId}, senderId=${data.senderId}, content=${data.content.substring(0, 50)}...`);
+        const success = await clubChatService.sendMessage(Number(data.clubId), data.senderId, data.senderName, data.content);
+        if (success) {
+            socket.to(`club_${data.clubId}`).emit("club_message", {
+                type: "new_message",
+                clubId: Number(data.clubId),
+                senderId: data.senderId,
+                senderName: data.senderName,
+                content: data.content,
+                timestamp: new Date().toISOString()
+            });
+            console.log(`Club message sent and broadcast to club_${data.clubId}`);
+        } else {
+            socket.emit("error", { message: "Failed to send message" });
         }
     });
 
