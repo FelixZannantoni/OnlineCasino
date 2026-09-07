@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../services/data-service';
+import { ClubChatService } from '../services/club-chat.service';
+import { SocketService } from '../services/socket.service';
 import { ClubDetails, ClubService, ClubSummary, ClubUserDisplay } from './club.service';
 
 interface ClubMember {
@@ -73,33 +75,15 @@ function xpInCurrentLevel(totalWinnings: number): number {
   templateUrl: './club.html',
   styleUrl: './club.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class Club implements OnInit {
+})\nexport class Club implements OnInit {
   @ViewChild('chatContainer') private chatContainer?: ElementRef<HTMLElement>;
 
   private readonly clubService = inject(ClubService);
   private readonly dataService = inject(DataService);
+  private readonly clubChatService = inject(ClubChatService);
+  private readonly socketService = inject(SocketService);
 
   readonly activeTab = signal<Tab>('members');
-  readonly searchQuery = signal('');
-  readonly messageInput = signal('');
-  readonly toastHidden = signal(true);
-  readonly toastMessage = signal('');
-
-  readonly exploreQuery = signal('');
-  readonly showCreateForm = signal(false);
-  readonly newClubName = signal('');
-  readonly newClubTag = signal('');
-  readonly newClubMotto = signal('');
-  readonly playerCoins = signal(42_500);
-  readonly loading = signal(false);
-
-  private readonly _messages = signal<ClubMessage[]>([
-    { memberId: 'golden', memberName: 'GoldenRush', memberInit: 'GR', memberColor: 'linear-gradient(135deg,#1e1a10,#2a2210)', memberHue: '#d4a017', mine: false, text: "Who's up for a poker run tonight?", time: '9:12 AM' },
-    { memberId: 'night', memberName: 'NightDealer', memberInit: 'ND', memberColor: 'linear-gradient(135deg,#0f1e1a,#122820)', memberHue: '#1D9E75', mine: false, text: "I'm in. Let's push the vault past 200k this week!", time: '9:14 AM' },
-    { memberId: 'me', memberName: 'You', memberInit: 'ME', memberColor: 'linear-gradient(135deg,#1a1228,#261840)', memberHue: '#7F77DD', mine: true, text: 'Absolutely. Blackjack table is calling my name.', time: '9:15 AM' },
-    { memberId: 'blaze', memberName: 'BlazeMerchant', memberInit: 'BM', memberColor: 'linear-gradient(135deg,#1e1510,#2a1e10)', memberHue: '#EF9F27', mine: false, text: "I'll catch up later, gotta step out for a bit.", time: '9:22 AM' },
-  ]);
 
   private readonly _totalWinnings = signal(184_200);
 
@@ -167,13 +151,50 @@ export class Club implements OnInit {
   });
 
   readonly canAffordCreate = computed(() => this.playerCoins() >= CREATE_CLUB_COST);
-
   readonly createFormValid = computed(() =>
     this.newClubName().trim().length >= 3 && this.newClubTag().trim().length >= 2
   );
 
+  readonly _messages = signal<ClubMessage[]>([]);
+
   async ngOnInit(): Promise<void> {
     await this.loadClubPage();
+
+    // Load chat messages
+    const userId = this.dataService.getUserId();
+    if (this.club.id > 0 && userId) {
+      await this.loadClubChatMessages();
+    }
+
+    // Register socket and join club for real-time updates
+    const socket = this.socketService;
+    if (socket) {
+      socket.register(userId);
+      socket.joinGame(this.club.id.toString(), userId);
+
+      socket.onEvent('club_message', (data: any) => {
+        if (data.type === 'new_message') {
+          const now = new Date();
+          const h = now.getHours();
+          const min = String(now.getMinutes()).padStart(2, '0');
+          const time = `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
+
+          this._messages.update(msgs => [...msgs, {
+            memberId: data.senderId,
+            memberName: data.senderName,
+            memberInit: data.senderName.split(/\s+/).slice(0, 2).map(p => p[0]?.toUpperCase()).join('') || '??',
+            memberColor: 'linear-gradient(135deg,#1a1228,#261840)',
+            memberHue: '#7F77DD',
+            mine: false,
+            text: data.content,
+            time,
+          }]);
+
+          this.scrollToBottom();
+        }
+      });
+    }
+  }
   }
 
   getMembersByRoles(roles: ReadonlyArray<ClubMember['role']>): ClubMember[] {
