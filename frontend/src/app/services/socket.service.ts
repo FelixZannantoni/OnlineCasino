@@ -54,6 +54,16 @@ export class SocketService {
     this.socket.on(eventName, callback);
   }
 
+  offEvent(eventName: string) {
+    if (!this.isBrowser || !this.socket) return;
+    this.socket.off(eventName);
+  }
+
+  emitEvent(eventName: string, data?: unknown) {
+    if (!this.isBrowser || !this.socket) return;
+    this.socket.emit(eventName, data);
+  }
+
   register(userId: string) {
     if (this.socket) {
       this.socket.emit('register', userId);

@@ -214,13 +214,13 @@ export class Club implements OnInit {
     const userId = this.dataService.getUserId();
     if (this.club.id > 0 && userId) {
       await this.loadClubChatMessages();
-      socket.joinClub(this.club.id);
+      this.socketService.joinClub(this.club.id);
     }
 
-    if (socket && userId) {
-      socket.register(userId);
+    if (this.socketService && userId) {
+      this.socketService.register(userId);
 
-      socket.onEvent('club_message', (data: any) => {
+      this.socketService.onEvent('club_message', (data: any) => {
         if (data.type === 'new_message') {
           const now = new Date();
           const h = now.getHours();
