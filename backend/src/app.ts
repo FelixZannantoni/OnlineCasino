@@ -94,7 +94,7 @@ const statsService: StatsService = new StatsService();
 const clubService: ClubService = new ClubService();
 const clubChatService: ClubChatService = new ClubChatService();
 const cosmeticsService: CosmeticsService = new CosmeticsService();
-export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService };
+export { pokerService, blackjackService, rouletteService, userService, roundService, ChatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
@@ -180,7 +180,7 @@ io.on("connection", (socket: Socket) => {
         const startBalance = 1000;
         const username = user.userName ?? '-';
         const displayname = user.displayName || user.userName || 'Guest';
-        const balance = user.balance; 
+        const balance = user.balance;
         console.log("DEBUG: join_game, userId:", userId, "balance from user:", user.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
