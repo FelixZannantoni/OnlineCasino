@@ -28,6 +28,7 @@ interface ClubMember {
 }
 
 interface ClubMessage {
+  id: string;
   memberId: string;
   memberName: string;
   memberInit: string;
@@ -75,7 +76,8 @@ function xpInCurrentLevel(totalWinnings: number): number {
   templateUrl: './club.html',
   styleUrl: './club.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-})\nexport class Club implements OnInit {
+})
+export class Club implements OnInit {
   @ViewChild('chatContainer') private chatContainer?: ElementRef<HTMLElement>;
 
   private readonly clubService = inject(ClubService);
@@ -84,6 +86,17 @@ function xpInCurrentLevel(totalWinnings: number): number {
   private readonly socketService = inject(SocketService);
 
   readonly activeTab = signal<Tab>('members');
+  readonly searchQuery = signal('');
+  readonly exploreQuery = signal('');
+  readonly messageInput = signal('');
+  readonly newClubName = signal('');
+  readonly newClubTag = signal('');
+  readonly newClubMotto = signal('');
+  readonly showCreateForm = signal(false);
+  readonly playerCoins = signal(0);
+  readonly loading = signal(false);
+  readonly toastMessage = signal('');
+  readonly toastHidden = signal(true);
 
   private readonly _totalWinnings = signal(184_200);
 
@@ -157,18 +170,54 @@ function xpInCurrentLevel(totalWinnings: number): number {
 
   readonly _messages = signal<ClubMessage[]>([]);
 
+  private async loadClubChatMessages(): Promise<void> {
+    const userId = this.dataService.getUserId();
+    const clubId = this.club.id;
+
+    if (!userId || clubId <= 0) return;
+
+    try {
+      const messages = await this.clubChatService.getClubChatMessages(clubId);
+      this._messages.set(
+        messages.map((message) => ({
+          id: `${message.clubId}-${message.id || message.senderId}-${message.timestamp}`,
+          memberId: message.senderId,
+          memberName: message.senderName,
+          memberInit: this.initials(message.senderName),
+          memberColor: 'linear-gradient(135deg,#1a1228,#261840)',
+          memberHue: '#7F77DD',
+          mine: message.senderId === userId,
+          text: message.content,
+          time: this.formatChatTime(message.timestamp),
+        }))
+      );
+      this.scrollToBottom();
+    } catch {
+      this.showToast('Could not load the club chat.');
+    }
+  }
+
+  private formatChatTime(timestamp: string): string {
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+      return 'Now';
+    }
+
+    const h = date.getHours();
+    const min = String(date.getMinutes()).padStart(2, '0');
+    return `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
+  }
+
   async ngOnInit(): Promise<void> {
     await this.loadClubPage();
 
-    // Load chat messages
     const userId = this.dataService.getUserId();
     if (this.club.id > 0 && userId) {
       await this.loadClubChatMessages();
     }
 
-    // Register socket and join club for real-time updates
     const socket = this.socketService;
-    if (socket) {
+    if (socket && userId) {
       socket.register(userId);
       socket.joinGame(this.club.id.toString(), userId);
 
@@ -180,9 +229,10 @@ function xpInCurrentLevel(totalWinnings: number): number {
           const time = `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
 
           this._messages.update(msgs => [...msgs, {
+            id: `${data.clubId ?? this.club.id}-${data.senderId}-${Date.now()}`,
             memberId: data.senderId,
             memberName: data.senderName,
-            memberInit: data.senderName.split(/\s+/).slice(0, 2).map(p => p[0]?.toUpperCase()).join('') || '??',
+            memberInit: data.senderName.split(/\s+/).slice(0, 2).map((p: string) => p[0]?.toUpperCase()).join('') || '??',
             memberColor: 'linear-gradient(135deg,#1a1228,#261840)',
             memberHue: '#7F77DD',
             mine: false,
@@ -194,7 +244,6 @@ function xpInCurrentLevel(totalWinnings: number): number {
         }
       });
     }
-  }
   }
 
   getMembersByRoles(roles: ReadonlyArray<ClubMember['role']>): ClubMember[] {
@@ -243,6 +292,7 @@ function xpInCurrentLevel(totalWinnings: number): number {
     const time = `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
 
     this._messages.update(msgs => [...msgs, {
+      id: `me-${Date.now()}`,
       memberId: 'me',
       memberName: 'You',
       memberInit: 'ME',
