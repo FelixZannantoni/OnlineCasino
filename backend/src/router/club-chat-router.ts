@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import { ClubChatMessage } from "../model";
-import { clubChatService } from "../app";
+import { clubChatService, io } from "../app";
 
 export const clubChatRouter = Router();
 
@@ -13,7 +13,6 @@ clubChatRouter.get("/:clubId", async (req: Request, res: Response) => {
     }
 
     const messages: ClubChatMessage[] = await clubChatService.getClubChatMessages(clubId);
-
     return res.status(StatusCodes.OK).json({ messages });
 });
 
@@ -30,6 +29,15 @@ clubChatRouter.post("/:clubId", async (req: Request, res: Response) => {
     const success = await clubChatService.sendMessage(clubId, senderId, senderName, content);
 
     if (success) {
+        // Broadcast to all members in the club room via Socket.io
+        io.to(`club_${clubId}`).emit("club_message", {
+            type: "new_message",
+            clubId,
+            senderId,
+            senderName,
+            content,
+            timestamp: new Date().toISOString()
+        });
         return res.status(StatusCodes.CREATED).json({ message: 'Message sent!' });
     } else {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something happened, try again later!' });

@@ -214,12 +214,11 @@ export class Club implements OnInit {
     const userId = this.dataService.getUserId();
     if (this.club.id > 0 && userId) {
       await this.loadClubChatMessages();
+      socket.joinClub(this.club.id);
     }
 
-    const socket = this.socketService;
     if (socket && userId) {
       socket.register(userId);
-      socket.joinGame(this.club.id.toString(), userId);
 
       socket.onEvent('club_message', (data: any) => {
         if (data.type === 'new_message') {
@@ -282,7 +281,7 @@ export class Club implements OnInit {
     if (tab === 'chat') this.scrollToBottom();
   }
 
-  sendMsg(): void {
+  async sendMsg(): Promise<void> {
     const txt = this.messageInput().trim();
     if (!txt) return;
 
@@ -291,6 +290,7 @@ export class Club implements OnInit {
     const min = String(now.getMinutes()).padStart(2, '0');
     const time = `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
 
+    // Add locally immediately for responsiveness
     this._messages.update(msgs => [...msgs, {
       id: `me-${Date.now()}`,
       memberId: 'me',
@@ -305,6 +305,29 @@ export class Club implements OnInit {
 
     this.messageInput.set('');
     this.scrollToBottom();
+
+    // Persist to backend via HTTP API
+    const userId = this.dataService.getUserId();
+    if (userId) {
+      try {
+        // Fetch user name from backend
+        const userResp = await fetch(`/users/${userId}`);
+        if (!userResp.ok) throw new Error('Failed to fetch user');
+        const user = await userResp.json() as { username?: string, displayname?: string };
+        const senderName = user.displayname || user.username || 'User';
+
+        await this.clubChatService.sendMessage(
+          this.club.id,
+          userId,
+          senderName,
+          txt
+        );
+      } catch (error) {
+        console.error('Failed to send club message:', error);
+        // Revert local message if API fails
+        this._messages.update(msgs => msgs.slice(0, -1));
+      }
+    }
   }
 
   async joinClub(club: PublicClub): Promise<void> {

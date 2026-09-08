@@ -12,7 +12,7 @@ export class SocketService {
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
-    
+
     if (this.isBrowser) {
       this.socket = io('/', {
         transports: ['websocket']
@@ -43,19 +43,15 @@ export class SocketService {
     });
   }
 
+  joinClub(clubId: number) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('join_club', clubId.toString());
+    }
+  }
+
   onEvent(eventName: string, callback: (data: unknown) => void) {
     if (!this.isBrowser || !this.socket) return;
     this.socket.on(eventName, callback);
-  }
-
-  offEvent(eventName: string) {
-    if (!this.isBrowser || !this.socket) return;
-    this.socket.off(eventName);
-  }
-
-  emitEvent(eventName: string, data: unknown) {
-    if (!this.isBrowser || !this.socket) return;
-    this.socket.emit(eventName, data);
   }
 
   register(userId: string) {

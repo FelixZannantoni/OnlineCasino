@@ -94,7 +94,7 @@ const statsService: StatsService = new StatsService();
 const clubService: ClubService = new ClubService();
 const clubChatService: ClubChatService = new ClubChatService();
 const cosmeticsService: CosmeticsService = new CosmeticsService();
-export { pokerService, blackjackService, rouletteService, userService, roundService, ChatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService };
+export { pokerService, blackjackService, rouletteService, userService, roundService, ChatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService, io };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
