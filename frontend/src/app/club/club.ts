@@ -117,13 +117,7 @@ export class Club implements OnInit {
     { id: 'dusk', name: 'DuskCroupier', role: 'member', status: 'offline', activity: 'Last seen yesterday', color: 'linear-gradient(135deg,#1e1818,#2a2020)', init: 'DC', hue: '#F09595', contribution: 17900 },
   ]);
 
-  private readonly _publicClubs = signal<PublicClub[]>([
-    { id: 1, name: 'ROYAL FLUSH SOCIETY', tag: '#ROYAL', motto: 'All In, Always', emblemIcon: 'diamond', totalWinnings: 320_000, memberCount: 12, maxMembers: 20, open: true, color: 'linear-gradient(135deg,#1a0e2a,#2a1840)' },
-    { id: 2, name: 'IRON DEALER GUILD', tag: '#IRON', motto: 'Steel Nerves Win Tables', emblemIcon: 'shield', totalWinnings: 215_000, memberCount: 8, maxMembers: 15, open: true, color: 'linear-gradient(135deg,#141e28,#1a2a38)' },
-    { id: 3, name: 'SHADOW SYNDICATE', tag: '#SHAD', motto: 'The Dark Horse Wins', emblemIcon: 'visibility_off', totalWinnings: 178_000, memberCount: 6, maxMembers: 10, open: false, color: 'linear-gradient(135deg,#0e0e1a,#181828)' },
-    { id: 4, name: 'BLAZE POKER HOUSE', tag: '#BLAZE', motto: 'Play Hot, Win Hotter', emblemIcon: 'local_fire_department', totalWinnings: 143_000, memberCount: 9, maxMembers: 15, open: true, color: 'linear-gradient(135deg,#2a1008,#381808)' },
-    { id: 5, name: 'AURORA CASINO CLUB', tag: '#AURORA', motto: 'Luck Favours the Patient', emblemIcon: 'nights_stay', totalWinnings: 98_000, memberCount: 4, maxMembers: 10, open: true, color: 'linear-gradient(135deg,#0a1e2a,#102838)' },
-  ]);
+  private readonly _publicClubs = signal<PublicClub[]>([]);
 
   readonly roleGroups = ROLE_GROUPS;
   readonly createClubCost = CREATE_CLUB_COST;
@@ -156,11 +150,12 @@ export class Club implements OnInit {
 
   readonly filteredPublicClubs = computed(() => {
     const q = this.exploreQuery().toLowerCase();
+    const clubs = this._publicClubs();
     return q
-      ? this._publicClubs().filter(c =>
+      ? clubs.filter(c =>
         c.name.toLowerCase().includes(q) || c.tag.toLowerCase().includes(q)
       )
-      : this._publicClubs();
+      : clubs;
   });
 
   readonly canAffordCreate = computed(() => this.playerCoins() >= CREATE_CLUB_COST);
