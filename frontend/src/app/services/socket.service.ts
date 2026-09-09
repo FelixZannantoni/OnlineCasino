@@ -44,9 +44,15 @@ export class SocketService {
   }
 
   joinClub(clubId: number) {
-    if (this.socket && this.socket.connected) {
-      this.socket.emit('join_club', clubId.toString());
+    if (!this.isBrowser || !this.socket) return;
+
+    const join = () => this.socket?.emit('join_club', clubId.toString());
+    if (this.socket.connected) {
+      join();
+      return;
     }
+
+    this.socket.once('connect', join);
   }
 
   onEvent(eventName: string, callback: (data: unknown) => void) {

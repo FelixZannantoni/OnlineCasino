@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ClubChatMessage } from '../models/club-chat-message.model';
 import { SocketService } from './socket.service';
@@ -16,23 +16,31 @@ export class ClubChatService {
   ) {}
 
   async getClubChatMessages(clubId: number): Promise<ClubChatMessage[]> {
-    const params = new HttpParams().set('clubId', clubId.toString());
     const response = await firstValueFrom(
-      this.http.get<{ messages: ClubChatMessage[] }>(this.apiUrl, { params })
+      this.http.get<{ messages?: ClubChatMessage[] } | ClubChatMessage[]>(`${this.apiUrl}/${clubId}`)
     );
 
-    return response.messages ?? [];
+    const messages = Array.isArray(response) ? response : response?.messages;
+    if (!Array.isArray(messages)) {
+      throw new Error('Club chat response did not contain a messages array.');
+    }
+
+    return messages;
   }
 
   async sendMessage(clubId: number, senderId: string, senderName: string, content: string): Promise<boolean> {
-    return await firstValueFrom(
-      this.http.post<{ message: string }>(`${this.apiUrl}/${clubId}`, {
-        senderId,
-        senderName,
-        content
-      }))
-      .then(() => true)
-      .catch(() => false);
+    try {
+      await firstValueFrom(
+        this.http.post<{ message: string }>(`${this.apiUrl}/${clubId}`, {
+          senderId,
+          senderName,
+          content
+        })
+      );
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   onNewClubMessage(callback: (message: ClubChatMessage) => void) {

@@ -5,8 +5,8 @@ import { clubChatService, io } from "../app";
 
 export const clubChatRouter = Router();
 
-clubChatRouter.get("/:clubId", async (req: Request, res: Response) => {
-    const clubId = Number.parseInt(req.params.clubId.toString());
+async function getClubChatMessages(req: Request, res: Response, clubIdValue: unknown) {
+    const clubId = Number.parseInt(String(clubIdValue));
 
     if (!Number.isFinite(clubId)) {
         return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Bad clubId!' });
@@ -14,6 +14,14 @@ clubChatRouter.get("/:clubId", async (req: Request, res: Response) => {
 
     const messages: ClubChatMessage[] = await clubChatService.getClubChatMessages(clubId);
     return res.status(StatusCodes.OK).json({ messages });
+}
+
+clubChatRouter.get("/", async (req: Request, res: Response) => {
+    return getClubChatMessages(req, res, req.query.clubId);
+});
+
+clubChatRouter.get("/:clubId", async (req: Request, res: Response) => {
+    return getClubChatMessages(req, res, req.params.clubId);
 });
 
 clubChatRouter.post("/:clubId", async (req: Request, res: Response) => {

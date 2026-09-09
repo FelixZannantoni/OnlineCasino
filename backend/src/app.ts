@@ -66,12 +66,17 @@ console.log(`Serving static files from: ${publicPath}`);
 // 1. Serve static files (js, css, icons)
 app.use(express.static(publicPath, {
     maxAge: '1y',
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('index.html')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        }
+    },
     fallthrough: true // If file not found, continue to the catch-all
 }));
 
 // 2. Catch-all for Angular Routing
 // Using a RegExp object directly bypasses path-to-regexp string parsing
-app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine|stats|chats|clubs|cosmetics)).*/, (req, res) => {
+app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine|stats|chats|clubs|club-chat|cosmetics)).*/, (req, res) => {
     res.sendFile(path.join(publicPath, "index.html"));
 });
 

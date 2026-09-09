@@ -4,7 +4,6 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  afterNextRender,
   computed,
   inject,
   signal,
@@ -187,7 +186,8 @@ export class Club implements OnInit {
         }))
       );
       this.scrollToBottom();
-    } catch {
+    } catch (error) {
+      console.error(`Could not load club chat for club ${clubId}:`, error);
       this.showToast('Could not load the club chat.');
     }
   }
@@ -209,14 +209,19 @@ export class Club implements OnInit {
     const userId = this.dataService.getUserId();
     if (this.club.id > 0 && userId) {
       await this.loadClubChatMessages();
-      this.socketService.joinClub(this.club.id);
     }
 
     if (this.socketService && userId) {
       this.socketService.register(userId);
+      if (this.club.id > 0) {
+        this.socketService.joinClub(this.club.id);
+      }
 
       this.socketService.onEvent('club_message', (data: any) => {
-        if (data.type === 'new_message') {
+        if (data.type === 'new_message' && Number(data.clubId) === this.club.id) {
+          const isOwnMessage = data.senderId === userId;
+          if (isOwnMessage) return;
+
           const now = new Date();
           const h = now.getHours();
           const min = String(now.getMinutes()).padStart(2, '0');
@@ -311,12 +316,13 @@ export class Club implements OnInit {
         const user = await userResp.json() as { username?: string, displayname?: string };
         const senderName = user.displayname || user.username || 'User';
 
-        await this.clubChatService.sendMessage(
+        const sent = await this.clubChatService.sendMessage(
           this.club.id,
           userId,
           senderName,
           txt
         );
+        if (!sent) throw new Error('Club chat message was rejected by the server.');
       } catch (error) {
         console.error('Failed to send club message:', error);
         // Revert local message if API fails
@@ -533,7 +539,7 @@ export class Club implements OnInit {
   }
 
   private scrollToBottom(): void {
-    afterNextRender(() => {
+    setTimeout(() => {
       this.chatContainer?.nativeElement.scrollTo({
         top: this.chatContainer.nativeElement.scrollHeight,
         behavior: 'smooth',
