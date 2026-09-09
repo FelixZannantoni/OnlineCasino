@@ -143,11 +143,11 @@ export class DB {
         connection.prepare(`
             CREATE TABLE IF NOT EXISTS club_chat_messages (
                 id integer PRIMARY KEY AUTOINCREMENT,
-                clubId number,
+                clubId integer,
                 senderId text,
                 senderName text,
                 content text,
-                timestamp text -- Timestamp in ISO format
+                timestamp text
             )
             `).run();
         connection.prepare(`

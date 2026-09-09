@@ -397,7 +397,7 @@ io.on("connection", (socket: Socket) => {
 
 httpServer.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
 
-DB.createDBConnection();
+await DB.createDBConnection();
 pokerService.loadAllPokerGames();
 blackjackService.loadAllBlackjackGames();
 rouletteService.loadAllRouletteGames();
