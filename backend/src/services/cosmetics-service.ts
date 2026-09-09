@@ -93,10 +93,14 @@ export class CosmeticsService {
             if (!normalizedUserId || !cosmeticId || !cosmeticType) return false;
 
             // Check if user already owns this cosmetic
-            const ownsCosmetic = connection.prepare(`
-                SELECT user_id FROM user_cosmetics
-                WHERE user_id = ? AND cosmetic_id = ? AND cosmetic_type = ?
-            `).get(normalizedUserId, cosmeticId, cosmeticType);
+            const ownsCosmetic = connection.prepare<{
+                userId: string;
+                cosmeticId: number;
+                cosmeticType: string;
+            }>(`
+                SELECT user_id as userId, cosmetic_id as cosmeticId, cosmetic_type as cosmeticType FROM user_cosmetics
+                WHERE user_id = @userId AND cosmetic_id = @cosmeticId AND cosmetic_type = @cosmeticType
+            `).get({ userId: normalizedUserId, cosmeticId, cosmeticType });
 
             if (ownsCosmetic) {
                 // Already owned, nothing to do
@@ -104,19 +108,19 @@ export class CosmeticsService {
             }
 
             // Get the cosmetic details and user's current balance
-            const cosmetic = connection.prepare<{ id: number, type: string, price: number }>(`
+            const cosmetic = connection.prepare(`
                 SELECT id, type, price FROM cosmetics
                 WHERE id = ? AND type = ?
-            `).get(cosmeticId, cosmeticType);
+            `).get(cosmeticId, cosmeticType) as { id: number, type: string, price: number } | undefined;
 
             if (!cosmetic || cosmetic.price < 0) {
                 // Invalid cosmetic
                 return false;
             }
 
-            const user = connection.prepare<{ userId: string, balance: number }>(`
+            const user = connection.prepare(`
                 SELECT uuid as userId, balance FROM users WHERE uuid = ?
-            `).get(normalizedUserId);
+            `).get(normalizedUserId) as { userId: string, balance: number } | undefined;
 
             if (!user || user.balance < cosmetic.price) {
                 // Not enough balance
@@ -127,9 +131,9 @@ export class CosmeticsService {
             const transaction = connection.transaction(() => {
                 // Deduct price from user's balance
                 connection.prepare(`
-                    UPDATE users SET balance = balance - ?
-                    WHERE uuid = ?
-                `).run(cosmetic.price, normalizedUserId);
+                    UPDATE users SET balance = balance - @price
+                    WHERE uuid = @userId
+                `).run({ price: cosmetic.price, userId: normalizedUserId });
 
                 // Add cosmetic to user's inventory
                 connection.prepare(`

@@ -92,9 +92,10 @@ const userService: UserService = new UserService();
 const roundService: RoundService = new RoundService();
 const statsService: StatsService = new StatsService();
 const clubService: ClubService = new ClubService();
+const chatService: ChatService = new ChatService();
 const clubChatService: ClubChatService = new ClubChatService();
 const cosmeticsService: CosmeticsService = new CosmeticsService();
-export { pokerService, blackjackService, rouletteService, userService, roundService, ChatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService, io };
+export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService, io };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
@@ -397,8 +398,10 @@ io.on("connection", (socket: Socket) => {
 
 httpServer.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
 
-await DB.createDBConnection();
-pokerService.loadAllPokerGames();
-blackjackService.loadAllBlackjackGames();
-rouletteService.loadAllRouletteGames();
-console.log("DEBUG: Roulette games loaded. Count:", RouletteService.rouletteGames.length);
+(async () => {
+    await DB.createDBConnection();
+    pokerService.loadAllPokerGames();
+    blackjackService.loadAllBlackjackGames();
+    rouletteService.loadAllRouletteGames();
+    console.log("DEBUG: Roulette games loaded. Count:", RouletteService.rouletteGames.length);
+})();
