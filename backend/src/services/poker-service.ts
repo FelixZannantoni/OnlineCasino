@@ -2,6 +2,7 @@ import { Database } from "better-sqlite3";
 import { Poker } from "../gameLogic/poker";
 import { PokerPlayer } from "../gameLogic/pokerPlayer";
 import { DB } from "../data";
+import { normalizeBalanceForGame } from "../config";
 
 export class PokerService {
   static pokerGames: Poker[] = [];
@@ -63,6 +64,11 @@ export class PokerService {
     if (!gameResult.game) {
       return { success: false, message: gameResult.message };
     }
+
+    const game = gameResult.game;
+    const balanceResult = normalizeBalanceForGame(balance, game.getGameName());
+    if (balanceResult.error) return { success: false, message: balanceResult.error };
+    balance = balanceResult.balance;
 
     const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
     try {

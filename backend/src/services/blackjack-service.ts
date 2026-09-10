@@ -2,7 +2,7 @@ import { Database } from "better-sqlite3";
 import { Blackjack } from "../gameLogic/blackjack";
 import { BlackjackPlayer } from "../gameLogic/blackjackPlayer";
 import { DB } from "../data";
-import { getGameMode, getBalanceLimits } from "../config";
+import { normalizeBalanceForGame } from "../config";
 
 export class BlackjackService {
     static blackjackGames: Blackjack[] = [];
@@ -41,15 +41,9 @@ export class BlackjackService {
         }
 
         const game = gameResult.game;
-        const mode = getGameMode(game.getGameName());
-        const limits = getBalanceLimits(mode);
-
-        if (balance < limits.min || (limits.max !== Infinity && balance > limits.max)) {
-            return {
-                success: false,
-                message: `Balance ${balance} is out of bounds for ${mode} mode (Min: ${limits.min}, Max: ${limits.max})`
-            };
-        }
+        const balanceResult = normalizeBalanceForGame(balance, game.getGameName());
+        if (balanceResult.error) return { success: false, message: balanceResult.error };
+        balance = balanceResult.balance;
 
         const newPlayer: BlackjackPlayer = new BlackjackPlayer(playerId, username, displayname, balance);
         try {

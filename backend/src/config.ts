@@ -91,3 +91,18 @@ export function getBalanceLimits(mode: GameMode): { min: number, max: number } {
     }
 }
 
+export function normalizeBalanceForGame(balance: number, gameName: string): { balance: number, error?: string } {
+    const mode = getGameMode(gameName);
+    const limits = getBalanceLimits(mode);
+    const normalizedBalance = Math.min(balance, limits.max);
+
+    if (normalizedBalance < limits.min) {
+        return {
+            balance: normalizedBalance,
+            error: `Balance ${normalizedBalance} is out of bounds for ${mode} mode (Min: ${limits.min}, Max: ${limits.max})`
+        };
+    }
+
+    return { balance: normalizedBalance };
+}
+

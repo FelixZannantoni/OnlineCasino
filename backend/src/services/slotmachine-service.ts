@@ -1,10 +1,15 @@
 import { Slotmachine, Symbols } from "../gameLogic/slotmachine";
 import { SlotmachinePlayer } from "../gameLogic/slotmachinePlayer";
+import { normalizeBalanceForGame } from "../config";
 
 export class SlotmachineService {
     private static games: Map<string, Slotmachine> = new Map();
 
     public async createGame(playerId: string, username: string, displayname: string, balance: number): Promise<string> {
+        const balanceResult = normalizeBalanceForGame(balance, "slotmachine");
+        if (balanceResult.error) throw new Error(balanceResult.error);
+        balance = balanceResult.balance;
+
         const gameId = `slot-${playerId}`;
         const player = new SlotmachinePlayer(playerId, username, displayname, balance);
         const game = new Slotmachine(gameId, player);
