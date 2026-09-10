@@ -366,6 +366,33 @@ io.on("connection", (socket: Socket) => {
         }
     });
 
+    socket.on("leave_game", (data: { gameId: string }) => {
+        const userId = socketUserMap.get(socket.id);
+        if (!userId) return;
+
+        console.log(`Player ${userId} leaving game ${data.gameId}`);
+
+        // Remove player from all games
+        [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
+            if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
+                game.removePlayer(userId);
+                console.log(`Removed player ${userId} from game ${game.getGameId()}`);
+            }
+        });
+
+        // Leave the specific game room
+        if (data.gameId) {
+            const userIdStr = userId.toString();
+            socket.leave(data.gameId);
+            console.log(`User ${userIdStr} left game room ${data.gameId}`);
+        }
+
+        // Emit game state update for affected games
+        [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
+            game.emit("game_state", game.getGameState());
+        });
+    });
+
     socket.on("disconnect", () => {
         const userId = socketUserMap.get(socket.id);
         console.log(`User disconnected: ${socket.id} (User: ${userId})`);
