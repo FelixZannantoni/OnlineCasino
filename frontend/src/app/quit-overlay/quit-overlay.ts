@@ -27,7 +27,7 @@ export class QuitOverlay implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!this.isBrowser) return; // Skip SSR
 
-    this.toggleSubscription = fromEvent<CustomEvent>(window, 'toggleQuitOverlay')
+    this.toggleSubscription = fromEvent<CustomEvent<{ redirectTo?: string; gameId?: string }>>(window, 'toggleQuitOverlay')
       .subscribe((event) => {
         this.redirectTo = event.detail?.redirectTo ?? '/home';
         window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
@@ -60,6 +60,11 @@ export class QuitOverlay implements OnInit, OnDestroy {
 
   confirm(): void {
     this.close();
+    // Notify backend to leave the game before navigating
+    if (this.redirectTo !== '/home' && typeof window !== 'undefined') {
+      const gameId = this.redirectTo.split('/')[1];
+      window.dispatchEvent(new CustomEvent('leave_game', { detail: { gameId } }));
+    }
     this.router.navigate([this.redirectTo]);
   }
 
