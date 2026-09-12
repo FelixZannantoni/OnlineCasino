@@ -71,7 +71,7 @@ export class Poker implements OnInit {
   flippingCards = new Set<string>();
   private revealedCards = new Set<string>();
 
-  private readonly gameId = signal<string>('1');
+  readonly gameId = signal<string>('1');
   gameName: string = 'Poker';
 
   protected readonly getCardRank = getCardRank;

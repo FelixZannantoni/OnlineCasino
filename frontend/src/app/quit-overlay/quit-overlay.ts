@@ -18,6 +18,7 @@ export class QuitOverlay implements OnInit, OnDestroy {
   private toggleSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private isBrowser: boolean;
+  private gameId?: string;
 
   constructor() {
     const platformId = inject(PLATFORM_ID);
@@ -30,6 +31,7 @@ export class QuitOverlay implements OnInit, OnDestroy {
     this.toggleSubscription = fromEvent<CustomEvent<{ redirectTo?: string; gameId?: string }>>(window, 'toggleQuitOverlay')
       .subscribe((event) => {
         this.redirectTo = event.detail?.redirectTo ?? '/home';
+        this.gameId = event.detail?.gameId;
         window.dispatchEvent(new CustomEvent('closeOtherOverlays'));
         this.isOpen = true; // always open, never toggle
         this.updateBodyScroll();
@@ -61,9 +63,8 @@ export class QuitOverlay implements OnInit, OnDestroy {
   confirm(): void {
     this.close();
     // Notify backend to leave the game before navigating
-    if (this.redirectTo !== '/home' && typeof window !== 'undefined') {
-      const gameId = this.redirectTo.split('/')[1];
-      window.dispatchEvent(new CustomEvent('leave_game', { detail: { gameId } }));
+    if (this.gameId && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('leave_game', { detail: { gameId: this.gameId } }));
     }
     this.router.navigate([this.redirectTo]);
   }

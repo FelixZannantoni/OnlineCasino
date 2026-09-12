@@ -372,41 +372,23 @@ io.on("connection", (socket: Socket) => {
 
         console.log(`Player ${userId} leaving game ${data.gameId}`);
 
-        // Remove player from all games
-        [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
-            if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
-                game.removePlayer(userId);
-                console.log(`Removed player ${userId} from game ${game.getGameId()}`);
-            }
-        });
+        if (!data.gameId) return;
 
-        // Leave the specific game room and sync state in one operation
-        if (data.gameId) {
-            const userIdStr = userId.toString();
-            socket.leave(data.gameId);
+        const game = [
+            ...PokerService.pokerGames,
+            ...BlackjackService.blackjackGames,
+            ...RouletteService.rouletteGames
+        ].find(candidate => candidate.getGameId().toString() === data.gameId);
 
-            // Force emit game state synchronously from the specific game to sync all players
-            const game = BlackjackService.blackjackGames.find(g => g.getGameId().toString() === data.gameId);
-            if (!game) {
-                game = PokerService.pokerGames.find(g => g.getGameId().toString() === data.gameId);
-            }
-            if (!game) {
-                game = RouletteService.rouletteGames.find(g => g.getGameId().toString() === data.gameId);
-            }
+        socket.leave(data.gameId);
 
-            if (game) {
-                // Get fresh game state (without the leaving player)
-                const newState = game.getGameState();
-                io.to(data.gameId).emit("game_state", newState);
-            }
-
-            console.log(`User ${userIdStr} left game room ${data.gameId}`);
+        if (game?.getPlayers().some(player => player.getPlayerId() === userId)) {
+            game.removePlayer(userId);
+            console.log(`Removed player ${userId} from game ${game.getGameId()}`);
+            io.to(data.gameId).emit("game_state", game.getGameState());
         }
 
-        // Emit game state update for all games
-        [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
-            game.emit("game_state", game.getGameState());
-        });
+        console.log(`User ${userId} left game room ${data.gameId}`);
     });
 
     socket.on("disconnect", () => {
