@@ -366,7 +366,7 @@ io.on("connection", (socket: Socket) => {
         }
     });
 
-    socket.on("leave_game", (data: { gameId: string }) => {
+    socket.on("leave_game", async (data: { gameId: string }) => {
         const userId = socketUserMap.get(socket.id);
         if (!userId) return;
 
@@ -380,14 +380,30 @@ io.on("connection", (socket: Socket) => {
             }
         });
 
-        // Leave the specific game room
+        // Leave the specific game room and sync state in one operation
         if (data.gameId) {
             const userIdStr = userId.toString();
             socket.leave(data.gameId);
+
+            // Force emit game state synchronously from the specific game to sync all players
+            const game = BlackjackService.blackjackGames.find(g => g.getGameId().toString() === data.gameId);
+            if (!game) {
+                game = PokerService.pokerGames.find(g => g.getGameId().toString() === data.gameId);
+            }
+            if (!game) {
+                game = RouletteService.rouletteGames.find(g => g.getGameId().toString() === data.gameId);
+            }
+
+            if (game) {
+                // Get fresh game state (without the leaving player)
+                const newState = game.getGameState();
+                io.to(data.gameId).emit("game_state", newState);
+            }
+
             console.log(`User ${userIdStr} left game room ${data.gameId}`);
         }
 
-        // Emit game state update for affected games
+        // Emit game state update for all games
         [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
             game.emit("game_state", game.getGameState());
         });

@@ -162,15 +162,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
             const playerIndex = this.players.indexOf(player);
             this.players.splice(playerIndex, 1);
 
+            console.log(`[Game ${this.getGameId()}] Removed player ${playerId} from game. Remaining players: ${this.players.length}`);
+
             // Restore original balance when leaving a game with balance limits
             const originalBalance = player.getOriginalAccountBalance();
             if (originalBalance !== null && originalBalance !== player.getBalance()) {
+                console.log(`[Game ${this.getGameId()}] Restoring balance for ${playerId}: ${player.getBalance()} -> ${originalBalance}`);
                 player.setBalance(originalBalance);
                 userService.updateUserBalance(playerId, originalBalance);
             }
 
+            // Emit that player left, but NOT game_state (let app.ts handle the full cleanup emit)
             this.emit("playerLeft", { playerId });
-            this.emit("game_state", this.getGameState());
         }
     }
 
