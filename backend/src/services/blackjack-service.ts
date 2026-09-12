@@ -43,9 +43,15 @@ export class BlackjackService {
         const game = gameResult.game;
         const balanceResult = normalizeBalanceForGame(balance, game.getGameName());
         if (balanceResult.error) return { success: false, message: balanceResult.error };
+
+        // Store original balance before capping, so it can be restored when leaving
         balance = balanceResult.balance;
 
         const newPlayer: BlackjackPlayer = new BlackjackPlayer(playerId, username, displayname, balance);
+
+        // Mark the original account balance before normalization
+        newPlayer.updateOriginalAccountBalance(balanceResult.balance);
+
         try {
             game.addPlayer(newPlayer);
         } catch (e: any) {

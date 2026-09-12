@@ -6,6 +6,7 @@ export class Player {
     private username: string;
     private displayname: string;
     private balance: number;
+    private originalAccountBalance: number | null = null;
     private bet: number;
     private desiredBet: number;
 
@@ -14,6 +15,7 @@ export class Player {
         this.username = username;
         this.displayname = displayname;
         this.balance = balance;
+        this.originalAccountBalance = balance;
         this.bet = 0;
         this.desiredBet = 0;
     }
@@ -32,6 +34,22 @@ export class Player {
 
     public getBalance(): number {
         return this.balance;
+    }
+
+    /**
+     * Get the original account balance before balance capping
+     * @returns original balance or null if never set
+     */
+    public getOriginalAccountBalance(): number | null {
+        return this.originalAccountBalance;
+    }
+
+    /**
+     * Update the original account balance - used when balance is normalized for a game
+     * @param balance the original balance value
+     */
+    public updateOriginalAccountBalance(balance: number): void {
+        this.originalAccountBalance = balance;
     }
 
     public setBalance(balance: number): void {

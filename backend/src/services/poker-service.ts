@@ -71,6 +71,10 @@ export class PokerService {
     balance = balanceResult.balance;
 
     const newPlayer: PokerPlayer = new PokerPlayer(playerId, username, displayname, balance);
+
+    // Mark the original account balance before normalization
+    newPlayer.updateOriginalAccountBalance(balanceResult.balance);
+
     try {
       gameResult.game.addPlayer(newPlayer);
     } catch (e: any) {

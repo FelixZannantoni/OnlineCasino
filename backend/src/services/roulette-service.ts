@@ -31,9 +31,14 @@ export class RouletteService {
         const game = gameResult.game;
         const balanceResult = normalizeBalanceForGame(balance, game.getGameName());
         if (balanceResult.error) return { success: false, message: balanceResult.error };
+
         balance = balanceResult.balance;
 
         const newPlayer: RoulettePlayer = new RoulettePlayer(playerId, username, displayname, balance);
+
+        // Mark the original account balance before normalization
+        newPlayer.updateOriginalAccountBalance(balanceResult.balance);
+
         try {
             gameResult.game.addPlayer(newPlayer);
         } catch (e: any) {

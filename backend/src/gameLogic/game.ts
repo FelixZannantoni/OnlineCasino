@@ -55,7 +55,23 @@ export class Game<T extends Player = Player> extends EventEmitter {
         return this.players;
     }
 
-    public removePlayer(playerId: string): void {
-        this.players = this.players.filter(p => p.getPlayerId() !== playerId);
+    public override removePlayer(playerId: string): void {
+        const player = this.players.find(p => p.getPlayerId() === playerId);
+        if (player) {
+            const playerIndex = this.players.indexOf(player);
+            this.players.splice(playerIndex, 1);
+
+            // Restore original balance when leaving a game with balance limits
+            const originalBalance = player.getOriginalAccountBalance();
+            if (originalBalance !== null && originalBalance !== player.getBalance()) {
+                player.setBalance(originalBalance);
+                // Only update user balance if using user service (not for Poker/Roulette which use their own logic)
+                // For now, skip userService for Game base class since PokerService and RouletteService
+                // handle the database update with the new balance
+            }
+
+            this.emit("playerLeft", { playerId });
+            this.emit("game_state", this.getGameState());
+        }
     }
 }

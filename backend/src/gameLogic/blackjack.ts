@@ -157,9 +157,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     public override removePlayer(playerId: string): void {
-        const index = this.players.findIndex(p => p.getPlayerId() === playerId);
-        if (index !== -1) {
-            this.players.splice(index, 1);
+        const player = this.players.find(p => p.getPlayerId() === playerId);
+        if (player) {
+            const playerIndex = this.players.indexOf(player);
+            this.players.splice(playerIndex, 1);
+
+            // Restore original balance when leaving a game with balance limits
+            const originalBalance = player.getOriginalAccountBalance();
+            if (originalBalance !== null && originalBalance !== player.getBalance()) {
+                player.setBalance(originalBalance);
+                userService.updateUserBalance(playerId, originalBalance);
+            }
+
             this.emit("playerLeft", { playerId });
             this.emit("game_state", this.getGameState());
         }
