@@ -1,4 +1,5 @@
 import { Component, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { Navbar } from './navbar/navbar';
 import { Login } from './login/login';
@@ -8,7 +9,8 @@ import { QuitOverlay } from './quit-overlay/quit-overlay';
 import { InformationOverlay } from './information-overlay/information-overlay';
 import { SocketService } from './services/socket.service';
 
-import { filter, fromEvent } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
+import { filter } from 'rxjs/operators';
 //import { PauseOverlay } from './pause-overlay/pause-overlay';
 import { GameModeOverlay } from './game-mode-overlay/game-mode-overlay';
 

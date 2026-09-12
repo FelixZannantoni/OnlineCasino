@@ -10,12 +10,15 @@
             <span class="balance-amount">{{ userCredits | number }}</span>
             <button class="free-chips-btn" (click)="claimFreeChips()" [disabled]="isClaimingFreeChips || freeChipsCooldown.isActive">
                 <mat-icon>add</mat-icon>
-                <span *ngIf="!freeChipsCooldown.isActive">
+                @if (!freeChipsCooldown.isActive) {
+                <span>
                     1,000 free chips
                 </span>
-                <span *ngIf="freeChipsCooldown.isActive">
+                } @else {
+                <span>
                     {{ freeChipsCooldown.message }}
                 </span>
+                }
             </button>
         </div>
     </div>
