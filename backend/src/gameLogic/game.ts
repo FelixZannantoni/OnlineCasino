@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import { Player } from "./player";
+import { userService } from "../app";
 
 export class Game<T extends Player = Player> extends EventEmitter {
     protected players: T[];
@@ -61,13 +62,10 @@ export class Game<T extends Player = Player> extends EventEmitter {
             const playerIndex = this.players.indexOf(player);
             this.players.splice(playerIndex, 1);
 
-            // Restore original balance when leaving a game with balance limits
-            const originalBalance = player.getOriginalAccountBalance();
-            if (originalBalance !== null && originalBalance !== player.getBalance()) {
-                player.setBalance(originalBalance);
-                // Only update user balance if using user service (not for Poker/Roulette which use their own logic)
-                // For now, skip userService for Game base class since PokerService and RouletteService
-                // handle the database update with the new balance
+            const balanceAfterLeaving = player.getBalanceAfterLeaving();
+            if (balanceAfterLeaving !== player.getBalance()) {
+                player.setBalance(balanceAfterLeaving);
+                void userService.updateUserBalance(playerId, balanceAfterLeaving);
             }
 
             this.emit("playerLeft", { playerId });

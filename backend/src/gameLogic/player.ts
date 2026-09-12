@@ -7,6 +7,7 @@ export class Player {
     private displayname: string;
     private balance: number;
     private originalAccountBalance: number | null = null;
+    private gameEntryBalance: number;
     private bet: number;
     private desiredBet: number;
 
@@ -16,6 +17,7 @@ export class Player {
         this.displayname = displayname;
         this.balance = balance;
         this.originalAccountBalance = balance;
+        this.gameEntryBalance = balance;
         this.bet = 0;
         this.desiredBet = 0;
     }
@@ -50,6 +52,11 @@ export class Player {
      */
     public updateOriginalAccountBalance(balance: number): void {
         this.originalAccountBalance = balance;
+    }
+
+    public getBalanceAfterLeaving(): number {
+        if (this.originalAccountBalance === null) return this.balance;
+        return this.originalAccountBalance + (this.balance - this.gameEntryBalance);
     }
 
     public setBalance(balance: number): void {
