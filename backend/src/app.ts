@@ -417,6 +417,7 @@ io.on("connection", (socket: Socket) => {
         if (userId) {
             // Find games the user might be in and remove them
             [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
+                if (BlackjackService.blackjackGames.includes(game as any)) return;
                 if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
                     game.removePlayer(userId);
                 }
