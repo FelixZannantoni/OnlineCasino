@@ -8,6 +8,7 @@ export type User = {
     balance: number,
     streakCount: number,
     lastStreakIncrement: string,
+    lastFreeChipsClaim?: string,
     passwordHash: string
 }
 
@@ -74,4 +75,13 @@ export type ClubSummary = {
     name: string,
     memberCount: number,
     totalBalance: number
+}
+
+export type ClubChatMessage = {
+    id: number,
+    senderId: string,
+    senderName: string,
+    clubId: number,
+    content: string,
+    timestamp: string
 }

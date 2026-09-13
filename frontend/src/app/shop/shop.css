@@ -100,8 +100,11 @@
 }
 
 .free-chips-btn:disabled {
-    cursor: default;
-    opacity: 0.55;
+    background: rgba(200, 165, 80, 0.25);
+    border-color: rgba(200, 165, 80, 0.4);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .free-chips-btn mat-icon {

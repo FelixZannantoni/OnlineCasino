@@ -92,12 +92,58 @@ export class CosmeticsService {
 
             if (!normalizedUserId || !cosmeticId || !cosmeticType) return false;
 
-            const result = connection.prepare(`
-                INSERT OR IGNORE INTO user_cosmetics (user_id, cosmetic_id, cosmetic_type, is_equipped)
-                VALUES (?, ?, ?, 0)
-            `).run(normalizedUserId, cosmeticId, cosmeticType);
+            // Check if user already owns this cosmetic
+            const ownsCosmetic = connection.prepare<{
+                userId: string;
+                cosmeticId: number;
+                cosmeticType: string;
+            }>(`
+                SELECT user_id as userId, cosmetic_id as cosmeticId, cosmetic_type as cosmeticType FROM user_cosmetics
+                WHERE user_id = @userId AND cosmetic_id = @cosmeticId AND cosmetic_type = @cosmeticType
+            `).get({ userId: normalizedUserId, cosmeticId, cosmeticType });
 
-            return result.changes >= 0;
+            if (ownsCosmetic) {
+                // Already owned, nothing to do
+                return true;
+            }
+
+            // Get the cosmetic details and user's current balance
+            const cosmetic = connection.prepare(`
+                SELECT id, type, price FROM cosmetics
+                WHERE id = ? AND type = ?
+            `).get(cosmeticId, cosmeticType) as { id: number, type: string, price: number } | undefined;
+
+            if (!cosmetic || cosmetic.price < 0) {
+                // Invalid cosmetic
+                return false;
+            }
+
+            const user = connection.prepare(`
+                SELECT uuid as userId, balance FROM users WHERE uuid = ?
+            `).get(normalizedUserId) as { userId: string, balance: number } | undefined;
+
+            if (!user || user.balance < cosmetic.price) {
+                // Not enough balance
+                return false;
+            }
+
+            // Start transaction
+            const transaction = connection.transaction(() => {
+                // Deduct price from user's balance
+                connection.prepare(`
+                    UPDATE users SET balance = balance - @price
+                    WHERE uuid = @userId
+                `).run({ price: cosmetic.price, userId: normalizedUserId });
+
+                // Add cosmetic to user's inventory
+                connection.prepare(`
+                    INSERT INTO user_cosmetics (user_id, cosmetic_id, cosmetic_type, is_equipped)
+                    VALUES (?, ?, ?, 0)
+                `).run(normalizedUserId, cosmeticId, cosmeticType);
+            });
+
+            transaction();
+            return true;
         } catch (error) {
             console.error(`Something happened while trying to add cosmetic ${cosmeticType}#${cosmeticId} to userId ${userId}:`, error);
             return false;

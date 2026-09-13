@@ -159,22 +159,21 @@
             </div>
 
             <div class="messages" #chatContainer role="log" aria-live="polite" aria-label="Club chat messages">
-                <div class="system-msg" role="note">Club Chat — {{ club.name }}</div>
-                @for (msg of messages(); track $index) {
-                <div class="msg" [class.mine]="msg.mine" [class.theirs]="!msg.mine">
-                    @if (!msg.mine) {
-                    <div class="msg-avatar" [style.background]="msg.memberColor" [style.color]="msg.memberHue"
-                        aria-hidden="true">{{ msg.memberInit }}</div>
-                    }
-                    <div class="msg-content">
-                        @if (!msg.mine) {
-                        <span class="msg-sender">{{ msg.memberName }}</span>
-                        }
-                        <div class="msg-bubble">{{ msg.text }}</div>
-                        <span class="msg-time"><time>{{ msg.time }}</time></span>
-                    </div>
-                </div>
+            @for (msg of messages(); track msg.id) {
+            <div class="msg" [class.mine]="msg.mine" [class.theirs]="!msg.mine">
+                @if (!msg.mine) {
+                <div class="msg-avatar" [style.background]="msg.memberColor" [style.color]="msg.memberHue"
+                    aria-hidden="true">{{ msg.memberInit }}</div>
                 }
+                <div class="msg-content">
+                    @if (!msg.mine) {
+                    <span class="msg-sender">{{ msg.memberName }}</span>
+                    }
+                    <div class="msg-bubble">{{ msg.text }}</div>
+                    <span class="msg-time"><time>{{ msg.time }}</time></span>
+                </div>
+            </div>
+            }
             </div>
 
             <div class="chat-input-wrap">

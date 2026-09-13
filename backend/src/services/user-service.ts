@@ -19,6 +19,7 @@ export class UserService {
             balance: row.balance,
             streakCount: row.streakCount,
             lastStreakIncrement: row.lastStreakIncrement,
+            lastFreeChipsClaim: row.lastFreeChipsClaim,
             passwordHash: row.passwordHash
         }));
     }
@@ -207,6 +208,29 @@ export class UserService {
             return success;
         } catch (error) {
             console.error(`Something happened while trying to update user balance for user #${userId}: ${error}`);
+            return false;
+        }
+    }
+
+    async updateLastFreeChipsClaim(userId: string | number): Promise<boolean> {
+        try {
+            const connection: Database = await DB.createDBConnection();
+            const normalizedUserId = this.normalizeUserId(userId);
+
+            if (!normalizedUserId) {
+                console.error(`Invalid userId for updateLastFreeChipsClaim: ${userId}`);
+                return false;
+            }
+
+            const timestamp = new Date().toISOString();
+            const result = connection.prepare<{userId: string, timestamp: string}>("UPDATE users SET lastFreeChipsClaim = :timestamp WHERE uuid = :userId").run({
+                userId: normalizedUserId,
+                timestamp
+            });
+
+            return result.changes === 1;
+        } catch (error) {
+            console.error(`Something happened while trying to update lastFreeChipsClaim for user #${userId}: ${error}`);
             return false;
         }
     }

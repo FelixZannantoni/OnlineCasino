@@ -67,7 +67,17 @@ export class DB {
             console.log('DEBUG: Added lastOnline column to users table');
         } catch (e) {
             // Column likely already exists
-        }        connection.prepare(`
+        }
+
+        // Migration: Add lastFreeChipsClaim if missing
+        try {
+            connection.prepare('ALTER TABLE users ADD COLUMN lastFreeChipsClaim text').run();
+            console.log('DEBUG: Added lastFreeChipsClaim column to users table');
+        } catch (e) {
+            // Column likely already exists
+        }
+
+        connection.prepare(`
             CREATE TABLE IF NOT EXISTS bonuses (
                 bonusId integer PRIMARY KEY AUTOINCREMENT,
                 userId text,
@@ -131,6 +141,16 @@ export class DB {
             )
             `).run();
         connection.prepare(`
+            CREATE TABLE IF NOT EXISTS club_chat_messages (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                clubId integer,
+                senderId text,
+                senderName text,
+                content text,
+                timestamp text
+            )
+            `).run();
+        connection.prepare(`
             CREATE TABLE IF NOT EXISTS cosmetics (
                 id integer,
                 type text CHECK (type IN ('avatar', 'card-back', 'chip', 'table-felt')),
@@ -160,6 +180,7 @@ export class DB {
         await this.insertUserSampleData(connection);
         await this.insertGameSampleData(connection);
         await this.insertCosmeticSampleData(connection);
+        await this.insertClubSampleData(connection);
     }
 
     private static async insertCosmeticSampleData(connection: Database): Promise<void> {
@@ -303,6 +324,36 @@ export class DB {
             
         } catch(error) {
             console.error("Error inserting sample data:", error);
+        }
+    }
+
+    private static async insertClubSampleData(connection: Database): Promise<void> {
+        try {
+            const clubCount = await connection.prepare("SELECT COUNT(*) as count FROM clubs").get() as { count: number };
+
+            if (clubCount.count > 0) {
+                console.log("Sample club data already inserted!");
+                return;
+            }
+
+            const clubs = [
+                { name: 'ROYAL FLUSH SOCIETY' },
+                { name: 'IRON DEALER GUILD' },
+                { name: 'SHADOW SYNDICATE' },
+                { name: 'BLAZE POKER HOUSE' },
+                { name: 'AURORA CASINO CLUB' }
+            ];
+
+            const insert = connection.prepare(`INSERT INTO clubs (name) VALUES (:name)`);
+            const transaction = connection.transaction(() => {
+                for (const club of clubs) {
+                    insert.run({ name: club.name });
+                }
+            });
+            transaction();
+
+        } catch(err) {
+            console.error("Error inserting club sample data:", err);
         }
     }
 }

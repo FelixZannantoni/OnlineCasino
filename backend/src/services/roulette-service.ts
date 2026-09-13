@@ -2,6 +2,7 @@ import { Database } from "better-sqlite3";
 import { Roulette } from "../gameLogic/roulette";
 import { RoulettePlayer } from "../gameLogic/roulettePlayer";
 import { DB } from "../data";
+import { normalizeBalanceForGame } from "../config";
 
 export class RouletteService {
     static rouletteGames: Roulette[] = [];
@@ -27,7 +28,18 @@ export class RouletteService {
             };
         }
 
+        const game = gameResult.game;
+        const balanceResult = normalizeBalanceForGame(balance, game.getGameName());
+        if (balanceResult.error) return { success: false, message: balanceResult.error };
+
+        const originalAccountBalance = balance;
+        balance = balanceResult.balance;
+
         const newPlayer: RoulettePlayer = new RoulettePlayer(playerId, username, displayname, balance);
+
+        // Mark the original account balance before normalization
+        newPlayer.updateOriginalAccountBalance(originalAccountBalance);
+
         try {
             gameResult.game.addPlayer(newPlayer);
         } catch (e: any) {
@@ -40,7 +52,7 @@ export class RouletteService {
         return {
             success: true,
             message: `Successfully added player ${playerId} to game ${gameId}`
-        }
+        };
     }
 
     async loadAllRouletteGames(): Promise<void> {

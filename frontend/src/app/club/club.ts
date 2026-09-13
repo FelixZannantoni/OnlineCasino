@@ -4,13 +4,14 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  afterNextRender,
   computed,
   inject,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../services/data-service';
+import { ClubChatService } from '../services/club-chat.service';
+import { SocketService } from '../services/socket.service';
 import { ClubDetails, ClubService, ClubSummary, ClubUserDisplay } from './club.service';
 
 interface ClubMember {
@@ -26,6 +27,7 @@ interface ClubMember {
 }
 
 interface ClubMessage {
+  id: string;
   memberId: string;
   memberName: string;
   memberInit: string;
@@ -79,27 +81,21 @@ export class Club implements OnInit {
 
   private readonly clubService = inject(ClubService);
   private readonly dataService = inject(DataService);
+  private readonly clubChatService = inject(ClubChatService);
+  private readonly socketService = inject(SocketService);
 
   readonly activeTab = signal<Tab>('members');
   readonly searchQuery = signal('');
-  readonly messageInput = signal('');
-  readonly toastHidden = signal(true);
-  readonly toastMessage = signal('');
-
   readonly exploreQuery = signal('');
-  readonly showCreateForm = signal(false);
+  readonly messageInput = signal('');
   readonly newClubName = signal('');
   readonly newClubTag = signal('');
   readonly newClubMotto = signal('');
-  readonly playerCoins = signal(42_500);
+  readonly showCreateForm = signal(false);
+  readonly playerCoins = signal(0);
   readonly loading = signal(false);
-
-  private readonly _messages = signal<ClubMessage[]>([
-    { memberId: 'golden', memberName: 'GoldenRush', memberInit: 'GR', memberColor: 'linear-gradient(135deg,#1e1a10,#2a2210)', memberHue: '#d4a017', mine: false, text: "Who's up for a poker run tonight?", time: '9:12 AM' },
-    { memberId: 'night', memberName: 'NightDealer', memberInit: 'ND', memberColor: 'linear-gradient(135deg,#0f1e1a,#122820)', memberHue: '#1D9E75', mine: false, text: "I'm in. Let's push the vault past 200k this week!", time: '9:14 AM' },
-    { memberId: 'me', memberName: 'You', memberInit: 'ME', memberColor: 'linear-gradient(135deg,#1a1228,#261840)', memberHue: '#7F77DD', mine: true, text: 'Absolutely. Blackjack table is calling my name.', time: '9:15 AM' },
-    { memberId: 'blaze', memberName: 'BlazeMerchant', memberInit: 'BM', memberColor: 'linear-gradient(135deg,#1e1510,#2a1e10)', memberHue: '#EF9F27', mine: false, text: "I'll catch up later, gotta step out for a bit.", time: '9:22 AM' },
-  ]);
+  readonly toastMessage = signal('');
+  readonly toastHidden = signal(true);
 
   private readonly _totalWinnings = signal(184_200);
 
@@ -120,13 +116,7 @@ export class Club implements OnInit {
     { id: 'dusk', name: 'DuskCroupier', role: 'member', status: 'offline', activity: 'Last seen yesterday', color: 'linear-gradient(135deg,#1e1818,#2a2020)', init: 'DC', hue: '#F09595', contribution: 17900 },
   ]);
 
-  private readonly _publicClubs = signal<PublicClub[]>([
-    { id: 1, name: 'ROYAL FLUSH SOCIETY', tag: '#ROYAL', motto: 'All In, Always', emblemIcon: 'diamond', totalWinnings: 320_000, memberCount: 12, maxMembers: 20, open: true, color: 'linear-gradient(135deg,#1a0e2a,#2a1840)' },
-    { id: 2, name: 'IRON DEALER GUILD', tag: '#IRON', motto: 'Steel Nerves Win Tables', emblemIcon: 'shield', totalWinnings: 215_000, memberCount: 8, maxMembers: 15, open: true, color: 'linear-gradient(135deg,#141e28,#1a2a38)' },
-    { id: 3, name: 'SHADOW SYNDICATE', tag: '#SHAD', motto: 'The Dark Horse Wins', emblemIcon: 'visibility_off', totalWinnings: 178_000, memberCount: 6, maxMembers: 10, open: false, color: 'linear-gradient(135deg,#0e0e1a,#181828)' },
-    { id: 4, name: 'BLAZE POKER HOUSE', tag: '#BLAZE', motto: 'Play Hot, Win Hotter', emblemIcon: 'local_fire_department', totalWinnings: 143_000, memberCount: 9, maxMembers: 15, open: true, color: 'linear-gradient(135deg,#2a1008,#381808)' },
-    { id: 5, name: 'AURORA CASINO CLUB', tag: '#AURORA', motto: 'Luck Favours the Patient', emblemIcon: 'nights_stay', totalWinnings: 98_000, memberCount: 4, maxMembers: 10, open: true, color: 'linear-gradient(135deg,#0a1e2a,#102838)' },
-  ]);
+  private readonly _publicClubs = signal<PublicClub[]>([]);
 
   readonly roleGroups = ROLE_GROUPS;
   readonly createClubCost = CREATE_CLUB_COST;
@@ -159,21 +149,100 @@ export class Club implements OnInit {
 
   readonly filteredPublicClubs = computed(() => {
     const q = this.exploreQuery().toLowerCase();
+    const clubs = this._publicClubs();
     return q
-      ? this._publicClubs().filter(c =>
+      ? clubs.filter(c =>
         c.name.toLowerCase().includes(q) || c.tag.toLowerCase().includes(q)
       )
-      : this._publicClubs();
+      : clubs;
   });
 
   readonly canAffordCreate = computed(() => this.playerCoins() >= CREATE_CLUB_COST);
-
   readonly createFormValid = computed(() =>
     this.newClubName().trim().length >= 3 && this.newClubTag().trim().length >= 2
   );
 
+  readonly _messages = signal<ClubMessage[]>([]);
+
+  private async loadClubChatMessages(): Promise<void> {
+    const userId = this.dataService.getUserId();
+    const clubId = this.club.id;
+
+    if (!userId || clubId <= 0) return;
+
+    try {
+      const messages = await this.clubChatService.getClubChatMessages(clubId);
+      this._messages.set(
+        messages.map((message) => ({
+          id: `${message.clubId}-${message.id || message.senderId}-${message.timestamp}`,
+          memberId: message.senderId,
+          memberName: message.senderName,
+          memberInit: this.initials(message.senderName),
+          memberColor: 'linear-gradient(135deg,#1a1228,#261840)',
+          memberHue: '#7F77DD',
+          mine: message.senderId === userId,
+          text: message.content,
+          time: this.formatChatTime(message.timestamp),
+        }))
+      );
+      this.scrollToBottom();
+    } catch (error) {
+      console.error(`Could not load club chat for club ${clubId}:`, error);
+      this.showToast('Could not load the club chat.');
+    }
+  }
+
+  private formatChatTime(timestamp: string): string {
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+      return 'Now';
+    }
+
+    const h = date.getHours();
+    const min = String(date.getMinutes()).padStart(2, '0');
+    return `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
+  }
+
   async ngOnInit(): Promise<void> {
     await this.loadClubPage();
+
+    const userId = this.dataService.getUserId();
+    if (this.club.id > 0 && userId) {
+      await this.loadClubChatMessages();
+    }
+
+    if (this.socketService && userId) {
+      this.socketService.register(userId);
+      if (this.club.id > 0) {
+        this.socketService.joinClub(this.club.id);
+      }
+
+      this.socketService.onEvent('club_message', (data: any) => {
+        if (data.type === 'new_message' && Number(data.clubId) === this.club.id) {
+          const isOwnMessage = data.senderId === userId;
+          if (isOwnMessage) return;
+
+          const now = new Date();
+          const h = now.getHours();
+          const min = String(now.getMinutes()).padStart(2, '0');
+          const time = `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
+
+          this._messages.update(msgs => [...msgs, {
+            id: `${data.clubId ?? this.club.id}-${data.senderId}-${Date.now()}`,
+            memberId: data.senderId,
+            memberName: data.senderName,
+            memberInit: data.senderName.split(/\s+/).slice(0, 2).map((p: string) => p[0]?.toUpperCase()).join('') || '??',
+            memberColor: 'linear-gradient(135deg,#1a1228,#261840)',
+            memberHue: '#7F77DD',
+            mine: false,
+            text: data.content,
+            time,
+          }]);
+
+          this.scrollToBottom();
+        }
+      });
+    }
   }
 
   getMembersByRoles(roles: ReadonlyArray<ClubMember['role']>): ClubMember[] {
@@ -212,7 +281,7 @@ export class Club implements OnInit {
     if (tab === 'chat') this.scrollToBottom();
   }
 
-  sendMsg(): void {
+  async sendMsg(): Promise<void> {
     const txt = this.messageInput().trim();
     if (!txt) return;
 
@@ -221,7 +290,9 @@ export class Club implements OnInit {
     const min = String(now.getMinutes()).padStart(2, '0');
     const time = `${h % 12 || 12}:${min} ${h < 12 ? 'AM' : 'PM'}`;
 
+    // Add locally immediately for responsiveness
     this._messages.update(msgs => [...msgs, {
+      id: `me-${Date.now()}`,
       memberId: 'me',
       memberName: 'You',
       memberInit: 'ME',
@@ -234,6 +305,30 @@ export class Club implements OnInit {
 
     this.messageInput.set('');
     this.scrollToBottom();
+
+    // Persist to backend via HTTP API
+    const userId = this.dataService.getUserId();
+    if (userId) {
+      try {
+        // Fetch user name from backend
+        const userResp = await fetch(`/users/${userId}`);
+        if (!userResp.ok) throw new Error('Failed to fetch user');
+        const user = await userResp.json() as { username?: string, displayname?: string };
+        const senderName = user.displayname || user.username || 'User';
+
+        const sent = await this.clubChatService.sendMessage(
+          this.club.id,
+          userId,
+          senderName,
+          txt
+        );
+        if (!sent) throw new Error('Club chat message was rejected by the server.');
+      } catch (error) {
+        console.error('Failed to send club message:', error);
+        // Revert local message if API fails
+        this._messages.update(msgs => msgs.slice(0, -1));
+      }
+    }
   }
 
   async joinClub(club: PublicClub): Promise<void> {
@@ -444,7 +539,7 @@ export class Club implements OnInit {
   }
 
   private scrollToBottom(): void {
-    afterNextRender(() => {
+    setTimeout(() => {
       this.chatContainer?.nativeElement.scrollTo({
         top: this.chatContainer.nativeElement.scrollHeight,
         behavior: 'smooth',

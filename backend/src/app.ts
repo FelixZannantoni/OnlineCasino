@@ -27,6 +27,8 @@ import { CosmeticsService } from "./services/cosmetics-service";
 import { ClubService } from "./services/club-service";
 import { clubRouter } from "./router/club-router";
 import { cosmeticsRouter } from "./router/cosmetics-router";
+import { ClubChatService } from "./services/club-chat-service";
+import { clubChatRouter } from "./router/club-chat-router";
 
 const PORT = process.env.PORT || 3000;
 
@@ -49,6 +51,7 @@ app.use("/slotmachine", slotmachineRouter);
 app.use("/stats", statsRouter);
 app.use("/chats", chatRouter);
 app.use("/clubs", clubRouter);
+app.use("/club-chat", clubChatRouter);
 app.use("/cosmetics", cosmeticsRouter);
 
 // Redirect root to login page
@@ -63,12 +66,17 @@ console.log(`Serving static files from: ${publicPath}`);
 // 1. Serve static files (js, css, icons)
 app.use(express.static(publicPath, {
     maxAge: '1y',
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('index.html')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        }
+    },
     fallthrough: true // If file not found, continue to the catch-all
 }));
 
 // 2. Catch-all for Angular Routing
 // Using a RegExp object directly bypasses path-to-regexp string parsing
-app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine|stats|chats|clubs|cosmetics)).*/, (req, res) => {
+app.get(/^(?!\/(users|poker|blackjack|roulette|slotmachine|stats|chats|clubs|club-chat|cosmetics)).*/, (req, res) => {
     res.sendFile(path.join(publicPath, "index.html"));
 });
 
@@ -89,10 +97,10 @@ const userService: UserService = new UserService();
 const roundService: RoundService = new RoundService();
 const statsService: StatsService = new StatsService();
 const clubService: ClubService = new ClubService();
-
 const chatService: ChatService = new ChatService();
+const clubChatService: ClubChatService = new ClubChatService();
 const cosmeticsService: CosmeticsService = new CosmeticsService();
-export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService, clubService, cosmeticsService };
+export { pokerService, blackjackService, rouletteService, userService, roundService, chatService, onlineUsers, statsService, clubService, clubChatService, cosmeticsService, io };
 
 export function onMessageSentToUser(receiverId: string) {
     // Find the socket ID for the receiver
@@ -113,7 +121,13 @@ io.on("connection", (socket: Socket) => {
   socket.on('register', (userId: string | number) => {
         socketUserMap.set(socket.id, normalizeUserId(userId));
         onlineUsers.set(normalizeUserId(userId), "online");
-    })
+    });
+    socket.on('join_club', (clubId: string) => {
+        const userId = socketUserMap.get(socket.id);
+        if (!userId) return;
+        socket.join(`club_${clubId}`);
+        console.log(`User ${userId} joined club: ${clubId}`);
+    });
     socket.on("join_game", async (gameId: string, userId: string, stakes?: string, gameName?: string) => {
         console.log("join_game received:", gameId, userId, "stakes:", stakes, "name:", gameName);
         socketUserMap.set(socket.id, userId);
@@ -172,7 +186,7 @@ io.on("connection", (socket: Socket) => {
         const startBalance = 1000;
         const username = user.userName ?? '-';
         const displayname = user.displayName || user.userName || 'Guest';
-        const balance = user.balance; 
+        const balance = user.balance;
         console.log("DEBUG: join_game, userId:", userId, "balance from user:", user.balance, "final balance:", balance);
 
         const existingPlayer = game.getPlayers().find((p: any) => p.getPlayerId() === userId);
@@ -334,6 +348,49 @@ io.on("connection", (socket: Socket) => {
         }
     });
 
+    socket.on("send_club_message", async (data: { clubId: string, senderId: string, senderName: string, content: string }) => {
+        console.log(`Sending club message: clubId=${data.clubId}, senderId=${data.senderId}, content=${data.content.substring(0, 50)}...`);
+        const success = await clubChatService.sendMessage(Number(data.clubId), data.senderId, data.senderName, data.content);
+        if (success) {
+            socket.to(`club_${data.clubId}`).emit("club_message", {
+                type: "new_message",
+                clubId: Number(data.clubId),
+                senderId: data.senderId,
+                senderName: data.senderName,
+                content: data.content,
+                timestamp: new Date().toISOString()
+            });
+            console.log(`Club message sent and broadcast to club_${data.clubId}`);
+        } else {
+            socket.emit("error", { message: "Failed to send message" });
+        }
+    });
+
+    socket.on("leave_game", async (data: { gameId: string }) => {
+        const userId = socketUserMap.get(socket.id);
+        if (!userId) return;
+
+        console.log(`Player ${userId} leaving game ${data.gameId}`);
+
+        if (!data.gameId) return;
+
+        const game = [
+            ...PokerService.pokerGames,
+            ...BlackjackService.blackjackGames,
+            ...RouletteService.rouletteGames
+        ].find(candidate => candidate.getGameId().toString() === data.gameId);
+
+        socket.leave(data.gameId);
+
+        if (game?.getPlayers().some(player => player.getPlayerId() === userId)) {
+            game.removePlayer(userId);
+            console.log(`Removed player ${userId} from game ${game.getGameId()}`);
+            io.to(data.gameId).emit("game_state", game.getGameState());
+        }
+
+        console.log(`User ${userId} left game room ${data.gameId}`);
+    });
+
     socket.on("disconnect", () => {
         const userId = socketUserMap.get(socket.id);
         console.log(`User disconnected: ${socket.id} (User: ${userId})`);
@@ -360,6 +417,7 @@ io.on("connection", (socket: Socket) => {
         if (userId) {
             // Find games the user might be in and remove them
             [...PokerService.pokerGames, ...BlackjackService.blackjackGames, ...RouletteService.rouletteGames].forEach(game => {
+                if (BlackjackService.blackjackGames.includes(game as any)) return;
                 if (game.getPlayers().find(p => p.getPlayerId() === userId)) {
                     game.removePlayer(userId);
                 }
@@ -371,8 +429,10 @@ io.on("connection", (socket: Socket) => {
 
 httpServer.listen(PORT, () => console.log(`Server running on: http://localhost:${PORT}`));
 
-DB.createDBConnection();
-pokerService.loadAllPokerGames();
-blackjackService.loadAllBlackjackGames();
-rouletteService.loadAllRouletteGames();
-console.log("DEBUG: Roulette games loaded. Count:", RouletteService.rouletteGames.length);
+(async () => {
+    await DB.createDBConnection();
+    pokerService.loadAllPokerGames();
+    blackjackService.loadAllBlackjackGames();
+    rouletteService.loadAllRouletteGames();
+    console.log("DEBUG: Roulette games loaded. Count:", RouletteService.rouletteGames.length);
+})();

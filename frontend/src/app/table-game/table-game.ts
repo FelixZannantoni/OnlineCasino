@@ -16,6 +16,7 @@ export class TableGameComponent implements OnInit, OnDestroy {
   @Input() pot: number = 0;
   @Input() showPot: boolean = true;
   @Input() showActions: boolean = true;
+  @Input() gameId: string = '';
 
   @HostBinding('class') get hostClass(): string {
     return `game-${this.game}`;
@@ -37,7 +38,7 @@ export class TableGameComponent implements OnInit, OnDestroy {
 
   toggleQuitOverlay(): void {
     if (isPlatformBrowser(this.platformId)) {
-      window.dispatchEvent(new CustomEvent('toggleQuitOverlay', { detail: { redirectTo: '/home' } }));
+      window.dispatchEvent(new CustomEvent('toggleQuitOverlay', { detail: { redirectTo: '/home', gameId: this.gameId } }));
     }
   }
 }

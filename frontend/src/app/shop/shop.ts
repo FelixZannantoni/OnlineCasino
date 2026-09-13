@@ -34,6 +34,7 @@ export class Shop implements OnInit {
   selectedCategory: 'all' | 'avatars' | 'card-backs' | 'chip-designs' | 'table-felts' | 'bundles' = 'all';
   userCredits: number = 0;
   isClaimingFreeChips = false;
+  freeChipsCooldown = { isActive: false, message: '', availableAt: '' as string | Date }
 
   featuredItem: ShopItem = {
     id: 0,
@@ -110,10 +111,24 @@ export class Shop implements OnInit {
 
     try {
       const res = await fetch(`/users/${userId}/free-chips`, { method: 'POST' });
-      if (!res.ok) return;
+      if (!res.ok) {
+        const errorData = await res.json();
+        if (res.status === 429 && errorData.message) {
+          // Cooldown is active
+          this.freeChipsCooldown = {
+            isActive: true,
+            message: `Free chips available in ${errorData.cooldownHours} hours`,
+            availableAt: errorData.availableAt
+          };
+        } else {
+          console.error('Failed to claim free chips', await res.text());
+        }
+        return;
+      }
 
       const body = await res.json();
       this.userCredits = typeof body.balance === 'number' ? body.balance : this.userCredits;
+      this.freeChipsCooldown = { isActive: false, message: '', availableAt: '' };
     } catch (error) {
       console.error('Failed to claim free chips', error);
     } finally {
@@ -127,21 +142,30 @@ export class Shop implements OnInit {
     if (!userId || item.isOwned || item.category === 'bundles') return;
     if (item.currency !== 'free' && this.userCredits < item.price) return;
 
-    const response = await fetch('/cosmetics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId,
-        cosmeticId: item.id,
-        cosmeticType: item.type,
-      }),
-    });
+    try {
+      const response = await fetch('/cosmetics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          cosmeticId: item.id,
+          cosmeticType: item.type,
+        }),
+      });
 
-    if (!response.ok) return;
+      if (!response.ok) return;
 
-    item.isOwned = true;
-    if (item.currency !== 'free') {
-      this.userCredits -= item.price;
+      // Mark item as owned
+      item.isOwned = true;
+      if (item.currency !== 'free') {
+        this.userCredits -= item.price;
+      }
+
+      // Refresh the balance after successful purchase
+      await this.loadUserBalance();
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Failed to purchase item', error);
     }
   }
 

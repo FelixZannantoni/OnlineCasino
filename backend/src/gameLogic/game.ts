@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import { Player } from "./player";
+import { userService } from "../app";
 
 export class Game<T extends Player = Player> extends EventEmitter {
     protected players: T[];
@@ -55,7 +56,20 @@ export class Game<T extends Player = Player> extends EventEmitter {
         return this.players;
     }
 
-    public removePlayer(playerId: string): void {
-        this.players = this.players.filter(p => p.getPlayerId() !== playerId);
+    public override removePlayer(playerId: string): void {
+        const player = this.players.find(p => p.getPlayerId() === playerId);
+        if (player) {
+            const playerIndex = this.players.indexOf(player);
+            this.players.splice(playerIndex, 1);
+
+            const balanceAfterLeaving = player.getBalanceAfterLeaving();
+            if (balanceAfterLeaving !== player.getBalance()) {
+                player.setBalance(balanceAfterLeaving);
+                void userService.updateUserBalance(playerId, balanceAfterLeaving);
+            }
+
+            this.emit("playerLeft", { playerId });
+            this.emit("game_state", this.getGameState());
+        }
     }
 }

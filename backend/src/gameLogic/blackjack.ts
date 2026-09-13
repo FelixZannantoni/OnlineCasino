@@ -157,11 +157,22 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
     }
 
     public override removePlayer(playerId: string): void {
-        const index = this.players.findIndex(p => p.getPlayerId() === playerId);
-        if (index !== -1) {
-            this.players.splice(index, 1);
+        const player = this.players.find(p => p.getPlayerId() === playerId);
+        if (player) {
+            const playerIndex = this.players.indexOf(player);
+            this.players.splice(playerIndex, 1);
+
+            console.log(`[Game ${this.getGameId()}] Removed player ${playerId} from game. Remaining players: ${this.players.length}`);
+
+            const balanceAfterLeaving = player.getBalanceAfterLeaving();
+            if (balanceAfterLeaving !== player.getBalance()) {
+                console.log(`[Game ${this.getGameId()}] Restoring balance for ${playerId}: ${player.getBalance()} -> ${balanceAfterLeaving}`);
+                player.setBalance(balanceAfterLeaving);
+                void userService.updateUserBalance(playerId, balanceAfterLeaving);
+            }
+
+            // Emit that player left, but NOT game_state (let app.ts handle the full cleanup emit)
             this.emit("playerLeft", { playerId });
-            this.emit("game_state", this.getGameState());
         }
     }
 

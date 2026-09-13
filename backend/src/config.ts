@@ -82,11 +82,27 @@ export function getPokerTipAmount(mode: GameMode): number {
 export function getBalanceLimits(mode: GameMode): { min: number, max: number } {
     switch (mode) {
         case GameMode.HIGH:
-            return { min: 50000, max: Infinity };
+            return { min: 100000, max: 1000000000 };
         case GameMode.MIDDLE:
-            return { min: 5000, max: 50000 };
+            return { min: 10000, max: 150000 };
+        case GameMode.LOW:
         default:
-            return { min: 0, max: 5000 };
+            return { min: 0, max: 15000 };
     }
+}
+
+export function normalizeBalanceForGame(balance: number, gameName: string): { balance: number, error?: string } {
+    const mode = getGameMode(gameName);
+    const limits = getBalanceLimits(mode);
+    const normalizedBalance = Math.min(balance, limits.max);
+
+    if (normalizedBalance < limits.min) {
+        return {
+            balance: normalizedBalance,
+            error: `Balance ${normalizedBalance} is out of bounds for ${mode} mode (Min: ${limits.min}, Max: ${limits.max})`
+        };
+    }
+
+    return { balance: normalizedBalance };
 }
 
