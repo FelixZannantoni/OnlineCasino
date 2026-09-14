@@ -38,6 +38,32 @@ describe('Slotmachine', () => {
                 });
             });
         });
+
+        it('should not double-spin when auto-spin advances the next round', () => {
+            player.userPressedAutoSpin();
+            const originalPlayRound = (game as any).playRound;
+            const originalSetTimeout = global.setTimeout;
+            let playRoundCalls = 0;
+            const scheduled: Array<() => void> = [];
+
+            (game as any).playRound = () => {
+                playRoundCalls++;
+            };
+
+            (global as any).setTimeout = ((callback: (...args: any[]) => void) => {
+                scheduled.push(callback);
+                return 1 as any;
+            }) as typeof setTimeout;
+
+            try {
+                (game as any).nextRound();
+                assert.strictEqual(playRoundCalls, 1);
+                assert.strictEqual(scheduled.length, 1);
+            } finally {
+                (global as any).setTimeout = originalSetTimeout;
+                (game as any).playRound = originalPlayRound;
+            }
+        });
     });
 
     describe('Win Evaluation (checkSpin)', () => {

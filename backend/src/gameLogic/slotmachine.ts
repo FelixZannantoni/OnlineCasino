@@ -19,6 +19,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
     private slots: Symbols[][]; // [row][col] -> 3 rows, 5 columns
     private lastWin: number = 0;
     private winningLines: number[] = [];
+    private autoSpinTimeout: NodeJS.Timeout | null = null;
 
     private static readonly MATCH_MULTIPLIERS: Record<number, number> = {
         3: 0.2,
@@ -77,26 +78,44 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
         try {
             this.player.makeNewBet(bet);
             this.playRound();
-            if (this.player.getPressedAutoSpin()) {
-                setTimeout(() => this.nextRound(), 1000);
-            }
+            this.scheduleNextAutoSpin();
         } catch (e) {
             console.error("Failed to start slot game:", e);
             throw e;
         }
     }
 
+    private scheduleNextAutoSpin() {
+        if (this.autoSpinTimeout) {
+            clearTimeout(this.autoSpinTimeout);
+            this.autoSpinTimeout = null;
+        }
+
+        if (!this.player.getPressedAutoSpin()) {
+            return;
+        }
+
+        this.autoSpinTimeout = setTimeout(() => {
+            this.nextRound();
+        }, 1000);
+    }
+
     private nextRound() {
-        if (this.player.getPressedAutoSpin()) {
-            try {
-                this.player.makeBet();
-                this.playRound();
-                setTimeout(() => this.nextRound(), 1000); // Use a small timeout or process next tick to avoid stack overflow
-            } catch (e) {
-                this.player.stopAutoSpin();
+        if (!this.player.getPressedAutoSpin()) {
+            return;
+        }
+
+        try {
+            this.player.makeBet();
+            this.playRound();
+            this.scheduleNextAutoSpin();
+        } catch (e) {
+            this.player.stopAutoSpin();
+            if (this.autoSpinTimeout) {
+                clearTimeout(this.autoSpinTimeout);
+                this.autoSpinTimeout = null;
             }
         }
-        this.playRound();
     }
 
 
@@ -172,9 +191,7 @@ export class Slotmachine extends SinglePlayerGame<SlotmachinePlayer> {
             try {
                 this.player.makeBet();
                 this.playRound();
-                if (this.player.getPressedAutoSpin()) {
-                    setTimeout(() => this.nextRound(), 1000);
-                }
+                this.scheduleNextAutoSpin();
             } catch (e) {
                 console.error("Slotmachine move failed:", e);
             }

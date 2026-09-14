@@ -1,6 +1,3 @@
-import { userService } from "../app";
-import { statsService } from "../app";
-
 export class Player {
     private playerId: string;
     private username: string;
@@ -87,7 +84,8 @@ export class Player {
         this.balance -= this.bet;
 
         // dont await this, because we dont want to wait for the database to update, we can do it in the background
-        userService.updateUserBalance(this.playerId, this.balance);
+        const { userService } = require("../app");
+        void userService.updateUserBalance(this.playerId, this.balance);
     }
 
     public makeNewBet(bet: number) {
@@ -106,14 +104,16 @@ export class Player {
         this.bet = bet;
 
         // dont await this, because we dont want to wait for the database to update, we can do it in the background
-        userService.updateUserBalance(this.playerId, this.balance);
+        const { userService } = require("../app");
+        void userService.updateUserBalance(this.playerId, this.balance);
     }
 
     public async winMoney(win: number, cap: number = Infinity) {
         this.balance = Math.min(this.balance + win, cap);
 
         // dont await this, because we dont want to wait for the database to update, we can do it in the background
-        userService.updateUserBalance(this.playerId, this.balance);
+        const { userService, statsService } = require("../app");
+        void userService.updateUserBalance(this.playerId, this.balance);
       
         statsService.onPlayerWin(this.playerId);
     }
