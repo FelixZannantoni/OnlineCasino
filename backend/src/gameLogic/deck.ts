@@ -38,13 +38,11 @@ export class Deck {
     }
 
     protected shuffle(cardDeck: Card[]) {
-        for (let i: number = 0; i < 4; i++) {
-            for (let j: number = 0; j < cardDeck.length; j++) {
-                const randNum: number = Math.floor(Math.random() * (cardDeck.length - 1)) + 1;
-                const temp: Card = cardDeck[j];
-                cardDeck[j] = cardDeck[randNum];
-                cardDeck[randNum] = temp;
-            }
+        for (let i: number = cardDeck.length - 1; i > 0; i--) {
+            const randNum: number = Math.floor(Math.random() * (i + 1));
+            const temp: Card = cardDeck[i];
+            cardDeck[i] = cardDeck[randNum];
+            cardDeck[randNum] = temp;
         }
     }
 
