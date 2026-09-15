@@ -38,6 +38,7 @@ export class Poker extends CardGame<PokerPlayer> {
     private gameStartTimer: NodeJS.Timeout | null = null;
     private gameStartEndTime: number | null = null;
     private readonly GAME_START_DELAY_MS: number = 10000; // 10 seconds delay before starting the game, so enough players can join
+    private nextHandTimer: NodeJS.Timeout | null = null;
 
     constructor(gameId: string, gameName: string = "") {
         super(gameId, gameName);
@@ -79,11 +80,14 @@ export class Poker extends CardGame<PokerPlayer> {
         if(this.gameStartTimer) {
             // reset timer if it's already running (e.g. a new player joined)
             clearTimeout(this.gameStartTimer);
+            this.gameStartTimer = null;
         }
 
         console.log(`Starting game start timer for game ${this.getGameId()}! Players: ${this.players.length}`);
         this.gameStartEndTime = Date.now() + this.GAME_START_DELAY_MS;
         this.gameStartTimer = setTimeout(() => {
+            this.gameStartTimer = null;
+            this.gameStartEndTime = null;
             if (!this.isStarted && this.players.length >= 2) {
                 console.log(`Timer triggered: Starting game ${this.getGameId()}!`);
                 this.startGame();
@@ -113,6 +117,12 @@ export class Poker extends CardGame<PokerPlayer> {
 
     public startGame() {
         if (this.isStarted) return;
+        if (this.gameStartTimer) {
+            clearTimeout(this.gameStartTimer);
+            this.gameStartTimer = null;
+            this.gameStartEndTime = null;
+        }
+        this.stopNextHandTimer();
         this.isStarted = true;
         // Clean up any existing dealer chips to ensure only one exists
         this.players.forEach(p => p.setDealerChip(false));
@@ -124,6 +134,7 @@ export class Poker extends CardGame<PokerPlayer> {
         if (this.players.length < 2) {
             this.isStarted = false;
             this.stopTurnTimer();
+            this.stopNextHandTimer();
             // Clean up dealer chips if game can't start
             this.players.forEach(p => p.setDealerChip(false));
             
@@ -338,9 +349,7 @@ export class Poker extends CardGame<PokerPlayer> {
             this.currentRoundId = -1;
         }
 
-        setTimeout(() => {
-            this.startNewHand();
-        }, 5000);
+        this.scheduleNextHand(5000);
     }
 
     public async handlePlayerMove(playerId: string, action: string, amount?: number) {
@@ -438,7 +447,7 @@ export class Poker extends CardGame<PokerPlayer> {
                 this.currentRoundId = -1;
             }
 
-            setTimeout(() => this.startNewHand(), 3000);
+            this.scheduleNextHand(3000);
             return { success: true, message: "Only one player left" };
         }
 
@@ -451,6 +460,24 @@ export class Poker extends CardGame<PokerPlayer> {
 
         this.emit("game_state", this.getGameState());
         return { success: success, message: message };
+    }
+
+    private scheduleNextHand(delayMs: number) {
+        this.stopNextHandTimer();
+
+        this.nextHandTimer = setTimeout(() => {
+            this.nextHandTimer = null;
+            if (this.isStarted) {
+                void this.startNewHand();
+            }
+        }, delayMs);
+    }
+
+    private stopNextHandTimer() {
+        if (this.nextHandTimer) {
+            clearTimeout(this.nextHandTimer);
+            this.nextHandTimer = null;
+        }
     }
 
     private moveToNextActivePlayer() {
