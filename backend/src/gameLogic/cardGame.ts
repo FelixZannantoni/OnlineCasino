@@ -12,6 +12,9 @@ export class CardGame<T extends CardGamePlayer = CardGamePlayer> extends Game<T>
     }
 
     public setDefaultDealerChip() {
+        if (this.players.length === 0) {
+            return;
+        }
         this.players[Math.floor(Math.random() * this.players.length)].setDealerChip(true);
     }
 
