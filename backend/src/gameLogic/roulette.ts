@@ -16,6 +16,7 @@ export class Roulette extends Game<RoulettePlayer> {
     private lastWinningNumber: number | null = null;
     private remainingTime: number = 0;
     private chipOptions: any[] = DEFAULT_CHIPS;
+    private bettingWaitCleanup: (() => void) | null = null;
 
     constructor(gameId: string, gameName: string = "") {
         super(gameId, gameName);
@@ -57,6 +58,7 @@ export class Roulette extends Game<RoulettePlayer> {
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
         this.isRunning = false;
+        this.cleanupBettingWait();
         this.currentPhase = RoulettePhase.WAITING;
         if (this.currentRoundId !== -1) {
             await roundService.endRound(this.currentRoundId);
@@ -96,11 +98,13 @@ export class Roulette extends Game<RoulettePlayer> {
     }
 
     private async waitForBets() {
+        this.cleanupBettingWait();
         this.remainingTime = 15;
         this.emit("game_state", this.getGameState());
 
         await new Promise<void>((resolve) => {
             let interval: NodeJS.Timeout | null = null;
+            let settled = false;
 
             const startTimer = () => {
                 if (interval) return;
@@ -110,8 +114,7 @@ export class Roulette extends Game<RoulettePlayer> {
                     this.emit("game_state", this.getGameState());
                     if (this.remainingTime <= 0) {
                         console.log(`DEBUG: Timer reached 0 for game ${this.getGameId()}`);
-                        cleanup();
-                        resolve();
+                        finish();
                     }
                 }, 1000);
             };
@@ -140,7 +143,24 @@ export class Roulette extends Game<RoulettePlayer> {
 
             this.on("playerBet", handleBet);
             this.on("playerReady", handleReady);
+
+            const finish = () => {
+                if (settled) return;
+                settled = true;
+                cleanup();
+                this.bettingWaitCleanup = null;
+                resolve();
+            };
+
+            this.bettingWaitCleanup = cleanup;
         });
+    }
+
+    private cleanupBettingWait() {
+        if (this.bettingWaitCleanup) {
+            this.bettingWaitCleanup();
+            this.bettingWaitCleanup = null;
+        }
     }
 
     public async handlePlayerMove(playerId: string, action: string, amount?: number, field?: string) {
