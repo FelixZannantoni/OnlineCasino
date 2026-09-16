@@ -81,8 +81,6 @@ export class Poker extends CardGame<PokerPlayer> {
             console.log(`[Game ${this.getGameId()}] Removed player ${playerId} from game. Remaining players: ${this.players.length}`);
         }
     }
-        }
-    }
 
     public async tipDealer(playerId: string) {
         const player = this.players.find(p => p.getPlayerId() === playerId);
