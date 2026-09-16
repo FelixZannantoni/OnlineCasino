@@ -164,6 +164,18 @@ export class Blackjack extends CardGame<BlackjackPlayer> {
 
             console.log(`[Game ${this.getGameId()}] Removed player ${playerId} from game. Remaining players: ${this.players.length}`);
 
+            // Ensure bet is properly refunded when explicitly leaving
+            if (player.getBet() > 0) {
+                const refundAmount = player.getBet();
+                player.setBalance(player.getBalance() + refundAmount);
+                console.log(`[Game ${this.getGameId()}] Refunded bet of ${refundAmount} to player ${playerId} on leave`);
+                
+                // Record the refund in database
+                if (this.currentRoundId > 0) {
+                    roundService.updatePlayerProfit(this.currentRoundId, playerId, -refundAmount);
+                }
+            }
+
             const balanceAfterLeaving = player.getBalanceAfterLeaving();
             if (balanceAfterLeaving !== player.getBalance()) {
                 console.log(`[Game ${this.getGameId()}] Restoring balance for ${playerId}: ${player.getBalance()} -> ${balanceAfterLeaving}`);

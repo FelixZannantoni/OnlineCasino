@@ -60,6 +60,30 @@ export class Poker extends CardGame<PokerPlayer> {
         }
     }
 
+    public override removePlayer(playerId: string): void {
+        const player = this.players.find(p => p.getPlayerId() === playerId);
+        if (player) {
+            const playerIndex = this.players.indexOf(player);
+            this.players.splice(playerIndex, 1);
+
+            // Ensure bet is properly refunded when explicitly leaving
+            if (player.getBet() > 0) {
+                const refundAmount = player.getBet();
+                player.setBalance(player.getBalance() + refundAmount);
+                console.log(`[Game ${this.getGameId()}] Refunded bet of ${refundAmount} to player ${playerId} on leave`);
+                
+                // Record the refund in database
+                if (this.currentRoundId > 0) {
+                    roundService.updatePlayerProfit(this.currentRoundId, playerId, -refundAmount);
+                }
+            }
+
+            console.log(`[Game ${this.getGameId()}] Removed player ${playerId} from game. Remaining players: ${this.players.length}`);
+        }
+    }
+        }
+    }
+
     public async tipDealer(playerId: string) {
         const player = this.players.find(p => p.getPlayerId() === playerId);
         if (!player) return { success: false, message: "Player not found" };
