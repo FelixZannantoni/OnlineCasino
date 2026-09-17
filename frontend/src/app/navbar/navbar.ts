@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { DataService } from '../services/data-service';
 import { Avatar } from '../avatar/avatar';
+import { getModeConfigByMode } from '../game-mode-overlay/game-mode-overlay';
 
 @Component({
   selector: 'app-navbar',
@@ -52,10 +53,22 @@ export class Navbar implements OnInit {
 
   navigate(path: string): void {
     if (this.isInGame && this.isBrowser) {
-      window.dispatchEvent(new CustomEvent('toggleQuitOverlay', { detail: { redirectTo: path } }));
+      window.dispatchEvent(new CustomEvent('toggleQuitOverlay', {
+        detail: { redirectTo: path, gameId: this.getCurrentGameId() }
+      }));
     } else {
       this.router.navigate([path]);
     }
+  }
+
+  private getCurrentGameId(): string | undefined {
+    const url = this.router.url;
+    const mode = new URLSearchParams(url.split('?')[1] ?? '').get('mode') ?? 'low';
+    const modeConfig = getModeConfigByMode(mode);
+
+    if (url.includes('/poker')) return modeConfig.pokerId;
+    if (url.includes('/blackjack')) return modeConfig.blackjackId;
+    return undefined;
   }
 
   toggleProfile(): void {
