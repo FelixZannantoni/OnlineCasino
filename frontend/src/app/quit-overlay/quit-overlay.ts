@@ -3,6 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { Subscription, fromEvent } from 'rxjs';
 import { Router } from '@angular/router';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-quit-overlay',
@@ -15,6 +16,7 @@ export class QuitOverlay implements OnInit, OnDestroy {
   isOpen = false;
   private redirectTo = '/home'; // default fallback
   private router = inject(Router);
+  private socketService = inject(SocketService);
   private toggleSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private isBrowser: boolean;
@@ -62,9 +64,8 @@ export class QuitOverlay implements OnInit, OnDestroy {
 
   confirm(): void {
     this.close();
-    // Notify backend to leave the game before navigating
-    if (this.gameId && typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('leave_game', { detail: { gameId: this.gameId } }));
+    if (this.gameId) {
+      this.socketService.emitEvent('leave_game', { gameId: this.gameId });
     }
     this.router.navigate([this.redirectTo]);
   }
