@@ -79,6 +79,17 @@ export class Poker extends CardGame<PokerPlayer> {
             }
 
             console.log(`[Game ${this.getGameId()}] Removed player ${playerId} from game. Remaining players: ${this.players.length}`);
+
+            if (this.players.length < 2) {
+                this.isStarted = false;
+                this.stopTurnTimer();
+                if (this.gameStartTimer) {
+                    clearTimeout(this.gameStartTimer);
+                    this.gameStartTimer = null;
+                }
+            } else if (this.currentPlayerIndex >= this.players.length) {
+                this.currentPlayerIndex = 0;
+            }
         }
     }
 

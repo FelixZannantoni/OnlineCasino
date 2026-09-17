@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { getBetLimits, getModeConfigByMode } from '../../game-mode-overlay/game-mode-overlay';
@@ -52,7 +52,7 @@ type PokerGameState = {
   templateUrl: './poker.html',
   styleUrls: ['./poker.css'],
 })
-export class Poker implements OnInit {
+export class Poker implements OnInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly route = inject(ActivatedRoute);
   private readonly socketService = inject(SocketService);
@@ -163,6 +163,16 @@ export class Poker implements OnInit {
     this.selectedBetAmount.set(this.modeLimits().minBet);
 
     this.socketService.joinGame(id, userId, undefined, this.gameName);
+  }
+
+  ngOnDestroy(): void {
+    const id = this.gameId();
+    if (id) {
+      this.socketService.emitEvent('leave_game', { gameId: id });
+    }
+    if (this.playerTurnTimer) clearInterval(this.playerTurnTimer);
+    if (this.gameStartTimer) clearInterval(this.gameStartTimer);
+    this.socketService.offEvent('game_state');
   }
 
   private handlePauseOverlayLogic(s: PokerGameState): void {

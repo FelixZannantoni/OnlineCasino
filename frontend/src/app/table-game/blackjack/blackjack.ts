@@ -134,6 +134,9 @@ export class Blackjack implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopLocalTimer();
+    if (this.gameId) {
+      this.socketService.emitEvent('leave_game', { gameId: this.gameId });
+    }
     this.socketService.offEvent('game_state');
     this.socketService.offEvent('error');
   }
