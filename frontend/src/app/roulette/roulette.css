@@ -679,6 +679,49 @@ dl {
     font-size: 16px;
     letter-spacing: 3px;
   }
+
+  .roulette-shell {
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .main-layout {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .wheel-col {
+    border-right: none;
+    border-bottom: 1px solid rgba(200, 165, 80, 0.15);
+  }
+
+  .wheel-frame {
+    width: min(300px, 72vw);
+    height: min(300px, 72vw);
+  }
+
+  .wheel-frame canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .table-col,
+  .side-col {
+    min-width: 0;
+  }
+
+  .table-col {
+    overflow: visible;
+  }
+
+  .side-col {
+    border-left: none;
+  }
+
+  .tray {
+    width: 100%;
+    overflow-x: auto;
+  }
 }
 
 /* OTHER PLAYERS' BETS CHIPS */

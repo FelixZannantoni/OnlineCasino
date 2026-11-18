@@ -1481,3 +1481,155 @@
 .explore-empty p {
     margin: 0;
 }
+
+/* Mobile club layout */
+@media (max-width: 768px) {
+    .root {
+        min-height: 100dvh;
+        border-radius: 0;
+    }
+
+    .header {
+        padding: 16px 14px 0;
+    }
+
+    .header-ornament {
+        display: none;
+    }
+
+    .title-row {
+        align-items: flex-start;
+    }
+
+    .title {
+        font-size: 18px;
+    }
+
+    .subtitle {
+        line-height: 1.4;
+    }
+
+    .tabs {
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        flex: 0 0 auto;
+        padding: 10px 12px;
+        letter-spacing: 1px;
+    }
+
+    .body {
+        min-height: 0;
+    }
+
+    .search-bar {
+        padding: 12px;
+    }
+
+    .member-card {
+        gap: 8px;
+        padding: 10px 8px;
+    }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .contrib {
+        max-width: 72px;
+    }
+
+    .stats-row {
+        position: sticky;
+        bottom: 0;
+        background: var(--casino-bg);
+    }
+
+    .chat-header {
+        padding: 12px;
+    }
+
+    .messages {
+        padding: 12px;
+    }
+
+    .chat-input-wrap {
+        padding: 10px 12px;
+    }
+
+    .msg {
+        max-width: 88%;
+    }
+
+    .explore-toolbar {
+        padding: 12px;
+    }
+
+    .explore-list {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .meta-chips {
+        gap: 4px;
+    }
+
+    .chip {
+        padding-inline: 7px;
+    }
+
+    .xp-row {
+        flex-wrap: wrap;
+    }
+
+    .xp-bar {
+        order: 3;
+        flex-basis: 100%;
+    }
+
+    .tab-icon {
+        display: none;
+    }
+
+    .tab {
+        padding-inline: 9px;
+        font-size: 10px;
+    }
+
+    .badge {
+        margin-left: 0;
+    }
+
+    .member-name {
+        font-size: 13px;
+    }
+
+    .role-badge {
+        display: none;
+    }
+
+    .contrib-val {
+        font-size: 13px;
+    }
+
+    .stat {
+        padding-inline: 6px;
+    }
+
+    .stat-val {
+        font-size: 15px;
+    }
+
+    .stat-lbl {
+        letter-spacing: 1px;
+    }
+}

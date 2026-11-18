@@ -507,6 +507,12 @@
 
 @media (max-width: 768px) {
   .home-container { padding: 1rem; }
+  .home-content { grid-template-columns: 1fr; }
+  .games-section {
+    height: auto;
+    min-height: 0;
+    padding: 1rem 0 1.5rem;
+  }
   .variation-grid,
   .favorites-grid,
   .labeled-variation-grid { grid-template-columns: 1fr; }
