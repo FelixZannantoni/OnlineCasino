@@ -236,6 +236,28 @@
   .navbar_container { padding: 0.35rem; }
   .navbar_center { display: none; }
   .navbar_right { gap: 0.6rem; }
+  .navbar_container { flex-wrap: wrap; }
+  .navbar_links {
+    order: 3;
+    flex: 1 0 100%;
+    min-width: 0;
+  }
+  .navbar_nav {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .navbar_nav ul {
+    width: max-content;
+    min-width: 100%;
+    justify-content: space-between;
+    gap: 0.35rem;
+  }
+  .navbar_nav .shining-btn {
+    display: block;
+    padding: 0.35rem 0.65rem;
+    white-space: nowrap;
+    font-size: 0.78rem;
+  }
 }
 
 @media (max-width: 480px) {

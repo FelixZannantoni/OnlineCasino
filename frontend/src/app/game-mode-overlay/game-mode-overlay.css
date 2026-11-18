@@ -304,7 +304,12 @@
 
 /* Responsive */
 @media (max-width: 600px) {
-  .mode-dialog { width: 94vw; border-radius: 16px; }
+  .mode-dialog {
+    width: 94vw;
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    border-radius: 16px;
+  }
   .mode-grid { grid-template-columns: 1fr; }
   .mode-header { padding: 1.25rem 1.25rem 1rem; }
   .mode-body { padding: 1.25rem 1.25rem 0.75rem; }
